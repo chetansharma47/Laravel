@@ -12,11 +12,11 @@
   <tr>
     <td width="20" align="left" valign="top">
       <table width="100%" border="0" cellspacing="0" cellpadding="0">
-      <tr style="background-color: #ed2227;">
+      <tr style="background-color: #7E7D7B;">
         <td width="20" align="left" valign="top">&nbsp;</td>
         <td align="center" valign="top" style="padding:20px 0;">
           <!-- <a href="javascript:void(0);" style="border:0; outline:0;"><img src="" alt="" width="100"/></a> -->
-          <div style="border:0; outline:0;"><img style="background-color: #fff; border-radius: 2px; width: 130px;" src="{{$message->embed($logo)}}" alt="" width="115px"/></div>
+          <div style="border:0; outline:0;"><img src="{{$message->embed($logo)}}" alt="" width="115px"/></div>
         </td>
         <td width="20" align="left" valign="top">&nbsp;</td>
       </tr>
@@ -48,7 +48,7 @@
           </tr>
           <tr>
             <td valign="top" style="padding:3px; font-family:arial, sans-serif; font-size:18px; color:#474747;">
-              Thanks for registering with Capital Loyalty, Please click on the button below to verify your email address.
+              Thanks for registering with Capital Motion, Please click on the button below to verify your email address.
             </td>
           </tr>
 
@@ -61,7 +61,7 @@
             <td style="">
               <h2 style="font-family:Arial, sans-serif, 'Helvetica Neue', Helvetica; font-size:18px;background:#efefef; color:#393939; font-weight:normal; margin:0; padding-left: 0;">
                 Best Regards,<br>
-                Capital Loyalty
+                Capital Motion
 
               </h2>
             </td>
@@ -79,13 +79,11 @@
           </tr>
 
           <tr>
-            <td align="center" valign="top"> <a href="{{$link}}"; style="border-radius: 5px; font-family:arial, sans-serif; font-size:14px; color:#00aeef; background-color: #ed2227; padding: 12px 9px; max-width: 120px; display: block; text-align: center; margin: 0 auto; color: #fff; text-decoration: none;">Verify Email</a></td>
+            <td align="center" valign="top"> <a href="{{$link}}"; style="border-radius: 5px; font-family:arial, sans-serif; font-size:14px; color:#fff; background-color: #3ABD6F; padding: 12px 9px; max-width: 120px; display: block; text-align: center; margin: 0 auto; text-decoration: none; border-radius: 10px;">Verify Email</a></td>
           </tr>
         </table></td>
       </tr>
-      <tr>
-        <td height="40" align="left" valign="top">&nbsp;</td>
-      </tr>
+      
 
     </table>
   </td>
@@ -93,17 +91,11 @@
 
 
   <tr>
-    <td align="left" valign="top" style="background:#413e3e; padding:20px; text-align:center;">
+    <td align="left" valign="top" style="background:#193358; padding:20px; text-align:center;">
       <table width="100%" border="0" cellspacing="0" cellpadding="0">
+
       <tr>
-        <td align="center" valign="top">
-          <a href="http://facebook.com" target="_blank" style="border:0; outline:0; text-decoration:none;"><img src="assets/icon-facebook.png" alt=""/></a> &nbsp;
-            <a href="http://twitter.com" target="_blank" style="border:0; outline:0; text-decoration:none;"><img src="assets/icon-twitter.png" alt=""/></a> &nbsp;
-            <a href="http://instagram.com" target="_blank" style="border:0; outline:0; text-decoration:none;"><img src="assets/icon-instagram.png" alt=""/></a>
-        </td>
-      </tr>
-      <tr>
-        <td align="center" valign="top" style="font-family:arial, sans-serif; font-size:13px; color:#727272; padding-top:10px;">© Capital Loyalty {{date('Y')}}</td>
+        <td align="center" valign="top" style="font-family:arial, sans-serif; font-size:13px; color:#fff;">© Capital Motion {{date('Y')}}</td>
       </tr>
     </table></td>
   </tr>

@@ -30,7 +30,7 @@ class UserForgotPassword extends Mailable
      */
     public function build()
     {
-        return $this->from(env('MAIL_USERNAME'), 'Dinz')
+        return $this->from(env('MAIL_USERNAME'), 'Capital Motion')
             ->subject('Reset Password Link')
             ->view('emails.user-email-forgot')
             ->with([

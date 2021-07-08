@@ -31,7 +31,7 @@ class UserVerifyMail extends Mailable
     public function build()
     {
 
-            return $this->from(env('MAIL_USERNAME'), 'Dinz')
+            return $this->from(env('MAIL_USERNAME'), 'Capital Motion')
                ->subject('Verify Email Link')
                ->view('emails.confirm-account')
                ->with([

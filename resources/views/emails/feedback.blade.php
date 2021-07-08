@@ -13,9 +13,6 @@
 
 <style type="text/css">
   img#logo_img {
-    background-color: #fff;
-    border-radius: 2px;
-    /* box-shadow: 3px 3px 5px #690404; */
     width: 130px;
 }
 </style>
@@ -24,7 +21,7 @@
   <div class="col-xs-12">
     <div class="table-responsive">
   <table width="600" border="0" align="center" cellpadding="0" cellspacing="0" style="background:#efefef; margin: 110px auto;" id="new-table">
-  <tr style="background-color: #ed2227;">
+  <tr style="background-color: #7E7D7B;">
     <td width="20" align="left" valign="top">
       <table width="100%" border="0" cellspacing="0" cellpadding="0">
       <tr>
@@ -82,7 +79,7 @@
 
 
   <tr>
-    <td align="left" valign="top" style="background-color: #ed2227; padding:20px; text-align:center;">
+    <td align="left" valign="top" style="background-color: #193358; padding:20px; text-align:center;">
       <table width="100%" border="0" cellspacing="0" cellpadding="0">
       <tr>
         <!-- <td align="center" valign="top">
@@ -92,7 +89,7 @@
         </td> -->
       </tr>
       <tr>
-        <td align="center" valign="top" style="font-family:arial, sans-serif; font-size:13px; color:#fff; padding-top:2px;">© Capital Loyalty {{date('Y')}}</td>
+        <td align="center" valign="top" style="font-family:arial, sans-serif; font-size:13px; color:#fff; padding-top:2px;">© Capital Motion {{date('Y')}}</td>
       </tr>
     </table></td>
   </tr>

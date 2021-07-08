@@ -34,7 +34,7 @@ class AuthenticationController extends ResponseController
         if($register['status'] == 0){
             return $this->responseWithErrorCode($register['error_msg'], 400);
         }
-        return $this->responseOk("You have registered successfully. Please verify email address on your mail.", $register['data']);
+        return $this->responseOk("You have registered successfully. Please verify email address on your mail.", ['register' => $register['data']]);
     }
 
     public function login(Request $request){
@@ -47,7 +47,7 @@ class AuthenticationController extends ResponseController
         }elseif($user_details['status'] == 5){
             return $this->responseWithErrorCode($user_details['error_msg'], 406);
         }else{
-            return $this->responseOk('User has been logged in successfully.', $user_details['data']);
+            return $this->responseOk('User has been logged in successfully.', ['login' => $user_details['data']]);
         }
 
     }
@@ -60,7 +60,7 @@ class AuthenticationController extends ResponseController
 
         $data = $request->all();
         $update_user = $this->profileModel->updateUser($data, $user);
-        return $this->responseOk('User has been updated successfully.', $update_user);
+        return $this->responseOk('User has been updated successfully.', ['update_user' => $update_user]);
     }
 
     public function getProfile(Request $request){
@@ -69,7 +69,7 @@ class AuthenticationController extends ResponseController
             $id = Auth::guard()->user()->id;
         }
         $get_profile=$this->profileModel->getProfile($id);
-        return $this->responseOk("User Profile", $get_profile);
+        return $this->responseOk("User Profile", ['profile' => $get_profile]);
     }
 
     public function logout(Request $request){

@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title> Loyalty Cash Back Settings</title>
+	<meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
+	<link rel="icon" href="../assets/img/logo-approved.png" type="image/x-icon"/>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Signika:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+	<!-- Fonts and icons -->
+	<script src="../assets/js/plugin/webfont/webfont.min.js"></script>
+	<link href="../assets/css/mdtimepicker.css" rel="stylesheet" />
+	<script>
+		WebFont.load({
+			google: {"families":["Lato:300,400,700,900"]},
+			custom: {"families":["Flaticon", "Font Awesome 5 Solid", "Font Awesome 5 Regular", "Font Awesome 5 Brands", "simple-line-icons"], urls: ['../assets/css/fonts.min.css']},
+			active: function() {
+				sessionStorage.fonts = true;
+			}
+		});
+	</script>
+
+	<!-- CSS Files -->
+	<link rel="stylesheet" href="../assets/css/bootstrap.min.css">
+	<link rel="stylesheet" href="../assets/css/atlantis.min.css">
+
+	<!-- CSS Just for demo purpose, don't include it in your project -->
+	<link rel="stylesheet" href="../assets/css/custom.css">
+	<style>
+		body {
+			background: #fff !important;
+		}
+	</style>
+</head>
+<body>
+	<header class="curve-bg">
+		<div class="container-fluid">
+			<div class="curve-bg1">
+				<nav class="navbar navbar-expand-lg">
+					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+						<span class="navbar-toggler-icon"></span>
+					</button>
+
+					<div class="collapse navbar-collapse" id="navbarSupportedContent">
+						<div class="row w-100">
+							<div class="col-md-5 col-sm-12">
+								<ul class="navbar-nav">
+									<li class="nav-item">
+										<a class="nav-link hover_color" href="admin_tabs.html" style="padding-right: 0">Admin Portal</a>
+										<a class="nav-link" href="#" style="padding-left: 0;"> <span style="color: #fff;">></span>   Loyalty Cash Back Settings</a>
+									</li>
+								</ul>
+							</div>
+							<div class="col-md-2 col-sm-12 text-center">
+								<ul class="" style="padding-left: 25px;">
+										<a class="nav-link" href="admin_tabs.html">
+											<img src="../assets/img/logo-approved.png"/ alt="logo-approved">
+										</a>
+								</ul>
+							</div>
+							<div class="col-md-5 text-right pr-0">
+								<ul class="navbar-nav">
+									<li class="nav-item">
+										<a class="nav-link" href="#">User: Nadeer</a>
+									</li>
+									<li class="nav-item">
+										<a class="nav-link" href="admin_tabs.html" style="color: #FFDA7A;">
+											Admin
+										</a>
+									</li>
+									<li class="nav-item">
+										<a class="nav-link" href="login.html" style="color: #FFDA7A;">
+											logout
+										</a>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</nav>
+			</div>
+		</div>
+	</header>
+	<section class="mt-2 mb-5">
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-4">
+					<div class="app_notification_bg" style="background-color: transparent;">
+						<h4>Base Cash Back Percentage</h4>
+						<div class="d-flex align-items-center">
+							<div class="venue_inputs mr-4">
+								<label style="width: 55px;">
+									Silver
+								</label>
+							</div>
+							<div class="venue_inputs mr-4">
+								<div class="d-flex">
+									<input type="text" class="form-control form-control-user" placeholder="" value="0.5" style="font-size: 14px !important; border-radius: 0px; width: 42px"/>
+									<input type="text" class="form-control form-control-user" placeholder="Percentage" value="%" style="font-size: 14px !important; border-radius: 0px; width: 42px"/>
+								</div>
+							</div>
+							<div>
+								<a href="" class="btn btn-primary btn-user btn-block common_btn" style="    padding: 0px; font-size: 20px; width: 110px;">
+	                      			SAVE
+	                    		</a>
+							</div>
+						</div>	
+						<div class="d-flex align-items-center mt-2">
+							<div class="venue_inputs mr-4">
+								<label style="width: 55px;">
+									Gold
+								</label>
+							</div>
+							<div class="venue_inputs mr-4">
+								<div class="d-flex">
+									<input type="text" class="form-control form-control-user" placeholder="" value="1.0" style="font-size: 14px !important; border-radius: 0px; width: 42px"/>
+									<input type="text" class="form-control form-control-user" placeholder="Percentage" value="%" style="font-size: 14px !important; border-radius: 0px; width: 42px"/>
+								</div>
+							</div>
+							<div>
+								<a href="" class="btn btn-primary btn-user btn-block common_btn" style="padding: 0px; font-size: 20px; width: 110px;">
+	                      			SAVE
+	                    		</a>
+							</div>
+						</div>
+						<div class="d-flex align-items-center mt-2">
+							<div class="venue_inputs mr-4">
+								<label>
+									Diamond
+								</label>
+							</div>
+							<div class="venue_inputs mr-4">
+								<div class="d-flex">
+									<input type="text" class="form-control form-control-user" placeholder="" value="1.0" style="font-size: 14px !important; border-radius: 0px; width: 42px"/>
+									<input type="text" class="form-control form-control-user" placeholder="Percentage" value="%" style="font-size: 14px !important; border-radius: 0px; width: 42px"/>
+								</div>
+							</div>
+							<div>
+								<a href="" class="btn btn-primary btn-user btn-block common_btn" style="    padding: 0px; font-size: 20px; width: 110px;">
+	                      			SAVE
+	                    		</a>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="app_notification_bg" style="background-color: transparent;">
+						<h4>More Wallet Cash Backs</h4>
+						<div class="d-flex align-items-center">
+							<div class="venue_inputs mr-4">
+								<label style="width: 99px;">
+									Bonus
+								</label>
+							</div>
+							<div class="venue_inputs mr-4">
+								<div class="d-flex">
+									<input type="text" class="form-control form-control-user" placeholder="" value="25" style="font-size: 14px !important; border-radius: 0px; width: 48px"/>
+									<input type="text" class="form-control form-control-user" placeholder="Percentage" value="AED" style="font-size: 14px !important; border-radius: 0px; width: 48px"/>
+								</div>
+							</div>
+							<div>
+								<a href="" class="btn btn-primary btn-user btn-block common_btn" style="    padding: 0px; font-size: 20px; width: 110px;">
+	                      			SAVE
+	                    		</a>
+							</div>
+						</div>	
+						<div class="d-flex align-items-center mt-2">
+							<div class="venue_inputs mr-4">
+								<label style="width: 99px;">
+									Refer A Friend
+								</label>
+							</div>
+							<div class="venue_inputs mr-4">
+								<div class="d-flex">
+									<input type="text" class="form-control form-control-user" placeholder="" value="25" style="font-size: 14px !important; border-radius: 0px; width: 48px"/>
+									<input type="text" class="form-control form-control-user" placeholder="Percentage" value="AED" style="font-size: 14px !important; border-radius: 0px; width: 48px"/>
+								</div>
+							</div>
+							<div>
+								<a href="" class="btn btn-primary btn-user btn-block common_btn" style="    padding: 0px; font-size: 20px; width: 110px;">
+	                      			SAVE
+	                    		</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<section class="events_venue_details" style="background-color: transparent;">
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-2  pr-0 ">
+					<div class="pt-5 pb-3 pl-3 menu-lisitng">
+						<ul style="margin-left: 0px !important;background-color: #E3DFDF;">
+							<li class="active">
+								<a href="javascript:void(0);">Salt & Caramel</a>
+							</li>
+							<li>
+								<a href="javascript:void(0);">Pacifico Tiki</a>
+							</li>
+							<li>
+								<a href="javascript:void(0);">Ornina</a>
+							</li>
+							<li>
+								<a href="javascript:void(0);">Aquarium</a>
+							</li>
+							<li>
+								<a href="#">Tokyo Grill</a>
+							</li>
+							<li style="visibility: hidden">
+								<a href="#">Tokyo Grill</a>
+							</li>
+							<li style="visibility: hidden">
+								<a href="#">Tokyo Grill</a>
+							</li>
+							<li style="visibility: hidden">
+								<a href="#">Tokyo Grill</a>
+							</li>
+							<li style="visibility: hidden">
+								<a href="#">Tokyo Grill</a>
+							</li>
+							<li style="visibility: hidden">
+								<a href="#">Tokyo Grill</a>
+							</li>
+							<li style="visibility: hidden">
+								<a href="#">Tokyo Grill</a>
+							</li>
+							<div class="d-flex justify-content-between" style="visibility: hidden;">
+								<li style="background-color: #ECECEC;">
+									<a href="javascript:void(0);">
+										<img src="../assets/img/icon.png" alt="icon"/>
+									</a>
+								</li>
+								<li style="background-color: #ECECEC;">
+									<a href="javascript:void(0);">
+										<img src="../assets/img/icon1.png" alt="icon1"/>
+									</a>
+								</li>
+							</div>
+						</ul>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="pt-5 pb-3 pl-3 menu-lisitng">
+						<ul style="margin-left: 0px !important;background-color: #E3DFDF;">
+							<li class="active">
+								<a href="javascript:void(0);">Feb Promotion Hours</a>
+							</li>
+							<li>
+								<a href="javascript:void(0);">Eid Cash Back %</a>
+							</li>
+							<li style="visibility: hidden">
+								<a href="#">Ornina</a>
+							</li>
+							<li style="visibility: hidden">
+								<a href="#">Aquarium</a>
+							</li>
+							<li style="visibility: hidden">
+								<a href="#">Tokyo Grill</a>
+							</li>
+							<li style="visibility: hidden">
+								<a href="#">Tokyo Grill</a>
+							</li>
+							<li style="visibility: hidden">
+								<a href="#">Tokyo Grill</a>
+							</li>
+							<li style="visibility: hidden">
+								<a href="#">Tokyo Grill</a>
+							</li>
+							<li style="visibility: hidden">
+								<a href="#">Tokyo Grill</a>
+							</li>
+							<li style="visibility: hidden">
+								<a href="#">Tokyo Grill</a>
+							</li>
+							<li style="visibility: hidden">
+								<a href="#">Tokyo Grill</a>
+							</li>
+							<div class="d-flex justify-content-between">
+								<li style="background-color: #ECECEC;">
+									<a href="javascript:void(0);">
+										<img src="../assets/img/icon.png" alt="icon"/>
+									</a>
+								</li>
+								<li style="background-color: #ECECEC;">
+									<a href="javascript:void(0);">
+										<img src="../assets/img/icon1.png" alt="icon1"/>
+									</a>
+								</li>
+							</div>
+						</ul>
+					</div>
+				</div>
+				<div class="col-md-7 padding-top">
+					<div class="row pr-3 pl-3">
+						<div class="col-md-6 venue_inputs">
+							<label>
+								Promotion Cash Back Name
+							</label>
+							<input type="email" class="form-control form-control-user" placeholder="Promotion Cash Back Name" value="Feb Promotion hours" />
+						</div>
+						<div class="col-md-6 venue_inputs">
+							<label>
+								Image
+							</label>
+							<input type="email" class="form-control form-control-user" placeholder="Image" value="LadiesNight.jpg" disabled="" />
+						</div>
+					</div>
+					<div class="row pr-3 pl-3 mt-3">
+						<div class="col-md-12 venue_inputs">
+							<label>
+								When
+							</label>
+							<div class="checkboxesbg">
+								<div class="d-flex flex-wrap">
+									<div class="mr-2">
+										<label class="tick_box"><span class="date">Monday</span>
+											<input type="checkbox" checked="checked">
+											<span class="checkmark"></span>
+										</label>
+									</div>
+									<div class="mr-2">
+										<label class="tick_box"><span class="date">Tuesday</span>
+											<input type="checkbox">
+											<span class="checkmark"></span>
+										</label>
+									</div>
+									<div class="mr-2">
+										<label class="tick_box"><span class="date">Wednesday</span>
+											<input type="checkbox">
+											<span class="checkmark"></span>
+										</label>
+									</div>
+									<div class="mr-2">
+										<label class="tick_box"><span class="date">Thursday</span>
+											<input type="checkbox">
+											<span class="checkmark"></span>
+										</label>
+									</div>
+									<div class="mr-2">
+										<label class="tick_box"><span class="date">Friday</span>
+											<input type="checkbox">
+											<span class="checkmark"></span>
+										</label>
+									</div>
+									<div class="mr-2">
+										<label class="tick_box"><span class="date">Saturday</span>
+											<input type="checkbox">
+											<span class="checkmark"></span>
+										</label>
+									</div>
+									<div>
+										<label class="tick_box"><span class="date">Sunday</span>
+											<input type="checkbox">
+											<span class="checkmark"></span>
+										</label>
+									</div>
+								</div>
+							</div>
+						</div>	
+					</div>
+					<label class="applicable-date mt-3">
+						Applicable Dates
+					</label>
+					<div class="row pr-3 pl-3 mt-0">
+						<div class="col-md-3 venue_inputs">
+							<label>
+								From Date
+							</label>
+							<input type="date" class="form-control form-control-user" placeholder="From Date" value="" />
+						</div>
+						<div class="col-md-3 venue_inputs">
+							<label>
+								To Date
+							</label>
+							<input type="date" class="form-control form-control-user" placeholder="To Date" value="" />
+						</div>
+						<div class="col-md-6 venue_inputs">
+							<div class="">
+								<label>
+									Created 
+								</label>
+								<input type="text" class="form-control form-control-user" placeholder="To Date" value="Nadeer on 20/05/2021 08:00 AM" disabled style="    background-color: #8D8A8A !important;" />
+							</div>
+						</div>
+					</div>
+					<div class="row pr-3 pl-3 mt-3">
+						<div class="col-md-6 venue_inputs">
+							<label>
+								Time
+							</label>
+							<input type="text" class="form-control form-control-user" placeholder="To Date" value="7:00 AM"  id="timepicker3" />
+						</div>
+						<div class="col-md-6 venue_inputs">
+								<div>
+								<label>
+									Last Updated 
+								</label>
+
+								<input type="text" class="form-control form-control-user" placeholder="Last Updated " value="Melvin on 20/05/2021 09:00 PM" disabled style="    background-color: #8D8A8A !important;" />
+							</div> 
+						</div>
+					</div>
+					<div class="row pr-3 pl-3 mt-3">
+						<div class="col-md-6 venue_inputs">
+							<label>
+								Cash Back Percentage
+							</label>
+							<div class="d-flex">
+									<input type="text" class="form-control form-control-user" placeholder="" value="1" style="border-radius: 0px; width: 70px; background-color: #F64141 !important; color: #fff !important;     padding: 0px 28px !important;"/>
+									<input type="text" class="form-control form-control-user" placeholder="" value="%" style=" border-radius: 0px; width: 48px"/>
+							</div>
+						</div>
+						<div class="col-md-6 venue_inputs">
+							<label>
+								Status
+							</label>
+							<div class="selectdiv">
+								<select class="form-control form-group" style="padding: .6rem 1rem; position: relative;" id="exampleFormControlSelect1">
+									<option>Active</option>
+									<option>Inactive</option>
+
+								</select>
+							</div>
+						</div>
+					</div>
+					<div class="row pr-5 pl-3 mt-3">
+						<div class="col-md-6 venue_inputs">
+							<a href="" class="btn btn-primary btn-user btn-block common_btn" style="width: 100% !important;">
+	                      		Save
+	                    	</a>
+                    	</div>	
+					</div>
+				</div>
+			</div>
+			
+		</div>
+		<!-- <div class="tab-content" id="pills-tabContent">
+			<div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">cvcvbcvbcbc</div>
+		</div> -->
+	</section>
+<!--   Core JS Files   -->
+	<script src="../assets/js/core/jquery.3.2.1.min.js"></script>
+	<script src="../assets/js/core/popper.min.js"></script>
+	<script src="../assets/js/core/bootstrap.min.js"></script>
+
+	<!-- jQuery UI -->
+	<script src="../assets/js/plugin/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
+	<script src="../assets/js/plugin/jquery-ui-touch-punch/jquery.ui.touch-punch.min.js"></script>
+
+	<!-- jQuery Scrollbar -->
+	<script src="../assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js"></script>
+
+
+	<!-- Chart JS -->
+	<script src="../assets/js/plugin/chart.js/chart.min.js"></script>
+
+	<!-- jQuery Sparkline -->
+	<script src="../assets/js/plugin/jquery.sparkline/jquery.sparkline.min.js"></script>
+
+	<!-- Chart Circle -->
+	<script src="../assets/js/plugin/chart-circle/circles.min.js"></script>
+
+	<!-- Datatables -->
+	<script src="../assets/js/plugin/datatables/datatables.min.js"></script>
+
+	<!-- Bootstrap Notify -->
+	<!-- <script src="../assets/js/plugin/bootstrap-notify/bootstrap-notify.min.js"></script> -->
+
+	<!-- jQuery Vector Maps -->
+	<script src="../assets/js/plugin/jqvmap/jquery.vmap.min.js"></script>
+	<script src="../assets/js/plugin/jqvmap/maps/jquery.vmap.world.js"></script>
+
+	<!-- Sweet Alert -->
+	<script src="../assets/js/plugin/sweetalert/sweetalert.min.js"></script>
+
+	<!-- Atlantis JS -->
+	<script src="../assets/js/atlantis.min.js"></script>
+	<script src="../assets/js/mdtimepicker.js" type="text/javascript"></script>
+
+	<!-- Atlantis DEMO methods, don't include it in your project! -->
+	<script src="../assets/js/setting-demo.js"></script>
+	<script src="../assets/js/demo.js"></script>
+	<script>
+      $(document).ready(function(){
+        $('#timepicker').mdtimepicker();
+        $('#timepicker2').mdtimepicker();
+        $('#timepicker3').mdtimepicker(); 
+        $('#timepicker4').mdtimepicker();
+        $('#timepicker5').mdtimepicker();
+        $('#timepicker6').mdtimepicker();
+        $('#timepicker7').mdtimepicker();
+        $('#timepicker8').mdtimepicker();
+        $('#timepicker9').mdtimepicker();
+        $('#timepicker10').mdtimepicker();
+        $('#timepicker11').mdtimepicker();
+        $('#timepicker12').mdtimepicker();
+        $('#timepicker13').mdtimepicker();
+        $('#timepicker14').mdtimepicker();
+      });
+    </script>
+	<script>
+		$('#lineChart').sparkline([102,109,120,99,110,105,115], {
+			type: 'line',
+			height: '70',
+			width: '100%',
+			lineWidth: '2',
+			lineColor: 'rgba(255, 255, 255, .5)',
+			fillColor: 'rgba(255, 255, 255, .15)'
+		});
+
+		$('#lineChart2').sparkline([99,125,122,105,110,124,115], {
+			type: 'line',
+			height: '70',
+			width: '100%',
+			lineWidth: '2',
+			lineColor: 'rgba(255, 255, 255, .5)',
+			fillColor: 'rgba(255, 255, 255, .15)'
+		});
+
+		$('#lineChart3').sparkline([105,103,123,100,95,105,115], {
+			type: 'line',
+			height: '70',
+			width: '100%',
+			lineWidth: '2',
+			lineColor: 'rgba(255, 255, 255, .5)',
+			fillColor: 'rgba(255, 255, 255, .15)'
+		});
+	</script>	
+</body>
