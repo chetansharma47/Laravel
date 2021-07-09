@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<title>Adding Venue</title>
+	<title>Adding Event</title>
 	<meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
 	<link rel="icon" href="{{url('public/admin/assets/img/logo-approved.png')}}" type="image/x-icon"/>
 	<link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,6 +12,7 @@
 
 	<!-- Fonts and icons -->
 	<script src="{{url('public/admin/assets/js/plugin/webfont/webfont.min.js')}}"></script>
+	<link href="{{url('public/admin/assets/css/mdtimepicker.css')}}" rel="stylesheet" />
 	<script>
 		WebFont.load({
 			google: {"families":["Lato:300,400,700,900"]},
@@ -28,18 +29,10 @@
 
 	<!-- CSS Just for demo purpose, don't include it in your project -->
 	<link rel="stylesheet" href="{{url('public/admin/assets/css/custom.css')}}">
-	<link href="{{url('public/admin/assets/css/mdtimepicker.css')}}" rel="stylesheet" />
 	<style>
 		body {
 			background: #fff !important;
 		}
-		/*.curve-bg .navbar-nav li.nav-item:nth-child(1) {
-			width: 100%;
-			margin-right: 0;
-		}*/
-	/*	.curve-bg .navbar-nav li.nav-item:nth-child(2) {
-			width: 0;
-		}*/
 	</style>
 </head>
 <body>
@@ -50,33 +43,6 @@
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 						<span class="navbar-toggler-icon"></span>
 					</button>
-
-					<!-- <div class="collapse navbar-collapse" id="navbarSupportedContent">
-						<ul class="navbar-nav">
-							<li class="nav-item">
-								<a class="nav-link hover_color" href="admin_tabs.html" style="padding-right: 0">Admin Portal</a>
-								<a class="nav-link" href="#" style="padding-left: 0;"> <span style="color: #fff;">></span> Add Restaurants, Events, Offers</a>
-							</li>
-							<li class="nav-item">
-								<a class="nav-link" href="admin_tabs.html">
-									<img src="../assets/img/logo-approved.png"/ alt="logo-approved">
-								</a>
-							</li>
-							<li class="nav-item">
-								<a class="nav-link" href="#">User: Nadeer</a>
-							</li>
-							<li class="nav-item">
-								<a class="nav-link" href="admin_tabs.html" style="color: #FFDA7A;">
-									Admin
-								</a>
-							</li>
-							<li class="nav-item">
-								<a class="nav-link" href="login.html" style="color: #FFDA7A;">
-									logout
-								</a>
-							</li>
-						</ul>
-					</div> -->
 
 					<div class="collapse navbar-collapse" id="navbarSupportedContent">
 						<div class="row w-100">
@@ -121,13 +87,13 @@
 	<div class="container-fluid menu-tabs">
 		<ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
 			<li class="nav-item">
-				<a class="nav-link active" href="{{route('admin.addingVenue')}}">Our Venues</a>
+				<a class="nav-link" href="{{route('admin.addingVenue')}}">Our Venues</a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link" href="{{route('admin.addingEvents')}}">Events</a>
+				<a class="nav-link active" href="{{route('admin.addingEvents')}}">Events</a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link" href="{{route('admin.offerSettings')}}">Offers</a>
+				<a class="nav-link" href="{{route('admin.offerSettings')}}" >Offers</a>
 			</li>
 		</ul>
 	</div>
@@ -138,22 +104,22 @@
 					<div class="pt-5 pb-3 pl-3 pr-3 menu-lisitng">
 						<ul>
 							<li class="active">
-								<a href="javascript:void(0);">Salt & Caramel</a>
+								<a href="javascript:void(0);">Tiki Ladies Night</a>
 							</li>
 							<li>
-								<a href="javascript:void(0);">Pacifico Tiki</a>
+								<a href="javascript:void(0);">Cheese & Grape</a>
 							</li>
 							<li>
-								<a href="javascript:void(0);">Ornina</a>
+								<a href="javascript:void(0);">Hola Cuba! Ladies Night</a>
 							</li>
 							<li>
-								<a href="javascript:void(0);">Aquarium</a>
+								<a href="javascript:void(0);">Tiki Friday Brunch</a>
 							</li>
 							<li>
-								<a href="javascript:void(0);">Tokyo Grill</a>
+								<a href="javascript:void(0);">Business Lunch</a>
 							</li>
 							<li style="visibility: hidden">
-								<a href="#">Tokyo Grill</a>
+								<a href="javascript:void(0);">Tokyo Grill</a>
 							</li>
 							<li style="visibility: hidden">
 								<a href="#">Tokyo Grill</a>
@@ -173,12 +139,12 @@
 							<div class="d-flex justify-content-between">
 								<li style="background-color: #ECECEC;">
 									<a href="javascript:void(0);">
-										<img src="{{url('public/admin/assets/img/icon.png')}}" alt="icon"/>
+										<img src="../assets/img/icon.png" alt="icon"/>
 									</a>
 								</li>
 								<li style="background-color: #ECECEC;">
 									<a href="javascript:void(0);">
-										<img src="{{url('public/admin/assets/img/icon1.png')}}" alt="icon1"/>
+										<img src="../assets/img/icon1.png" alt="icon1"/>
 									</a>
 								</li>
 							</div>
@@ -189,65 +155,154 @@
 					<div class="row pr-5 pl-3">
 						<div class="col-md-6 venue_inputs">
 							<label>
-								Venue Name
+								Offer Name
 							</label>
-							<input type="email" class="form-control form-control-user" placeholder="Venue Name" value="Pacifico Tiki" />
+							<input type="email" class="form-control form-control-user" placeholder="Offer Name" value="Offer Ladies Night" />
 						</div>
 						<div class="col-md-6 venue_inputs">
 							<label>
 								Image
 							</label>
-							<input type="text" class="form-control form-control-user" placeholder="Image" value="PacificoTiki.jpg" disabled=""/>
+							<input type="text" class="form-control form-control-user" placeholder="Image" value="LadiesNight.jpg" disabled="" />
 						</div>
 					</div>
 					<div class="row pr-5 pl-3  mt-3">
 						<div class="col-md-6 venue_inputs">
 							<label>
-								Address
-							</label>
-							<input type="email" class="form-control form-control-user" placeholder="Address" value="Al Bandar | Al Raha Beach | Abu Dhabi" />
-						</div>
-						<div class="col-md-6 venue_inputs">
-							<label>
-								Menu Link
+								Offer Description
 							</label>
 							<!-- <input type="text" class="form-control form-control-user" placeholder="Menu Link" value="https://www.pacificotiki.com/menu.pdf" /> -->
-							<textarea class="form-control" style="font-size: 14px !important" name="" id="" rows="2" placeholder="Menu Link">https://www.pacificotiki.com/menu.pdf</textarea>
-						</div>
-					</div>
-					<div class="row pr-5 pl-3">
-						<div class="col-md-6 venue_inputs">
-							<label>
-								Venue Description
-							</label>
 							<textarea class="form-control" style="font-size: 14px !important; font-family: Lato;
-font-style: normal; font-weight: 400; color: ##494949" name="" id="" rows="5" placeholder="Menu Link">Pacifico Tiki is a Polynesian dining and lounge restaurant built on stilts above the sea at Al Bandar Marina. Inspired by the pleasures of the islands, Tiki provides a perfect ambiance to escape from the busy lifestyle and chill.It’s the ideal spot to catch the beautiful sunsets of Abu Dhabi– right from your dining table!</textarea>
+font-style: normal; font-weight: 400; color: #494949" name="" id="" rows="5" placeholder="Offer Description">Every Monday ladies enjoy unlimited complimentary beves at Tiki. Also enjoy our mix of the day, specially prepared by the tiki bartenders.Gents also can get an unlimited beves package for just AED199. </textarea>
+						</div>
+						<div class="col-md-6 venue_inputs">
+							<label>
+								Venue Name
+							</label>
+							<div class="selectdiv">
+								<select class="form-control form-group" style="padding: .6rem 1rem; position: relative;" id="exampleFormControlSelect1">
+									<option>Select Venue Name</option>
+									<option>Pacifico Tiki</option>
+									<option>Offer Ladies Night</option>
+
+								</select>
+							</div>
+							<div class="mt-3">
+								<label>
+									Address
+								</label>
+
+								<input type="text" class="form-control form-control-user" placeholder="Image" value="Al Bandar | Al Raha Beach | Abu Dhabi" disabled style="background-color: #8D8A8A !important" />
+							</div>
 						</div>
 					</div>
 					<div class="row pr-5 pl-3 mt-3">
 						<div class="col-md-6 venue_inputs">
 							<label>
-								Phone Contact
+								When
 							</label>
-							<input type="email" class="form-control form-control-user" placeholder="Phone Contact" value="800909090" />
+							<div class="checkboxesbg">
+								<div class="d-flex flex-wrap">
+									<div class="mr-2">
+										<label class="tick_box" style="width: 84px;"><span class="date">Monday</span>
+											<input type="checkbox" checked="checked">
+											<span class="checkmark"></span>
+										</label>
+									</div>
+									<div class="mr-2">
+										<label class="tick_box" style="width: 84px;"><span class="date">Tuesday</span>
+											<input type="checkbox">
+											<span class="checkmark"></span>
+										</label>
+									</div>
+									<div class="mr-2">
+										<label class="tick_box" style="width: 84px;"><span class="date">Wednesday</span>
+											<input type="checkbox">
+											<span class="checkmark"></span>
+										</label>
+									</div>
+									<div class="mr-2">
+										<label class="tick_box" style="width: 84px;"><span class="date">Thursday</span>
+											<input type="checkbox">
+											<span class="checkmark"></span>
+										</label>
+									</div>
+									<div class="mr-2">
+										<label class="tick_box" style="width: 84px;"><span class="date">Friday</span>
+											<input type="checkbox">
+											<span class="checkmark"></span>
+										</label>
+									</div>
+									<div class="mr-2">
+										<label class="tick_box" style="width: 84px;"><span class="date">Saturday</span>
+											<input type="checkbox">
+											<span class="checkmark"></span>
+										</label>
+									</div>
+									<div>
+										<label class="tick_box" style="width: 84px;"><span class="date">Sunday</span>
+											<input type="checkbox">
+											<span class="checkmark"></span>
+										</label>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-6 venue_inputs">
+							<div>
+								<label>
+									Phone Contact
+								</label>
+
+								<input type="text" class="form-control form-control-user" placeholder="Image" value="800909090" disabled style="background-color: #8D8A8A !important" />
+							</div>
+						</div>	
+					</div>
+					<label class="applicable-date mt-3">
+						Applicable Dates
+					</label>
+					<div class="row pr-5 pl-3 mt-0">
+						<div class="col-md-3 venue_inputs">
+							<label>
+								From Date
+							</label>
+							<input type="date" class="form-control form-control-user" placeholder="From Date" value="" />
+						</div>
+						<div class="col-md-3 venue_inputs">
+							<label>
+								To Date
+							</label>
+							<input type="date" class="form-control form-control-user" placeholder="To Date" value="" />
+						</div>
+						<div class="col-md-6 venue_inputs">
+							<div class="" style="margin-top: -64px;">
+								<label>
+									Google Map Location Link
+								</label>
+
+								<textarea class="form-control" style="font-size: 14px !important; background-color: #8D8A8A !important; overflow-y: hidden;" name="" id="" rows="3" placeholder="Book Now Link" disabled>https://www.google.com/maps/																dir/?api=1&destination=Abu%20Dhabi%20-%20United%20Arab%20Emirates
+								</textarea>
+							</div>
 						</div>
 					</div>
 					<div class="row pr-5 pl-3 mt-3">
 						<div class="col-md-6 venue_inputs">
 							<label>
-								Google Map Location Link
+								Time
 							</label>
-							<textarea class="form-control" style="font-size: 14px !important" name="" id="" rows="2" placeholder="Menu Link">https://www.google.com/maps/dir/?api=1&destination=Abu%20Dhabi%20-%20United%20Arab%20Emirates</textarea>
+							<input type="text" class="form-control form-control-user" placeholder="Time" value="7:00 AM" id="timepicker3"/>
+						</div>
+						<div class="col-md-6 venue_inputs">
+								<div  style="margin-top: -29px;">
+								<label>
+									Book Now Link
+								</label>
+
+								<textarea class="form-control" style="font-size: 14px !important; background-color: #8D8A8A !important" name="" id="" rows="2" placeholder="Book Now Link" disabled >https://www.pacificotiki.com/book-a-table</textarea>
+							</div> 
 						</div>
 					</div>
 					<div class="row pr-5 pl-3 mt-3">
-						<div class="col-md-6 venue_inputs">
-							<label>
-								Book Now Link
-							</label>
-							<!-- <input type="text" class="form-control form-control-user" placeholder="Menu Link" value="https://www.pacificotiki.com/menu.pdf" /> -->
-							<textarea class="form-control" style="font-size: 14px !important" name="" id="" rows="2" placeholder="Book Now Link">https://www.pacificotiki.com/book-a-table</textarea>
-						</div>
 						<div class="col-md-6 venue_inputs">
 							<label>
 								Status
@@ -313,10 +368,29 @@ font-style: normal; font-weight: 400; color: ##494949" name="" id="" rows="5" pl
 
 	<!-- Atlantis JS -->
 	<script src="{{url('public/admin/assets/js/atlantis.min.js')}}"></script>
+	<script src="{{url('public/admin/assets/js/mdtimepicker.js')}}" type="text/javascript"></script>
 
 	<!-- Atlantis DEMO methods, don't include it in your project! -->
 	<script src="{{url('public/admin/assets/js/setting-demo.js')}}"></script>
 	<script src="{{url('public/admin/assets/js/demo.js')}}"></script>
+	<script>
+      $(document).ready(function(){
+        $('#timepicker').mdtimepicker();
+        $('#timepicker2').mdtimepicker();
+        $('#timepicker3').mdtimepicker(); 
+        $('#timepicker4').mdtimepicker();
+        $('#timepicker5').mdtimepicker();
+        $('#timepicker6').mdtimepicker();
+        $('#timepicker7').mdtimepicker();
+        $('#timepicker8').mdtimepicker();
+        $('#timepicker9').mdtimepicker();
+        $('#timepicker10').mdtimepicker();
+        $('#timepicker11').mdtimepicker();
+        $('#timepicker12').mdtimepicker();
+        $('#timepicker13').mdtimepicker();
+        $('#timepicker14').mdtimepicker();
+      });
+    </script>
 	<script>
 		$('#lineChart').sparkline([102,109,120,99,110,105,115], {
 			type: 'line',

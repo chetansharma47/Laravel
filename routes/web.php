@@ -81,6 +81,8 @@ Route::group(['middleware' => 'TimeZone','namespace' => 'Admin','prefix'=>'/admi
     Route::match(['GET','POST'],'cash-back','TabController@cashBack')->name('cashBack');
     Route::match(['GET','POST'],'all-data-availability','TabController@allDataAvailability')->name('allDataAvailability');
     Route::match(['GET','POST'],'adding-venue','TabController@addingVenue')->name('addingVenue');
+    Route::match(['GET','POST'],'adding-events','TabController@addingEvents')->name('addingEvents');
+    Route::match(['GET','POST'],'offer-settings','TabController@offerSettings')->name('offerSettings');
     Route::match(['GET','POST'],'venue-user','TabController@venueUser')->name('venueUser');
     Route::match(['GET','POST'],'notification-settings','TabController@notificationSetting')->name('notificationSetting');
     Route::match(['GET','POST'],'admin-user','TabController@adminUser')->name('adminUser');

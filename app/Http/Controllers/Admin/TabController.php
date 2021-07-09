@@ -74,9 +74,51 @@ class TabController extends Controller
         }
     }
 
+    public function addingEvents(Request $request){
+        if($request->isMethod('GET')){
+            return view('admin.adding-events');
+        }
+    }
+
+    public function offerSettings(Request $request){
+        if($request->isMethod('GET')){
+            return view('admin.offer-settings');
+        }
+    }
+
     public function venueUser(Request $request){
         if($request->isMethod('GET')){
             return view('admin.venue-user');
+        }
+    }
+
+    public function notificationSetting(Request $request){
+        if($request->isMethod('GET')){
+            return view('admin.notifications-settings');
+        }
+    }
+
+    public function adminUser(Request $request){
+        if($request->isMethod('GET')){
+            return view('admin.admin-user');
+        }
+    }
+
+    public function performanceDashboard(Request $request){
+        if($request->isMethod('GET')){
+            return view('admin.performance-dashboard');
+        }
+    }
+
+    public function crossVerificationSales(Request $request){
+        if($request->isMethod('GET')){
+            return view('admin.cross-verification-sales');
+        }
+    }
+
+    public function generalSettings(Request $request){
+        if($request->isMethod('GET')){
+            return view('admin.general-settings');
         }
     }
 }
