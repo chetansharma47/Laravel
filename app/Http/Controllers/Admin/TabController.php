@@ -67,4 +67,16 @@ class TabController extends Controller
     		return view('admin.all-data-availability');
     	}
     }
+
+    public function addingVenue(Request $request){
+        if($request->isMethod('GET')){
+            return view('admin.adding-venue');
+        }
+    }
+
+    public function venueUser(Request $request){
+        if($request->isMethod('GET')){
+            return view('admin.venue-user');
+        }
+    }
 }
