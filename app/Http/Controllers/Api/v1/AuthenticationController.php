@@ -17,6 +17,8 @@ use App\User;
 use Hash;
 use Crypt;
 use DB;
+use App\Models\Otp;
+require_once $_SERVER['DOCUMENT_ROOT'].'/capital_motion/vendor/autoload.php';
 
 class AuthenticationController extends ResponseController
 {
@@ -29,6 +31,27 @@ class AuthenticationController extends ResponseController
 
     public function register(Request $request){
         $this->is_validationRule(Validation::userAppRegister($Validation = "", $message = "") , $request);
+
+
+        $profile = $request->file('image');
+        if($profile){
+
+            $extension = $profile->getClientOriginalExtension();
+            $size = $profile->getSize();
+
+            if($extension != 'jpg' && $extension != 'jpeg' && $extension != 'png' && $extension != 'JPG' && $extension != 'JPEG' && $extension != 'PNG'){
+                return $this->responseWithErrorValidation("Please select image type of Jpg, Jpeg or Png format file only.");
+            }
+
+            if($extension == "jpg" || $extension == "jpeg" || $extension == "png" || $extension == "JPG" || $extension == "JPEG" || $extension == "PNG"){
+                if($size > 20971520){
+                    return $this->responseWithErrorValidation("Image should not be greater than 20 MB.");
+                }
+            }
+
+
+        }
+
         
         $register = $this->profileModel->register($request, $id = null);
         if($register['status'] == 0){
@@ -58,6 +81,26 @@ class AuthenticationController extends ResponseController
         $user_id = $user->id;
         $this->is_validationRule(Validation::userAppUpdateUser($Validation = "", $message = "", $user_id) , $request);
 
+        $profile = $request->file('image');
+        if($profile){
+
+            $extension = $profile->getClientOriginalExtension();
+            $size = $profile->getSize();
+
+            if($extension != 'jpg' && $extension != 'jpeg' && $extension != 'png' && $extension != 'JPG' && $extension != 'JPEG' && $extension != 'PNG'){
+                return $this->responseWithErrorValidation("Please select image type of Jpg, Jpeg or Png format file only.");
+            }
+
+            if($extension == "jpg" || $extension == "jpeg" || $extension == "png" || $extension == "JPG" || $extension == "JPEG" || $extension == "PNG"){
+                if($size > 20971520){
+                    return $this->responseWithErrorValidation("Image should not be greater than 20 MB.");
+                }
+            }
+
+
+        }
+
+        $data['image'] = $profile;
         $data = $request->all();
         $update_user = $this->profileModel->updateUser($data, $user);
         return $this->responseOk('User has been updated successfully.', ['update_user' => $update_user]);
@@ -160,6 +203,56 @@ class AuthenticationController extends ResponseController
             $message = "Your verification link is either expired or invalid.";
             $type = "danger";
             return view('emails.feedback', compact('title', 'message', 'type'));
+        }
+    }
+
+    public function sendOTP(Request $request){
+
+        $this->is_validationRule(Validation::sendOTP($Validation = "", $message = "") , $request);
+
+        \SMSGlobal\Credentials::set(env('SMS_GLOBAL_API'),env('SMS_GLOBAL_SECERET'));
+
+        $sms = new \SMSGlobal\Resource\Sms();
+
+        $otp = mt_rand(1000,9999);
+        $data = $request->all();
+
+        /*try {
+            $response = $sms->sendToOne($data['country_code'].$data['mobile_number'], $otp);
+        } catch (\Exception $e) {
+            return $this->responseWithErrorCode($e->getMessage(),400);
+        }*/
+
+        $data['otp'] = $otp;
+
+        $otp_save = new Otp();
+        $otp_save->fill($data);
+        $otp_save->save();
+        return $this->responseOk("OTP sent successfully.", ["otp_data" => $otp_save]);
+
+
+
+        /*$otp = new \SMSGlobal\Resource\Otp();
+
+        try {
+            $response = $otp->send('+918556025369', '{*code*} is your SMSGlobal verification code.');
+            print_r($response);
+        } catch (\Exception $e) {
+            echo $e->getMessage();
+        }*/
+
+    }
+
+    public function verifyOTP(Request $request){
+        $this->is_validationRule(Validation::verifyOTP($Validation = "", $message = "") , $request);
+
+        $find_otp = Otp::whereOtp($request->otp)->whereMobileNumber($request->mobile_number)->whereCountryCode($request->country_code)->first();
+
+        if($find_otp){
+            $find_otp->delete();
+            return $this->responseOk("OTP has been verified successfully.");
+        }else{
+            return $this->responseWithErrorCode("Please enter valid OTP.",406);
         }
     }
 

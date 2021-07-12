@@ -115,14 +115,14 @@ html .mt-5, html .my-5 {
 							<div class="col-md-5 col-sm-12">
 								<ul class="navbar-nav">
 									<li class="nav-item">
-										<a class="nav-link hover_color" href="admin_tabs.html" style="padding-right: 0">Admin Portal</a>
+										<a class="nav-link hover_color" href="{{route('admin.adminTabs')}}" style="padding-right: 0">Admin Portal</a>
 										<a class="nav-link" href="#" style="padding-left: 0;"> <span style="color: #fff;">></span> Venue Login Users</a>
 									</li>
 								</ul>
 							</div>
 							<div class="col-md-2 col-sm-12 text-center">
 								<ul class="" style="padding-left: 25px;">
-										<a class="nav-link" href="admin_tabs.html">
+										<a class="nav-link" href="{{route('admin.adminTabs')}}">
 											<img src="{{url('public/admin/assets/img/logo-approved.png')}}"/ alt="logo-approved">
 										</a>
 								</ul>
@@ -133,12 +133,12 @@ html .mt-5, html .my-5 {
 										<a class="nav-link" href="#">User: Nadeer</a>
 									</li>
 									<li class="nav-item">
-										<a class="nav-link" href="admin_tabs.html" style="color: #FFDA7A;">
+										<a class="nav-link" href="{{route('admin.adminTabs')}}" style="color: #FFDA7A;">
 											Admin
 										</a>
 									</li>
 									<li class="nav-item">
-										<a class="nav-link" href="login.html" style="color: #FFDA7A;">
+										<a class="nav-link" href="{{route('admin.login')}}" style="color: #FFDA7A;">
 											logout
 										</a>
 									</li>

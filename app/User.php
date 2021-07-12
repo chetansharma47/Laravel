@@ -17,6 +17,9 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
+        'country_code',
+        'mobile_number',
+        'image',
         'first_name',
         'last_name', 
         'email', 
@@ -53,4 +56,24 @@ class User extends Authenticatable
     // protected $casts = [
     //     'email_verified_at' => 'datetime',
     // ];
+
+
+
+
+    public function getImageAttribute($value){
+
+        if(!empty($value)){
+
+            $path_img = public_path(). '/storage/users' . '/' . $value;
+
+            if(file_exists($path_img)){
+                return url('/') . '/' . env('IMG_STORAGE_VIEW') . '/' . $value;
+            }else{
+
+                return "";
+            } 
+        }else{
+            return $value;
+        }
+    }
 }

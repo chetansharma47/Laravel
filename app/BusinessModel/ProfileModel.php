@@ -40,6 +40,13 @@ class ProfileModel extends Model
 
     public static function updateUser($data, $user){
         $id = $user->id;
+
+        if(isset($data['image'])){
+            $destinationPath = storage_path() . DIRECTORY_SEPARATOR . env('IMG_STORAGE');
+            $image_name = self::uploadImage($data['image'], $destinationPath);
+            $data['image'] = $image_name;
+        }
+        
         $update_user = $user->update($data);
         return User::find($id);
     }
@@ -71,6 +78,13 @@ class ProfileModel extends Model
         }catch(\Exception $ex){
             return ["status" => 0, "data" => null, "error_msg" => "Something went wrong " . $ex->getMessage()];
         }
+
+        if($request->file('image')){
+            $destinationPath = storage_path() . DIRECTORY_SEPARATOR . env('IMG_STORAGE');
+            $image_name = self::uploadImage($data['image'], $destinationPath);
+            $data['image'] = $image_name;
+        }
+
         $data['password'] = Hash::make($request->password);
         $data['verify_email_token'] = $token;
         $save_user = self::createUser($data);

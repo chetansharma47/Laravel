@@ -11,13 +11,15 @@ class Validation extends Model
     public static function userAppRegister($validation = null, $message = null){
 
     	$validation = [
-
+            'image'             => 'required',
+            'country_code'      => 'required',
+            'mobile_number'     => 'required|numeric|digits_between:8,15',
             'first_name'        => 'required|max:50',
     		    'last_name'         => 'required|max:50',
             'email'        	    => 'required|max:100|unique:users,email',
             'password'     	    => ['required',
                                 'max:100',
-                                'min:8'],
+                                'min:6'],
             'city_of_residence' => 'required|max:100',
             'nationality'       => 'required|max:50',
             'dob'               => 'required|date_format:Y-m-d',
@@ -27,12 +29,17 @@ class Validation extends Model
     	];
 
     	$message = [
+              'country_code.required'       =>  "Please enter country code",
+              'mobile_number.required'      =>  "Please enter mobile number.",
+              'mobile_number.numeric'       =>  "Mobile number should be numeric only.",
+              'mobile_number.digits_between' =>  "Mobile number should be between 8 to 15 digits only.",
+              'image.required'              =>  "Please enter image.",
               'first_name.required'         =>  "Please enter first name.",
               'last_name.required'          =>  "Please enter last name.",
               'email.required'              =>  "Please enter email.",
               'email.unique'                =>  "Email already exists.",
               'password.required'           =>  "Please enter password.",
-              'password.min'                =>  "Password must be at 8 characters long.",
+              'password.min'                =>  "Password must be at 6 characters long.",
               'city_of_residence.required'  =>  "Please enter city of residence.",
               'city_of_residence.max'       =>  "City of residence should be less than 100 characters.",
               'nationality.required'        =>  "Please enter nationality.",
@@ -93,13 +100,13 @@ class Validation extends Model
             'old_password'              =>      'required',
             'new_password'              =>      ['required',
                                                 'max:100',
-                                                'min:8']
+                                                'min:6']
         ];
 
         $message = [
             'password.required'                 => 'Please enter old password.',
             'new_password.required'             => 'Please enter new password.',
-            'new_password.min'                  =>  "New Password must be at 8 characters long.",
+            'new_password.min'                  =>  "New Password must be at 6 characters long.",
             'new_password.regex'                =>  "New Password must have at least 1 upper case character and 1 lower case character and 1 special character."
         ];
         
@@ -112,13 +119,13 @@ class Validation extends Model
         $validation =  [
             'password'          => ['required',
                                     'max:100',
-                                    'min:8'],
+                                    'min:6'],
             'confirm_password'  => 'required|same:password',
          ];
 
          $message = [
              'password.required'          => 'Please enter new password.',
-             'password.min'               =>  "New Password must be at 8 characters long.",
+             'password.min'               =>  "New Password must be at 6 characters long.",
              'password.regex'             =>  "New Password must have at least 1 upper case character and 1 lower case character and 1 special character.",
              'confirm_password.required'  => 'Please enter confirm password.',
              'confirm_password.same'      => 'New password and confirm password must be same.',
@@ -134,7 +141,8 @@ class Validation extends Model
 
 
       $validation = [
-
+            'country_code'      => 'required',
+            'mobile_number'     => 'required|numeric|digits_between:8,15',
             'first_name'        => 'sometimes|nullable|max:50',
             'last_name'         => 'sometimes|nullable|max:50',
             'email'             => 'sometimes|nullable|email|max:100|unique:users,email,'.$user_id.',id',
@@ -147,6 +155,10 @@ class Validation extends Model
       ];
 
       $message = [
+              'country_code.required'       =>  "Please enter country code",
+              'mobile_number.required'      =>  "Please enter mobile number.",
+              'mobile_number.numeric'       =>  "Mobile number should be numeric only.",
+              'mobile_number.digits_between' =>  "Mobile number should be between 8 to 15 digits only.",
               'first_name.max'              =>  "First name should be less than 50 characters.",
               'last_name.required'          =>  "Last name should be less than 50 characters.",
               'email.unique'                =>  "Email already exists.",
@@ -160,6 +172,100 @@ class Validation extends Model
       return $data = ['validation' => $validation, 'message' => $message];
 
     }
+
+
+    public static function sendOTP($validation = null, $message = null){
+
+
+      $validation = [
+            'country_code'      => 'required',
+            'mobile_number'     => 'required|numeric|digits_between:8,15'
+
+      ];
+
+      $message = [
+              'country_code.required'       =>  "Please enter country code",
+              'mobile_number.required'      =>  "Please enter mobile number.",
+              'mobile_number.numeric'       =>  "Mobile number should be numeric only.",
+              'mobile_number.digits_between' =>  "Mobile number should be between 8 to 15 digits only."
+      ];
+
+      return $data = ['validation' => $validation, 'message' => $message];
+
+    }
+
+    public static function verifyOTP($validation = null, $message = null){
+
+
+      $validation = [
+            'country_code'      => 'required',
+            'mobile_number'     => 'required|numeric|digits_between:8,15',
+            'otp'               => 'required'
+
+      ];
+
+      $message = [
+              'country_code.required'       =>  "Please enter country code",
+              'mobile_number.required'      =>  "Please enter mobile number.",
+              'mobile_number.numeric'       =>  "Mobile number should be numeric only.",
+              'mobile_number.digits_between'=>  "Mobile number should be between 8 to 15 digits only.",
+              'otp.required'                =>  "Please enter OTP."  
+      ];
+
+      return $data = ['validation' => $validation, 'message' => $message];
+
+    }
+
+
+
+
+
+    /*ADMIN VALIDATIONS*/
+
+    public static function adminLoginValidation($validation = null, $message = null){
+
+
+      $validation = [
+            'email'      => 'required',
+            'password'     => 'required'
+
+      ];
+
+      $message = [
+              'email.required'  =>  "Please enter email address.",
+              'password.required' =>  "Please enter password."
+      ];
+
+      return $data = ['validation' => $validation, 'message' => $message];
+
+    }
+
+    public static function adminValidationForForgotPassword($validation = null, $message = null){
+
+        $validation = [
+          'email'  =>  'required',  
+        ];
+        $message = [
+          'email.required'  => '* Please enter email address.',  
+        ];
+        return $data = ['validation' => $validation, 'message' => $message];
+    }
+
+    public static function adminValidationForResetPassword($validation = null, $message = null){
+
+        $validation = [ 
+          'new_password'  =>  'required', 
+          'confirm_password'  =>  'required', 
+        ];
+        $message = [ 
+          'new_password.required'  => 'Please enter new password.',
+          'confirm_password.required'  => 'Please confirm new password.', 
+        ];
+        return $data = ['validation' => $validation, 'message' => $message];
+      }
+
+
+    /*END OF ADMIN VALIDATION*/
       
 
 }

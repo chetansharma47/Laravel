@@ -105,6 +105,7 @@
 .login_card label.err {
     color: #ce3333 !important;
     font-size: 14px!important;
+    font-weight: 700;
 }
 
   .backend_err {
@@ -290,7 +291,7 @@ div#loaderModel .modal-dialog {
                       <label id="confirm_password-error" class="error err" for="confirm_password"></label>
                     </div>
                     <button type="submit" id="submit_btn" class="btn btn-primary btn-user btn-block common_btn mt-5">
-                      Login
+                      Submit
                     </button>
                   </form>
                 </div>
@@ -411,7 +412,7 @@ div#loaderModel .modal-dialog {
         rules: {
             password: {
                 required: true,
-                minlength: 8,
+                minlength: 6,
                 maxlength:100,
                 //checkallowedchars: true
             },

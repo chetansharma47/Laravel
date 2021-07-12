@@ -28,10 +28,24 @@
 
 	<!-- CSS Just for demo purpose, don't include it in your project -->
 	<link rel="stylesheet" href="{{url('public/admin/assets/css/custom.css')}}">
+
+
+	<link href="{{url('public/admin/assets/css/spectrum.css')}}" rel="stylesheet" type="text/css">
+
 	<style>
 		body {
 			background: #fff !important;
 		}
+		.sp-replacer {
+			width: 76px;
+		    height: 31px;
+		    margin-left: 12px;
+		}
+
+		label.error {
+		    color: #ce3333!important;
+		}
+
 	</style>
 </head>
 <body>
@@ -187,10 +201,14 @@
 					</div>
 					<div class="row pr-5 pl-3 mt-5">
 						<div class="col-md-3 venue_inputs">
-							<label>
-								Color Code for Customer Tier 
-							</label>
-							<input type="email" class="form-control form-control-user" placeholder="Color Code for Customer Tier" value="#FF0000" />
+								<label>
+									Color Code for Customer Tier 
+								</label>
+							<div class="d-flex align-items-center">
+								<input type="text" class="form-control form-control-user" placeholder="Color Code for Customer Tier color_code" name="color_code" value="#FF0000" />
+								<input type="color" class="basic" value="#FF0000">
+							</div>
+								<label class="error" style="display: none;">Please enter valid color code.</label>
 						</div>
 					</div>
 					<div class="row pr-5 pl-3 mt-3">
@@ -278,4 +296,34 @@
 			fillColor: 'rgba(255, 255, 255, .15)'
 		});
 	</script>	
+
+
+	<script src="{{url('public/admin/assets/js/spectrum.js')}}"></script>
+
+	<script type="text/javascript">
+		$(".basic").spectrum({
+		    preferredFormat: "hex6",
+		    showInput: true
+		});
+
+		$(".sp-choose").click(function(){
+			let color_code = $(".sp-input").val();
+			$("#color_code").val(color_code);
+		});
+
+		$("body").on("click",function(){
+			let input_color_code = $(".color_code").val();
+
+			if(/^#[0-9A-F]{6}$/i.test(input_color_code) == false){
+				//alert("Please enter valid color code")
+			}
+			
+		});
+
+		function isColor(strColor){
+		  var s = new Option().style;
+		  s.color = strColor;
+		  return s.color == strColor;
+		}
+	</script>
 </body>

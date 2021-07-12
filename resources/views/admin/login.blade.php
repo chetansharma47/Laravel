@@ -66,6 +66,13 @@
 	margin-right:0 !important;
 }
 
+label.error {
+    font-size: 14px!important;
+    color: #ce3333!important;
+    margin:0;
+    font-weight: 700;
+}
+
 
 	</style>
 
@@ -162,21 +169,34 @@
         <div class="border-0 my-5 login_card">
           <div class="p-0">
             <!-- Nested Row within Card Body -->
+
+            @if ($errors->any())
+            	<div class="backend_err" style="text-align: left;margin-bottom: -50px; margin-left: 40%;">
+			     @foreach ($errors->all() as $error)
+			         <label class="error" style="margin:0;">{{$error}}</label><br>
+			     @endforeach
+			 </div>
+			@endif
+			@include('admin.notification')
             <div class="row">
               <div class="col-lg-12">
                 <div class="pt-5 pb-5 form-middle">
-                  <form class="user">
+                  <form class="user" method="POST" id="validate-form">
+                  	{{@csrf_field()}}
                     <div class="form-group" style="padding-right: 0; padding-left: 0">
                     	<label>Login</label>
-                      <input type="email" class="form-control form-control-user" id="exampleInputEmail" aria-describedby="emailHelp" placeholder="Email Address">
+                      <input type="email" class="form-control form-control-user" id="exampleInputEmail" onkeypress="return AvoidSpace(event)" aria-describedby="emailHelp" name="email" placeholder="Email Address">
                     </div>
                     <div class="form-group" style="padding-right: 0; padding-left: 0">
                     	<label>Password</label>
-                      <input type="password" class="form-control form-control-user" id="exampleInputPassword" placeholder="Password" style="font-family: 'Lato', sans-serif !important;">
+                      <input type="password" class="form-control form-control-user" id="exampleInputPassword" onkeypress="return AvoidSpace(event)" placeholder="Password" name="password" style="font-family: 'Lato', sans-serif !important;">
                     </div>
-                    <a href="{{route('admin.adminTabs')}}" class="btn btn-primary btn-user btn-block common_btn mt-5">
+                    <div class="text-right">
+                    	<a href="{{route('admin.forgotPassword')}}" style="color:#3ABD6F">Forgot Password?</a>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-user btn-block common_btn mt-5" id="submit_btn">
                       Login
-                    </a>
+                    </button>
                   </form>
                 </div>
               </div>
@@ -257,4 +277,80 @@
 			fillColor: 'rgba(255, 255, 255, .15)'
 		});
 	</script>	
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.1.62/jquery.inputmask.bundle.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js" integrity="sha256-sPB0F50YUDK0otDnsfNHawYmA5M0pjjUf4TvRJkGFrI=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/additional-methods.min.js" integrity="sha256-vb+6VObiUIaoRuSusdLRWtXs/ewuz62LgVXg2f1ZXGo=" crossorigin="anonymous"></script>
+
+
+<script type="text/javascript">
+	
+	$(document).ready(function(){
+
+		jQuery.validator.addMethod("valid_email", function(value, element) {
+	      	console.log(value.indexOf("."))
+	        if(value.indexOf(".") >= 0 ){
+	          return true;
+	        }else {
+	          return false;
+	        }
+    	}, "Please enter valid email address.");
+
+
+		$("#validate-form").validate({
+
+			rules:{
+				email:{
+					required:true,
+					email:true,
+					valid_email: true
+				},
+				password:{
+					required:true,
+					// minlength:6,
+				},
+			},
+			messages:{
+				email:{
+					required: 'Please enter email address.',
+					email: 'Please enter valid email address.'
+				},
+				password:{
+					required:'Please enter password.',
+					minlength:'Password should be atleast 6 characters only.'
+				},
+			},
+
+			submitHandler:function(form){
+				$('#submit').attr('disabled' , 'true');
+				form.submit();
+			}
+
+		})
+
+	})
+
+</script>
+
+<script type="text/javascript">
+    function AvoidSpace(event) {
+        var k = event ? event.which : window.event.keyCode;
+        if (k == 32) return false;
+    }
+</script>
+
+<script type="text/javascript">
+	$(function(){
+		setTimeout(function(){
+			$('.alert-danger').hide();
+		},5000);
+	});
+	$(function(){
+		setTimeout(function(){
+			$('.alert-success').hide();
+		},5000);
+	});
+</script>
+
+
 </body>

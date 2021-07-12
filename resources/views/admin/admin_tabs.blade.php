@@ -12,6 +12,7 @@
 
 	<!-- Fonts and icons -->
 	<script src="{{url('public/admin/assets/js/plugin/webfont/webfont.min.js')}}"></script>
+	
 	<script>
 		WebFont.load({
 			google: {"families":["Lato:300,400,700,900"]},
@@ -81,7 +82,7 @@
 							<div class="col-md-5 text-right pr-0">
 								<ul class="navbar-nav">
 									<li class="nav-item">
-										<a class="nav-link" href="{{route('admin.login')}}" style="color: #FFDA7A; text-transform: capitalize;">
+										<a class="nav-link" href="{{route('admin.logout')}}" style="color: #FFDA7A; text-transform: capitalize;">
 											logout
 										</a>
 									</li>

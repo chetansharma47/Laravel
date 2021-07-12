@@ -21,6 +21,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
   
 Route::group(['namespace' => 'Api\v1','prefix'=>'v1'], function() {
 
+	Route::post('send-otp','AuthenticationController@sendOTP');
+    Route::post('verify-otp','AuthenticationController@verifyOTP');
     Route::post('register', 'AuthenticationController@register');
     Route::post('login', 'AuthenticationController@login'); 
     Route::post('forgot-password','AuthenticationController@forgotPassword');
