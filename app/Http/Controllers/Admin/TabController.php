@@ -22,10 +22,17 @@ use Redirect;
 use Illuminate\Support\Facades\Input;
 use Mail;
 use App\BusinessModel\AdminAuthenticateBusiness;
+use App\BusinessModel\TabBusiness;
 use App\Http\Controllers\Admin\ResponseController;
+use App\Models\TierSetting;
+use App\Models\TierCondition;
 
 class TabController extends Controller
 {
+
+    public function tabBusiness(){
+        return new TabBusiness();
+    }
     public function adminTabs(Request $request){
     	if($request->isMethod('GET')){
     		return view('admin.admin_tabs');
@@ -34,8 +41,76 @@ class TabController extends Controller
 
     public function customerTierSettings(Request $request){
     	if($request->isMethod('GET')){
+            
     		return view('admin.cust_tier_settings');
     	}
+    }
+
+    public function customerTierSettingsAjax(Request $request){
+        $admin = Auth()->guard('admin')->user();
+        $tier_settings = TierSetting::whereAdminId($admin->id)->whereDeletedAt(null)->with('tierConditions')->first();
+        return $tier_settings;
+
+    }
+
+    public function customerTierNameRemove(Request $request){
+        $admin = Auth()->guard('admin')->user();
+        $tier_find = TierSetting::whereAdminId($admin->id)->first();
+        TierCondition::where("unique_id_by_tier","=",$request->unique_id_by_tier)->whereTierSettingId($tier_find->id)->update(['deleted_at' => Carbon::now()]);
+        return "success";
+    }
+
+    public function addCustomerTierAjax(Request $request){
+        $data = $request->all();
+        $data['transaction_amount_check_last_days'] = str_replace("Last ", "", $data['transaction_amount_check_last_days']);
+        $data['transaction_amount_check_last_days'] = (int)str_replace(" Days", "", $data['transaction_amount_check_last_days']);
+
+        $data['customer_tier_validity_check'] = (int)str_replace(" Days", "", $data['customer_tier_validity_check']);
+        $admin = Auth()->guard('admin')->user();
+
+        $tier_find = TierSetting::whereAdminId($admin->id)->first();
+        if(!empty($tier_find)){
+
+            $tier_cond = TierCondition::where("unique_id_by_tier","=",$data['unique_id_by_tier'])->whereTierSettingId($tier_find->id)->first();
+        }
+        
+        if(!empty($tier_find)){
+
+            if(!empty($tier_cond)){
+
+                $amount_check = TierCondition::where(function($query) use ($tier_find, $data, $tier_cond){
+                                            $query->whereTierSettingId($tier_find->id);
+                                            $query->whereBetween('from_amount',[$data['from_amount'],$data['to_amount']]);
+                                            $query->where("unique_id_by_tier","!=",$tier_cond->unique_id_by_tier);
+                                        })->orWhere(function($query) use ($tier_find, $data, $tier_cond){
+                                            $query->whereTierSettingId($tier_find->id);
+                                            $query->whereBetween('to_amount',[$data['from_amount'],$data['to_amount']]);
+                                            $query->where("unique_id_by_tier","!=",$tier_cond->unique_id_by_tier);
+                                        })
+                                        ->first();
+            }else{
+                $amount_check = TierCondition::where(function($query) use ($tier_find, $data){
+                                            $query->whereTierSettingId($tier_find->id);
+                                            $query->whereBetween('from_amount',[$data['from_amount'],$data['to_amount']]);
+                                        })->orWhere(function($query) use ($tier_find, $data){
+                                            $query->whereTierSettingId($tier_find->id);
+                                            $query->whereBetween('to_amount',[$data['from_amount'],$data['to_amount']]);
+                                        })->orWhere(function($query) use ($tier_find, $data){
+                                            $query->whereTierSettingId($tier_find->id);
+                                            $query->where('from_amount','<=', $data['from_amount']);
+                                            $query->where('to_amount','>=',$data['to_amount']);
+                                        })
+                                        ->first();
+            }
+
+            if($amount_check){
+                return response()->json(['amount_err' => "Transaction amount already exists. Please enter different amount."],422);
+            }
+        }
+        $save_tier = $this->tabBusiness()->saveTier($data, $admin, $tier_find);
+        return "success";
+
+
     }
 
     public function customerTierSettingsGold(Request $request){

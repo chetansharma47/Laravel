@@ -79,7 +79,7 @@
           </tr>
 
           <tr>
-            <td align="center" valign="top"> <a href="{{$link}}"; style="border-radius: 5px; font-family:arial, sans-serif; font-size:14px; color:#fff; background-color: #3ABD6F; padding: 12px 9px; max-width: 120px; display: block; text-align: center; margin: 0 auto; text-decoration: none; border-radius: 10px;">Verify Email</a></td>
+            <td align="center" valign="top"> <a href="{{$link}}"; style="border-radius: 5px; font-family:arial, sans-serif; font-size:14px; color:#fff; background-color: #3ABD6F; padding: 12px 9px; max-width: 135px; display: block; text-align: center; margin: 0 auto; text-decoration: none; border-radius: 10px;">Verify Email Address</a></td>
           </tr>
         </table></td>
       </tr>

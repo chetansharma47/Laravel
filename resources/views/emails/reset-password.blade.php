@@ -424,7 +424,7 @@ div#loaderModel .modal-dialog {
         messages: {
             password: {
                 required: "Please enter new password.",
-                minlength: "New password must be at least 8 characters long."
+                minlength: "New password must be at least 6 characters long."
             },
             confirm_password: {
                 required: "Please enter confirm password.",

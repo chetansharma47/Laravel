@@ -57,7 +57,7 @@ class AuthenticationController extends ResponseController
         if($register['status'] == 0){
             return $this->responseWithErrorCode($register['error_msg'], 400);
         }
-        return $this->responseOk("You have registered successfully. Please verify email address on your mail.", ['register' => $register['data']]);
+        return $this->responseOk("Your account has been registered successfully. Please verify the email first for login.", ['register' => $register['data']]);
     }
 
     public function login(Request $request){
@@ -194,7 +194,7 @@ class AuthenticationController extends ResponseController
             $user->is_verify = 1;
             $user->update();
             $title = "Email verified";
-            $message = "Your email has been verified successfully.";
+            $message = "Your email address has been verified successfully.";
             $type = "success";
             $link = "";
             return view('emails.feedback', compact('title', 'message', 'type'));
@@ -228,7 +228,7 @@ class AuthenticationController extends ResponseController
         $otp_save = new Otp();
         $otp_save->fill($data);
         $otp_save->save();
-        return $this->responseOk("OTP sent successfully.", ["otp_data" => $otp_save]);
+        return $this->responseOk("OTP has been sent successfully on your registered mobile number.", ["otp_data" => $otp_save]);
 
 
 

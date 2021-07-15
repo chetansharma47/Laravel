@@ -83,6 +83,9 @@ Route::group(['middleware' => 'TimeZone','namespace' => 'Admin','prefix'=>'/admi
         
         Route::match(['GET','POST'],'admin-tabs','TabController@adminTabs')->name('adminTabs');
         Route::match(['GET','POST'],'cus-tier-settings','TabController@customerTierSettings')->name('customerTierSettings');
+        Route::post('cus-tier-settings-ajax','TabController@customerTierSettingsAjax')->name('customerTierSettingsAjax');
+        Route::post('cus-tier-name-remove-ajax','TabController@customerTierNameRemove')->name('customerTierNameRemove');
+        Route::post('add-customer-tier-ajax','TabController@addCustomerTierAjax')->name('addCustomerTierAjax');
         Route::match(['GET','POST'],'cus-tier-settings-gold','TabController@customerTierSettingsGold')->name('customerTierSettingsGold');
         Route::match(['GET','POST'],'cus-tier-settings-dimond','TabController@customerTierSettingsDimond')->name('customerTierSettingsDimond');
 

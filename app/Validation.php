@@ -11,9 +11,9 @@ class Validation extends Model
     public static function userAppRegister($validation = null, $message = null){
 
     	$validation = [
-            'image'             => 'required',
+            'image'             => 'sometimes|nullable',
             'country_code'      => 'required',
-            'mobile_number'     => 'required|numeric|digits_between:8,15',
+            'mobile_number'     => 'required|numeric|digits_between:8,15|unique:users,mobile_number',
             'first_name'        => 'required|max:50',
     		    'last_name'         => 'required|max:50',
             'email'        	    => 'required|max:100|unique:users,email',
@@ -23,7 +23,7 @@ class Validation extends Model
             'city_of_residence' => 'required|max:100',
             'nationality'       => 'required|max:50',
             'dob'               => 'required|date_format:Y-m-d',
-            'gender'            => 'required|in:Male,Female',
+            'gender'            => 'required|in:Male,Female,Other',
             'reference_code'    => 'sometimes|nullable|max:20',
 
     	];
@@ -33,6 +33,7 @@ class Validation extends Model
               'mobile_number.required'      =>  "Please enter mobile number.",
               'mobile_number.numeric'       =>  "Mobile number should be numeric only.",
               'mobile_number.digits_between' =>  "Mobile number should be between 8 to 15 digits only.",
+              'mobile_number.unique'        =>  "Mobile number already registered with us. Please use another mobile number.",
               'image.required'              =>  "Please enter image.",
               'first_name.required'         =>  "Please enter first name.",
               'last_name.required'          =>  "Please enter last name.",
@@ -47,7 +48,7 @@ class Validation extends Model
               'dob.required'                =>  "Please enter DOB.",
               'dob.date_format'             =>  "DOB should be Y-m-d format only.",
               'gender.required'             =>  "Please enter gender.",
-              'gender.in'                   =>  "Gender should be male,female only.",
+              'gender.in'                   =>  "Gender should be male,female,other only.",
               'reference_code.max'          =>  "Reference code should be less than 20 characters."
     	];
 
@@ -59,7 +60,7 @@ class Validation extends Model
 
 
         $validation = [
-            'email'         => 'required',
+            'email' => 'required',
             'password'     	=> 'required',
             'device_type'   => 'required|in:Ios,Android',  //I=>IOS, A=>Android
             'device_token'  => 'required',
@@ -67,10 +68,10 @@ class Validation extends Model
         ];
         
         $message = [
-            'email.required'                => 'Please enter email.',
-            'password.required'             => 'Please enter password.',
-            'device_type.required'          => 'Please enter device type.',
-            'device_token.required'         => 'Please enter device token.',
+            'email.required'    => 'Please enter email or mobile number.',
+            'password.required'  => 'Please enter password.',
+            'device_type.required' => 'Please enter device type.',
+            'device_token.required' => 'Please enter device token.',
              
         ];
 
@@ -149,7 +150,7 @@ class Validation extends Model
             'city_of_residence' => 'sometimes|nullable|max:100',
             'nationality'       => 'sometimes|nullable|max:50',
             'dob'               => 'sometimes|nullable|date_format:Y-m-d',
-            'gender'            => 'sometimes|nullable|in:Male,Female',
+            'gender'            => 'sometimes|nullable|in:Male,Female,Other',
             'reference_code'    => 'sometimes|nullable|max:20',
 
       ];
@@ -165,7 +166,7 @@ class Validation extends Model
               'city_of_residence.max'       =>  "City of residence should be less than 100 characters.",
               'nationality.max'             =>  "Nationality should be less than 50 characters.",
               'dob.date_format'             =>  "DOB should be Y-m-d format only.",
-              'gender.in'                   =>  "Gender should be male,female only.",
+              'gender.in'                   =>  "Gender should be male,female,other only.",
               'reference_code.max'          =>  "Reference code should be less than 20 characters."
       ];
 
@@ -179,7 +180,7 @@ class Validation extends Model
 
       $validation = [
             'country_code'      => 'required',
-            'mobile_number'     => 'required|numeric|digits_between:8,15'
+            'mobile_number'     => 'required|numeric|digits_between:8,15|unique:users,mobile_number'
 
       ];
 
@@ -187,7 +188,8 @@ class Validation extends Model
               'country_code.required'       =>  "Please enter country code",
               'mobile_number.required'      =>  "Please enter mobile number.",
               'mobile_number.numeric'       =>  "Mobile number should be numeric only.",
-              'mobile_number.digits_between' =>  "Mobile number should be between 8 to 15 digits only."
+              'mobile_number.digits_between' =>  "Mobile number should be between 8 to 15 digits only.",
+              'mobile_number.unique'        => "Mobile number already registered with us. Please use another mobile number."
       ];
 
       return $data = ['validation' => $validation, 'message' => $message];

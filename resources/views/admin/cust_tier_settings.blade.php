@@ -46,6 +46,86 @@
 		    color: #ce3333!important;
 		}
 
+		input.input_tier_name {
+		    border: 0!important;
+		    background-color: #EBEBEB;
+		    color: #4B4B4B!important;
+		    font-family: 'Signika', sans-serif;
+		    font-weight: 700;
+		    width: 100%;
+		}
+
+		.menu-lisitng ul {
+		    height: 364px;
+		    overflow-x: auto;
+		    margin-bottom: 0;
+		    
+		}
+
+		.menu-lisitng ul::-webkit-scrollbar {
+		    display: none;
+		}
+
+		.box_icon {
+		    display: flex;
+		    justify-content: space-between;
+		    height: unset!important;
+		    width: 100%;
+		    margin-left: unset!important;
+		    background: #E3DFDF!important;
+		}
+
+		#validationModel .modal-title{
+		    text-align: center;
+		    width: 100%;
+		    font-size: 20px;
+		    font-weight: 600;
+		}
+		#validationModel .modal-header {
+		    background-color: #5f5f5f;
+		    color: #fff;
+		    justify-content: center;
+		}
+
+		#validationModel .modal-body {
+			text-align: center;
+		}
+
+		#validationModel .modal-body p {
+			margin-bottom: 0rem;
+		}
+
+
+
+		#successModel .modal-title{
+		    text-align: center;
+		    width: 100%;
+		    font-size: 20px;
+		    font-weight: 600;
+		}
+		#successModel .modal-header {
+		    background-color: #5f5f5f;
+		    color: #fff;
+		    justify-content: center;
+		}
+
+		#successModel .modal-body {
+			text-align: center;
+		}
+
+		#successModel .modal-body p {
+			margin-bottom: 0rem;
+		}
+
+		div#loaderImg2 {
+		    position: absolute;
+		    left: 0;
+		    right: 0;
+		    text-align: center;
+		    margin-top: 250px;
+		}
+
+
 	</style>
 </head>
 <body>
@@ -97,6 +177,9 @@
 			</div>
 		</div>
 	</header>
+
+	<input type="hidden" id="last_tier_cond_id" value="0">
+	<input type="hidden" id="tier_setting_id">
 	<section class="mt-3 mb-3" style="padding-left: 40px;">
 		<div class="container-fluid">
 			<div class="row">
@@ -105,14 +188,14 @@
 						<label>
 							Customer Total Transaction Amount Check for
 						</label>
-						<input type="text" class="form-control form-control-user" placeholder="Amount Check" value="Last 30 Days" style="border-radius: 0px;"/>
+						<input type="text" class="form-control form-control-user" placeholder="Enter Number Of Days" id="transaction_amount_check_last_days" value="Last 30 Days" style="border-radius: 0px;"/>
 					</div>
 					<div class="col-md-12" style="padding-left: 0; padding-right: 0">
 						<div class="venue_inputs mr-4 mb-4">
 							<label>
 								Customer Tier Validity Check (Badge Change)
 							</label>
-							<input type="date" class="form-control form-control-user" placeholder="Customer Tier Validity Check (Badge Change)" value="30 Days from status change" style="border-radius: 0px;"/>
+							<input type="text" class="form-control form-control-user" placeholder="Enter Number Of Days" id="customer_tier_validity_check" value="30 Days" style="border-radius: 0px;"/>
 						</div>
 					</div>
 					<div class="venue_inputs mr-4 mb-4">
@@ -133,51 +216,35 @@
 						<h4 style="">Customer Tier Names</h4>
 					</div>
 					<div class="pb-1 pl-2 pr-3 menu-lisitng">
-						<ul style="margin-left: 0; background-color:#E3DFDF;">
-							<li class="active">
-								<a href="{{route('admin.customerTierSettings')}}">Silver</a>
+						<ul style="margin-left: 0; background-color:#E3DFDF;" id="tier_name_append">
+							<!-- <li class="active">
+								<input type="text" class="input_tier_name" placeholder="Enter Tier Name">
 							</li>
-							<li>
-								<a href="{{route('admin.customerTierSettingsGold')}}">Gold</a>
-							</li>
-							<li>
-								<a href="{{route('admin.customerTierSettingsDimond')}}">Diamond</a>
-							</li>
-							<li style="visibility: hidden">
-								<a href="#">Aquarium</a>
-							</li>
-							<li style="visibility: hidden">
-								<a href="#">Tokyo Grill</a>
-							</li>
-							<li style="visibility: hidden">
-								<a href="#">Tokyo Grill</a>
-							</li>
-							<li style="visibility: hidden">
-								<a href="#">Tokyo Grill</a>
-							</li>
-							<li style="visibility: hidden">
-								<a href="#">Tokyo Grill</a>
-							</li>
-							<li style="visibility: hidden">
-								<a href="#">Tokyo Grill</a>
-							</li>
-							<div class="d-flex justify-content-between">
-								<li style="background-color: #ECECEC;">
-									<a href="#">
-										<img src="{{url('public/admin/assets/img/icon.png')}}" alt="icon"/>
-									</a>
-								</li>
-								<li style="background-color: #ECECEC;">
-									<a href="#">
-										<img src="{{url('public/admin/assets/img/icon1.png')}}" alt="icon1"/>
-									</a>
-								</li>
-							</div>
+
+							<li class="">
+								<input type="text" class="input_tier_name" style="background-color: #E3DFDF" placeholder="Enter Tier Name" disabled>
+							</li> -->
+
+
 						</ul>
+							<div class="d-flex justify-content-between">
+								<ul class="box_icon">
+								<li style="background-color: #ECECEC;">
+									<a href="javascript:void(0);">
+										<img id="plus_icon" src="{{url('public/admin/assets/img/icon.png')}}" alt="icon"/>
+									</a>
+								</li>
+								<li style="background-color: #ECECEC;">
+									<a href="javascript:void(0);">
+										<img id="minus_icon" src="{{url('public/admin/assets/img/icon1.png')}}" alt="icon1"/>
+									</a>
+								</li>
+								</ul>
+							</div>
 					</div>
 				</div>
-				<div class="col-md-9 padding-top" style="padding-top: 20px">
-					<div class="app_notification_bg" style="background-color: transparent; padding-bottom: 0; padding-top: 0;">
+				<div class="col-md-9 padding-top" id="append_condition" style="padding-top: 20px">
+					<!-- <div class="app_notification_bg" style="background-color: transparent; padding-bottom: 0; padding-top: 0;">
 						<h4 style="margin-bottom: 50px;  margin-top: -9px;">Customer Tier Conditions</h4>
 					</div>
 					<div class="venue_inputs ml-3">
@@ -218,7 +285,7 @@
 	                      		Save
 	                    	</a>
                     	</div>	
-					</div>
+					</div> -->
 				</div>
 			</div>
 			
@@ -227,6 +294,61 @@
 			<div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">cvcvbcvbcbc</div>
 		</div> -->
 	</section>
+
+
+
+<div class="modal fade" id="validationModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Alert</h5>
+        <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button> -->
+      </div>
+      <div class="modal-body">
+        <p id="alert_text">Info Text</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary ok" style="background-color: #3ABD6F!important; border: none; border-radius: 50px; color: #fff;"  data-dismiss="modal">Ok</button>
+       <!--  <button type="button" class="btn btn-primary">Save changes</button> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="successModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Information</h5>
+        <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button> -->
+      </div>
+      <div class="modal-body">
+        <p id="success_alert_text">Info Text</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary ok" style="background-color: #3ABD6F!important; border: none; border-radius: 50px; color: #fff;"  data-dismiss="modal">Ok</button>
+       <!--  <button type="button" class="btn btn-primary">Save changes</button> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div id="loaderModel" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <div class="loaderImg2" id="loaderImg2">
+               <img src = "{{url('public/loader.gif')}}">
+            </div>
+
+  </div>
+</div>
+
 <!--   Core JS Files   -->
 	<script src="{{url('public/admin/assets/js/core/jquery.3.2.1.min.js')}}"></script>
 	<script src="{{url('public/admin/assets/js/core/popper.min.js')}}"></script>
@@ -301,15 +423,28 @@
 	<script src="{{url('public/admin/assets/js/spectrum.js')}}"></script>
 
 	<script type="text/javascript">
-		$(".basic").spectrum({
-		    preferredFormat: "hex6",
-		    showInput: true
-		});
+		localStorage.clear();
+		setInterval(function(){
 
-		$(".sp-choose").click(function(){
-			let color_code = $(".sp-input").val();
-			$("#color_code").val(color_code);
-		});
+			if(localStorage.getItem("customerTierSettingsAjaxHit") == "true"){
+
+				$(".basic").spectrum({
+				    preferredFormat: "hex6",
+				    showInput: true
+				});
+
+				$(".sp-choose").click(function(){
+					let active_data_id = $(".tier_name_c.active").data("id");
+					let color_code = $(this).parent().parent().find(".sp-input-container .sp-input").val();
+					$(".ccc[data-id='"+active_data_id+"']").children().val(color_code)
+				});
+
+				saveClick();
+				localStorage.setItem("customerTierSettingsAjaxHit","false");
+			}
+
+		},100);
+
 
 		$("body").on("click",function(){
 			let input_color_code = $(".color_code").val();
@@ -325,5 +460,508 @@
 		  s.color = strColor;
 		  return s.color == strColor;
 		}
+
+
+		$(document).unbind().on("click",".tier_name_c",function(){
+			if($(this).hasClass("active") == false){
+				$(".condition_tier.active_tier").removeClass("active_tier").css("display","none");
+				$(this).children().removeAttr("disabled");
+				$(this).children().css({"background-color" : "unset","cursor":"unset"});
+
+				$(".tier_name_c.active").children().css({"background-color" : "#E3DFDF","cursor":"pointer"}).attr("disabled","true");
+
+				$(".tier_name_c.active").removeClass('active').css("background-color","unset");
+				let data_id = $(this).data("id");
+				$(this).css({"background-color" : "#EBEBEB"});
+				$(this).addClass("active");
+				$(".condition_tier[data-id='"+data_id+"']").addClass("active_tier").css("display","block");
+			}
+		});
 	</script>
+
+
+	<script type="text/javascript">
+		$(document).ready(function(){
+
+			
+			localStorage.setItem("customerTierSettingsAjaxHit","false");
+			//default ajax
+
+			var data = {
+            	'_token': "{{csrf_token()}}",
+            };
+
+          	$.ajax({
+	              url:"{{route('admin.customerTierSettingsAjax')}}",
+	              type:'POST',
+	              data:data,
+	              success: function(res){
+	              	$("#tier_setting_id").val(res.id);
+	              	localStorage.setItem("customerTierSettingsAjaxHit","true");
+	               	
+	               	if(res.length <= 0){
+	               		$("#loaderModel").modal("hide");
+	               		return false;
+	               	}
+
+	               	let tier_conditions = res.tier_conditions;
+	               	let append_condition;
+
+	               	for(let i=0; i < tier_conditions.length; i++){
+	               		if(i == 0){
+		               		$("#tier_name_append").append(`<li class="active tier_name_c" data-id="`+tier_conditions[i]['unique_id_by_tier']+`">
+									<input type="text" class="input_tier_name" maxlength="30" value="`+tier_conditions[i]['tier_name']+`" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" placeholder="Enter Tier Name">`);
+
+
+	               		append_condition = `<div class="condition_tier active_tier" data-id="`+tier_conditions[i]['unique_id_by_tier']+`">
+	               		<div class="app_notification_bg" style="background-color: transparent; padding-bottom: 0; padding-top: 0;">
+						<h4 style="margin-bottom: 50px;  margin-top: -9px;">Customer Tier Conditions</h4>
+							</div>
+							<div class="venue_inputs ml-3">
+								<label>
+									Transaction Amount
+								</label>
+							</div>
+							<div class="row pr-5 pl-3 mt-0">
+								<div class="col-md-3 venue_inputs">
+									<label>
+										From Amount($)
+									</label>
+									<input type="number" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" class="form-control form-control-user from_amount" placeholder="From Amount" value="`+tier_conditions[i]['from_amount']+`" />
+
+									<label class="error from_amount_err" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" style="display: none;">Please enter valid color code.</label>
+								</div>
+								<div class="col-md-3 venue_inputs">
+									<label>
+										To Amount($)
+									</label>
+									<input type="number" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" class="form-control form-control-user to_amount" placeholder="To Amount" value="`+tier_conditions[i]['to_amount']+`" />
+
+									<label class="error to_amount_err" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" style="display: none;">Please enter valid color code.</label>
+								</div>
+							</div>
+							<div class="row pr-5 pl-3 mt-5">
+								<div class="col-md-3 venue_inputs">
+										<label>
+											Color Code for Customer Tier 
+										</label>
+									<div class="d-flex align-items-center ccc" data-id="`+tier_conditions[i]['unique_id_by_tier']+`">
+										<input type="text" class="form-control form-control-user" placeholder="Color Code for Customer Tier color_code" name="color_code" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" value="`+tier_conditions[i]['color_code']+`" />
+										<input type="color" class="basic" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" value="`+tier_conditions[i]['color_code']+`">
+									</div>
+										<label class="error color_code_err" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" style="display: none;">Please enter valid color code.</label>
+								</div>
+							</div>
+							<div class="row pr-5 pl-3 mt-3">
+								<div class="col-md-6 venue_inputs">
+									<a href="javascript:void(0);" class="btn btn-primary btn-user btn-block common_btn" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" style="    margin-top: 66px;
+		    margin-bottom: 14px;">
+			                      		Save
+			                    	</a>
+		                    	</div>	
+							</div>
+							</div>`;
+
+	               		}else{
+
+	               			$("#tier_name_append").append(`<li class="tier_name_c" data-id="`+tier_conditions[i]['unique_id_by_tier']+`">
+									<input type="text" class="input_tier_name" maxlength="30" value="`+tier_conditions[i]['tier_name']+`" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" placeholder="Enter Tier Name" style="background-color:#E3DFDF; cursor:pointer" disabled>`);
+
+
+
+	               			append_condition = `<div class="condition_tier" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" style="display:none;">
+	               		<div class="app_notification_bg" style="background-color: transparent; padding-bottom: 0; padding-top: 0;">
+						<h4 style="margin-bottom: 50px;  margin-top: -9px;">Customer Tier Conditions</h4>
+							</div>
+							<div class="venue_inputs ml-3">
+								<label>
+									Transaction Amount
+								</label>
+							</div>
+							<div class="row pr-5 pl-3 mt-0">
+								<div class="col-md-3 venue_inputs">
+									<label>
+										From Amount($)
+									</label>
+									<input type="number" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" class="form-control form-control-user from_amount" placeholder="From Amount" value="`+tier_conditions[i]['from_amount']+`" />
+
+									<label class="error from_amount_err" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" style="display: none;">Please enter valid color code.</label>
+								</div>
+								<div class="col-md-3 venue_inputs">
+									<label>
+										To Amount($)
+									</label>
+									<input type="number" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" class="form-control form-control-user to_amount" placeholder="To Amount" value="`+tier_conditions[i]['to_amount']+`" />
+
+									<label class="error to_amount_err" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" style="display: none;">Please enter valid color code.</label>
+								</div>
+							</div>
+							<div class="row pr-5 pl-3 mt-5">
+								<div class="col-md-3 venue_inputs">
+										<label>
+											Color Code for Customer Tier 
+										</label>
+									<div class="d-flex align-items-center ccc" data-id="`+tier_conditions[i]['unique_id_by_tier']+`">
+										<input type="text" class="form-control form-control-user" placeholder="Color Code for Customer Tier color_code" name="color_code" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" value="`+tier_conditions[i]['color_code']+`" />
+										<input type="color" class="basic" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" value="`+tier_conditions[i]['color_code']+`">
+									</div>
+										<label class="error color_code_err" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" style="display: none;">Please enter valid color code.</label>
+								</div>
+							</div>
+							<div class="row pr-5 pl-3 mt-3">
+								<div class="col-md-6 venue_inputs">
+									<a href="javascript:void(0);" class="btn btn-primary btn-user btn-block common_btn" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" style="    margin-top: 66px;
+		    margin-bottom: 14px;">
+			                      		Save
+			                    	</a>
+		                    	</div>	
+							</div>
+							</div>`;
+
+	               		}
+
+	               		if(i == tier_conditions.length - 1){
+	               			$("#last_tier_cond_id").val(i + 1);
+	               		}
+
+	               		$("#append_condition").append(append_condition);
+	               		
+	               	}
+	              },
+	              error: function(data, textStatus, xhr) {
+	                if(data.status == 422){
+	                  var result = data.responseJSON;
+	                  alert('Something went worng.');
+	                  window.location.href = "";
+	                  return false;
+	                } 
+              	}
+            });
+
+			$("#plus_icon").on("click",function(){
+
+				let data_id = parseInt($("#last_tier_cond_id").val()) + 1;
+				$("#last_tier_cond_id").val(data_id);
+
+				let active_data_id_prev = $(".tier_name_c.active").data("id");
+				$(".input_tier_name[data-id='"+active_data_id_prev+"']").css({"background-color":"#E3DFDF","cursor":"pointer"}).attr("disabled","true");
+				$(".tier_name_c.active").removeClass('active').css("background-color","unset");
+
+				$("#tier_name_append").append(`<li class="active tier_name_c" data-id="`+data_id+`">
+					<input type="text" class="input_tier_name" maxlength="30" value="" data-id="`+data_id+`" placeholder="Enter Tier Name">`);
+
+				$(".condition_tier.active_tier").removeClass('active_tier').css("display","none");
+
+				let append_condition = `<div class="condition_tier active_tier" data-id="`+data_id+`">
+	               		<div class="app_notification_bg" style="background-color: transparent; padding-bottom: 0; padding-top: 0;">
+						<h4 style="margin-bottom: 50px;  margin-top: -9px;">Customer Tier Conditions</h4>
+							</div>
+							<div class="venue_inputs ml-3">
+								<label>
+									Transaction Amount
+								</label>
+							</div>
+							<div class="row pr-5 pl-3 mt-0">
+								<div class="col-md-3 venue_inputs">
+									<label>
+										From Amount($)
+									</label>
+									<input type="number" data-id="`+data_id+`" class="form-control form-control-user from_amount" placeholder="From Amount" value="0" />
+
+									<label class="error from_amount_err" data-id="`+data_id+`" style="display: none;">Please enter valid color code.</label>
+								</div>
+								<div class="col-md-3 venue_inputs">
+									<label>
+										To Amount($)
+									</label>
+									<input type="number" data-id="`+data_id+`" class="form-control form-control-user to_amount" placeholder="To Amount" value="0" />
+
+									<label class="error to_amount_err" data-id="`+data_id+`" style="display: none;">Please enter valid color code.</label>
+								</div>
+							</div>
+							<div class="row pr-5 pl-3 mt-5">
+								<div class="col-md-3 venue_inputs">
+										<label>
+											Color Code for Customer Tier 
+										</label>
+									<div class="d-flex align-items-center ccc" data-id="`+data_id+`">
+										<input type="text" class="form-control form-control-user" placeholder="Color Code for Customer Tier color_code" name="color_code" data-id="`+data_id+`" value="#ff0000" />
+										<input type="color" class="spectrum_`+data_id+`" data-id="`+data_id+`" value="#ff0000">
+									</div>
+										<label class="error color_code_err" data-id="`+data_id+`" style="display: none;">Please enter valid color code.</label>
+								</div>
+							</div>
+							<div class="row pr-5 pl-3 mt-3">
+								<div class="col-md-6 venue_inputs">
+									<a href="javascript:void(0);" class="btn btn-primary btn-user btn-block common_btn" data-id="`+data_id+`" style="    margin-top: 66px;
+		    margin-bottom: 14px;">
+			                      		Save
+			                    	</a>
+		                    	</div>	
+							</div>
+							</div>`;
+
+				spectrum(".spectrum_"+data_id);
+				$("#append_condition").append(append_condition);
+				setTimeout(function(){
+
+					$(".sp-choose").click(function(){
+						let active_data_id = $(".tier_name_c.active").data("id");
+						let color_code = $(this).parent().parent().find(".sp-input-container .sp-input").val();
+						$(".ccc[data-id='"+active_data_id+"']").children().val(color_code)
+					});
+
+					saveClick();
+
+				},100)
+
+			});
+		});
+	</script>
+	<script type="text/javascript">
+		function spectrum(className){
+			setTimeout(function(){
+
+				$(className).spectrum({
+					    preferredFormat: "hex6",
+					    showInput: true
+					});
+			},100)
+
+		}
+	</script>
+
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$("#minus_icon").on("click",function(){
+				let tier_setting_id = $("#tier_setting_id").val();
+				let active_id = $(".tier_name_c.active").data("id");
+
+				var data = {
+		            '_token': "{{csrf_token()}}",
+		            'tier_cond_id' : active_id
+	            };
+
+	          	$.ajax({
+	              url:"{{route('admin.customerTierNameRemove')}}",
+	              type:'POST',
+	              data:data,
+	              success: function(res){
+	                $(".tier_name_c[data-id='"+active_id+"']").remove();
+	                $(".condition_tier[data-id='"+active_id+"']").remove();
+	              },
+	              error: function(data, textStatus, xhr) {
+	                if(data.status == 422){
+	                  var result = data.responseJSON;
+	                  alert('Something went worng.');
+	                  window.location.href = "";
+	                  return false;
+	                } 
+	              }
+	            });
+        	});
+		});
+	</script>
+
+
+
+
+<script type="text/javascript">
+	$(document).ready(function(){
+		$('#transaction_amount_check_last_days').keypress(function (event) {
+	        return isNumber(event, this)
+		});
+
+
+		$("#transaction_amount_check_last_days").on("click",function(){
+			$(this).val("");
+			localStorage.setItem('click_amount_check',"true");
+		});
+
+		$("#customer_tier_validity_check").on("click",function(){
+			$(this).val("");
+			localStorage.setItem('customer_tier_validity_check',"true");
+		});
+
+		$(document).click(function(event){
+			if (!$(event.target).is("#transaction_amount_check_last_days") && localStorage.getItem("click_amount_check") == "true") {
+				let transaction_amount_check_last_days = $("#transaction_amount_check_last_days").val();
+
+				if(transaction_amount_check_last_days){
+
+					$("#transaction_amount_check_last_days").val("Last "+transaction_amount_check_last_days+" Days");
+				}
+				localStorage.setItem("click_amount_check","false");
+		    }
+
+		    if (!$(event.target).is("#customer_tier_validity_check") && localStorage.getItem("customer_tier_validity_check") == "true") {
+				let customer_tier_validity_check = $("#customer_tier_validity_check").val();
+
+				if(customer_tier_validity_check){
+
+					$("#customer_tier_validity_check").val(customer_tier_validity_check+" Days");
+				}
+				localStorage.setItem("customer_tier_validity_check","false");
+		    }
+
+		});
+
+		// THE SCRIPT THAT CHECKS IF THE KEY PRESSED IS A NUMERIC OR DECIMAL VALUE.
+		function isNumber(evt, element) {
+		    var charCode = (evt.which) ? evt.which : event.keyCode
+		    $("#transaction_amount_check_last_days").attr("maxlength","6");
+				// if($(element).val().indexOf('.') != -1){
+				// 	$("#price").attr("maxlength","6");	
+				// }else{
+				// 	$("#price").attr("maxlength","5");
+				// }
+		    if (            
+		             // “.” CHECK DOT, AND ONLY ONE.
+		        (charCode < 48 || charCode > 57)){
+
+		        return false;
+			}else{
+
+			        return true;
+			}
+
+		}
+	});
+</script>
+
+<script type="text/javascript">
+	function saveClick(){
+
+		$(".venue_inputs .common_btn").unbind().on("click",function(){
+			let select_data_id = $(this).data("id");
+			//alert(select_data_id)
+			let check_transaction_amount_check_last_days = $("#transaction_amount_check_last_days").val();
+
+			let check_customer_tier_validity_check = $("#customer_tier_validity_check").val();
+			let check_tier_name = $(".tier_name_c[data-id='"+select_data_id+"']").children().val();
+			let check_from_amount = $(".from_amount[data-id='"+select_data_id+"']").val();
+			let check_to_amount = $(".to_amount[data-id='"+select_data_id+"']").val();
+			let check_color_code = $(".ccc[data-id='"+select_data_id+"']").children().val();
+
+			if(check_transaction_amount_check_last_days == ""){
+				$("#alert_text").text("Please enter customer total transaction amount check for.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
+
+			if(check_customer_tier_validity_check == ""){
+				$("#alert_text").text("Please enter customer tier validity check (Badge Change).");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
+
+			if(check_tier_name == ""){
+				$("#alert_text").text("Please enter tier name.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
+
+			if(check_from_amount == ""){
+				$("#alert_text").text("Please enter from amount.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
+
+			if(parseFloat(check_from_amount) == 0){
+				$("#alert_text").text("Please enter valid from amount.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
+
+			if(check_to_amount == ""){
+				$("#alert_text").text("Please enter to amount.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
+
+			if(parseFloat(check_to_amount) == 0){
+				$("#alert_text").text("Please enter valid to amount.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
+
+			if(parseFloat(check_to_amount) < parseFloat(check_from_amount)){
+				$("#alert_text").text("From amount should be less than to amount.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
+
+			if(parseFloat(check_to_amount) == parseFloat(check_from_amount)){
+				$("#alert_text").text("To amount should be not equal to from amount.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
+
+			if(/^#[0-9A-F]{6}$/i.test(check_color_code) == false){
+				$("#alert_text").text("Please enter valid color code.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
+
+			$("#loaderModel").modal("show");
+			$("#loaderModel").unbind("click");
+			var data = {
+	            '_token': "{{csrf_token()}}",
+	            'transaction_amount_check_last_days': check_transaction_amount_check_last_days,
+	            'customer_tier_validity_check': check_customer_tier_validity_check,
+	            'tier_name': check_tier_name,
+	            'from_amount': check_from_amount,
+	            'to_amount': check_to_amount,
+	            'color_code': check_color_code,
+	            'unique_id_by_tier' : select_data_id
+            };
+
+          	$.ajax({
+	              url:"{{route('admin.addCustomerTierAjax')}}",
+	              type:'POST',
+	              data:data,
+	              success: function(res){
+	              	console.log(res)
+	              	setTimeout(function(){
+	              		$("#loaderModel").modal("hide");
+	              	},500)
+	              },
+	              error: function(data, textStatus, xhr) {
+	                if(data.status == 422){
+	                  setTimeout(function(){
+	                  	$("#loaderModel").modal("hide");
+		                  	var result = data.responseJSON;
+		                  	if(result['amount_err'] && result['amount_err'].length > 0){
+		                  	$("#alert_text").text(result['amount_err']);
+							$("#validationModel").modal("show");
+							$("#validationModel").unbind("click");
+		                 }
+		                  return false;
+	                  },500);
+	                } 
+	              }
+        	});
+
+		})
+	}
+
+	$(document).ready(function(){
+		$(".ok").on("click",function(){
+			$("#validationModel").modal("hide");
+			$("#successModel").modal("hide");
+		})
+	});
+</script>
+
+
 </body>

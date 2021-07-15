@@ -76,7 +76,7 @@ class ProfileModel extends Model
             $link = url("confirm-account/$token");
             \Mail::to($data['email'])->send(new UserVerifyMail($data, $link));
         }catch(\Exception $ex){
-            return ["status" => 0, "data" => null, "error_msg" => "Something went wrong " . $ex->getMessage()];
+            return ["status" => 0, "data" => null, "error_msg" => "Something went wrong."];
         }
 
         if($request->file('image')){
@@ -94,18 +94,18 @@ class ProfileModel extends Model
     }
 
     public function login($request){
-        $email = $request->email;
+        $email_mobile_number = $request->email;
         $password = $request->password;
         $device_type = $request->device_type;
         $device_token = $request->device_token;
-        $user = User::whereEmail($email)->first();
+        $user = User::whereEmail($email_mobile_number)->orWhere('mobile_number','=',$email_mobile_number)->first();
         $data = [];
         if(!empty($user)){
 
             if(Hash::check($password, $user->password)){
 
                 if($user->is_verify == 0){
-                    return ["status" => 3, "data" => null, "error_msg" => "Please verify your email address to continue."];
+                    return ["status" => 3, "data" => null, "error_msg" => "Please verify the email address first to login."];
                 }
 
                 if($user->deleted_at != null){
@@ -142,7 +142,7 @@ class ProfileModel extends Model
           return ["status" => 3, "data" => null, "error_msg" => "Your account has been blocked by admin."];
         }
         if($user->is_verify == 0){
-          return ["status" => 3, "data" => null, "error_msg" => "Please verify your email address to continue."];
+          return ["status" => 3, "data" => null, "error_msg" => "Please verify the email address first to reset the password."];
         }
         if($user->deleted_at != null){
           return ["status" => 3, "data" => null, "error_msg" => "Your account has been deleted by admin."];
@@ -155,7 +155,7 @@ class ProfileModel extends Model
           DB::table('password_resets')->insert(['email' => $user->email, 'token' => $reset_password_token,
                 'created_at' => Carbon::now()]);
         }catch(\Exception $ex){
-          return ["status" => 0, "data" => null, "error_msg" => "Something went wrong " . $ex->getMessage()];
+          return ["status" => 0, "data" => null, "error_msg" => "Something went wrong."];
         }
         return ["status" => 8, "data" => null, "msg" => "A reset password link has been sent to your registered email address."];
     }
