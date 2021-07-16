@@ -737,18 +737,44 @@
 				let tier_setting_id = $("#tier_setting_id").val();
 				let active_id = $(".tier_name_c.active").data("id");
 
+				let __prev_tier = $(".tier_name_c.active").prev();
+				let __next_tier = $(".tier_name_c.active").next();
+
 				var data = {
 		            '_token': "{{csrf_token()}}",
-		            'tier_cond_id' : active_id
+		            'unique_id_by_tier' : active_id
 	            };
+
+	            $("#loaderModel").modal("show");
+	            $("#loaderModel").unbind("click");
 
 	          	$.ajax({
 	              url:"{{route('admin.customerTierNameRemove')}}",
 	              type:'POST',
 	              data:data,
 	              success: function(res){
-	                $(".tier_name_c[data-id='"+active_id+"']").remove();
-	                $(".condition_tier[data-id='"+active_id+"']").remove();
+	              	setTimeout(function(){
+
+	              		$("#loaderModel").modal("hide");
+
+		                $(".tier_name_c[data-id='"+active_id+"']").remove();
+		                $(".condition_tier[data-id='"+active_id+"']").remove();
+
+		                if(__next_tier.length > 0){
+		                	$(".tier_name_c[data-id='"+__next_tier.data("id")+"']").addClass("active").css("background-color","#EBEBEB");
+
+		                	$(".tier_name_c[data-id='"+__next_tier.data("id")+"']").children().removeAttr("disabled").css({"background-color":"#EBEBEB","cursor":"unset"});
+
+		                	$(".condition_tier[data-id='"+__next_tier.data("id")+"']").addClass("active_tier").css("display","block");
+
+						}else if(__prev_tier.length > 0){
+							$(".tier_name_c[data-id='"+__prev_tier.data("id")+"']").addClass("active").css("background-color","#EBEBEB");
+
+		                	$(".tier_name_c[data-id='"+__prev_tier.data("id")+"']").children().removeAttr("disabled").css({"background-color":"#EBEBEB","cursor":"unset"});
+
+		                	$(".condition_tier[data-id='"+__prev_tier.data("id")+"']").addClass("active_tier").css("display","block");
+						}
+	              	},500)
 	              },
 	              error: function(data, textStatus, xhr) {
 	                if(data.status == 422){
