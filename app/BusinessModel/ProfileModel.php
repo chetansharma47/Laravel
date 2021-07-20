@@ -99,13 +99,18 @@ class ProfileModel extends Model
         $device_type = $request->device_type;
         $device_token = $request->device_token;
         $user = User::whereEmail($email_mobile_number)->orWhere('mobile_number','=',$email_mobile_number)->first();
+
+        $is_mobile_number = User::where('mobile_number','=',$email_mobile_number)->first();
         $data = [];
         if(!empty($user)){
 
             if(Hash::check($password, $user->password)){
 
-                if($user->is_verify == 0){
-                    return ["status" => 3, "data" => null, "error_msg" => "Please verify the email address first to login."];
+                if(empty($is_mobile_number)){
+
+                    if($user->is_verify == 0){
+                        return ["status" => 3, "data" => null, "error_msg" => "Please verify the email address first to login."];
+                    }
                 }
 
                 if($user->deleted_at != null){

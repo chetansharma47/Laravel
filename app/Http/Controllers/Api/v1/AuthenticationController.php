@@ -217,11 +217,11 @@ class AuthenticationController extends ResponseController
         $otp = mt_rand(1000,9999);
         $data = $request->all();
 
-        /*try {
+        try {
             $response = $sms->sendToOne($data['country_code'].$data['mobile_number'], $otp);
         } catch (\Exception $e) {
-            return $this->responseWithErrorCode($e->getMessage(),400);
-        }*/
+            return $this->responseWithErrorCode("Please enter valid phone number.",400);
+        }
 
         $data['otp'] = $otp;
 
