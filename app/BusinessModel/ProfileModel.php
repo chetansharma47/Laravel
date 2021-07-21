@@ -64,7 +64,7 @@ class ProfileModel extends Model
                         ->where("user_id",$user->id)
                         ->where("revoked","=",0)
                         ->update(["revoked" => 1]);
-        $data = ['device_type' => 'None', 'device_token' => null];
+        $data = ['device_type' => 'None', 'device_token' => null,'is_active' => 2];
         self::updateUser($data, $user);
         return 1;
     }
@@ -98,9 +98,9 @@ class ProfileModel extends Model
         $password = $request->password;
         $device_type = $request->device_type;
         $device_token = $request->device_token;
-        $user = User::whereEmail($email_mobile_number)->orWhere('mobile_number','=',$email_mobile_number)->first();
+        $user = User::whereEmail($email_mobile_number)->orWhere(DB::raw("CONCAT(users.country_code,users.mobile_number)"),'=',"+".$email_mobile_number)->first();
 
-        $is_mobile_number = User::where('mobile_number','=',$email_mobile_number)->first();
+        $is_mobile_number = User::where(DB::raw("CONCAT(users.country_code,users.mobile_number)"),'=',"+".$email_mobile_number)->first();
         $data = [];
         if(!empty($user)){
 
@@ -127,6 +127,7 @@ class ProfileModel extends Model
 
                 $data['device_type'] = $device_type ? $device_type : 'None';
                 $data['device_token'] = $device_token ? $device_token : null;
+                $data['is_active'] = 1;
                 
                 $user_data = self::updateUser($data,$user);
                 $user_data->access_token = $user_data->createToken('andrew')->accessToken;
