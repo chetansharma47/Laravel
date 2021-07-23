@@ -142,8 +142,8 @@ class Validation extends Model
 
 
       $validation = [
-            'country_code'      => 'required',
-            'mobile_number'     => 'required|numeric|digits_between:8,15',
+            'country_code'      => 'sometimes|nullable',
+            'mobile_number'     => 'sometimes|nullable|numeric|digits_between:8,15',
             'first_name'        => 'sometimes|nullable|max:50',
             'last_name'         => 'sometimes|nullable|max:50',
             'email'             => 'sometimes|nullable|email|max:100|unique:users,email,'.$user_id.',id',

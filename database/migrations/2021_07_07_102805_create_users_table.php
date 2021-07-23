@@ -15,6 +15,7 @@ class CreateUsersTable extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->increments('id');
+            $table->bigInteger('customer_id')->nullable();
             $table->string('image')->nullable();
             $table->string('country_code');
             $table->string('mobile_number');
@@ -34,6 +35,10 @@ class CreateUsersTable extends Migration
             $table->string('is_block')->default(0)->comment("0 => Unblocked 1 => Blocked");
             $table->string('is_verify')->default(0)->comment("0 => Not Verify, 1 => Verify");
             $table->string('refresh_token')->nullable();
+            $table->integer('is_active')->default(2)->comment("1 => active, 2 => inactive");
+            $table->string('wallet_cash')->nullable();
+            $table->string('customer_tier')->nullable();
+            $table->string('reference_by')->nullable();
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

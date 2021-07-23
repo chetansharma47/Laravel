@@ -178,7 +178,7 @@
 		</div>
 	</header>
 
-	<input type="hidden" id="last_tier_cond_id" value="0">
+	<input type="hidden" id="last_tier_cond_id" value="{{$count_condition}}">
 	<input type="hidden" id="tier_setting_id">
 	<section class="mt-3 mb-3" style="padding-left: 40px;">
 		<div class="container-fluid">
@@ -620,9 +620,9 @@
 
 	               		}
 
-	               		if(i == tier_conditions.length - 1){
-	               			$("#last_tier_cond_id").val(i + 1);
-	               		}
+	               		// if(i == tier_conditions.length - 1){
+	               		// 	$("#last_tier_cond_id").val(i + 1);
+	               		// }
 
 	               		$("#append_condition").append(append_condition);
 	               		
@@ -960,6 +960,9 @@
 	              	console.log(res)
 	              	setTimeout(function(){
 	              		$("#loaderModel").modal("hide");
+	              		$("#success_alert_text").text("Tier has been saved successfully.");
+	              		$("#successModel").modal("show");
+	              		$("#successModel").unbind("click");
 	              	},500)
 	              },
 	              error: function(data, textStatus, xhr) {
@@ -968,10 +971,16 @@
 	                  	$("#loaderModel").modal("hide");
 		                  	var result = data.responseJSON;
 		                  	if(result['amount_err'] && result['amount_err'].length > 0){
-		                  	$("#alert_text").text(result['amount_err']);
-							$("#validationModel").modal("show");
-							$("#validationModel").unbind("click");
-		                 }
+			                  	$("#alert_text").text(result['amount_err']);
+								$("#validationModel").modal("show");
+								$("#validationModel").unbind("click");
+		                 	}
+
+		                 	if(result['tier_name_err'] && result['tier_name_err'].length > 0){
+		                 		$("#alert_text").text(result['tier_name_err']);
+								$("#validationModel").modal("show");
+								$("#validationModel").unbind("click");
+		                 	}
 		                  return false;
 	                  },500);
 	                } 

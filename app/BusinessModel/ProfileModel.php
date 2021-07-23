@@ -11,6 +11,7 @@ use DB;
 use Carbon\Carbon;
 use App\Mail\UserVerifyMail;
 use App\Mail\UserForgotPassword;
+use App\Models\TierCondition;
 class ProfileModel extends Model
 {
 
@@ -46,6 +47,10 @@ class ProfileModel extends Model
             $image_name = self::uploadImage($data['image'], $destinationPath);
             $data['image'] = $image_name;
         }
+
+        if(!empty($data['first_name']) && !empty($data['last_name'])){
+            User::whereReferenceCode($user->customer_id)->update(['reference_by' => $data['first_name'] . " " . $data['last_name']]);
+        }
         
         $update_user = $user->update($data);
         return User::find($id);
@@ -64,13 +69,23 @@ class ProfileModel extends Model
                         ->where("user_id",$user->id)
                         ->where("revoked","=",0)
                         ->update(["revoked" => 1]);
-        $data = ['device_type' => 'None', 'device_token' => null,'is_active' => 2];
+        $data = ['device_type' => 'None', 'device_token' => null,'is_active' => 'Inactive'];
         self::updateUser($data, $user);
         return 1;
     }
 
     public function register($request, $id){
         $data = $request->all();
+        $data['customer_id'] = mt_rand(10000000000,99999999999);
+
+        if($data['reference_code']){
+            $user_find = User::whereCustomerId($data['reference_code'])->first();
+            $data['reference_by'] = $user_find->first_name . " " . $user_find->last_name;
+        }
+        $tier_first = TierCondition::whereDeletedAt(null)->first();
+        if(!empty($tier_first)){
+            $data['customer_tier'] = $tier_first->tier_name;
+        }
         $token = str_random(64);
         try{
             $link = url("confirm-account/$token");
@@ -127,7 +142,7 @@ class ProfileModel extends Model
 
                 $data['device_type'] = $device_type ? $device_type : 'None';
                 $data['device_token'] = $device_token ? $device_token : null;
-                $data['is_active'] = 1;
+                $data['is_active'] = 'Active';
                 
                 $user_data = self::updateUser($data,$user);
                 $user_data->access_token = $user_data->createToken('andrew')->accessToken;

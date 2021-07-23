@@ -169,9 +169,10 @@
 							</label>
 							<select class="form-control form-group" style="position: relative;border-radius: 0px;     padding: 9px 28px 9px 12px !important;" id="exampleFormControlSelect1">
 								<option>Select Gender</option>
-								<option>All</option>
-								<option>Male</option>
-								<option>Female</option>
+								<option value="All">All</option>
+								<option value="Male">Male</option>
+								<option value="Female">Female</option>
+								<option value="Other">Other</option>
 							</select>
 						</div>
 						<div class="venue_inputs mb-3 px-2">
@@ -180,9 +181,9 @@
 							</label>
 							<select class="form-control form-group" style="position: relative;border-radius: 0px;    padding: 9px 28px 9px 12px !important;" id="exampleFormControlSelect1">
 								<option>Select Customer Status</option>
-								<option>Active</option>
-								<option>InActive</option>
-								<option>All</option>
+								<option value="0">All</option>
+								<option value="1">Active</option>
+								<option value="2">InActive</option>
 							</select>
 						</div>
 						<!-- <div class="d-flex justify-content-between mt-4">
@@ -203,24 +204,25 @@
 							<label>
 								Customer Tier
 							</label>
+
 							<select class="form-control form-group" style="position: relative;border-radius: 0px;     padding: 9px 28px 9px 12px !important;" id="exampleFormControlSelect1">
 								<option>Select Tier</option>
-								<option>Gold</option>
-								<option>Silver</option>
-								<option>Diamond</option>
+								@foreach($tiers[0]['tierConditions'] as $condition)
+								<option value="{{$condition->id}}">{{$condition->tier_name}}</option>
+								@endforeach()
 							</select>
 						</div>
 						<div class="venue_inputs mb-3 px-2" style="width: inherit !important;">
 							<label>
 								Email ID
 							</label>
-							<input type="text" class="form-control form-control-user" placeholder="Email Id" value="Nadeer@capitalmotion.com" style="border-radius: 0px;    padding: 9px 14px 9px 12px !important;"/>
+							<input type="text" class="form-control form-control-user" placeholder="Enter Email Id" value="" style="border-radius: 0px;    padding: 9px 14px 9px 12px !important;"/>
 						</div>
 						<div class="venue_inputs mb-3 px-2" style="width: inherit !important;">
 							<label>
 								Mobile Number
 							</label>
-							<input type="text" class="form-control form-control-user" placeholder="Mobile Number" value="0588727169" style="border-radius: 0px;    padding: 9px 14px 9px 12px !important;"/>
+							<input type="text" class="form-control form-control-user" placeholder="Enter Mobile Number" value="" style="border-radius: 0px;    padding: 9px 14px 9px 12px !important;"/>
 						</div>
 					</div>
 					<div class="d-flex px-2 mt-2">
@@ -285,120 +287,13 @@
 									<th>Joined On</th>
 									<th>Customer Tier</th>
 									<th>Wallet Cash</th>
-									<th>Status</th>
 									<th>Customer Referral Code</th>
 									<th>Referred By</th>
 								</tr>
 							</thead>
 							<tbody>
-								<tr>
-									<td>558897462</td>
-									<td>58958462256</td>
-									<td>Needar</td>
-									<td>Abrian</td>
-									<td>Nadeer@capitalmotion.com</td>
-									<td>*************</td>
-									<td>USA</td>
-									<td>21-june-2021</td>
-									<td>Male</td>
-									<td>Actve</td>
-									<td>22-July-2021</td>
-									<td>Dummy</td>
-									<td>40 AED</td>
-									<td>Actve</td>
-									<td>558897462</td>
-									<td>Dummy</td>
-								</tr>
-								<tr>
-									<td>558897462</td>
-									<td>58958462256</td>
-									<td>Needar</td>
-									<td>Abrian</td>
-									<td>Nadeer@capitalmotion.com</td>
-									<td>*************</td>
-									<td>USA</td>
-									<td>21-june-2021</td>
-									<td>Male</td>
-									<td>Unactve</td>
-									<td>22-July-2021</td>
-									<td>Dummy</td>
-									<td>40 AED</td>
-									<td>Actve</td>
-									<td>558897462</td>
-									<td>Dummy</td>
-								</tr>
-								<tr>
-									<td>558897462</td>
-									<td>58958462256</td>
-									<td>Needar</td>
-									<td>Abrian</td>
-									<td>Nadeer@capitalmotion.com</td>
-									<td>*************</td>
-									<td>USA</td>
-									<td>21-june-2021</td>
-									<td>Male</td>
-									<td>Actve</td>
-									<td>22-July-2021</td>
-									<td>Dummy</td>
-									<td>40 AED</td>
-									<td>Actve</td>
-									<td>558897462</td>
-									<td>Dummy</td>
-								</tr>
-								<tr>
-									<td>558897462</td>
-									<td>58958462256</td>
-									<td>Needar</td>
-									<td>Abrian</td>
-									<td>Nadeer@capitalmotion.com</td>
-									<td>*************</td>
-									<td>USA</td>
-									<td>21-june-2021</td>
-									<td>Male</td>
-									<td>Unactve</td>
-									<td>22-July-2021</td>
-									<td>Dummy</td>
-									<td>40 AED</td>
-									<td>Actve</td>
-									<td>558897462</td>
-									<td>Dummy</td>
-								</tr>
-								<tr>
-									<td>558897462</td>
-									<td>58958462256</td>
-									<td>Needar</td>
-									<td>Abrian</td>
-									<td>Nadeer@capitalmotion.com</td>
-									<td>*************</td>
-									<td>USA</td>
-									<td>21-june-2021</td>
-									<td>Male</td>
-									<td>Actve</td>
-									<td>22-July-2021</td>
-									<td>Dummy</td>
-									<td>40 AED</td>
-									<td>Actve</td>
-									<td>558897462</td>
-									<td>Dummy</td>
-								</tr>
-								<tr>
-									<td>558897462</td>
-									<td>58958462256</td>
-									<td>Needar</td>
-									<td>Abrian</td>
-									<td>Nadeer@capitalmotion.com</td>
-									<td>*************</td>
-									<td>USA</td>
-									<td>21-june-2021</td>
-									<td>Male</td>
-									<td>Unactve</td>
-									<td>22-July-2021</td>
-									<td>Dummy</td>
-									<td>40 AED</td>
-									<td>Actve</td>
-									<td>558897462</td>
-									<td>Dummy</td>
-								</tr>
+								
+								
 							</tbody>
 						</table>
 					</div>
@@ -942,10 +837,10 @@
 	<script src="{{url('public/admin/assets/js/atlantis.min.js')}}"></script>
 
 	<!-- Atlantis DEMO methods, don't include it in your project! -->
-	<script src="{{url('public/admin/assets/js/setting-demo.js')}}"></script>
+	<!-- <script src="{{url('public/admin/assets/js/setting-demo.js')}}"></script>
 	<script src="{{url('public/admin/assets/js/demo.js')}}"></script>
-	<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
-	<script>
+	<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script> -->
+<!-- 	<script>
 window.onload = function () {
 
 var chart = new CanvasJS.Chart("chartContainer", {
@@ -1123,7 +1018,7 @@ chart.render();
 
 }
 
-</script>
+</script> -->
 	<script>
 		$('#lineChart').sparkline([102,109,120,99,110,105,115], {
 			type: 'line',
@@ -1152,11 +1047,99 @@ chart.render();
 			fillColor: 'rgba(255, 255, 255, .15)'
 		});
 	</script>	
+
+<!-- 	<script type="text/javascript">
+    $(document).ready(function() {
+
+      $('#basic-datatables').dataTable({
+        processing: true,
+        serverSide: true,
+        ajax:{
+         url:"{{url('admin/all-data-availability')}}",
+         beforeSend:function(){
+          $('#basic-datatables').parent()
+          .find("#basic-datatables_processing").attr("ll",true)
+
+
+          // $('#basic-datatables').parent()
+          // .find("#basic-datatables_processing")
+          // .html(`<img src="{{url('public/website/images/loader.gif')}}" id="loaderIMG" />`);
+          
+          // $("#loaderIMG").css({"position":"absolute","margin-left":"45%","margin-top":"35%","text-align":"center","top":"0","bottom":"0","z-index":"999"})
+         },
+         complete:function(){
+          //  $('#basic-datatables').parent()
+          // .find("#basic-datatables_processing")
+          // .html('')
+         }
+        },
+        columns: [
+           // {data: 'DT_RowIndex', name: 'DT_RowIndex'},
+            {data: 'customer_id', name: 'customer_id'},
+            {data: 'mobile_number', name: 'mobile_number'},
+            {data: 'first_name', name: 'first_name'},
+            {data: 'last_name', name: 'last_name'},
+            {data: 'email', name: 'email'},
+            {data: 'password', name: 'password'},
+            {data: 'nationality', name: 'nationality'},
+            {data: 'dob', name: 'dob'},
+            {data: 'gender', name: 'gender'},
+            {data: 'is_active', name: 'is_active'},
+            {data: 'created_at', name: 'created_at'},
+            {data: 'customer_tier', name: 'customer_tier'},
+            {data: 'wallet_cash', name: 'wallet_cash'},
+            {data: 'reference_code', name: 'reference_code'},
+            {data: 'reference_by', name: 'reference_by'},
+           
+            // {data: 'action', name: 'action', orderable: false, searchable: false},
+        ]
+
+       });
+      });
+</script> -->
+
+
+<script type="text/javascript">
+    $(document).ready(function() {
+ 	
+		
+        $('#basic-datatables').dataTable( {
+             dom: "Bfrtip",
+            "processing": true,
+            "serverSide": true,
+            "ajax": {
+                "url": "{{url('admin/all-data-availability')}}",
+                "type": "POST",
+                "data" : {
+                	'_token': "{{csrf_token()}}",
+                }
+            },
+            "columns": [
+                {data: 'customer_id', name: 'customer_id'},
+	            {data: 'mobile_number', name: 'mobile_number'},
+	            {data: 'first_name', name: 'first_name'},
+	            {data: 'last_name', name: 'last_name'},
+	            {data: 'email', name: 'email'},
+	            {data: 'password', name: 'password'},
+	            {data: 'nationality', name: 'nationality'},
+	            {data: 'dob', name: 'dob'},
+	            {data: 'gender', name: 'gender'},
+	            {data: 'is_active', name: 'is_active'},
+	            {data: 'created_at', name: 'created_at'},
+	            {data: 'customer_tier', name: 'customer_tier'},
+	            {data: 'wallet_cash', name: 'wallet_cash'},
+	            {data: 'reference_code', name: 'reference_code'},
+	            {data: 'reference_by', name: 'reference_by'},
+            ]
+ 
+        } );
+    } );
+      </script>
+
+
 	<script >
 		$(document).ready(function() {
-			$('#basic-datatables').DataTable({
-			});
-
+			
 			$('#multi-filter-select').DataTable( {
 				"pageLength": 5,
 				initComplete: function () {

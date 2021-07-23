@@ -17,6 +17,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
+        'customer_id',
         'country_code',
         'mobile_number',
         'image',
@@ -35,7 +36,11 @@ class User extends Authenticatable
         'verify_email_token',
         'is_block',
         'is_verify',
+        'is_active',
         'refresh_token',
+        'wallet_cash',
+        'customer_tier',
+        'reference_by',
         'remember_token',
     ];
 
@@ -45,7 +50,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'remember_token',
     ];
 
     /**

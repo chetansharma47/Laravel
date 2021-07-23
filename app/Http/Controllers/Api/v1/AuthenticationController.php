@@ -18,7 +18,7 @@ use Hash;
 use Crypt;
 use DB;
 use App\Models\Otp;
-require_once $_SERVER['DOCUMENT_ROOT'].'/capital_motion/vendor/autoload.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/capital_motion_22_july/vendor/autoload.php';
 
 class AuthenticationController extends ResponseController
 {
@@ -50,6 +50,14 @@ class AuthenticationController extends ResponseController
             }
 
 
+        }
+
+        $data = $request->all();
+        if($data['reference_code']){
+            $user_find = User::whereCustomerId($data['reference_code'])->first();
+            if(empty($user_find)){
+                return $this->responseWithErrorCode("Please enter valid referral code.",406);
+            }
         }
 
         
@@ -217,8 +225,10 @@ class AuthenticationController extends ResponseController
         $otp = mt_rand(1000,9999);
         $data = $request->all();
 
+        $message = "Your OTP for Society App is ".$otp;
+
         try {
-            $response = $sms->sendToOne($data['country_code'].$data['mobile_number'], $otp);
+            $response = $sms->sendToOne($data['country_code'].$data['mobile_number'], $message);
         } catch (\Exception $e) {
             return $this->responseWithErrorCode("Please enter valid phone number.",400);
         }
