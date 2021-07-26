@@ -206,9 +206,40 @@ class TabController extends Controller
                 $column = "reference_by";
             }
 
+            $tier_find = TierCondition::whereId($request->tier)->first();
+
         $data = User::select("*",DB::raw('CONCAT(users.first_name, " ", users.last_name) AS full_name'),DB::raw('CONCAT(users.country_code, " ", users.mobile_number) AS country_code_with_phone_number'),DB::raw("DATE_FORMAT(dob, '%d-%M-%Y') AS dob"),DB::raw("DATE_FORMAT(created_at, '%d-%M-%Y') AS join_date"))
-                ->whereDeletedAt(null)
-                ->orderBy($column,$asc_desc);
+                ->where(function($query) use ($request, $tier_find){
+                    $query->whereDeletedAt(null);
+                    if($request->joined_from && $request->joined_to){
+                        $query->whereBetween(DB::raw('date(created_at)'),[$request->joined_from, $request->joined_to]);
+                    }else if($request->joined_from){
+                        $query->where(DB::raw('date(created_at)'),'>=', $request->joined_from);
+                    }else if($request->joined_to){
+                        $query->where(DB::raw('date(created_at)'),'<=', $request->joined_to);
+                    }
+
+                    if($request->gender){
+                        $query->whereGender($request->gender);
+                    }
+
+                    if($request->customer_status && (int)$request->customer_status != 0){
+                        $query->whereIsActive((int)$request->customer_status);
+                    }
+
+                    if($tier_find){
+                        $query->whereCustomerTier($tier_find->tier_name);
+                    }
+
+                    if($request->email){
+                        $query->where('email', 'Like', '%' . $request->email . '%');
+                    }
+
+                    if($request->mobile_number){
+                        $query->where(DB::raw('CONCAT(users.country_code, " ", users.mobile_number)'), 'Like', '%' . $request->mobile_number . '%');
+    
+                    }
+                })->orderBy($column,$asc_desc);
         $total = $data->get()->count();
 
         $search = $request->get("search")["value"];
@@ -275,6 +306,7 @@ class TabController extends Controller
 
 
                 $user_select->action = $btn;*/
+                $user_select->password = "************";
                 $user_select->DT_RowIndex = $start_from++;
             }
 
@@ -289,6 +321,16 @@ class TabController extends Controller
             return response()->json($return_data);
         }
         
+
+    }
+
+    public function updateUserData(Request $request){
+        $data = $request->arrayData;
+        foreach ($data as $d) {
+            User::whereId($d['selected_data_id'])->update([ $d['selected_key_name'] => $d['text'] ]);
+        }
+
+        return "success";
 
     }
 

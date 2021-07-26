@@ -79,6 +79,8 @@ Route::group(['middleware' => 'TimeZone','namespace' => 'Admin','prefix'=>'/admi
 
     Route::group(['middleware'=>['CheckAdmin']] , function() {
 
+        Route::post('update-user-data','TabController@updateUserData')->name('updateUserData');
+
         Route::get('logout','AuthenticationController@logout')->name('logout');
         
         Route::match(['GET','POST'],'admin-tabs','TabController@adminTabs')->name('adminTabs');

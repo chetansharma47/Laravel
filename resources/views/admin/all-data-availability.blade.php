@@ -77,6 +77,58 @@
     color: #676767 !important;
     background-color: #EBEBEB !important;
 		}
+
+
+
+		#validationModel .modal-title{
+		    text-align: center;
+		    width: 100%;
+		    font-size: 20px;
+		    font-weight: 600;
+		}
+		#validationModel .modal-header {
+		    background-color: #5f5f5f;
+		    color: #fff;
+		    justify-content: center;
+		}
+
+		#validationModel .modal-body {
+			text-align: center;
+		}
+
+		#validationModel .modal-body p {
+			margin-bottom: 0rem;
+		}
+
+
+
+		#successModel .modal-title{
+		    text-align: center;
+		    width: 100%;
+		    font-size: 20px;
+		    font-weight: 600;
+		}
+		#successModel .modal-header {
+		    background-color: #5f5f5f;
+		    color: #fff;
+		    justify-content: center;
+		}
+
+		#successModel .modal-body {
+			text-align: center;
+		}
+
+		#successModel .modal-body p {
+			margin-bottom: 0rem;
+		}
+
+		div#loaderImg2 {
+		    position: absolute;
+		    left: 0;
+		    right: 0;
+		    text-align: center;
+		    margin-top: 250px;
+		}
 	</style>
 </head>
 <body>
@@ -145,13 +197,13 @@
 							<label>
 								Joining Date - From
 							</label>
-							<input type="date" class="form-control form-control-user" placeholder="Joining Date - From" value="" style="border-radius: 0px ;    padding: 8px 10px !important;" />
+							<input type="date" class="form-control form-control-user" placeholder="Joining Date - From" id="joined_from" value="" style="border-radius: 0px ;    padding: 8px 10px !important;" />
 						</div>
 						<div class="venue_inputs mb-3 px-2">
 							<label>
 								Joining Date - To
 							</label>
-							<input type="date" class="form-control form-control-user" placeholder="Joining Date - To" value="" style="border-radius: 0px ;    padding: 8px 10px !important;" />
+							<input type="date" class="form-control form-control-user" placeholder="Joining Date - To" id="joined_to" value="" style="border-radius: 0px ;    padding: 8px 10px !important;" />
 						</div>
 						<div class="venue_inputs mb-3 px-2">
 							<label>
@@ -167,8 +219,8 @@
 							<label>
 								Gender
 							</label>
-							<select class="form-control form-group" style="position: relative;border-radius: 0px;     padding: 9px 28px 9px 12px !important;" id="exampleFormControlSelect1">
-								<option>Select Gender</option>
+							<select class="form-control form-group" style="position: relative;border-radius: 0px; padding: 9px 28px 9px 12px !important;" id="gender">
+								<option value="">Select Gender</option>
 								<option value="All">All</option>
 								<option value="Male">Male</option>
 								<option value="Female">Female</option>
@@ -179,8 +231,8 @@
 							<label>
 								Customer Status
 							</label>
-							<select class="form-control form-group" style="position: relative;border-radius: 0px;    padding: 9px 28px 9px 12px !important;" id="exampleFormControlSelect1">
-								<option>Select Customer Status</option>
+							<select class="form-control form-group" style="position: relative;border-radius: 0px;    padding: 9px 28px 9px 12px !important;" id="status">
+								<option value="">Select Customer Status</option>
 								<option value="0">All</option>
 								<option value="1">Active</option>
 								<option value="2">InActive</option>
@@ -205,8 +257,8 @@
 								Customer Tier
 							</label>
 
-							<select class="form-control form-group" style="position: relative;border-radius: 0px;     padding: 9px 28px 9px 12px !important;" id="exampleFormControlSelect1">
-								<option>Select Tier</option>
+							<select class="form-control form-group" style="position: relative;border-radius: 0px;     padding: 9px 28px 9px 12px !important;" id="tier">
+								<option value="">Select Tier</option>
 								@foreach($tiers[0]['tierConditions'] as $condition)
 								<option value="{{$condition->id}}">{{$condition->tier_name}}</option>
 								@endforeach()
@@ -216,18 +268,18 @@
 							<label>
 								Email ID
 							</label>
-							<input type="text" class="form-control form-control-user" placeholder="Enter Email Id" value="" style="border-radius: 0px;    padding: 9px 14px 9px 12px !important;"/>
+							<input type="text" class="form-control form-control-user" placeholder="Enter Email Id" id="email" value="" style="border-radius: 0px;    padding: 9px 14px 9px 12px !important;"/>
 						</div>
 						<div class="venue_inputs mb-3 px-2" style="width: inherit !important;">
 							<label>
 								Mobile Number
 							</label>
-							<input type="text" class="form-control form-control-user" placeholder="Enter Mobile Number" value="" style="border-radius: 0px;    padding: 9px 14px 9px 12px !important;"/>
+							<input type="text" class="form-control form-control-user" placeholder="Enter Mobile Number" id="mobile_number" value="" style="border-radius: 0px;    padding: 9px 14px 9px 12px !important;"/>
 						</div>
 					</div>
 					<div class="d-flex px-2 mt-2">
 						<div>
-							<a href="" class="btn btn-primary btn-user btn-block common_btn" style="     font-size: 18px; width: 154px; margin-right: 15px; text-transform: none; padding: 8px 0;">
+							<a href="javascript:void(0)"; id="search_btn" class="btn btn-primary btn-user btn-block common_btn" style="     font-size: 18px; width: 154px; margin-right: 15px; text-transform: none; padding: 8px 0;">
 								Search
 							</a>
 						</div>
@@ -247,7 +299,7 @@
 							</a>
 						</div>
 						<div>
-							<a href="" class="btn btn-primary btn-user btn-block common_btn" style="     font-size: 18px; width: 154px; margin-right: 15px; text-transform: none; padding: 8px 0;">
+							<a href="javascript:void(0)" id="update_btn" class="btn btn-primary btn-user btn-block common_btn" style="     font-size: 18px; width: 154px; margin-right: 15px; text-transform: none; padding: 8px 0;">
 								Update
 							</a>
 						</div>
@@ -798,6 +850,61 @@
 			</div>
 		</div>
 	</section>
+
+
+
+	<div class="modal fade" id="validationModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Alert</h5>
+        <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button> -->
+      </div>
+      <div class="modal-body">
+        <p id="alert_text">Info Text</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary ok" style="background-color: #3ABD6F!important; border: none; border-radius: 50px; color: #fff;"  data-dismiss="modal">Ok</button>
+       <!--  <button type="button" class="btn btn-primary">Save changes</button> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="successModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Information</h5>
+        <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button> -->
+      </div>
+      <div class="modal-body">
+        <p id="success_alert_text">Info Text</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary ok" style="background-color: #3ABD6F!important; border: none; border-radius: 50px; color: #fff;"  data-dismiss="modal">Ok</button>
+       <!--  <button type="button" class="btn btn-primary">Save changes</button> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div id="loaderModel" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <div class="loaderImg2" id="loaderImg2">
+               <img src = "{{url('public/loader.gif')}}">
+            </div>
+
+  </div>
+</div>
+
 <!--   Core JS Files   -->
 	<script src="{{url('public/admin/assets/js/core/jquery.3.2.1.min.js')}}"></script>
 	<script src="{{url('public/admin/assets/js/core/popper.min.js')}}"></script>
@@ -1103,7 +1210,7 @@ chart.render();
     $(document).ready(function() {
  	
 		
-        $('#basic-datatables').dataTable( {
+        $('#basic-datatables').dataTable({
              dom: "Bfrtip",
             "processing": true,
             "serverSide": true,
@@ -1112,11 +1219,34 @@ chart.render();
                 "type": "POST",
                 "data" : {
                 	'_token': "{{csrf_token()}}",
-                }
+                },
+                complete:function(){
+		          tdClick();
+		        }
+
             },
+            createdRow: function( row, data, dataIndex ) {
+
+		        $( row ).find('td:eq(0)').attr('data-id', data['id']).attr('key_type','customer_id').addClass('td_click');
+		        $( row ).find('td:eq(1)').attr('data-id', data['id']).attr('key_type','mobile_number').addClass('td_click');
+		        $( row ).find('td:eq(2)').attr('data-id', data['id']).attr('key_type','first_name').addClass('td_click');
+		        $( row ).find('td:eq(3)').attr('data-id', data['id']).attr('key_type','last_name').addClass('td_click');
+		        $( row ).find('td:eq(4)').attr('data-id', data['id']).attr('key_type','email').addClass('td_click');
+		        $( row ).find('td:eq(5)').attr('data-id', data['id']).attr('key_type','password').addClass('td_click');
+		        $( row ).find('td:eq(6)').attr('data-id', data['id']).attr('key_type','nationality').addClass('td_click');
+		        $( row ).find('td:eq(7)').attr('data-id', data['id']).attr('key_type','dob').addClass('td_click');
+		        $( row ).find('td:eq(8)').attr('data-id', data['id']).attr('key_type','gender').addClass('td_click');
+		        $( row ).find('td:eq(9)').attr('data-id', data['id']).attr('key_type','is_active').addClass('td_click');
+		        $( row ).find('td:eq(10)').attr('data-id', data['id']).attr('key_type','created_at').addClass('td_click');
+		        $( row ).find('td:eq(11)').attr('data-id', data['id']).attr('key_type','customer_tier').addClass('td_click');
+		        $( row ).find('td:eq(12)').attr('data-id', data['id']).attr('key_type','wallet_cash').addClass('td_click');
+		        $( row ).find('td:eq(13)').attr('data-id', data['id']).attr('key_type','reference_code').addClass('td_click');
+		        $( row ).find('td:eq(14)').attr('data-id', data['id']).attr('key_type','reference_by').addClass('td_click');
+		    },
             "columns": [
+            // {data: 'DT_RowIndex', name: 'DT_RowIndex'},
                 {data: 'customer_id', name: 'customer_id'},
-	            {data: 'mobile_number', name: 'mobile_number'},
+	            {data: 'country_code_with_phone_number', name: 'country_code_with_phone_number'},
 	            {data: 'first_name', name: 'first_name'},
 	            {data: 'last_name', name: 'last_name'},
 	            {data: 'email', name: 'email'},
@@ -1125,14 +1255,85 @@ chart.render();
 	            {data: 'dob', name: 'dob'},
 	            {data: 'gender', name: 'gender'},
 	            {data: 'is_active', name: 'is_active'},
-	            {data: 'created_at', name: 'created_at'},
+	            {data: 'join_date', name: 'join_date'},
 	            {data: 'customer_tier', name: 'customer_tier'},
 	            {data: 'wallet_cash', name: 'wallet_cash'},
 	            {data: 'reference_code', name: 'reference_code'},
 	            {data: 'reference_by', name: 'reference_by'},
+	            // {data: 'action', name: 'action', orderable: false, searchable: false},
             ]
  
-        } );
+        });
+
+        $("#search_btn").on("click",function(){
+        	let joined_from = $("#joined_from").val();
+        	let joined_to = $("#joined_to").val();
+        	let gender = $("#gender").val();
+        	let status = $("#status").val();
+        	let tier = $("#tier").val();
+        	let email = $("#email").val();
+        	let mobile_number = $("#mobile_number").val();
+
+        	$("#basic-datatables").dataTable().fnDestroy();
+        	$('#basic-datatables').dataTable({
+             dom: "Bfrtip",
+            "processing": true,
+            "serverSide": true,
+            "ajax": {
+                "url": "{{url('admin/all-data-availability')}}",
+                "type": "POST",
+                "data" : {
+                	'_token': "{{csrf_token()}}",
+                	'joined_from' : joined_from,
+                	'joined_to' : joined_to,
+                	'gender' : gender,
+                	'customer_status' : status,
+                	'tier' : tier,
+                	'email' : email,
+                	'mobile_number' : mobile_number
+                }
+            },
+            createdRow: function( row, data, dataIndex ) {
+
+		       $( row ).find('td:eq(0)').attr('data-id', data['id']).attr('key_type','customer_id').addClass('td_click');
+		        $( row ).find('td:eq(1)').attr('data-id', data['id']).attr('key_type','mobile_number').addClass('td_click');
+		        $( row ).find('td:eq(2)').attr('data-id', data['id']).attr('key_type','first_name').addClass('td_click');
+		        $( row ).find('td:eq(3)').attr('data-id', data['id']).attr('key_type','last_name').addClass('td_click');
+		        $( row ).find('td:eq(4)').attr('data-id', data['id']).attr('key_type','email').addClass('td_click');
+		        $( row ).find('td:eq(5)').attr('data-id', data['id']).attr('key_type','password').addClass('td_click');
+		        $( row ).find('td:eq(6)').attr('data-id', data['id']).attr('key_type','nationality').addClass('td_click');
+		        $( row ).find('td:eq(7)').attr('data-id', data['id']).attr('key_type','dob').addClass('td_click');
+		        $( row ).find('td:eq(8)').attr('data-id', data['id']).attr('key_type','gender').addClass('td_click');
+		        $( row ).find('td:eq(9)').attr('data-id', data['id']).attr('key_type','is_active').addClass('td_click');
+		        $( row ).find('td:eq(10)').attr('data-id', data['id']).attr('key_type','created_at').addClass('td_click');
+		        $( row ).find('td:eq(11)').attr('data-id', data['id']).attr('key_type','customer_tier').addClass('td_click');
+		        $( row ).find('td:eq(12)').attr('data-id', data['id']).attr('key_type','wallet_cash').addClass('td_click');
+		        $( row ).find('td:eq(13)').attr('data-id', data['id']).attr('key_type','reference_code').addClass('td_click');
+		        $( row ).find('td:eq(14)').attr('data-id', data['id']).attr('key_type','reference_by').addClass('td_click');
+		    },
+            "columns": [
+            // {data: 'DT_RowIndex', name: 'DT_RowIndex'},
+                {data: 'customer_id', name: 'customer_id'},
+	            {data: 'country_code_with_phone_number', name: 'country_code_with_phone_number'},
+	            {data: 'first_name', name: 'first_name'},
+	            {data: 'last_name', name: 'last_name'},
+	            {data: 'email', name: 'email'},
+	            {data: 'password', name: 'password'},
+	            {data: 'nationality', name: 'nationality'},
+	            {data: 'dob', name: 'dob'},
+	            {data: 'gender', name: 'gender'},
+	            {data: 'is_active', name: 'is_active'},
+	            {data: 'join_date', name: 'join_date'},
+	            {data: 'customer_tier', name: 'customer_tier'},
+	            {data: 'wallet_cash', name: 'wallet_cash'},
+	            {data: 'reference_code', name: 'reference_code'},
+	            {data: 'reference_by', name: 'reference_by'},
+	            // {data: 'action', name: 'action', orderable: false, searchable: false},
+            ]
+	 
+	        });
+        });
+
     } );
       </script>
 
@@ -1279,5 +1480,108 @@ chart.render();
 			});
 		});
 	</script>
+
+	<script type="text/javascript">
+		function tdClick(){
+			$(".td_click").on("dblclick",function(){
+				let data_id = $(this).data("id");
+				let key_type = $(this).attr("key_type");
+				let currentVal = $(this).text();
+				if(key_type == "first_name" || key_type == "last_name" || key_type == "nationality" || key_type == "gender"){
+					$(this).attr("contenteditable","true");
+					if(key_type == "first_name" || key_type == "last_name"){
+
+						$(this).attr("onkeypress", "return (this.innerText.length <= 50)");
+					}
+					$(this).attr("edited","true");
+
+					if(key_type == "gender"){
+						$(this).focusout(function(){
+							if($(this).text() == "Male" || $(this).text() == "Female"){
+								
+							}else{
+								$("#alert_text").text("Gender should be Male, Female only.");
+								$("#validationModel").modal("show");
+								$("#validationModel").unbind("click");
+								$(this).text(currentVal);
+								return false;
+							}
+						})
+					}
+
+					if(key_type == "password"){
+						$(this).attr("contenteditable","true");
+						$(this).text("");
+					}
+
+				}
+			});
+			
+		}
+
+
+		$(document).ready(function(){
+			$("#update_btn").on("click",function(){
+
+				let arrayData = [];
+
+				$(".td_click[edited='true']").each(function(){
+					let selected_data_id = $(this).data("id");
+					let selected_key_name = $(this).attr("key_type");
+					let text = $(this).text();
+					let objectData = {
+
+					}
+					objectData.selected_data_id = selected_data_id;
+					objectData.selected_key_name = selected_key_name;
+					objectData.text = text;
+
+					arrayData.push(objectData);
+					
+				});
+
+				if(arrayData.length <= 0){
+					$("#alert_text").text("Please edit at least one column of user.");
+					$("#validationModel").modal("show");
+					$("#validationModel").unbind("click");
+					return false;
+				}
+
+				$("#loaderModel").modal("show");
+				$("#loaderModel").unbind("click");
+				var data = {
+	            	'_token': "{{csrf_token()}}",
+	            	"arrayData": arrayData
+	            };
+
+	          	$.ajax({
+		              url:"{{route('admin.updateUserData')}}",
+		              type:'POST',
+		              data:data,
+		              success: function(res){
+		              	setTimeout(function(){
+		              		console.log(res)
+		              		$("#loaderModel").modal("hide");
+		              		$("#success_alert_text").text("Users has been updated successfully.");
+		              		$("#successModel").modal("show");
+		              	},500);
+		              },
+		              error: function(data, textStatus, xhr) {
+		                if(data.status == 422){
+		                  var result = data.responseJSON;
+		                  alert('Something went worng.');
+		                  window.location.href = "";
+		                  return false;
+		                } 
+	              	}
+	            });
+			});
+
+			$(".ok").on("click",function(){
+				$("#validationModel").modal("hide");
+			});
+		});
+	</script>
+
 </body>
 </html>

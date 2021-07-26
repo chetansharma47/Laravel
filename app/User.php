@@ -81,4 +81,35 @@ class User extends Authenticatable
             return $value;
         }
     }
+
+
+    public function getWalletCashAttribute($value){
+
+        if(!empty($value)){
+
+           return $value;
+        }else{
+            return "N/A";
+        }
+    }
+
+    public function getReferenceCodeAttribute($value){
+
+        if(!empty($value)){
+
+           return $value;
+        }else{
+            return "N/A";
+        }
+    }
+
+    public function getReferenceByAttribute($value){
+
+        if(!empty($value)){
+
+           return $value;
+        }else{
+            return "N/A";
+        }
+    }
 }
