@@ -26,6 +26,7 @@ Route::group(['namespace' => 'Api\v1','prefix'=>'v1'], function() {
     Route::post('register', 'AuthenticationController@register');
     Route::post('login', 'AuthenticationController@login'); 
     Route::post('forgot-password','AuthenticationController@forgotPassword');
+    Route::get('application-data','AuthenticationController@applicationData');
     
     Route::group(['middleware' => 'auth:api'], function(){
 

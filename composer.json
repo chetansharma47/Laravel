@@ -15,7 +15,8 @@
         "laravel/tinker": "^1.0",
         "lcobucci/jwt": "3.3.0",
         "smsglobal/smsglobal-php": "^1.1",
-        "yajra/laravel-datatables": "^1.2"
+        "yajra/laravel-datatables": "^1.2",
+        "maatwebsite/excel": "~2.1.0"
     },
     "require-dev": {
         "beyondcode/laravel-dump-server": "^1.0",

@@ -284,7 +284,7 @@
 							</a>
 						</div>
 						<div>
-							<a href="" class="btn btn-primary btn-user btn-block common_btn" style="     font-size: 18px; width: 154px; margin-right: 15px; text-transform: none; padding: 8px 0;">
+							<a href="{{route('admin.downloadUsers')}}" target="_blank" class="btn btn-primary btn-user btn-block common_btn" style="     font-size: 18px; width: 154px; margin-right: 15px; text-transform: none; padding: 8px 0;">
 								Download
 							</a>
 						</div>

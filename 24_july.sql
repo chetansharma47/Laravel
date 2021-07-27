@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jul 23, 2021 at 07:17 PM
+-- Generation Time: Jul 27, 2021 at 05:58 PM
 -- Server version: 5.7.34-0ubuntu0.18.04.1
 -- PHP Version: 7.2.34-10+ubuntu18.04.1+deb.sury.org+1
 
@@ -41,7 +41,56 @@ CREATE TABLE `admins` (
 --
 
 INSERT INTO `admins` (`id`, `name`, `email`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'admin', 'adminn@yopmail.com', '$2y$10$nbvTNJDjH6yIpVurSdVaOOeYAyIi8spa8oc.cNpx7mp4/oCV679A6', 'wZtlYd589HDu7YmuXzpJiwO26RlxebWo7UBPBIPssLyTYmLCfb0Bvcm2TpaiUsFs', NULL, '2021-07-23 02:13:27');
+(1, 'admin', 'adminn@yopmail.com', '$2y$10$nbvTNJDjH6yIpVurSdVaOOeYAyIi8spa8oc.cNpx7mp4/oCV679A6', '1CxJ5NGTsi1VbLt9gptzjdlMbTGnasX3XhYa5lDWDDhxjxcRDmdHogsdXkzgKZCX', NULL, '2021-07-27 06:41:56');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `application_datas`
+--
+
+CREATE TABLE `application_datas` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `admin_id` int(10) UNSIGNED NOT NULL,
+  `logo` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `video` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `color` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `application_datas`
+--
+
+INSERT INTO `application_datas` (`id`, `admin_id`, `logo`, `video`, `color`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(1, 1, '0713202107532960ed467961d5b.jpg', 'file_example_MOV_480_700kB.mov', '#000', '2021-07-26 18:30:00', '2021-07-26 18:30:00', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `application_images`
+--
+
+CREATE TABLE `application_images` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `application_data_id` int(10) UNSIGNED NOT NULL,
+  `image` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `application_images`
+--
+
+INSERT INTO `application_images` (`id`, `application_data_id`, `image`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(1, 1, '0713202104291560ed169b28835.jpg', NULL, NULL, NULL),
+(2, 1, '0713202110290360ed6aef15ed8.jpg', NULL, NULL, NULL),
+(3, 1, '0713202110290360ed6aef15ed8.jpg', NULL, NULL, NULL),
+(4, 1, '0713202112274160ed86bddc445.jpg', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -70,7 +119,9 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (12, '2021_07_12_053943_create_otps_table', 2),
 (13, '2021_07_12_092052_create_admins_table', 3),
 (18, '2021_07_13_090942_create_tier_settings_table', 4),
-(19, '2021_07_13_091013_create_tier_conditions_table', 4);
+(19, '2021_07_13_091013_create_tier_conditions_table', 4),
+(20, '2021_07_27_104038_create_application_datas_table', 5),
+(21, '2021_07_27_104625_create_application_images_table', 6);
 
 -- --------------------------------------------------------
 
@@ -301,8 +352,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `image`, `country_code`, `mobile_number`, `first_name`, `last_name`, `email`, `password`, `city_of_residence`, `nationality`, `dob`, `gender`, `reference_code`, `device_type`, `device_token`, `reset_password_token`, `verify_email_token`, `is_block`, `is_verify`, `refresh_token`, `remember_token`, `is_active`, `customer_id`, `customer_tier`, `wallet_cash`, `reference_by`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, '0723202107514060fa750c22873.png', '+91', '16516511545', 'lp', 'lo', 'abc1@yopmail.com', '$2y$10$FIlNFNG1RZMSjY3JRTG0vOhahKPY6/RPMZFhr.WW3Ah8bivyJMv8m', 'Mohali', 'IN', '2012-12-12', 'Male', NULL, 'Ios', 'jaskfjsajfljal', NULL, 'jnYu0hu9G384mwaQu3N6wZEzCgG9YTHkjUHE2BWPFpq2aXDKmVJKqEjosKLbWczr', '0', '1', NULL, NULL, 'Inactive', 40551173578, 'ab', NULL, NULL, '2021-07-23 02:21:40', '2021-07-23 02:31:42', NULL),
-(2, '0723202107540460fa759cbb56c.png', '+91', '1234567890', 'jo', 'jo', 'abc2@yopmail.com', '$2y$10$JU7vFu5UPuazyR1fgtqLbOjgrsf74CKilVwIrSf5P2rTbVBaYl0ga', 'Mohali', 'IN', '2012-12-12', 'Male', '40551173578', 'None', NULL, NULL, 'mfl8RAz1Y6eDIBCQ3kOLcpcNkalyUtHnlDlnWM8wME0IPixTRnvJnb3CqLa9jbGW', '0', '1', NULL, NULL, 'Active', 13652686819, 'ab', NULL, 'lp lo', '2021-07-23 02:24:04', '2021-07-23 02:31:42', NULL);
+(1, '0723202107514060fa750c22873.png', '+91', '16516511545', 'lp', 'lok', 'abc1@yopmail.com', '$2y$10$FIlNFNG1RZMSjY3JRTG0vOhahKPY6/RPMZFhr.WW3Ah8bivyJMv8m', 'Mohali', 'IN', '2012-12-12', 'Male', NULL, 'Ios', 'jaskfjsajfljal', NULL, 'jnYu0hu9G384mwaQu3N6wZEzCgG9YTHkjUHE2BWPFpq2aXDKmVJKqEjosKLbWczr', '0', '1', NULL, NULL, 'Inactive', 40551173578, 'ab', NULL, NULL, '2021-07-23 02:21:40', '2021-07-26 06:57:33', NULL),
+(2, '0723202107540460fa759cbb56c.png', '+91', '1234567890', 'fsdfdsfdfjffghfgh', 'dfsf', 'abc2@yopmail.com', '$2y$10$JU7vFu5UPuazyR1fgtqLbOjgrsf74CKilVwIrSf5P2rTbVBaYl0ga', 'Mohali', 'vvbb', '2012-12-12', 'Male', '40551173578', 'None', NULL, NULL, 'mfl8RAz1Y6eDIBCQ3kOLcpcNkalyUtHnlDlnWM8wME0IPixTRnvJnb3CqLa9jbGW', '0', '1', NULL, NULL, 'Active', 13652686819, 'ab', NULL, 'lp lo', '2021-07-23 02:24:04', '2021-07-26 07:30:27', NULL);
 
 --
 -- Indexes for dumped tables
@@ -313,6 +364,20 @@ INSERT INTO `users` (`id`, `image`, `country_code`, `mobile_number`, `first_name
 --
 ALTER TABLE `admins`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `application_datas`
+--
+ALTER TABLE `application_datas`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `application_datas_admin_id_foreign` (`admin_id`);
+
+--
+-- Indexes for table `application_images`
+--
+ALTER TABLE `application_images`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `application_images_application_data_id_foreign` (`application_data_id`);
 
 --
 -- Indexes for table `migrations`
@@ -396,10 +461,20 @@ ALTER TABLE `users`
 ALTER TABLE `admins`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 --
+-- AUTO_INCREMENT for table `application_datas`
+--
+ALTER TABLE `application_datas`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+--
+-- AUTO_INCREMENT for table `application_images`
+--
+ALTER TABLE `application_images`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+--
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 --
 -- AUTO_INCREMENT for table `oauth_clients`
 --
@@ -433,6 +508,18 @@ ALTER TABLE `users`
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `application_datas`
+--
+ALTER TABLE `application_datas`
+  ADD CONSTRAINT `application_datas_admin_id_foreign` FOREIGN KEY (`admin_id`) REFERENCES `admins` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `application_images`
+--
+ALTER TABLE `application_images`
+  ADD CONSTRAINT `application_images_application_data_id_foreign` FOREIGN KEY (`application_data_id`) REFERENCES `application_datas` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `tier_conditions`

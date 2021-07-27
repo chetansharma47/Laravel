@@ -18,6 +18,9 @@ use Hash;
 use Crypt;
 use DB;
 use App\Models\Otp;
+use App\Models\ApplicationData;
+use App\Models\ApplicationImage;
+use App\Models\Admin;
 require_once $_SERVER['DOCUMENT_ROOT'].'/capital_motion_22_july/vendor/autoload.php';
 
 class AuthenticationController extends ResponseController
@@ -264,6 +267,12 @@ class AuthenticationController extends ResponseController
         }else{
             return $this->responseWithErrorCode("Please enter valid OTP.",406);
         }
+    }
+
+    public function applicationData(Request $request){
+        $admin = Admin::orderBy("id","desc")->first();
+        $applicationData = ApplicationData::whereAdminId($admin->id)->whereDeletedAt(null)->with('applicationImages')->first();
+        return $this->responseOk("Application Datas",['application_datas' => $applicationData]);
     }
 
 }

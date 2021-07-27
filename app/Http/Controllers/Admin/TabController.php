@@ -27,6 +27,7 @@ use App\Http\Controllers\Admin\ResponseController;
 use App\Models\TierSetting;
 use App\Models\TierCondition;
 use App\User;
+use Excel;
 
 class TabController extends Controller
 {
@@ -321,6 +322,21 @@ class TabController extends Controller
             return response()->json($return_data);
         }
         
+
+    }
+
+    public function downloadUsers(Request $request){
+        $users = User::whereDeletedAt(null)->select('customer_id as Customer Id', 'mobile_number as Mobile Number','first_name as First Name','last_name as Last Name','email as Email Id','nationality as Nationality','dob as DOB', 'gender as Gender','is_active as Status',DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d') AS Join_On"),'customer_tier as Customer Tier','wallet_cash as Wallet Cash','reference_code as Customer Referral Code','reference_by as Referral By')->get()->toArray();
+
+        return $download =  Excel::create('export-users', function($excel) use ($users){
+
+            $excel->sheet('export-users', function($sheet) use ($users){
+
+                $sheet->fromArray($users);
+
+            });
+
+        })->download('csv');
 
     }
 

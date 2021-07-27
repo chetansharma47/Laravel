@@ -2,7 +2,6 @@
 
 namespace Yajra\DataTables\Transformers;
 
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
 class DataArrayTransformer
@@ -21,7 +20,7 @@ class DataArrayTransformer
             return $this->buildColumnByCollection($row, $columns, $type);
         }
 
-        return Arr::only($row, $columns);
+        return array_only($row, $columns);
     }
 
     /**
@@ -38,7 +37,7 @@ class DataArrayTransformer
         foreach ($columns->all() as $column) {
             if ($column[$type]) {
                 $title = $column['title'];
-                $data  = Arr::get($row, $column['data']);
+                $data  = array_get($row, $column['data']);
                 if ($type == 'exportable') {
                     $title    = $this->decodeContent($title);
                     $dataType = gettype($data);
