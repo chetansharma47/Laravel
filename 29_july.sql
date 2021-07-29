@@ -3,8 +3,8 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jul 27, 2021 at 05:58 PM
--- Server version: 5.7.34-0ubuntu0.18.04.1
+-- Generation Time: Jul 29, 2021 at 06:39 PM
+-- Server version: 5.7.35-0ubuntu0.18.04.1
 -- PHP Version: 7.2.34-10+ubuntu18.04.1+deb.sury.org+1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -41,7 +41,7 @@ CREATE TABLE `admins` (
 --
 
 INSERT INTO `admins` (`id`, `name`, `email`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'admin', 'adminn@yopmail.com', '$2y$10$nbvTNJDjH6yIpVurSdVaOOeYAyIi8spa8oc.cNpx7mp4/oCV679A6', '1CxJ5NGTsi1VbLt9gptzjdlMbTGnasX3XhYa5lDWDDhxjxcRDmdHogsdXkzgKZCX', NULL, '2021-07-27 06:41:56');
+(1, 'admin', 'adminn@yopmail.com', '$2y$10$nbvTNJDjH6yIpVurSdVaOOeYAyIi8spa8oc.cNpx7mp4/oCV679A6', 'WCHpWPl3SD0oT7EmMkwYV6Nq198qeHhEDBhYzgaORM7lUDs2zC4pH9LtBKoSwArs', NULL, '2021-07-29 04:59:05');
 
 -- --------------------------------------------------------
 
@@ -121,7 +121,10 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (18, '2021_07_13_090942_create_tier_settings_table', 4),
 (19, '2021_07_13_091013_create_tier_conditions_table', 4),
 (20, '2021_07_27_104038_create_application_datas_table', 5),
-(21, '2021_07_27_104625_create_application_images_table', 6);
+(21, '2021_07_27_104625_create_application_images_table', 6),
+(22, '2021_07_28_121136_create_venus_table', 7),
+(23, '2021_07_28_125108_create_venue_users_table', 8),
+(24, '2021_07_29_120346_create_wallet_cashbacks_table', 9);
 
 -- --------------------------------------------------------
 
@@ -284,7 +287,9 @@ CREATE TABLE `tier_conditions` (
 --
 
 INSERT INTO `tier_conditions` (`id`, `unique_id_by_tier`, `tier_setting_id`, `tier_name`, `from_amount`, `to_amount`, `color_code`, `deleted_at`, `created_at`, `updated_at`) VALUES
-(1, '1', 1, 'ab', 4, 8, '#ff0000', NULL, '2021-07-23 02:18:57', '2021-07-23 02:22:02');
+(1, '1', 1, 'ab', 4, 8, '#ff0000', '2021-07-28 07:21:57', '2021-07-23 02:18:57', '2021-07-28 07:21:57'),
+(2, '2', 1, 'dd', 110, 120, '#ff0000', '2021-07-28 07:24:35', '2021-07-28 07:23:40', '2021-07-28 07:24:35'),
+(3, '3', 1, 'Silvert', 1, 500, '#0cbb61', NULL, '2021-07-29 01:30:07', '2021-07-29 07:23:09');
 
 -- --------------------------------------------------------
 
@@ -352,8 +357,99 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `image`, `country_code`, `mobile_number`, `first_name`, `last_name`, `email`, `password`, `city_of_residence`, `nationality`, `dob`, `gender`, `reference_code`, `device_type`, `device_token`, `reset_password_token`, `verify_email_token`, `is_block`, `is_verify`, `refresh_token`, `remember_token`, `is_active`, `customer_id`, `customer_tier`, `wallet_cash`, `reference_by`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, '0723202107514060fa750c22873.png', '+91', '16516511545', 'lp', 'lok', 'abc1@yopmail.com', '$2y$10$FIlNFNG1RZMSjY3JRTG0vOhahKPY6/RPMZFhr.WW3Ah8bivyJMv8m', 'Mohali', 'IN', '2012-12-12', 'Male', NULL, 'Ios', 'jaskfjsajfljal', NULL, 'jnYu0hu9G384mwaQu3N6wZEzCgG9YTHkjUHE2BWPFpq2aXDKmVJKqEjosKLbWczr', '0', '1', NULL, NULL, 'Inactive', 40551173578, 'ab', NULL, NULL, '2021-07-23 02:21:40', '2021-07-26 06:57:33', NULL),
-(2, '0723202107540460fa759cbb56c.png', '+91', '1234567890', 'fsdfdsfdfjffghfgh', 'dfsf', 'abc2@yopmail.com', '$2y$10$JU7vFu5UPuazyR1fgtqLbOjgrsf74CKilVwIrSf5P2rTbVBaYl0ga', 'Mohali', 'vvbb', '2012-12-12', 'Male', '40551173578', 'None', NULL, NULL, 'mfl8RAz1Y6eDIBCQ3kOLcpcNkalyUtHnlDlnWM8wME0IPixTRnvJnb3CqLa9jbGW', '0', '1', NULL, NULL, 'Active', 13652686819, 'ab', NULL, 'lp lo', '2021-07-23 02:24:04', '2021-07-26 07:30:27', NULL);
+(1, '0723202107514060fa750c22873.png', '+91', '16516511545', 'lpe', 'lo', 'abc1@yopmail.com', '$2y$10$FIlNFNG1RZMSjY3JRTG0vOhahKPY6/RPMZFhr.WW3Ah8bivyJMv8m', 'Mohali', 'IN', '2012-12-12', 'Male', NULL, 'Ios', 'jaskfjsajfljal', NULL, 'jnYu0hu9G384mwaQu3N6wZEzCgG9YTHkjUHE2BWPFpq2aXDKmVJKqEjosKLbWczr', '0', '1', NULL, NULL, 'Inactive', 40551173578, 'ab', NULL, NULL, '2021-07-23 02:21:40', '2021-07-28 07:21:57', NULL),
+(2, '0723202107540460fa759cbb56c.png', '+91', '1234567890', 'fsdfdsfdfjffghfgh', 'dfs', 'abc2@yopmail.com', '$2y$10$JU7vFu5UPuazyR1fgtqLbOjgrsf74CKilVwIrSf5P2rTbVBaYl0ga', 'Mohali', 'vvbb', '2012-12-12', 'Male', '40551173578', 'None', NULL, NULL, 'mfl8RAz1Y6eDIBCQ3kOLcpcNkalyUtHnlDlnWM8wME0IPixTRnvJnb3CqLa9jbGW', '1', '1', NULL, NULL, 'Active', 13652686819, 'ab', NULL, 'lpe lo', '2021-07-23 02:24:04', '2021-07-29 01:32:44', NULL),
+(3, '0723202107514060fa750c22873.png', '+91', '16516511545', 'lpe', 'lo', 'abc1@yopmail.com', '$2y$10$FIlNFNG1RZMSjY3JRTG0vOhahKPY6/RPMZFhr.WW3Ah8bivyJMv8m', 'Mohali', 'IN', '2012-12-12', 'Male', NULL, 'Ios', 'jaskfjsajfljal', NULL, 'jnYu0hu9G384mwaQu3N6wZEzCgG9YTHkjUHE2BWPFpq2aXDKmVJKqEjosKLbWczr', '0', '1', NULL, NULL, 'Inactive', 40551173578, 'ab', NULL, NULL, '2021-07-23 02:21:40', '2021-07-28 07:21:57', NULL),
+(4, '0723202107540460fa759cbb56c.png', '+91', '1234567890', 'fsdfdsfdfjffghfgh', 'dfs', 'abc2@yopmail.com', '$2y$10$JU7vFu5UPuazyR1fgtqLbOjgrsf74CKilVwIrSf5P2rTbVBaYl0ga', 'Mohali', 'vvbb', '2012-12-12', 'Male', '40551173578', 'None', NULL, NULL, 'mfl8RAz1Y6eDIBCQ3kOLcpcNkalyUtHnlDlnWM8wME0IPixTRnvJnb3CqLa9jbGW', '1', '1', NULL, NULL, 'Active', 13652686819, 'ab', NULL, 'lpe lo', '2021-07-23 02:24:04', '2021-07-29 01:32:44', NULL),
+(5, '0723202107514060fa750c22873.png', '+91', '16516511545', 'lpe', 'lo', 'abc1@yopmail.com', '$2y$10$FIlNFNG1RZMSjY3JRTG0vOhahKPY6/RPMZFhr.WW3Ah8bivyJMv8m', 'Mohali', 'IN', '2012-12-12', 'Male', NULL, 'Ios', 'jaskfjsajfljal', NULL, 'jnYu0hu9G384mwaQu3N6wZEzCgG9YTHkjUHE2BWPFpq2aXDKmVJKqEjosKLbWczr', '0', '1', NULL, NULL, 'Inactive', 40551173578, 'ab', NULL, NULL, '2021-07-23 02:21:40', '2021-07-28 07:21:57', NULL),
+(6, '0723202107540460fa759cbb56c.png', '+91', '1234567890', 'fsdfdsfdfjffghfgh', 'dfs', 'abc2@yopmail.com', '$2y$10$JU7vFu5UPuazyR1fgtqLbOjgrsf74CKilVwIrSf5P2rTbVBaYl0ga', 'Mohali', 'vvbb', '2012-12-12', 'Male', '40551173578', 'None', NULL, NULL, 'mfl8RAz1Y6eDIBCQ3kOLcpcNkalyUtHnlDlnWM8wME0IPixTRnvJnb3CqLa9jbGW', '0', '1', NULL, NULL, 'Active', 13652686819, 'ab', NULL, 'lpe lo', '2021-07-23 02:24:04', '2021-07-28 07:21:57', NULL),
+(7, '0723202107514060fa750c22873.png', '+91', '16516511545', 'lpe', 'lo', 'abc1@yopmail.com', '$2y$10$FIlNFNG1RZMSjY3JRTG0vOhahKPY6/RPMZFhr.WW3Ah8bivyJMv8m', 'Mohali', 'IN', '2012-12-12', 'Male', NULL, 'Ios', 'jaskfjsajfljal', NULL, 'jnYu0hu9G384mwaQu3N6wZEzCgG9YTHkjUHE2BWPFpq2aXDKmVJKqEjosKLbWczr', '0', '1', NULL, NULL, 'Inactive', 40551173578, 'ab', NULL, NULL, '2021-07-23 02:21:40', '2021-07-28 07:21:57', NULL),
+(8, '0723202107540460fa759cbb56c.png', '+91', '1234567890', 'fsdfdsfdfjffghfgh', 'dfs', 'abc2@yopmail.com', '$2y$10$JU7vFu5UPuazyR1fgtqLbOjgrsf74CKilVwIrSf5P2rTbVBaYl0ga', 'Mohali', 'vvbb', '2012-12-12', 'Male', '40551173578', 'None', NULL, NULL, 'mfl8RAz1Y6eDIBCQ3kOLcpcNkalyUtHnlDlnWM8wME0IPixTRnvJnb3CqLa9jbGW', '0', '1', NULL, NULL, 'Active', 13652686819, 'ab', NULL, 'lpe lo', '2021-07-23 02:24:04', '2021-07-28 07:21:57', NULL),
+(9, '0723202107514060fa750c22873.png', '+91', '16516511545', 'lpe', 'lo', 'abc1@yopmail.com', '$2y$10$FIlNFNG1RZMSjY3JRTG0vOhahKPY6/RPMZFhr.WW3Ah8bivyJMv8m', 'Mohali', 'IN', '2012-12-12', 'Male', NULL, 'Ios', 'jaskfjsajfljal', NULL, 'jnYu0hu9G384mwaQu3N6wZEzCgG9YTHkjUHE2BWPFpq2aXDKmVJKqEjosKLbWczr', '0', '1', NULL, NULL, 'Inactive', 40551173578, 'ab', NULL, NULL, '2021-07-23 02:21:40', '2021-07-28 07:21:57', NULL),
+(10, '0723202107540460fa759cbb56c.png', '+91', '1234567890', 'fsdfdsfdfjffghfgh', 'dfs', 'abc2@yopmail.com', '$2y$10$JU7vFu5UPuazyR1fgtqLbOjgrsf74CKilVwIrSf5P2rTbVBaYl0ga', 'Mohali', 'vvbb', '2012-12-12', 'Male', '40551173578', 'None', NULL, NULL, 'mfl8RAz1Y6eDIBCQ3kOLcpcNkalyUtHnlDlnWM8wME0IPixTRnvJnb3CqLa9jbGW', '0', '1', NULL, NULL, 'Active', 13652686819, 'ab', NULL, 'lpe lo', '2021-07-23 02:24:04', '2021-07-28 07:21:57', NULL),
+(11, '0723202107514060fa750c22873.png', '+91', '16516511545', 'lpe', 'lo', 'abc1@yopmail.com', '$2y$10$FIlNFNG1RZMSjY3JRTG0vOhahKPY6/RPMZFhr.WW3Ah8bivyJMv8m', 'Mohali', 'IN', '2012-12-12', 'Male', NULL, 'Ios', 'jaskfjsajfljal', NULL, 'jnYu0hu9G384mwaQu3N6wZEzCgG9YTHkjUHE2BWPFpq2aXDKmVJKqEjosKLbWczr', '0', '1', NULL, NULL, 'Inactive', 40551173578, 'ab', NULL, NULL, '2021-07-23 02:21:40', '2021-07-28 07:21:57', NULL),
+(12, '0723202107540460fa759cbb56c.png', '+91', '1234567890', 'fsdfdsfdfjffghfgh', 'dfs', 'abc2@yopmail.com', '$2y$10$JU7vFu5UPuazyR1fgtqLbOjgrsf74CKilVwIrSf5P2rTbVBaYl0ga', 'Mohali', 'vvbb', '2012-12-12', 'Male', '40551173578', 'None', NULL, NULL, 'mfl8RAz1Y6eDIBCQ3kOLcpcNkalyUtHnlDlnWM8wME0IPixTRnvJnb3CqLa9jbGW', '0', '1', NULL, NULL, 'Active', 13652686819, 'ab', NULL, 'lpe lo', '2021-07-23 02:24:04', '2021-07-28 07:21:57', NULL),
+(13, '0723202107514060fa750c22873.png', '+91', '16516511545', 'lpe', 'lo', 'abc1@yopmail.com', '$2y$10$FIlNFNG1RZMSjY3JRTG0vOhahKPY6/RPMZFhr.WW3Ah8bivyJMv8m', 'Mohali', 'IN', '2012-12-12', 'Male', NULL, 'Ios', 'jaskfjsajfljal', NULL, 'jnYu0hu9G384mwaQu3N6wZEzCgG9YTHkjUHE2BWPFpq2aXDKmVJKqEjosKLbWczr', '0', '1', NULL, NULL, 'Inactive', 40551173578, 'ab', NULL, NULL, '2021-07-23 02:21:40', '2021-07-28 07:21:57', NULL),
+(14, '0723202107540460fa759cbb56c.png', '+91', '1234567890', 'fsdfdsfdfjffghfgh', 'dfs', 'abc2@yopmail.com', '$2y$10$JU7vFu5UPuazyR1fgtqLbOjgrsf74CKilVwIrSf5P2rTbVBaYl0ga', 'Mohali', 'vvbb', '2012-12-12', 'Male', '40551173578', 'None', NULL, NULL, 'mfl8RAz1Y6eDIBCQ3kOLcpcNkalyUtHnlDlnWM8wME0IPixTRnvJnb3CqLa9jbGW', '0', '1', NULL, NULL, 'Active', 13652686819, 'ab', NULL, 'lpe lo', '2021-07-23 02:24:04', '2021-07-28 07:21:57', NULL),
+(15, '0723202107514060fa750c22873.png', '+91', '16516511545', 'lpe', 'lo', 'abc1@yopmail.com', '$2y$10$FIlNFNG1RZMSjY3JRTG0vOhahKPY6/RPMZFhr.WW3Ah8bivyJMv8m', 'Mohali', 'IN', '2012-12-12', 'Male', NULL, 'Ios', 'jaskfjsajfljal', NULL, 'jnYu0hu9G384mwaQu3N6wZEzCgG9YTHkjUHE2BWPFpq2aXDKmVJKqEjosKLbWczr', '0', '1', NULL, NULL, 'Inactive', 40551173578, 'ab', NULL, NULL, '2021-07-23 02:21:40', '2021-07-28 07:21:57', NULL),
+(16, '0723202107540460fa759cbb56c.png', '+91', '1234567890', 'fsdfdsfdfjffghfgh', 'dfs', 'ggg@yopmail.com', '$2y$10$JU7vFu5UPuazyR1fgtqLbOjgrsf74CKilVwIrSf5P2rTbVBaYl0ga', 'Mohali', 'vvbb', '2012-12-12', 'Male', '40551173578', 'None', NULL, NULL, 'mfl8RAz1Y6eDIBCQ3kOLcpcNkalyUtHnlDlnWM8wME0IPixTRnvJnb3CqLa9jbGW', '0', '1', NULL, NULL, 'Active', 13652686819, 'ab', NULL, 'lpe lo', '2021-07-23 02:24:04', '2021-07-28 07:21:57', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `venue_users`
+--
+
+CREATE TABLE `venue_users` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `venu_id` int(10) UNSIGNED DEFAULT NULL,
+  `username` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `password` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `venue_name` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `status` enum('None','Active','Inactive') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'None',
+  `device_model` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mac_address` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `authorized_status` enum('Unauthorized','Authorized') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Unauthorized',
+  `date_time` datetime DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `venue_users`
+--
+
+INSERT INTO `venue_users` (`id`, `venu_id`, `username`, `password`, `venue_name`, `status`, `device_model`, `mac_address`, `authorized_status`, `date_time`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(1, 1, 'abc', '123456', 'Venue1', 'Active', 'Nokia', '11:250:11:00', 'Unauthorized', '2021-07-29 15:54:00', NULL, '2021-07-29 01:51:31', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `venus`
+--
+
+CREATE TABLE `venus` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `admin_id` int(10) UNSIGNED NOT NULL,
+  `venue_name` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `address` text COLLATE utf8mb4_unicode_ci,
+  `venue_description` longtext COLLATE utf8mb4_unicode_ci,
+  `phone_number` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `google_map_location_link` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `book_now_link` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `image` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `menu_link` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `status` enum('None','Active','Inactive') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `venus`
+--
+
+INSERT INTO `venus` (`id`, `admin_id`, `venue_name`, `address`, `venue_description`, `phone_number`, `google_map_location_link`, `book_now_link`, `image`, `menu_link`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(1, 1, 'Venue1', 'Mohali', 'Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum ', '156151561561', 'https://www.google.com/maps/place/Deftsoft/@30.6996255,76.6908335,15z/data=!4m2!3m1!1s0x0:0x6d3c38ef8c74065?sa=X&ved=2ahUKEwj7otaEvYfyAhXFyDgGHduSALsQ_BIwG3oECFUQBQ', 'https://www.google.com/maps/place/Deftsoft/@30.6996255,76.6908335,15z/data=!4m2!3m1!1s0x0:0x6d3c38ef8c74065?sa=X&ved=2ahUKEwj7otaEvYfyAhXFyDgGHduSALsQ_BIwG3oECFUQBQ', 'image.jpg', 'www.google.com', 'Active', NULL, NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `wallet_cashbacks`
+--
+
+CREATE TABLE `wallet_cashbacks` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `admin_id` int(10) UNSIGNED NOT NULL,
+  `bonus` double NOT NULL,
+  `bonus_text` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `refer_friend` double NOT NULL,
+  `refer_friend_text` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Indexes for dumped tables
@@ -452,6 +548,27 @@ ALTER TABLE `users`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `venue_users`
+--
+ALTER TABLE `venue_users`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `venue_users_venu_id_foreign` (`venu_id`);
+
+--
+-- Indexes for table `venus`
+--
+ALTER TABLE `venus`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `venus_admin_id_foreign` (`admin_id`);
+
+--
+-- Indexes for table `wallet_cashbacks`
+--
+ALTER TABLE `wallet_cashbacks`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `wallet_cashbacks_admin_id_foreign` (`admin_id`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -474,7 +591,7 @@ ALTER TABLE `application_images`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 --
 -- AUTO_INCREMENT for table `oauth_clients`
 --
@@ -494,7 +611,7 @@ ALTER TABLE `otps`
 -- AUTO_INCREMENT for table `tier_conditions`
 --
 ALTER TABLE `tier_conditions`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT for table `tier_settings`
 --
@@ -504,7 +621,22 @@ ALTER TABLE `tier_settings`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+--
+-- AUTO_INCREMENT for table `venue_users`
+--
+ALTER TABLE `venue_users`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+--
+-- AUTO_INCREMENT for table `venus`
+--
+ALTER TABLE `venus`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+--
+-- AUTO_INCREMENT for table `wallet_cashbacks`
+--
+ALTER TABLE `wallet_cashbacks`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 --
 -- Constraints for dumped tables
 --
@@ -532,6 +664,24 @@ ALTER TABLE `tier_conditions`
 --
 ALTER TABLE `tier_settings`
   ADD CONSTRAINT `tier_settings_admin_id_foreign` FOREIGN KEY (`admin_id`) REFERENCES `admins` (`id`);
+
+--
+-- Constraints for table `venue_users`
+--
+ALTER TABLE `venue_users`
+  ADD CONSTRAINT `venue_users_venu_id_foreign` FOREIGN KEY (`venu_id`) REFERENCES `venus` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `venus`
+--
+ALTER TABLE `venus`
+  ADD CONSTRAINT `venus_admin_id_foreign` FOREIGN KEY (`admin_id`) REFERENCES `admins` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `wallet_cashbacks`
+--
+ALTER TABLE `wallet_cashbacks`
+  ADD CONSTRAINT `wallet_cashbacks_admin_id_foreign` FOREIGN KEY (`admin_id`) REFERENCES `admins` (`id`) ON DELETE CASCADE;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

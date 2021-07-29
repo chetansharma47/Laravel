@@ -33,6 +33,21 @@
 		body {
 			background: #fff !important;
 		}
+		.scroll-text {
+			width: 403px;
+	    	overflow-y: auto;
+		    max-height:180px;
+		}
+		.venue_inputs {
+			position: relative;
+		}
+		img.upload_icon {
+			position: absolute;
+		    width: 30px;
+		    top: 35px;
+		    right: 20px;
+		    cursor: pointer;
+		}
 	</style>
 </head>
 <body>
@@ -87,66 +102,38 @@
 	<section class="mt-2 mb-5">
 		<div class="container-fluid">
 			<div class="row">
-				<div class="col-md-4">
+				<div class="col-md-6">
 					<div class="app_notification_bg" style="background-color: transparent;">
 						<h4>Base Cash Back Percentage</h4>
-						<div class="d-flex align-items-center">
-							<div class="venue_inputs mr-4">
-								<label style="width: 55px;">
-									Silver
-								</label>
-							</div>
-							<div class="venue_inputs mr-4">
-								<div class="d-flex">
-									<input type="text" class="form-control form-control-user" placeholder="" value="0.5" style="font-size: 14px !important; border-radius: 0px; width: 42px"/>
-									<input type="text" class="form-control form-control-user" placeholder="Percentage" value="%" style="font-size: 14px !important; border-radius: 0px; width: 42px"/>
+						<div class="scroll-text">
+							@if(!empty($tier))
+							@foreach($tier->tierConditions as $condition)
+							<div class="d-flex align-items-center">
+								<div class="venue_inputs mr-4">
+									<label style="width: 135px;">
+										{{$condition->tier_name}}
+									</label>
 								</div>
-							</div>
-							<div>
-								<a href="" class="btn btn-primary btn-user btn-block common_btn" style="    padding: 0px; font-size: 20px; width: 110px;">
-	                      			SAVE
-	                    		</a>
-							</div>
-						</div>	
-						<div class="d-flex align-items-center mt-2">
-							<div class="venue_inputs mr-4">
-								<label style="width: 55px;">
-									Gold
-								</label>
-							</div>
-							<div class="venue_inputs mr-4">
-								<div class="d-flex">
-									<input type="text" class="form-control form-control-user" placeholder="" value="1.0" style="font-size: 14px !important; border-radius: 0px; width: 42px"/>
-									<input type="text" class="form-control form-control-user" placeholder="Percentage" value="%" style="font-size: 14px !important; border-radius: 0px; width: 42px"/>
+								<div class="venue_inputs mr-4">
+									<div class="d-flex">
+										<input type="text" class="form-control form-control-user double tier_percentage" placeholder="" value="0.0" data-id="{{$condition->id}}" style="font-size: 14px !important; border-radius: 0px; width: 50px"/>
+										<input type="text" class="form-control form-control-user" placeholder="Percentage" data-id="{{$condition->id}}" value="%" style="font-size: 14px !important; border-radius: 0px; width: 42px" disabled/>
+									</div>
 								</div>
-							</div>
-							<div>
-								<a href="" class="btn btn-primary btn-user btn-block common_btn" style="padding: 0px; font-size: 20px; width: 110px;">
-	                      			SAVE
-	                    		</a>
-							</div>
-						</div>
-						<div class="d-flex align-items-center mt-2">
-							<div class="venue_inputs mr-4">
-								<label>
-									Diamond
-								</label>
-							</div>
-							<div class="venue_inputs mr-4">
-								<div class="d-flex">
-									<input type="text" class="form-control form-control-user" placeholder="" value="1.0" style="font-size: 14px !important; border-radius: 0px; width: 42px"/>
-									<input type="text" class="form-control form-control-user" placeholder="Percentage" value="%" style="font-size: 14px !important; border-radius: 0px; width: 42px"/>
+								<div>
+									<a href="javascript:void(0);" data-id="{{$condition->id}}" class="btn btn-primary btn-user btn-block common_btn tier_save_btn" style="padding: 0px; font-size: 20px; width: 110px;">
+		                      			SAVE
+		                    		</a>
 								</div>
-							</div>
-							<div>
-								<a href="" class="btn btn-primary btn-user btn-block common_btn" style="    padding: 0px; font-size: 20px; width: 110px;">
-	                      			SAVE
-	                    		</a>
-							</div>
+							</div>	
+							@endforeach()
+							@endif()
+							
+							
 						</div>
 					</div>
 				</div>
-				<div class="col-md-4">
+				<div class="col-md-6">
 					<div class="app_notification_bg" style="background-color: transparent;">
 						<h4>More Wallet Cash Backs</h4>
 						<div class="d-flex align-items-center">
@@ -157,8 +144,8 @@
 							</div>
 							<div class="venue_inputs mr-4">
 								<div class="d-flex">
-									<input type="text" class="form-control form-control-user" placeholder="" value="25" style="font-size: 14px !important; border-radius: 0px; width: 48px"/>
-									<input type="text" class="form-control form-control-user" placeholder="Percentage" value="AED" style="font-size: 14px !important; border-radius: 0px; width: 48px"/>
+									<input type="text" class="form-control form-control-user integer" placeholder="" value="25" style="font-size: 14px !important; border-radius: 0px; width: 106px"/>
+									<input type="text" class="form-control form-control-user" placeholder="Percentage" maxlength="3" value="AED" style="font-size: 14px !important; border-radius: 0px; width: 60px"/>
 								</div>
 							</div>
 							<div>
@@ -175,8 +162,8 @@
 							</div>
 							<div class="venue_inputs mr-4">
 								<div class="d-flex">
-									<input type="text" class="form-control form-control-user" placeholder="" value="25" style="font-size: 14px !important; border-radius: 0px; width: 48px"/>
-									<input type="text" class="form-control form-control-user" placeholder="Percentage" value="AED" style="font-size: 14px !important; border-radius: 0px; width: 48px"/>
+									<input type="text" class="form-control form-control-user integer" placeholder="" value="25" style="font-size: 14px !important; border-radius: 0px; width: 106px"/>
+									<input type="text" class="form-control form-control-user" placeholder="Percentage" maxlength="3" value="AED" style="font-size: 14px !important; border-radius: 0px; width: 60px"/>
 								</div>
 							</div>
 							<div>
@@ -232,12 +219,12 @@
 							<div class="d-flex justify-content-between" style="visibility: hidden;">
 								<li style="background-color: #ECECEC;">
 									<a href="javascript:void(0);">
-										<img src="../assets/img/icon.png" alt="icon"/>
+										<img src="{{url('public/admin/assets/img/icon.png')}}" alt="icon"/>
 									</a>
 								</li>
 								<li style="background-color: #ECECEC;">
 									<a href="javascript:void(0);">
-										<img src="../assets/img/icon1.png" alt="icon1"/>
+										<img src="{{url('public/admin/assets/img/icon1.png')}}" alt="icon1"/>
 									</a>
 								</li>
 							</div>
@@ -307,7 +294,8 @@
 							<label>
 								Image
 							</label>
-							<input type="email" class="form-control form-control-user" placeholder="Image" value="LadiesNight.jpg" disabled="" />
+							<input type="text" class="form-control form-control-user" title="LadiesNight.jpgsssssssssssdadadasdasdsadss" placeholder="Image" value="LadiesNight.jpgssssssssss...." disabled="true" />
+							<img src="{{url('public/upload_icon.png')}}" title="Click to upload image" alt="" class="upload_icon" />
 						</div>
 					</div>
 					<div class="row pr-3 pl-3 mt-3">
@@ -411,7 +399,7 @@
 								Cash Back Percentage
 							</label>
 							<div class="d-flex">
-									<input type="text" class="form-control form-control-user" placeholder="" value="1" style="border-radius: 0px; width: 70px; background-color: #F64141 !important; color: #fff !important;     padding: 0px 28px !important;"/>
+									<input type="text" class="form-control form-control-user" placeholder="" value="0" style="border-radius: 0px; width: 90px; background-color: #F64141 !important; color: #fff !important;     padding: 0px 28px !important;"/>
 									<input type="text" class="form-control form-control-user" placeholder="" value="%" style=" border-radius: 0px; width: 48px"/>
 							</div>
 						</div>
@@ -484,7 +472,7 @@
 
 	<!-- Atlantis DEMO methods, don't include it in your project! -->
 	<script src="{{url('public/admin/assets/js/setting-demo.js')}}"></script>
-	<script src="{{url('public/admin/assets/js/demo.js')}}"></script>
+<!-- 	<script src="{{url('public/admin/assets/js/demo.js')}}"></script> -->
 	<script>
       $(document).ready(function(){
         $('#timepicker').mdtimepicker();
@@ -503,32 +491,76 @@
         $('#timepicker14').mdtimepicker();
       });
     </script>
-	<script>
-		$('#lineChart').sparkline([102,109,120,99,110,105,115], {
-			type: 'line',
-			height: '70',
-			width: '100%',
-			lineWidth: '2',
-			lineColor: 'rgba(255, 255, 255, .5)',
-			fillColor: 'rgba(255, 255, 255, .15)'
+
+
+    <script type="text/javascript">
+	$(document).ready(function(){
+		$(document).on("keypress",".double",function (event) {
+	        return isNumber(event, this)
 		});
 
-		$('#lineChart2').sparkline([99,125,122,105,110,124,115], {
-			type: 'line',
-			height: '70',
-			width: '100%',
-			lineWidth: '2',
-			lineColor: 'rgba(255, 255, 255, .5)',
-			fillColor: 'rgba(255, 255, 255, .15)'
+		// THE SCRIPT THAT CHECKS IF THE KEY PRESSED IS A NUMERIC OR DECIMAL VALUE.
+		function isNumber(evt, element) {
+		    var charCode = (evt.which) ? evt.which : event.keyCode
+				if($(element).val().indexOf('.') != -1){
+					$(".double").attr("maxlength","4");	
+				}else{
+					$(".double").attr("maxlength","3");
+				}
+
+				console.log($(element).val())
+
+				
+		    if (            
+		        (charCode != 46 || $(element).val().indexOf('.') != -1) &&      // “.” CHECK DOT, AND ONLY ONE.
+		        (charCode < 48 || charCode > 57)){
+
+		        return false;
+			}else{
+
+			        return true;
+			}
+
+		}
+
+
+		$(document).on('keydown keyup change',".double", function(e){
+		    if ($(this).val() > 100 
+		        && e.keyCode !== 46 // keycode for delete
+		        && e.keyCode !== 8 // keycode for backspace
+		       ) {
+		       e.preventDefault();
+		       $(this).val(100);
+		    }
 		});
 
-		$('#lineChart3').sparkline([105,103,123,100,95,105,115], {
-			type: 'line',
-			height: '70',
-			width: '100%',
-			lineWidth: '2',
-			lineColor: 'rgba(255, 255, 255, .5)',
-			fillColor: 'rgba(255, 255, 255, .15)'
+
+
+		$('.integer').keypress(function (event) {
+	        return isInteger(event, this)
 		});
-	</script>	
+
+		// THE SCRIPT THAT CHECKS IF THE KEY PRESSED IS A NUMERIC OR DECIMAL VALUE.
+		function isInteger(evt, element) {
+		    var charCode = (evt.which) ? evt.which : event.keyCode
+			$(".integer").attr("maxlength","11");	
+
+			console.log($(element).val())
+
+				
+		    if (            
+		        (charCode != 46 || $(element).val().indexOf('.') == -1) &&      // “.” CHECK DOT, AND ONLY ONE.
+		        (charCode < 48 || charCode > 57)){
+
+		        return false;
+			}else{
+
+			        return true;
+			}
+
+		}
+
+	});
+</script>
+	
 </body>

@@ -129,6 +129,10 @@
 		    text-align: center;
 		    margin-top: 250px;
 		}
+
+		.app_checkboxes .checkmark {
+		    top: -15px;
+		}
 	</style>
 </head>
 <body>
@@ -190,6 +194,7 @@
 					</div>
 				</div>
 			</div>
+			<input type="hidden" name="selected_checkboxes" id="selected_checkboxes" value="">
 			<div class="row">
 				<div class="col-md-12">
 					<div class="d-flex">
@@ -289,10 +294,17 @@
 							</a>
 						</div>
 						<div>
-							<a href="" class="btn btn-primary btn-user btn-block common_btn" style="     font-size: 18px; width: 154px; margin-right: 15px; text-transform: none; padding: 8px 0;">
-								Block User
+							<a href="javascript:void(0)" class="btn btn-primary btn-user btn-block common_btn" id="blockUser" style="font-size: 18px; width: 154px; margin-right: 15px; text-transform: none; padding: 8px 0;">
+								Block Users
 							</a>
 						</div>
+
+						<div>
+							<a href="javascript:void(0)" class="btn btn-primary btn-user btn-block common_btn" id="unblock" style="font-size: 18px; width: 154px; margin-right: 15px; text-transform: none; padding: 8px 0;">
+								Unblock Users
+							</a>
+						</div>
+
 						<div>
 							<a href="" class="btn btn-primary btn-user btn-block common_btn" style="     font-size: 18px; width: 154px; margin-right: 15px; text-transform: none; padding: 8px 0;">
 								Activate User
@@ -331,7 +343,6 @@
 									<th>First Name</th>
 									<th>Last Name</th>
 									<th>Email ID</th>
-									<th>Password</th>
 									<th>Nationality</th>
 									<th>DOB</th>
 									<th>Gender</th>
@@ -341,6 +352,12 @@
 									<th>Wallet Cash</th>
 									<th>Customer Referral Code</th>
 									<th>Referred By</th>
+									<th>
+										<div class="d-flex align-items-center">
+											Select 
+	                                        <input type="checkbox" data-id = "0" class="select_all_checkbox" key_type="checkbox" style="margin-left: 17px; margin-top: 2px;">
+										</div>
+                                    </th>
 								</tr>
 							</thead>
 							<tbody>
@@ -1187,7 +1204,6 @@ chart.render();
             {data: 'first_name', name: 'first_name'},
             {data: 'last_name', name: 'last_name'},
             {data: 'email', name: 'email'},
-            {data: 'password', name: 'password'},
             {data: 'nationality', name: 'nationality'},
             {data: 'dob', name: 'dob'},
             {data: 'gender', name: 'gender'},
@@ -1222,6 +1238,27 @@ chart.render();
                 },
                 complete:function(){
 		          tdClick();
+		          	let selected_checkboxes = $("#selected_checkboxes").val();
+
+			        let split_selected_checkboxes = selected_checkboxes.split(",");
+
+			        split_selected_checkboxes = split_selected_checkboxes.filter(function (el) {
+				   		if(el == ""){
+				   			return el != "";
+				   		}else{
+				   			return el != null;
+				   		}
+					});
+
+			        for(let i=0; split_selected_checkboxes.length > i; i++){
+			          	$(".single_checkbox[data-id='"+split_selected_checkboxes[i]+"']").prop("checked", true);
+
+			        }
+					if($(".single_checkbox:not(:checked)").length > 0){
+						$(".select_all_checkbox").prop("checked",false);
+					}else{
+						$(".select_all_checkbox").prop("checked",true);
+					}
 		        }
 
             },
@@ -1232,7 +1269,6 @@ chart.render();
 		        $( row ).find('td:eq(2)').attr('data-id', data['id']).attr('key_type','first_name').addClass('td_click');
 		        $( row ).find('td:eq(3)').attr('data-id', data['id']).attr('key_type','last_name').addClass('td_click');
 		        $( row ).find('td:eq(4)').attr('data-id', data['id']).attr('key_type','email').addClass('td_click');
-		        $( row ).find('td:eq(5)').attr('data-id', data['id']).attr('key_type','password').addClass('td_click');
 		        $( row ).find('td:eq(6)').attr('data-id', data['id']).attr('key_type','nationality').addClass('td_click');
 		        $( row ).find('td:eq(7)').attr('data-id', data['id']).attr('key_type','dob').addClass('td_click');
 		        $( row ).find('td:eq(8)').attr('data-id', data['id']).attr('key_type','gender').addClass('td_click');
@@ -1250,7 +1286,6 @@ chart.render();
 	            {data: 'first_name', name: 'first_name'},
 	            {data: 'last_name', name: 'last_name'},
 	            {data: 'email', name: 'email'},
-	            {data: 'password', name: 'password'},
 	            {data: 'nationality', name: 'nationality'},
 	            {data: 'dob', name: 'dob'},
 	            {data: 'gender', name: 'gender'},
@@ -1260,13 +1295,22 @@ chart.render();
 	            {data: 'wallet_cash', name: 'wallet_cash'},
 	            {data: 'reference_code', name: 'reference_code'},
 	            {data: 'reference_by', name: 'reference_by'},
+	            {data: 'select', name: 'select', orderable: false, searchable: false},
 	            // {data: 'action', name: 'action', orderable: false, searchable: false},
             ]
  
         });
 
         $("#search_btn").on("click",function(){
-        	let joined_from = $("#joined_from").val();
+        	getData();
+        });
+
+    } );
+      </script>
+
+      <script type="text/javascript">
+      	function getData(){
+      		let joined_from = $("#joined_from").val();
         	let joined_to = $("#joined_to").val();
         	let gender = $("#gender").val();
         	let status = $("#status").val();
@@ -1291,7 +1335,38 @@ chart.render();
                 	'tier' : tier,
                 	'email' : email,
                 	'mobile_number' : mobile_number
-                }
+                },
+                complete:function(){
+		          tdClick();
+
+		          	let selected_checkboxes = $("#selected_checkboxes").val();
+
+			        let split_selected_checkboxes = selected_checkboxes.split(",");
+
+			        split_selected_checkboxes = split_selected_checkboxes.filter(function (el) {
+				   		if(el == ""){
+				   			return el != "";
+				   		}else{
+				   			return el != null;
+				   		}
+					});
+
+			        for(let i=0; split_selected_checkboxes.length > i; i++){
+			          	$(".single_checkbox[data-id='"+split_selected_checkboxes[i]+"']").prop("checked", true);
+
+			        }
+					if($(".single_checkbox:not(:checked)").length > 0){
+						$(".select_all_checkbox").prop("checked",false);
+					}else{
+						$(".select_all_checkbox").prop("checked",true);
+					}
+
+					if($(".single_checkbox:not(:checked)").length > 0){
+						$(".select_all_checkbox").prop("checked",false);
+					}else{
+						$(".select_all_checkbox").prop("checked",true);
+					}
+		        }
             },
             createdRow: function( row, data, dataIndex ) {
 
@@ -1300,7 +1375,6 @@ chart.render();
 		        $( row ).find('td:eq(2)').attr('data-id', data['id']).attr('key_type','first_name').addClass('td_click');
 		        $( row ).find('td:eq(3)').attr('data-id', data['id']).attr('key_type','last_name').addClass('td_click');
 		        $( row ).find('td:eq(4)').attr('data-id', data['id']).attr('key_type','email').addClass('td_click');
-		        $( row ).find('td:eq(5)').attr('data-id', data['id']).attr('key_type','password').addClass('td_click');
 		        $( row ).find('td:eq(6)').attr('data-id', data['id']).attr('key_type','nationality').addClass('td_click');
 		        $( row ).find('td:eq(7)').attr('data-id', data['id']).attr('key_type','dob').addClass('td_click');
 		        $( row ).find('td:eq(8)').attr('data-id', data['id']).attr('key_type','gender').addClass('td_click');
@@ -1318,7 +1392,6 @@ chart.render();
 	            {data: 'first_name', name: 'first_name'},
 	            {data: 'last_name', name: 'last_name'},
 	            {data: 'email', name: 'email'},
-	            {data: 'password', name: 'password'},
 	            {data: 'nationality', name: 'nationality'},
 	            {data: 'dob', name: 'dob'},
 	            {data: 'gender', name: 'gender'},
@@ -1328,13 +1401,11 @@ chart.render();
 	            {data: 'wallet_cash', name: 'wallet_cash'},
 	            {data: 'reference_code', name: 'reference_code'},
 	            {data: 'reference_by', name: 'reference_by'},
-	            // {data: 'action', name: 'action', orderable: false, searchable: false},
+	            {data: 'select', name: 'select', orderable: false, searchable: false},
             ]
 	 
 	        });
-        });
-
-    } );
+      	}
       </script>
 
 
@@ -1509,10 +1580,7 @@ chart.render();
 						})
 					}
 
-					if(key_type == "password"){
-						$(this).attr("contenteditable","true");
-						$(this).text("");
-					}
+					
 
 				}
 			});
@@ -1529,12 +1597,14 @@ chart.render();
 					let selected_data_id = $(this).data("id");
 					let selected_key_name = $(this).attr("key_type");
 					let text = $(this).text();
+					let customer_id = $(".td_click[data-id='"+selected_data_id+"']").first().text();
 					let objectData = {
 
 					}
 					objectData.selected_data_id = selected_data_id;
 					objectData.selected_key_name = selected_key_name;
 					objectData.text = text;
+					objectData.customer_id = customer_id;
 
 					arrayData.push(objectData);
 					
@@ -1564,6 +1634,8 @@ chart.render();
 		              		$("#loaderModel").modal("hide");
 		              		$("#success_alert_text").text("Users has been updated successfully.");
 		              		$("#successModel").modal("show");
+
+		              		getData();
 		              	},500);
 		              },
 		              error: function(data, textStatus, xhr) {
@@ -1580,6 +1652,200 @@ chart.render();
 			$(".ok").on("click",function(){
 				$("#validationModel").modal("hide");
 			});
+
+			$(document).on("click",".select_all_checkbox",function(){
+				if($(this).prop("checked") == true){
+					$(".single_checkbox").prop("checked",true);
+
+					$(".single_checkbox:checked").each(function(){
+					   	let data_id = $(this).data("id").toString();
+					   	let selected_checkboxes = $("#selected_checkboxes").val();
+					   	let split_selected_checkboxes = selected_checkboxes.split(",");
+					   	split_selected_checkboxes = split_selected_checkboxes.filter(function (el) {
+					   		if(el == ""){
+					   			return el != "";
+					   		}else{
+					   			return el != null;
+					   		}
+						});
+					   	
+					   	if(split_selected_checkboxes.indexOf(data_id) == -1){
+					   		if(selected_checkboxes.length > 0){
+					   			$("#selected_checkboxes").val($("#selected_checkboxes").val() + "," + data_id);
+					   		}else{
+					   			$("#selected_checkboxes").val(data_id);
+					   		}
+					   	}
+					});
+
+				}else{
+					$(".single_checkbox").prop("checked",false);
+					$(".single_checkbox:not(:checked)").each(function(){
+					    let data_id = $(this).data("id").toString();
+					   	let selected_checkboxes = $("#selected_checkboxes").val();
+					   	let split_selected_checkboxes = selected_checkboxes.split(",");
+					   	split_selected_checkboxes = split_selected_checkboxes.filter(function (el) {
+					   		if(el == ""){
+					   			return el != "";
+					   		}else{
+					   			return el != null;
+					   		}
+						});
+
+					   	
+					   	if(split_selected_checkboxes.indexOf(data_id) != -1){
+					   		split_selected_checkboxes.splice(split_selected_checkboxes.indexOf(data_id),1);
+
+					   		if(split_selected_checkboxes.length > 0){
+					   			split_selected_checkboxes = split_selected_checkboxes.toString();
+					   			$("#selected_checkboxes").val(split_selected_checkboxes);
+					   		}else{
+					   			$("#selected_checkboxes").val("");
+					   		}
+					   	}
+					});
+				}
+			});
+
+			$(document).on("click",".single_checkbox",function(){
+				if($(this).prop("checked") == true){
+
+					let data_id = $(this).data("id").toString();
+				   	let selected_checkboxes = $("#selected_checkboxes").val();
+				   	let split_selected_checkboxes = selected_checkboxes.split(",");
+				   	split_selected_checkboxes = split_selected_checkboxes.filter(function (el) {
+				   		if(el == ""){
+				   			return el != "";
+				   		}else{
+				   			return el != null;
+				   		}
+					});
+				   	
+				   	if(split_selected_checkboxes.indexOf(data_id) == -1){
+				   		if(selected_checkboxes.length > 0){
+				   			$("#selected_checkboxes").val($("#selected_checkboxes").val() + "," + data_id);
+				   		}else{
+				   			$("#selected_checkboxes").val(data_id);
+				   		}
+				   	}
+
+				}else{
+
+					let data_id = $(this).data("id").toString();
+				   	let selected_checkboxes = $("#selected_checkboxes").val();
+				   	let split_selected_checkboxes = selected_checkboxes.split(",");
+				   	split_selected_checkboxes = split_selected_checkboxes.filter(function (el) {
+				   		if(el == ""){
+				   			return el != "";
+				   		}else{
+				   			return el != null;
+				   		}
+					});
+
+				   	
+				   	if(split_selected_checkboxes.indexOf(data_id) != -1){
+				   		split_selected_checkboxes.splice(split_selected_checkboxes.indexOf(data_id),1);
+
+				   		if(split_selected_checkboxes.length > 0){
+				   			split_selected_checkboxes = split_selected_checkboxes.toString();
+				   			$("#selected_checkboxes").val(split_selected_checkboxes);
+				   		}else{
+				   			$("#selected_checkboxes").val("");
+				   		}
+			   		}
+
+				}
+			});
+
+
+			$("#blockUser").on("click",function(){
+				let ids = $("#selected_checkboxes").val();
+				if(ids == "" || ids == null || ids == "undefiend"){
+					$("#alert_text").text("Please select checkbox for block users.");
+					$("#validationModel").modal("show");
+					$("#validationModel").unbind("click");
+					return false;
+				}
+				
+				var data = {
+	            	'_token': "{{csrf_token()}}",
+	            	"ids": ids
+	            };
+
+	          	$.ajax({
+		              url:"{{route('admin.blockUsers')}}",
+		              type:'POST',
+		              data:data,
+		              beforeSend:function(){
+		              	$("#loaderModel").modal("show");
+						$("#loaderModel").unbind("click");
+		              },
+		              success: function(res){
+		              	setTimeout(function(){
+		              		console.log(res)
+		              		$("#loaderModel").modal("hide");
+		              		$("#success_alert_text").text("Users has been blocked successfully.");
+		              		$("#successModel").modal("show");
+
+		              	},500);
+		              },
+		              error: function(data, textStatus, xhr) {
+		                if(data.status == 422){
+		                  var result = data.responseJSON;
+		                  alert('Something went worng.');
+		                  window.location.href = "";
+		                  return false;
+		                } 
+	              	}
+	            });
+
+			});
+
+			$("#unblock").on("click",function(){
+				let ids = $("#selected_checkboxes").val();
+				if(ids == "" || ids == null || ids == "undefiend"){
+					$("#alert_text").text("Please select checkbox for unblock users.");
+					$("#validationModel").modal("show");
+					$("#validationModel").unbind("click");
+					return false;
+				}
+				
+				var data = {
+	            	'_token': "{{csrf_token()}}",
+	            	"ids": ids
+	            };
+
+	          	$.ajax({
+		              url:"{{route('admin.unBlockUsers')}}",
+		              type:'POST',
+		              data:data,
+		              beforeSend:function(){
+		              	$("#loaderModel").modal("show");
+						$("#loaderModel").unbind("click");
+		              },
+		              success: function(res){
+		              	setTimeout(function(){
+		              		console.log(res)
+		              		$("#loaderModel").modal("hide");
+		              		$("#success_alert_text").text("Users has been un-blocked successfully.");
+		              		$("#successModel").modal("show");
+
+		              	},500);
+		              },
+		              error: function(data, textStatus, xhr) {
+		                if(data.status == 422){
+		                  var result = data.responseJSON;
+		                  alert('Something went worng.');
+		                  window.location.href = "";
+		                  return false;
+		                } 
+	              	}
+	            });
+
+			});
+
+
+
 		});
 	</script>
 

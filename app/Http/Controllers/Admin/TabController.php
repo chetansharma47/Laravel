@@ -28,6 +28,8 @@ use App\Models\TierSetting;
 use App\Models\TierCondition;
 use App\User;
 use Excel;
+use App\Models\Venu;
+use App\Models\VenueUser;
 
 class TabController extends Controller
 {
@@ -65,7 +67,28 @@ class TabController extends Controller
     public function customerTierNameRemove(Request $request){
         $admin = Auth()->guard('admin')->user();
         $tier_find = TierSetting::whereAdminId($admin->id)->first();
-        TierCondition::where("unique_id_by_tier","=",$request->unique_id_by_tier)->whereTierSettingId($tier_find->id)->update(['deleted_at' => Carbon::now()]);
+        if(!empty($tier_find)){
+
+            $tier_cond_find = TierCondition::where("unique_id_by_tier","=",$request->unique_id_by_tier)->whereTierSettingId($tier_find->id)->first();
+
+            if(!empty($tier_cond_find)){
+
+                $tier_cond_find->deleted_at = Carbon::now();
+                $tier_cond_find->update();
+
+                $first_tier_cond = TierCondition::whereTierSettingId($tier_find->id)->whereDeletedAt(null)->first();
+
+                if(!empty($first_tier_cond)){
+
+                    User::whereIn('customer_tier',array($tier_cond_find->tier_name))->update(['customer_tier' => $first_tier_cond->tier_name]);
+                }else{
+                    User::whereIn('customer_tier',array($tier_cond_find->tier_name))->update(['customer_tier' => null]);
+                }
+            }
+        }
+
+
+
         return "success";
     }
 
@@ -150,11 +173,114 @@ class TabController extends Controller
     	if($request->isMethod('GET')){
     		return view('admin.adding_venue_table');
     	}
+
+        if ($request->isMethod('POST')) {
+            $column = "id";
+            $asc_desc = $request->get("order")[0]['dir'];
+         
+        if($asc_desc == "asc"){
+            $asc_desc = "desc";
+        }else{
+            $asc_desc = "asc";
+        }
+
+        $order = $request->get("order")[0]['column'];
+        if($order == 0){
+            $column = "username";
+        }elseif($order == 1){
+            $column = "venue_name";
+        }elseif ($order == 2) {
+            $column = "device_model";
+        }elseif ($order == 3) {
+            $column = "mac_address";
+        }elseif ($order == 4) {
+            $column = "authorized_status";
+        }else{
+            $column = "date_time";
+        }
+
+        $data = VenueUser::select("*",DB::raw("DATE_FORMAT(date_time, '%d %M %Y %h:%i %p') AS date_time"))->orderBy($column,$asc_desc);
+        $total = $data->get()->count();
+
+        $search = $request->get("search")["value"];
+        $filter = $total;
+
+
+        if($search){
+            $data  = $data->where(function($query) use($search){
+                        $query->where('username', 'Like', '%'. $search . '%');
+                            $query->orWhere('venue_name', 'Like', '%' . $search . '%');
+                            $query->orWhere('device_model', 'Like', '%' . $search . '%');
+                            $query->orWhere('mac_address', 'Like', '%' . $search . '%');
+                            $query->orWhere('authorized_status', 'Like', '%' . $search . '%');
+                            $query->orWhere(DB::raw("DATE_FORMAT(date_time, '%d %M %Y %h:%i %p')"), 'Like', '%' . $search . '%');
+                            // ->orWhereHas('category', function($insideQuery) use ($search){
+                            //     return $insideQuery->where('category_name', 'like', '%'.$search.'%');
+                            // })
+                    });
+
+            $filter = $data->get()->count();
+                            
+        }
+
+        $data = $data->offset($request->start);
+        $data = $data->take($request->length);
+        $data = $data->get();
+
+
+        $start_from = $request->start;
+        if($start_from == 0){
+            $start_from  = 1;
+        }
+        if($start_from % 10 == 0){
+            $start_from = $start_from + 1;
+        }
+
+
+        foreach ($data as $k => $user_select) {
+                
+
+                /*$view_user = url('admin/view_user').'/'.base64_encode($user_select->id);
+                $edit_user = url('admin/edit-user').'/'.base64_encode($user_select->id);
+
+                $block_link = url('admin/block-user').'/'.base64_encode($user_select->id);
+
+                $delete_user = url('admin/delete-user').'/'.base64_encode($user_select->id);
+
+                if($user_select->block == 1){
+                    $hyper_link = '<a href="'.$block_link.'" class="btn btn-danger" title="Unblock user">Unblock</a>';
+                }else{
+                    $hyper_link = '<a href="'.$block_link.'" class="btn btn-danger" title="Block user">Block</a>';
+                }
+
+               $btn = '<a href="'.$view_user.'" class="btn btn-success" title="View user detail">View</a> <a href="'.$edit_user.'" class="btn btn-success" title="Update user detail">Edit</a>'.$hyper_link.'<a href="'.$delete_user.'" class="btn btn-danger" title="Delete user" onclick="return confirm(Do you really want to delete this user ?)">Delete</a>';
+
+
+                $user_select->action = $btn;*/
+                $user_select->selection = '<label class="app_checkboxes" data-id = "'.$user_select->id.'" key_type="checkbox">
+                                            <input type="checkbox" class="single_checkbox" data-id = "'.$user_select->id.'" key_type="checkbox">
+                                            <span class="checkmark" data-id = "'.$user_select->id.'" key_type="checkbox"></span>
+                                        </label>';
+                $user_select->DT_RowIndex = $start_from++;
+            }
+
+
+            $return_data = [
+                    "data" => $data,
+                    "draw" => (int)$request->draw,
+                    "recordsTotal" => $total,
+                    "recordsFiltered" => $filter,
+                    "input" => $request->all()
+            ];
+            return response()->json($return_data);
+        }
     }
 
     public function cashBack(Request $request){
     	if($request->isMethod('GET')){
-    		return view('admin.cash-back');
+            $admin = Auth::guard('admin')->user();
+            $tier = TierSetting::whereAdminId($admin->id)->with('tierConditions')->first();
+    		return view('admin.cash-back', compact('tier'));
     	}
     }
 
@@ -167,7 +293,7 @@ class TabController extends Controller
     	}
 
         if ($request->isMethod('POST')) {
-            $column = "customer_id";
+            $column = "id";
             $asc_desc = $request->get("order")[0]['dir'];
          
          if($asc_desc == "asc"){
@@ -177,7 +303,9 @@ class TabController extends Controller
          }
 
          $order = $request->get("order")[0]['column'];
-            if($order == 1){
+            if($order == 0){
+                $column = "customer_id";
+            }elseif($order == 1){
                 $column = "mobile_number";
             }elseif ($order == 2) {
                 $column = "first_name";
@@ -186,22 +314,20 @@ class TabController extends Controller
             }elseif ($order == 4) {
                 $column = "email";
             }elseif ($order == 5) {
-                $column = "password";
-            }elseif ($order == 6) {
                 $column = "nationality";
-            }elseif ($order == 7) {
+            }elseif ($order == 6) {
                 $column = "dob";
-            }elseif ($order == 8) {
+            }elseif ($order == 7) {
                 $column = "gender";
-            }elseif ($order == 9) {
+            }elseif ($order == 8) {
                 $column = "is_active";
-            }elseif ($order == 10) {
+            }elseif ($order == 9) {
                 $column = "created_at";
-            }elseif ($order == 11) {
+            }elseif ($order == 10) {
                 $column = "customer_tier";
-            }elseif ($order == 12) {
+            }elseif ($order == 11) {
                 $column = "wallet_cash";
-            }elseif ($order == 13) {
+            }elseif ($order == 12) {
                 $column = "reference_code";
             }else{
                 $column = "reference_by";
@@ -307,6 +433,10 @@ class TabController extends Controller
 
 
                 $user_select->action = $btn;*/
+                $user_select->select = '<label class="app_checkboxes" data-id = "'.$user_select->id.'" key_type="checkbox">
+                                            <input type="checkbox" class="single_checkbox" data-id = "'.$user_select->id.'" key_type="checkbox">
+                                            <span class="checkmark" data-id = "'.$user_select->id.'" key_type="checkbox"></span>
+                                        </label>';
                 $user_select->password = "************";
                 $user_select->DT_RowIndex = $start_from++;
             }
@@ -343,11 +473,42 @@ class TabController extends Controller
     public function updateUserData(Request $request){
         $data = $request->arrayData;
         foreach ($data as $d) {
-            User::whereId($d['selected_data_id'])->update([ $d['selected_key_name'] => $d['text'] ]);
+            $user_find = User::find($d['selected_data_id']);
+            $user_find->update([ $d['selected_key_name'] => $d['text'] ]);
+
+            if(isset($d['selected_key_name']) && $d['selected_key_name'] == "first_name"){
+                User::whereIn('reference_code',array($user_find->customer_id))->update(['reference_by' => $user_find->first_name . " " . $user_find->last_name]);
+            }else if(isset($d['selected_key_name']) && $d['selected_key_name'] == "last_name"){
+                User::whereIn('reference_code',array($user_find->customer_id))->update(['reference_by' => $user_find->first_name . " " . $user_find->last_name]);
+            }
         }
 
         return "success";
 
+    }
+
+    public function blockUsers(Request $request){
+        $ids = explode(",", $request->ids);
+        User::whereIn("id", $ids)->update(['is_block' => 1]);
+        return "success";
+
+    }
+
+    public function unBlockUsers(Request $request){
+        $ids = explode(",", $request->ids);
+        User::whereIn("id", $ids)->update(['is_block' => 0]);
+        return "success";
+    }
+
+    public function authorizedUnauthorized(Request $request){
+        $ids = explode(",", $request->ids);
+        if($request->type == "authorized"){
+            VenueUser::whereIn("id",$ids)->update(['authorized_status' => 'Authorized']);
+        }else{
+            VenueUser::whereIn("id",$ids)->update(['authorized_status' => 'Unauthorized']);
+        }
+
+        return ['status' => "success", "type" => $request->type];
     }
 
     public function addingVenue(Request $request){

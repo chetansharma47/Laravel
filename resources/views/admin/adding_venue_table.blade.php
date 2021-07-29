@@ -56,6 +56,59 @@
 		.no-arrow::after {
 			display: none !important;
 		}
+
+
+
+		#validationModel .modal-title{
+		    text-align: center;
+		    width: 100%;
+		    font-size: 20px;
+		    font-weight: 600;
+		}
+		#validationModel .modal-header {
+		    background-color: #5f5f5f;
+		    color: #fff;
+		    justify-content: center;
+		}
+
+		#validationModel .modal-body {
+			text-align: center;
+		}
+
+		#validationModel .modal-body p {
+			margin-bottom: 0rem;
+		}
+
+
+
+		#successModel .modal-title{
+		    text-align: center;
+		    width: 100%;
+		    font-size: 20px;
+		    font-weight: 600;
+		}
+		#successModel .modal-header {
+		    background-color: #5f5f5f;
+		    color: #fff;
+		    justify-content: center;
+		}
+
+		#successModel .modal-body {
+			text-align: center;
+		}
+
+		#successModel .modal-body p {
+			margin-bottom: 0rem;
+		}
+
+		div#loaderImg2 {
+		    position: absolute;
+		    left: 0;
+		    right: 0;
+		    text-align: center;
+		    margin-top: 250px;
+		}
+
 	</style>
 	<!-- CSS Files -->
 	<link rel="stylesheet" href="{{url('public/admin/assets/css/bootstrap.min.css')}}">
@@ -123,6 +176,7 @@
 		<div class="container">
 			<div class="table-responsive">
 				<table id="basic-datatables"  class="display table table-striped table-hover" >
+					<input type="hidden" name="selected_checkboxes" id="selected_checkboxes" value="">
 				<!-- 	<a href="" class="btn btn-primary btn-user btn-block common_btn"  style="width: 100px;padding: 4px 0 !important;font-size: 17px; text-transform: initial !important;position: absolute;
     right: 137px;
     margin-top: 0px;
@@ -137,128 +191,83 @@
 							<th>Mac Address</th>
 							<th>Status</th>
 							<th>Date</th>
-							<th class="text-center no-arrow">Selection</th>
+							<th class="text-center no-arrow">
+								<div class="d-flex align-items-center">
+									Selecttion 
+	                                <input type="checkbox" data-id = "0" class="select_all_checkbox" key_type="checkbox" style="margin-left: 17px; margin-top: 2px;">
+								</div>
+							</th>
 						</tr>
 					</thead>
 					<tbody>
-						<tr>
-							<td>Dorie</td>
-							<td>Salt & Caramel</td>
-							<td>iPad 8</td>
-							<td>1:23:23:23:23:2</td>
-							<td>Unauthorized</td>
-							<td>21 June 2021 8:00 AM</td>
-							<td>
-								<label class="app_checkboxes">
-									<!-- <div class="checkbox-text">Push</div> -->
-									<input type="checkbox" checked="checked">
-									<span class="checkmark"></span>
-								</label>
-							</td>
-						</tr>
-						<tr>
-							<td>Dorie</td>
-							<td>Salt & Caramel</td>
-							<td>iPad 8</td>
-							<td>1:23:23:23:23:2</td>
-							<td>Authorized</td>
-							<td>21 June 2021 8:00 AM</td>
-							<td>
-								<label class="app_checkboxes">
-									<!-- <div class="checkbox-text">Push</div> -->
-									<input type="checkbox" checked="checked">
-									<span class="checkmark"></span>
-								</label>
-							</td>
-						</tr>
-						<tr>
-							<td>Dorie</td>
-							<td>Salt & Caramel</td>
-							<td>iPad 8</td>
-							<td>1:23:23:23:23:2</td>
-							<td>Unauthorized</td>
-							<td>21 June 2021 8:00 AM</td>
-							<td>
-								<label class="app_checkboxes">
-									<!-- <div class="checkbox-text">Push</div> -->
-									<input type="checkbox" checked="checked">
-									<span class="checkmark"></span>
-								</label>
-							</td>
-						</tr>
-						<tr>
-							<td>Dorie</td>
-							<td>Salt & Caramel</td>
-							<td>iPad 8</td>
-							<td>1:23:23:23:23:2</td>
-							<td>Unauthorized</td>
-							<td>21 June 2021 8:00 AM</td>
-							<td>
-								<label class="app_checkboxes">
-									<!-- <div class="checkbox-text">Push</div> -->
-									<input type="checkbox" checked="checked">
-									<span class="checkmark"></span>
-								</label>
-							</td>
-						</tr>
-						<tr>
-							<td>Dorie</td>
-							<td>Salt & Caramel</td>
-							<td>iPad 8</td>
-							<td>1:23:23:23:23:2</td>
-							<td>Authorized</td>
-							<td>21 June 2021 8:00 AM</td>
-							<td>
-								<label class="app_checkboxes">
-									<!-- <div class="checkbox-text">Push</div> -->
-									<input type="checkbox" checked="checked">
-									<span class="checkmark"></span>
-								</label>
-							</td>
-						</tr>
-						<tr>
-							<td>Dorie</td>
-							<td>Salt & Caramel</td>
-							<td>iPad 8</td>
-							<td>1:23:23:23:23:2</td>
-							<td>Unauthorized</td>
-							<td>21 June 2021 8:00 AM</td>
-							<td>
-								<label class="app_checkboxes">
-									<!-- <div class="checkbox-text">Push</div> -->
-									<input type="checkbox" checked="checked">
-									<span class="checkmark"></span>
-								</label>
-							</td>
-						</tr>
-						<tr>
-							<td>Dorie</td>
-							<td>Salt & Caramel</td>
-							<td>iPad 8</td>
-							<td>1:23:23:23:23:2</td>
-							<td>Authorized</td>
-							<td>21 June 2021 8:00 AM</td>
-							<td>
-								<label class="app_checkboxes">
-									<!-- <div class="checkbox-text">Push</div> -->
-									<input type="checkbox" checked="checked">
-									<span class="checkmark"></span>
-								</label>
-							</td>
-						</tr>
+						
 					</tbody>
 				</table>
 			</div>
 			<div class="d-flex mt-3" style="margin-left: 14px;">
-				<a href="" class="btn btn-primary btn-user btn-block common_btn mr-3" style="width: 28%; text-transform: none; font-size: 20px;">
+				<a href="javascript:void(0);" class="btn btn-primary btn-user btn-block common_btn mr-3 authorizedUnauthorized" type="authorized" style="width: 28%; text-transform: none; font-size: 20px;">
 	                Authorize
 	           </a>
-	           <a href="" class="btn btn-primary btn-user btn-block common_btn mt-0" style="width: 28%; text-transform: none; font-size: 20px;">
+	           <a href="javascript:void(0);" class="btn btn-primary btn-user btn-block common_btn mt-0 authorizedUnauthorized" type="unauthorized" style="width: 28%; text-transform: none; font-size: 20px;">
 	                Unauthorize
 	           </a>
 			</div>
 		</div>
 	</section>
+
+
+	<div class="modal fade" id="validationModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Alert</h5>
+        <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button> -->
+      </div>
+      <div class="modal-body">
+        <p id="alert_text">Info Text</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary ok" style="background-color: #3ABD6F!important; border: none; border-radius: 50px; color: #fff;"  data-dismiss="modal">Ok</button>
+       <!--  <button type="button" class="btn btn-primary">Save changes</button> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="successModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Information</h5>
+        <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button> -->
+      </div>
+      <div class="modal-body">
+        <p id="success_alert_text">Info Text</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary ok" style="background-color: #3ABD6F!important; border: none; border-radius: 50px; color: #fff;"  data-dismiss="modal">Ok</button>
+       <!--  <button type="button" class="btn btn-primary">Save changes</button> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div id="loaderModel" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <div class="loaderImg2" id="loaderImg2">
+               <img src = "{{url('public/loader.gif')}}">
+            </div>
+
+  </div>
+</div>
+
 <!--   Core JS Files   -->
 	<script src="{{url('public/admin/assets/js/core/jquery.3.2.1.min.js')}}"></script>
 	<script src="{{url('public/admin/assets/js/core/popper.min.js')}}"></script>
@@ -299,81 +308,237 @@
 
 	<!-- Atlantis DEMO methods, don't include it in your project! -->
 	<script src="{{url('public/admin/assets/js/setting-demo.js')}}"></script>
-	<script src="{{url('public/admin/assets/js/demo.js')}}"></script>
-	<script>
-		$('#lineChart').sparkline([102,109,120,99,110,105,115], {
-			type: 'line',
-			height: '70',
-			width: '100%',
-			lineWidth: '2',
-			lineColor: 'rgba(255, 255, 255, .5)',
-			fillColor: 'rgba(255, 255, 255, .15)'
+<!-- 	<script src="{{url('public/admin/assets/js/demo.js')}}"></script> -->
+	
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$('#basic-datatables').dataTable({
+             dom: "Bfrtip",
+            "processing": true,
+            "serverSide": true,
+            "ajax": {
+                "url": "{{url('admin/adding-venue-table')}}",
+                "type": "POST",
+                "data" : {
+                	'_token': "{{csrf_token()}}",
+                },
+                complete:function(){
+		          	let selected_checkboxes = $("#selected_checkboxes").val();
+
+			        let split_selected_checkboxes = selected_checkboxes.split(",");
+
+			        split_selected_checkboxes = split_selected_checkboxes.filter(function (el) {
+				   		if(el == ""){
+				   			return el != "";
+				   		}else{
+				   			return el != null;
+				   		}
+					});
+
+			        for(let i=0; split_selected_checkboxes.length > i; i++){
+			          	$(".single_checkbox[data-id='"+split_selected_checkboxes[i]+"']").prop("checked", true);
+
+			        }
+					if($(".single_checkbox:not(:checked)").length > 0){
+						$(".select_all_checkbox").prop("checked",false);
+					}else{
+						$(".select_all_checkbox").prop("checked",true);
+					}
+		        }
+
+            },
+            createdRow: function( row, data, dataIndex ) {
+
+		        $( row ).find('td:eq(0)').attr('data-id', data['id']).attr('key_type','username').addClass('td_click');
+		        $( row ).find('td:eq(1)').attr('data-id', data['id']).attr('key_type','venue_name').addClass('td_click');
+		        $( row ).find('td:eq(2)').attr('data-id', data['id']).attr('key_type','device_model').addClass('td_click');
+		        $( row ).find('td:eq(3)').attr('data-id', data['id']).attr('key_type','authorized_status').addClass('td_click');
+		        $( row ).find('td:eq(4)').attr('data-id', data['id']).attr('key_type','date_time').addClass('td_click');
+		        
+		    },
+            "columns": [
+            // {data: 'DT_RowIndex', name: 'DT_RowIndex'},
+                {data: 'username', name: 'username'},
+	            {data: 'venue_name', name: 'venue_name'},
+	            {data: 'device_model', name: 'device_model'},
+	            {data: 'mac_address', name: 'mac_address'},
+	            {data: 'authorized_status', name: 'authorized_status'},
+	            {data: 'date_time', name: 'date_time'},
+	            {data: 'selection', name: 'selection', orderable: false, searchable: false},
+            ]
+ 
+        });
 		});
+	</script>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$(document).on("click",".select_all_checkbox",function(){
+				if($(this).prop("checked") == true){
+					$(".single_checkbox").prop("checked",true);
 
-		$('#lineChart2').sparkline([99,125,122,105,110,124,115], {
-			type: 'line',
-			height: '70',
-			width: '100%',
-			lineWidth: '2',
-			lineColor: 'rgba(255, 255, 255, .5)',
-			fillColor: 'rgba(255, 255, 255, .15)'
-		});
+					$(".single_checkbox:checked").each(function(){
+					   	let data_id = $(this).data("id").toString();
+					   	let selected_checkboxes = $("#selected_checkboxes").val();
+					   	let split_selected_checkboxes = selected_checkboxes.split(",");
+					   	split_selected_checkboxes = split_selected_checkboxes.filter(function (el) {
+					   		if(el == ""){
+					   			return el != "";
+					   		}else{
+					   			return el != null;
+					   		}
+						});
+					   	
+					   	if(split_selected_checkboxes.indexOf(data_id) == -1){
+					   		if(selected_checkboxes.length > 0){
+					   			$("#selected_checkboxes").val($("#selected_checkboxes").val() + "," + data_id);
+					   		}else{
+					   			$("#selected_checkboxes").val(data_id);
+					   		}
+					   	}
+					});
 
-		$('#lineChart3').sparkline([105,103,123,100,95,105,115], {
-			type: 'line',
-			height: '70',
-			width: '100%',
-			lineWidth: '2',
-			lineColor: 'rgba(255, 255, 255, .5)',
-			fillColor: 'rgba(255, 255, 255, .15)'
-		});
-	</script>	
-	<script >
-		$(document).ready(function() {
-			$('#basic-datatables').DataTable({
-			});
+				}else{
+					$(".single_checkbox").prop("checked",false);
+					$(".single_checkbox:not(:checked)").each(function(){
+					    let data_id = $(this).data("id").toString();
+					   	let selected_checkboxes = $("#selected_checkboxes").val();
+					   	let split_selected_checkboxes = selected_checkboxes.split(",");
+					   	split_selected_checkboxes = split_selected_checkboxes.filter(function (el) {
+					   		if(el == ""){
+					   			return el != "";
+					   		}else{
+					   			return el != null;
+					   		}
+						});
 
-			$('#multi-filter-select').DataTable( {
-				"pageLength": 5,
-				initComplete: function () {
-					this.api().columns().every( function () {
-						var column = this;
-						var select = $('<select class="form-control"><option value=""></option></select>')
-						.appendTo( $(column.footer()).empty() )
-						.on( 'change', function () {
-							var val = $.fn.dataTable.util.escapeRegex(
-								$(this).val()
-								);
+					   	
+					   	if(split_selected_checkboxes.indexOf(data_id) != -1){
+					   		split_selected_checkboxes.splice(split_selected_checkboxes.indexOf(data_id),1);
 
-							column
-							.search( val ? '^'+val+'$' : '', true, false )
-							.draw();
-						} );
-
-						column.data().unique().sort().each( function ( d, j ) {
-							select.append( '<option value="'+d+'">'+d+'</option>' )
-						} );
-					} );
+					   		if(split_selected_checkboxes.length > 0){
+					   			split_selected_checkboxes = split_selected_checkboxes.toString();
+					   			$("#selected_checkboxes").val(split_selected_checkboxes);
+					   		}else{
+					   			$("#selected_checkboxes").val("");
+					   		}
+					   	}
+					});
 				}
 			});
 
-			// Add Row
-			$('#add-row').DataTable({
-				"pageLength": 5,
+			$(document).on("click",".single_checkbox",function(){
+				if($(this).prop("checked") == true){
+
+					let data_id = $(this).data("id").toString();
+				   	let selected_checkboxes = $("#selected_checkboxes").val();
+				   	let split_selected_checkboxes = selected_checkboxes.split(",");
+				   	split_selected_checkboxes = split_selected_checkboxes.filter(function (el) {
+				   		if(el == ""){
+				   			return el != "";
+				   		}else{
+				   			return el != null;
+				   		}
+					});
+				   	
+				   	if(split_selected_checkboxes.indexOf(data_id) == -1){
+				   		if(selected_checkboxes.length > 0){
+				   			$("#selected_checkboxes").val($("#selected_checkboxes").val() + "," + data_id);
+				   		}else{
+				   			$("#selected_checkboxes").val(data_id);
+				   		}
+				   	}
+
+				}else{
+
+					let data_id = $(this).data("id").toString();
+				   	let selected_checkboxes = $("#selected_checkboxes").val();
+				   	let split_selected_checkboxes = selected_checkboxes.split(",");
+				   	split_selected_checkboxes = split_selected_checkboxes.filter(function (el) {
+				   		if(el == ""){
+				   			return el != "";
+				   		}else{
+				   			return el != null;
+				   		}
+					});
+
+				   	
+				   	if(split_selected_checkboxes.indexOf(data_id) != -1){
+				   		split_selected_checkboxes.splice(split_selected_checkboxes.indexOf(data_id),1);
+
+				   		if(split_selected_checkboxes.length > 0){
+				   			split_selected_checkboxes = split_selected_checkboxes.toString();
+				   			$("#selected_checkboxes").val(split_selected_checkboxes);
+				   		}else{
+				   			$("#selected_checkboxes").val("");
+				   		}
+			   		}
+
+				}
 			});
 
-			var action = '<td> <div class="form-button-action"> <button type="button" data-toggle="tooltip" title="" class="btn btn-link btn-primary btn-lg" data-original-title="Edit Task"> <i class="fa fa-edit"></i> </button> <button type="button" data-toggle="tooltip" title="" class="btn btn-link btn-danger" data-original-title="Remove"> <i class="fa fa-times"></i> </button> </div> </td>';
 
-			$('#addRowButton').click(function() {
-				$('#add-row').dataTable().fnAddData([
-					$("#addName").val(),
-					$("#addPosition").val(),
-					$("#addOffice").val(),
-					action
-					]);
-				$('#addRowModal').modal('hide');
+
+			$(".authorizedUnauthorized").on("click",function(){
+				let ids = $("#selected_checkboxes").val();
+				let type = $(this).attr('type');
+				if(ids == "" || ids == null || ids == "undefiend"){
+					$("#alert_text").text("Please select checkbox for "+type+" users.");
+					$("#validationModel").modal("show");
+					$("#validationModel").unbind("click");
+					return false;
+				}
+				
+				var data = {
+	            	'_token': "{{csrf_token()}}",
+	            	"ids": ids,
+	            	"type" : type
+	            };
+
+	          	$.ajax({
+		              url:"{{route('admin.authorizedUnauthorized')}}",
+		              type:'POST',
+		              data:data,
+		              beforeSend:function(){
+		              	$("#loaderModel").modal("show");
+						$("#loaderModel").unbind("click");
+		              },
+		              success: function(res){
+		              	setTimeout(function(){
+		              		console.log(res)
+		              		if(res.type == "authorized"){
+
+			              		$("#loaderModel").modal("hide");
+			              		$("#success_alert_text").text("Users has authorized.");
+			              		$("#successModel").modal("show");
+		              		}else{
+		              			//unauthorized
+		              			$("#loaderModel").modal("hide");
+			              		$("#success_alert_text").text("Users has been unauthorized successfully.");
+			              		$("#successModel").modal("show");
+		              		}
+
+		              	},500);
+		              },
+		              error: function(data, textStatus, xhr) {
+		                if(data.status == 422){
+		                  var result = data.responseJSON;
+		                  alert('Something went worng.');
+		                  window.location.href = "";
+		                  return false;
+		                } 
+	              	}
+	            });
 
 			});
+
+
+
+			$(".ok").on("click",function(){
+				$("#validationModel").modal("hide");
+			});
+
+
+
 		});
 	</script>
 </body>

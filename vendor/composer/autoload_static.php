@@ -607,6 +607,8 @@ class ComposerStaticInita14e08ef3fa5eaf20d91cf29f03744ac
         'App\\Models\\Otp' => __DIR__ . '/../..' . '/app/Models/Otp.php',
         'App\\Models\\TierCondition' => __DIR__ . '/../..' . '/app/Models/TierCondition.php',
         'App\\Models\\TierSetting' => __DIR__ . '/../..' . '/app/Models/TierSetting.php',
+        'App\\Models\\Venu' => __DIR__ . '/../..' . '/app/Models/Venu.php',
+        'App\\Models\\VenueUser' => __DIR__ . '/../..' . '/app/Models/VenueUser.php',
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',
         'App\\Providers\\AuthServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AuthServiceProvider.php',
         'App\\Providers\\BroadcastServiceProvider' => __DIR__ . '/../..' . '/app/Providers/BroadcastServiceProvider.php',

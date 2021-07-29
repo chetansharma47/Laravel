@@ -41,6 +41,8 @@ return array(
     'App\\Models\\Otp' => $baseDir . '/app/Models/Otp.php',
     'App\\Models\\TierCondition' => $baseDir . '/app/Models/TierCondition.php',
     'App\\Models\\TierSetting' => $baseDir . '/app/Models/TierSetting.php',
+    'App\\Models\\Venu' => $baseDir . '/app/Models/Venu.php',
+    'App\\Models\\VenueUser' => $baseDir . '/app/Models/VenueUser.php',
     'App\\Providers\\AppServiceProvider' => $baseDir . '/app/Providers/AppServiceProvider.php',
     'App\\Providers\\AuthServiceProvider' => $baseDir . '/app/Providers/AuthServiceProvider.php',
     'App\\Providers\\BroadcastServiceProvider' => $baseDir . '/app/Providers/BroadcastServiceProvider.php',

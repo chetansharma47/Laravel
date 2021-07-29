@@ -80,6 +80,9 @@ Route::group(['middleware' => 'TimeZone','namespace' => 'Admin','prefix'=>'/admi
     Route::group(['middleware'=>['CheckAdmin']] , function() {
 
         Route::get('download-users','TabController@downloadUsers')->name('downloadUsers');
+        Route::post('block-users','TabController@blockUsers')->name('blockUsers');
+        Route::post('unblock-users','TabController@unBlockUsers')->name('unBlockUsers');
+        Route::post('authorized-unauthorized','TabController@authorizedUnauthorized')->name('authorizedUnauthorized');
 
         Route::post('update-user-data','TabController@updateUserData')->name('updateUserData');
 
