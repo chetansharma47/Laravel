@@ -5,7 +5,9 @@ namespace App\BusinessModel;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\TierSetting;
 use App\Models\TierCondition;
+use App\Models\WalletCashback;
 use App\User;
+use Auth;
 class TabBusiness extends Model
 {
     public function saveTier($data, $admin, $tier_setting = null){
@@ -37,5 +39,30 @@ class TabBusiness extends Model
 
         User::whereDeletedAt(null)->whereCustomerTier(null)->update(['customer_tier' => $tier_condition->tier_name]);
     	return "success";
+    }
+
+    public function loyalityCashBackPage($data){
+        $admin = Auth::guard('admin')->user();
+        if($data['update_type'] == "tier_percentage"){
+            TierCondition::whereId($data['tier_condition_id'])->update(['percentage' => $data['percentage_value']]);
+
+            return ['status' => 'success', 'tier_name' => $data['tier_name'], 'update_type' => $data['update_type']];
+        }else if($data['update_type'] == "more_wallet_cashback"){
+
+            $find_wallet_cashback = WalletCashback::whereAdminId($admin->id)->whereDeletedAt(null)->first();
+            if(!empty($find_wallet_cashback)){
+                $find_wallet_cashback->fill($data);
+                $find_wallet_cashback->update();
+            }else{
+                $wallet_cashback = new WalletCashback();
+                $wallet_cashback->admin_id = $admin->id;
+                $wallet_cashback->fill($data);
+                $wallet_cashback->save();
+            }
+
+            return ['status' => 'success', 'wallet_type' => $data['wallet_type'], 'update_type' => $data['update_type']]; 
+        }
+
+
     }
 }

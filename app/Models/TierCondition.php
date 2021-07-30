@@ -12,6 +12,7 @@ class TierCondition extends Model
     	'tier_name',
     	'from_amount',
     	'to_amount',
-    	'color_code'
+    	'color_code',
+    	'percentage'
     ];
 }

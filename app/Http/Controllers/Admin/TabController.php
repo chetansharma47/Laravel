@@ -30,6 +30,8 @@ use App\User;
 use Excel;
 use App\Models\Venu;
 use App\Models\VenueUser;
+use App\Models\WalletCashback;
+use App\Models\Cashback;
 
 class TabController extends Controller
 {
@@ -280,8 +282,22 @@ class TabController extends Controller
     	if($request->isMethod('GET')){
             $admin = Auth::guard('admin')->user();
             $tier = TierSetting::whereAdminId($admin->id)->with('tierConditions')->first();
-    		return view('admin.cash-back', compact('tier'));
+            $wallet_cashback = WalletCashback::whereAdminId($admin->id)->whereDeletedAt(null)->first();
+            $venues = Venu::whereAdminId($admin->id)->get();
+            $cashback_last = Cashback::whereAdminId($admin->id)->orderBy('id','desc')->first();
+            if(!empty($cashback_last)){
+                $last_id = $cashback_last->id;
+            }else{
+                $last_id = 0;
+            }
+    		return view('admin.cash-back', compact('tier','wallet_cashback','venues','last_id','cashback_last'));
     	}
+
+        if($request->isMethod('POST')){
+            $data = $request->all();
+            $loyality_cashback = $this->tabBusiness()->loyalityCashBackPage($data);
+            return $loyality_cashback;
+        }
     }
 
     public function allDataAvailability(Request $request){

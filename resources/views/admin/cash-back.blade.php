@@ -38,6 +38,11 @@
 	    	overflow-y: auto;
 		    max-height:180px;
 		}
+
+		.scroll-text::-webkit-scrollbar {
+		    display: none;
+		}
+
 		.venue_inputs {
 			position: relative;
 		}
@@ -48,6 +53,95 @@
 		    right: 20px;
 		    cursor: pointer;
 		}
+
+
+		.menu-lisitng ul {
+		    height: 474px;
+		    overflow-x: auto;
+		    margin-bottom: 0;
+		    
+		}
+
+		.menu-lisitng ul::-webkit-scrollbar {
+		    display: none;
+		}
+
+		.box_icon {
+		    display: flex;
+		    justify-content: space-between;
+		    height: unset!important;
+		    width: 100%;
+		    margin-left: unset!important;
+		    background: #E3DFDF!important;
+		}
+
+
+
+		#validationModel .modal-title{
+		    text-align: center;
+		    width: 100%;
+		    font-size: 20px;
+		    font-weight: 600;
+		}
+		#validationModel .modal-header {
+		    background-color: #5f5f5f;
+		    color: #fff;
+		    justify-content: center;
+		}
+
+		#validationModel .modal-body {
+			text-align: center;
+		}
+
+		#validationModel .modal-body p {
+			margin-bottom: 0rem;
+		}
+
+
+
+		#successModel .modal-title{
+		    text-align: center;
+		    width: 100%;
+		    font-size: 20px;
+		    font-weight: 600;
+		}
+		#successModel .modal-header {
+		    background-color: #5f5f5f;
+		    color: #fff;
+		    justify-content: center;
+		}
+
+		#successModel .modal-body {
+			text-align: center;
+		}
+
+		#successModel .modal-body p {
+			margin-bottom: 0rem;
+		}
+
+		div#loaderImg2 {
+		    position: absolute;
+		    left: 0;
+		    right: 0;
+		    text-align: center;
+		    margin-top: 250px;
+		}
+
+		p.no_tier_found {
+		    font-size: 16px;
+		    font-weight: 800;
+		    margin-right: 130px;
+		    text-align: center;
+		    margin-top: 24px;
+		}
+
+		p.no_venue_find {
+		    margin-top: 100px;
+		    font-size: 16px;
+		    font-weight: 800;
+		    text-align: center;
+		}
+
 	</style>
 </head>
 <body>
@@ -106,11 +200,11 @@
 					<div class="app_notification_bg" style="background-color: transparent;">
 						<h4>Base Cash Back Percentage</h4>
 						<div class="scroll-text">
-							@if(!empty($tier))
+							@if(!empty($tier) && isset($tier->tierConditions) && count($tier->tierConditions) > 0)
 							@foreach($tier->tierConditions as $condition)
 							<div class="d-flex align-items-center">
 								<div class="venue_inputs mr-4">
-									<label style="width: 135px;">
+									<label style="width: 135px;" data-id = "{{$condition->id}}" tier_name = "{{$condition->tier_name}}" class="tier_heading">
 										{{$condition->tier_name}}
 									</label>
 								</div>
@@ -127,95 +221,134 @@
 								</div>
 							</div>	
 							@endforeach()
+
+							@else
+							<p class="no_tier_found">No Tier Found.</p>
 							@endif()
 							
 							
 						</div>
 					</div>
 				</div>
+
+				@if(!empty($wallet_cashback))
 				<div class="col-md-6">
 					<div class="app_notification_bg" style="background-color: transparent;">
 						<h4>More Wallet Cash Backs</h4>
 						<div class="d-flex align-items-center">
 							<div class="venue_inputs mr-4">
-								<label style="width: 99px;">
+								<label style="width: 99px;" type="bonus">
 									Bonus
 								</label>
 							</div>
 							<div class="venue_inputs mr-4">
 								<div class="d-flex">
-									<input type="text" class="form-control form-control-user integer" placeholder="" value="25" style="font-size: 14px !important; border-radius: 0px; width: 106px"/>
-									<input type="text" class="form-control form-control-user" placeholder="Percentage" maxlength="3" value="AED" style="font-size: 14px !important; border-radius: 0px; width: 60px"/>
+									<input type="text" class="form-control form-control-user integer bonus" placeholder="" value="{{$wallet_cashback->bonus}}" style="font-size: 14px !important; border-radius: 0px; width: 106px" data-id="{{$wallet_cashback->id}}"/>
+									<input type="text" class="form-control form-control-user bonus_text"  maxlength="3" value="{{$wallet_cashback->bonus_text}}" placeholder="AED" style="font-size: 14px !important; border-radius: 0px; width: 60px" data-id="{{$wallet_cashback->id}}"/>
 								</div>
+								
 							</div>
 							<div>
-								<a href="" class="btn btn-primary btn-user btn-block common_btn" style="    padding: 0px; font-size: 20px; width: 110px;">
+								<a href="javascript:void(0);" data-id="{{$wallet_cashback->id}}" class="btn btn-primary btn-user btn-block common_btn more_wallet_save" style="    padding: 0px; font-size: 20px; width: 110px;">
 	                      			SAVE
 	                    		</a>
 							</div>
 						</div>	
 						<div class="d-flex align-items-center mt-2">
 							<div class="venue_inputs mr-4">
-								<label style="width: 99px;">
+								<label style="width: 99px;" type="refere_friend">
 									Refer A Friend
 								</label>
 							</div>
 							<div class="venue_inputs mr-4">
 								<div class="d-flex">
-									<input type="text" class="form-control form-control-user integer" placeholder="" value="25" style="font-size: 14px !important; border-radius: 0px; width: 106px"/>
-									<input type="text" class="form-control form-control-user" placeholder="Percentage" maxlength="3" value="AED" style="font-size: 14px !important; border-radius: 0px; width: 60px"/>
+									<input type="text" class="form-control form-control-user integer refere_friend" placeholder="" value="{{$wallet_cashback->refer_friend}}" style="font-size: 14px !important; border-radius: 0px; width: 106px" data-id="{{$wallet_cashback->id}}"/>
+									<input type="text" class="form-control form-control-user refer_friend_text" placeholder="AED" maxlength="3" value="{{$wallet_cashback->refer_friend_text}}" style="font-size: 14px !important; border-radius: 0px; width: 60px" data-id="{{$wallet_cashback->id}}"/>
 								</div>
 							</div>
 							<div>
-								<a href="" class="btn btn-primary btn-user btn-block common_btn" style="    padding: 0px; font-size: 20px; width: 110px;">
+								<a href="javascript:void(0);" class="btn btn-primary btn-user btn-block common_btn more_wallet_save" style="padding: 0px; font-size: 20px; width: 110px;" data-id="{{$wallet_cashback->id}}">
 	                      			SAVE
 	                    		</a>
 							</div>
 						</div>
 					</div>
 				</div>
+
+
+				@else
+
+				<div class="col-md-6">
+					<div class="app_notification_bg" style="background-color: transparent;">
+						<h4>More Wallet Cash Backs</h4>
+						<div class="d-flex align-items-center">
+							<div class="venue_inputs mr-4">
+								<label style="width: 99px;" type="bonus">
+									Bonus
+								</label>
+							</div>
+							<div class="venue_inputs mr-4">
+								<div class="d-flex">
+									<input type="text" class="form-control form-control-user integer bonus" placeholder="" value="0" style="font-size: 14px !important; border-radius: 0px; width: 106px" data-id=""/>
+									<input type="text" class="form-control form-control-user bonus_text" placeholder="AED"  maxlength="3" value="" style="font-size: 14px !important; border-radius: 0px; width: 60px" data-id=""/>
+								</div>
+								
+							</div>
+							<div>
+								<a href="javascript:void(0);" data-id="" class="btn btn-primary btn-user btn-block common_btn more_wallet_save" style="    padding: 0px; font-size: 20px; width: 110px;">
+	                      			SAVE
+	                    		</a>
+							</div>
+						</div>	
+						<div class="d-flex align-items-center mt-2">
+							<div class="venue_inputs mr-4">
+								<label style="width: 99px;" type="refere_friend">
+									Refer A Friend
+								</label>
+							</div>
+							<div class="venue_inputs mr-4">
+								<div class="d-flex">
+									<input type="text" class="form-control form-control-user integer refere_friend" placeholder="" value="0" style="font-size: 14px !important; border-radius: 0px; width: 106px" data-id=""/>
+									<input type="text" class="form-control form-control-user refer_friend_text" placeholder="AED" maxlength="3" value="" style="font-size: 14px !important; border-radius: 0px; width: 60px" data-id=""/>
+								</div>
+							</div>
+							<div>
+								<a href="javascript:void(0);" class="btn btn-primary btn-user btn-block common_btn more_wallet_save" style="padding: 0px; font-size: 20px; width: 110px;" data-id="">
+	                      			SAVE
+	                    		</a>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				@endif()
+
 			</div>
 		</div>
 	</section>
+
+	@if(count($venues) > 0)
 	<section class="events_venue_details" style="background-color: transparent;">
 		<div class="container-fluid">
 			<div class="row">
 				<div class="col-md-2  pr-0 ">
 					<div class="pt-5 pb-3 pl-3 menu-lisitng">
-						<ul style="margin-left: 0px !important;background-color: #E3DFDF;">
-							<li class="active">
-								<a href="javascript:void(0);">Salt & Caramel</a>
-							</li>
-							<li>
-								<a href="javascript:void(0);">Pacifico Tiki</a>
-							</li>
-							<li>
-								<a href="javascript:void(0);">Ornina</a>
-							</li>
-							<li>
-								<a href="javascript:void(0);">Aquarium</a>
-							</li>
-							<li>
-								<a href="#">Tokyo Grill</a>
-							</li>
-							<li style="visibility: hidden">
-								<a href="#">Tokyo Grill</a>
-							</li>
-							<li style="visibility: hidden">
-								<a href="#">Tokyo Grill</a>
-							</li>
-							<li style="visibility: hidden">
-								<a href="#">Tokyo Grill</a>
-							</li>
-							<li style="visibility: hidden">
-								<a href="#">Tokyo Grill</a>
-							</li>
-							<li style="visibility: hidden">
-								<a href="#">Tokyo Grill</a>
-							</li>
-							<li style="visibility: hidden">
-								<a href="#">Tokyo Grill</a>
-							</li>
+						<ul style="margin-left: 0px !important;background-color: #E3DFDF; height: 521px;">
+							<?php
+								$v = 0;
+						 	?>
+							@foreach($venues as $venue)
+								@if($v == 0)
+								<li class="active">
+									<a href="javascript:void(0);">{{$venue->venue_name}}</a>
+								</li>
+								@else
+								<li class="">
+									<a href="javascript:void(0);">{{$venue->venue_name}}</a>
+								</li>
+								@endif()
+							<?php $v++; ?>
+							@endforeach()
 							<div class="d-flex justify-content-between" style="visibility: hidden;">
 								<li style="background-color: #ECECEC;">
 									<a href="javascript:void(0);">
@@ -231,6 +364,8 @@
 						</ul>
 					</div>
 				</div>
+
+				<input type="hidden" id="cashback_last_id" value="{{$last_id}}">
 				<div class="col-md-3">
 					<div class="pt-5 pb-3 pl-3 menu-lisitng">
 						<ul style="margin-left: 0px !important;background-color: #E3DFDF;">
@@ -267,19 +402,23 @@
 							<li style="visibility: hidden">
 								<a href="#">Tokyo Grill</a>
 							</li>
-							<div class="d-flex justify-content-between">
-								<li style="background-color: #ECECEC;">
-									<a href="javascript:void(0);">
-										<img src="{{url('public/admin/assets/img/icon.png')}}" alt="icon"/>
-									</a>
-								</li>
-								<li style="background-color: #ECECEC;">
-									<a href="javascript:void(0);">
-										<img src="{{url('public/admin/assets/img/icon1.png')}}" alt="icon1"/>
-									</a>
-								</li>
-							</div>
+							
 						</ul>
+
+						<div class="d-flex justify-content-between">
+								<ul class="box_icon">
+								<li style="background-color: #ECECEC;">
+									<a href="javascript:void(0);">
+										<img id="plus_icon" src="{{url('public/admin/assets/img/icon.png')}}" alt="icon"/>
+									</a>
+								</li>
+								<li style="background-color: #ECECEC;">
+									<a href="javascript:void(0);">
+										<img id="minus_icon" src="{{url('public/admin/assets/img/icon1.png')}}" alt="icon1"/>
+									</a>
+								</li>
+								</ul>
+							</div>
 					</div>
 				</div>
 				<div class="col-md-7 padding-top">
@@ -431,6 +570,63 @@
 			<div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">cvcvbcvbcbc</div>
 		</div> -->
 	</section>
+	@else
+	<p class="no_venue_find">No Venue Found.</p>
+	@endif()
+
+
+	<div class="modal fade" id="validationModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Alert</h5>
+        <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button> -->
+      </div>
+      <div class="modal-body">
+        <p id="alert_text">Info Text</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary ok" style="background-color: #3ABD6F!important; border: none; border-radius: 50px; color: #fff;"  data-dismiss="modal">Ok</button>
+       <!--  <button type="button" class="btn btn-primary">Save changes</button> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="successModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Information</h5>
+        <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button> -->
+      </div>
+      <div class="modal-body">
+        <p id="success_alert_text">Info Text</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary ok" style="background-color: #3ABD6F!important; border: none; border-radius: 50px; color: #fff;"  data-dismiss="modal">Ok</button>
+       <!--  <button type="button" class="btn btn-primary">Save changes</button> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div id="loaderModel" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <div class="loaderImg2" id="loaderImg2">
+               <img src = "{{url('public/loader.gif')}}">
+            </div>
+
+  </div>
+</div>
+
 <!--   Core JS Files   -->
 	<script src="{{url('public/admin/assets/js/core/jquery.3.2.1.min.js')}}"></script>
 	<script src="{{url('public/admin/assets/js/core/popper.min.js')}}"></script>
@@ -560,7 +756,141 @@
 
 		}
 
+
+		$(document).on("click",".tier_save_btn",function(){
+			let data_id = $(this).data("id");
+			let check_tier_percentage_val = $(".tier_percentage[data-id='"+data_id+"']").val();
+			let tier_name = $(".tier_heading[data-id='"+data_id+"']").attr("tier_name");
+			if(check_tier_percentage_val == "" || check_tier_percentage_val == 0 || check_tier_percentage_val == "0"){
+				$("#alert_text").text("Please enter valid percentage for "+tier_name+".");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
+
+
+			var data = {
+	        	'_token': "{{csrf_token()}}",
+	        	"update_type": "tier_percentage",
+	        	"tier_condition_id" : data_id,
+	        	"percentage_value" : check_tier_percentage_val,
+	        	"tier_name" : tier_name
+        	};
+
+        	ajaxCalling(data)
+		});
+
+
+		$(document).on("click",".more_wallet_save",function(){
+			let data_id = $(this).data("id");
+			let check_name = $(this).parent().parent().find('label').first().attr("type");
+
+			let data;
+			if(check_name == "bonus"){
+
+				let check_bonus_value = $(this).parent().parent().find(".bonus").val();
+				let check_bonus_text_value = $(this).parent().parent().find(".bonus_text").val();
+
+				if(check_bonus_value == 0 || check_bonus_value == "0" || check_bonus_value == ""){
+					$("#alert_text").text("Please enter valid value for bonus");
+					$("#validationModel").modal("show");
+					$("#validationModel").unbind("click");
+					return false;
+				}
+
+				if(check_bonus_text_value == ""){
+					$("#alert_text").text("Please enter text for bonus.");
+					$("#validationModel").modal("show");
+					$("#validationModel").unbind("click");
+					return false;
+				}
+				
+
+				data = {
+		        	'_token': "{{csrf_token()}}",
+		        	"update_type": "more_wallet_cashback",
+		        	"wallet_cashback_id" : data_id,
+		        	"bonus" : check_bonus_value,
+		        	"bonus_text" : check_bonus_text_value,
+		        	"wallet_type" : "bonus"
+	        	};
+
+			}else if(check_name == "refere_friend"){
+				let check_refere_friend_value = $(this).parent().parent().find(".refere_friend").val();
+				let check_refere_friend_text_value = $(this).parent().parent().find(".refer_friend_text").val();
+				
+				if(check_refere_friend_value == 0 || check_refere_friend_value == "0" || check_refere_friend_value == ""){
+					$("#alert_text").text("Please enter valid value for refer a friend.");
+					$("#validationModel").modal("show");
+					$("#validationModel").unbind("click");
+					return false;
+				}
+
+				if(check_refere_friend_text_value == ""){
+					$("#alert_text").text("Please enter text for refer a friend.");
+					$("#validationModel").modal("show");
+					$("#validationModel").unbind("click");
+					return false;
+				}
+
+				data = {
+		        	'_token': "{{csrf_token()}}",
+		        	"update_type": "more_wallet_cashback",
+		        	"wallet_cashback_id" : data_id,
+		        	"refer_friend" : check_refere_friend_value,
+		        	"refer_friend_text" : check_refere_friend_text_value,
+		        	"wallet_type" : "Refere a friend"
+	        	};
+
+			}
+
+			ajaxCalling(data);
+		})
+
+		$(".ok").on("click",function(){
+			$("#validationModel").modal("hide");
+		});
+
 	});
+
+
+
+	function ajaxCalling(data){
+
+	  	$.ajax({
+	          url:"{{route('admin.cashBack')}}",
+	          type:'POST',
+	          data:data,
+	          beforeSend:function(){
+	          	$("#loaderModel").modal("show");
+				$("#loaderModel").unbind("click");
+	          },
+	          success: function(res){
+	          	console.log(res)
+	          	setTimeout(function(){
+	          		if(res.update_type == "tier_percentage"){
+
+		          		$("#loaderModel").modal("hide");
+		          		$("#success_alert_text").text(res.tier_name+" percentage has been updated successfully.");
+		          		$("#successModel").modal("show");
+	          		}else if(res.update_type == "more_wallet_cashback"){
+	          			$("#loaderModel").modal("hide");
+		          		$("#success_alert_text").text(res.wallet_type+" has been updated successfully.");
+		          		$("#successModel").modal("show");
+	          		}
+
+	          	},500);
+	          },
+	          error: function(data, textStatus, xhr) {
+	            if(data.status == 422){
+	              var result = data.responseJSON;
+	              alert('Something went worng.');
+	              window.location.href = "";
+	              return false;
+	            } 
+	      	}
+	    });
+	}
 </script>
 	
 </body>

@@ -22,6 +22,7 @@ class CreateTierConditionsTable extends Migration
             $table->double('from_amount');
             $table->double('to_amount');
             $table->string('color_code');
+            $table->double('percentage')->nullable()->default(0);
             $table->softDeletes();
             $table->timestamps();
         });
