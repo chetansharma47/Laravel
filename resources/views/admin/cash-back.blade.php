@@ -142,6 +142,15 @@
 		    text-align: center;
 		}
 
+		input.cashback_name_input {
+		    border: 0!important;
+		    background-color: #EBEBEB;
+		    color: #4B4B4B!important;
+		    font-family: 'Signika', sans-serif;
+		    font-weight: 700;
+		    width: 100%;
+		}
+
 	</style>
 </head>
 <body>
@@ -339,11 +348,11 @@
 						 	?>
 							@foreach($venues as $venue)
 								@if($v == 0)
-								<li class="active">
+								<li class="active venue_name" data-id="{{$venue->id}}">
 									<a href="javascript:void(0);">{{$venue->venue_name}}</a>
 								</li>
 								@else
-								<li class="">
+								<li class="venue_name" data-id="{{$venue->id}}">
 									<a href="javascript:void(0);">{{$venue->venue_name}}</a>
 								</li>
 								@endif()
@@ -368,40 +377,14 @@
 				<input type="hidden" id="cashback_last_id" value="{{$last_id}}">
 				<div class="col-md-3">
 					<div class="pt-5 pb-3 pl-3 menu-lisitng">
-						<ul style="margin-left: 0px !important;background-color: #E3DFDF;">
-							<li class="active">
+						<ul style="margin-left: 0px !important;background-color: #E3DFDF;" class="cashback_name_list">
+							<!-- <li class="active">
 								<a href="javascript:void(0);">Feb Promotion Hours</a>
 							</li>
 							<li>
 								<a href="javascript:void(0);">Eid Cash Back %</a>
-							</li>
-							<li style="visibility: hidden">
-								<a href="#">Ornina</a>
-							</li>
-							<li style="visibility: hidden">
-								<a href="#">Aquarium</a>
-							</li>
-							<li style="visibility: hidden">
-								<a href="#">Tokyo Grill</a>
-							</li>
-							<li style="visibility: hidden">
-								<a href="#">Tokyo Grill</a>
-							</li>
-							<li style="visibility: hidden">
-								<a href="#">Tokyo Grill</a>
-							</li>
-							<li style="visibility: hidden">
-								<a href="#">Tokyo Grill</a>
-							</li>
-							<li style="visibility: hidden">
-								<a href="#">Tokyo Grill</a>
-							</li>
-							<li style="visibility: hidden">
-								<a href="#">Tokyo Grill</a>
-							</li>
-							<li style="visibility: hidden">
-								<a href="#">Tokyo Grill</a>
-							</li>
+							</li> -->
+							
 							
 						</ul>
 
@@ -421,13 +404,15 @@
 							</div>
 					</div>
 				</div>
-				<div class="col-md-7 padding-top">
+				<div class="col-md-7 padding-top append_data">
+
+				<!-- <div class="form_data_show">
 					<div class="row pr-3 pl-3">
 						<div class="col-md-6 venue_inputs">
 							<label>
 								Promotion Cash Back Name
 							</label>
-							<input type="email" class="form-control form-control-user" placeholder="Promotion Cash Back Name" value="Feb Promotion hours" />
+							<input type="text" class="form-control form-control-user" placeholder="Promotion Cash Back Name" value="Feb Promotion hours" />
 						</div>
 						<div class="col-md-6 venue_inputs">
 							<label>
@@ -562,7 +547,11 @@
 	                    	</a>
                     	</div>	
 					</div>
+				</div> -->
+
+
 				</div>
+
 			</div>
 			
 		</div>
@@ -669,24 +658,7 @@
 	<!-- Atlantis DEMO methods, don't include it in your project! -->
 	<script src="{{url('public/admin/assets/js/setting-demo.js')}}"></script>
 <!-- 	<script src="{{url('public/admin/assets/js/demo.js')}}"></script> -->
-	<script>
-      $(document).ready(function(){
-        $('#timepicker').mdtimepicker();
-        $('#timepicker2').mdtimepicker();
-        $('#timepicker3').mdtimepicker(); 
-        $('#timepicker4').mdtimepicker();
-        $('#timepicker5').mdtimepicker();
-        $('#timepicker6').mdtimepicker();
-        $('#timepicker7').mdtimepicker();
-        $('#timepicker8').mdtimepicker();
-        $('#timepicker9').mdtimepicker();
-        $('#timepicker10').mdtimepicker();
-        $('#timepicker11').mdtimepicker();
-        $('#timepicker12').mdtimepicker();
-        $('#timepicker13').mdtimepicker();
-        $('#timepicker14').mdtimepicker();
-      });
-    </script>
+	
 
 
     <script type="text/javascript">
@@ -886,6 +858,719 @@
 	              var result = data.responseJSON;
 	              alert('Something went worng.');
 	              window.location.href = "";
+	              $("#loaderModel").modal("hide");
+	              return false;
+	            } 
+	      	}
+	    });
+	}
+</script>
+
+<script type="text/javascript">
+	$(document).ready(function(){
+		$("#plus_icon").on("click",function(){
+			let last_cashback_unique_id = $("#cashback_last_id").val();
+			let unique_id = parseInt(last_cashback_unique_id) + 1;
+			$("#cashback_last_id").val(unique_id);
+			let venu_id = $(".venue_name.active").data("id");
+			let remove_pre_active = $(".cashback_name_show.active").removeClass("active").children(".cashback_name_input").css({"background-color" : "#E3DFDF","cursor":"pointer"});
+
+			$(".cashback_name_list").append(`<li class="cashback_name_show active" venu_id = "`+venu_id+`" unique_id = "`+unique_id+`">
+								<input type="text" class="cashback_name_input" maxlength="30" value="" venu_id="`+venu_id+`" unique_id="`+unique_id+`" placeholder="Enter Promotion Cash Back Name">
+							</li>`);
+
+			$(".form_data_show").removeClass("active").css("display","none");
+			$(".append_data").append(`<div class="form_data_show active" unique_id="`+unique_id+`">
+					<div class="row pr-3 pl-3">
+						<div class="col-md-6 venue_inputs">
+							<label>
+								Promotion Cash Back Name
+							</label>
+							<input type="text" class="form-control form-control-user cashback_input2" maxlength="30" placeholder="Enter Promotion Cash Back Name" value="" unique_id="`+unique_id+`" />
+						</div>
+						<div class="col-md-6 venue_inputs">
+							<label>
+								Image
+							</label>
+							<input type="text" class="form-control form-control-user file_name_show" title="" placeholder="" value="" disabled="true" unique_id="`+unique_id+`" />
+							<img src="{{url('public/upload_icon.png')}}" title="Click to upload image" alt="" class="upload_icon" unique_id="`+unique_id+`" />
+							<input type="file" class="file_name" unique_id="`+unique_id+`" style="display:none" img="false">
+						</div>
+					</div>
+					<div class="row pr-3 pl-3 mt-3">
+						<div class="col-md-12 venue_inputs">
+							<label>
+								When
+							</label>
+							<input type="hidden" class="days" unique_id="`+unique_id+`" value="">
+							<div class="checkboxesbg">
+								<div class="d-flex flex-wrap">
+									<div class="mr-2">
+										<label class="tick_box"><span class="date">Monday</span>
+											<input type="checkbox" unique_id="`+unique_id+`" data-id="Monday" class="checkbox_click">
+											<span class="checkmark"></span>
+										</label>
+									</div>
+									<div class="mr-2">
+										<label class="tick_box"><span class="date">Tuesday</span>
+											<input type="checkbox" unique_id="`+unique_id+`" data-id="Tuesday" class="checkbox_click">
+											<span class="checkmark"></span>
+										</label>
+									</div>
+									<div class="mr-2">
+										<label class="tick_box"><span class="date">Wednesday</span>
+											<input type="checkbox" unique_id="`+unique_id+`" data-id="Wednesday" class="checkbox_click">
+											<span class="checkmark"></span>
+										</label>
+									</div>
+									<div class="mr-2">
+										<label class="tick_box"><span class="date">Thursday</span>
+											<input type="checkbox" unique_id="`+unique_id+`" data-id="Thursday" class="checkbox_click">
+											<span class="checkmark"></span>
+										</label>
+									</div>
+									<div class="mr-2">
+										<label class="tick_box"><span class="date">Friday</span>
+											<input type="checkbox" unique_id="`+unique_id+`" data-id="Friday" class="checkbox_click">
+											<span class="checkmark"></span>
+										</label>
+									</div>
+									<div class="mr-2">
+										<label class="tick_box"><span class="date">Saturday</span>
+											<input type="checkbox" unique_id="`+unique_id+`" data-id="Saturday" class="checkbox_click">
+											<span class="checkmark"></span>
+										</label>
+									</div>
+									<div>
+										<label class="tick_box"><span class="date">Sunday</span>
+											<input type="checkbox" unique_id="`+unique_id+`" data-id="Sunday" class="checkbox_click">
+											<span class="checkmark"></span>
+										</label>
+									</div>
+								</div>
+							</div>
+						</div>	
+					</div>
+					<label class="applicable-date mt-3">
+						Applicable Dates
+					</label>
+					<div class="row pr-3 pl-3 mt-0">
+						<div class="col-md-3 venue_inputs">
+							<label>
+								From Date
+							</label>
+							<input type="date" class="form-control form-control-user from_date" placeholder="From Date" value="" unique_id="`+unique_id+`" />
+						</div>
+						<div class="col-md-3 venue_inputs">
+							<label>
+								To Date
+							</label>
+							<input type="date" class="form-control form-control-user to_date" placeholder="To Date" value="" unique_id="`+unique_id+`" />
+						</div>
+						<div class="col-md-6 venue_inputs">
+							<div class="">
+								<label>
+									Created 
+								</label>
+								<input type="text" class="form-control form-control-user created_date" unique_id="`+unique_id+`"  value="" disabled style="background-color: #8D8A8A !important;" />
+							</div>
+						</div>
+					</div>
+					<div class="row pr-3 pl-3 mt-3">
+						<div class="col-md-3 venue_inputs">
+							<label>
+								From Time
+							</label>
+							<input type="text" style="cursor:pointer;" class="form-control form-control-user from_time" unique_id="`+unique_id+`" />
+						</div>
+
+						<div class="col-md-3 venue_inputs">
+							<label>
+								To Time
+							</label>
+							<input type="text" style="cursor:pointer;" class="form-control form-control-user to_time" unique_id="`+unique_id+`" />
+						</div>
+
+						<div class="col-md-6 venue_inputs">
+								<div>
+								<label>
+									Last Updated 
+								</label>
+
+								<input type="text" class="form-control form-control-user last_update"  value="" unique_id="`+unique_id+`" disabled style="background-color: #8D8A8A !important;" />
+							</div> 
+						</div>
+					</div>
+					<div class="row pr-3 pl-3 mt-3">
+						<div class="col-md-6 venue_inputs">
+							<label>
+								Cash Back Percentage
+							</label>
+							<div class="d-flex">
+									<input type="text" class="form-control form-control-user cashback_perentage double" unique_id="`+unique_id+`" placeholder="" value="0.0" style="border-radius: 0px; width: 108px; background-color: #F64141 !important; color: #fff !important; padding: 0px 28px !important;"/>
+									<input type="text" class="form-control form-control-user" placeholder="" value="%" style=" border-radius: 0px; width: 48px"/>
+							</div>
+						</div>
+						<div class="col-md-6 venue_inputs">
+							<label>
+								Status
+							</label>
+							<div class="selectdiv">
+								<select class="form-control form-group cashback_status" unique_id="`+unique_id+`" style="padding: .6rem 1rem; position: relative;" id="exampleFormControlSelect1">
+									<option value="">Select Status</option>
+									<option value="Active">Active</option>
+									<option value="Inactive">Inactive</option>
+
+								</select>
+							</div>
+						</div>
+					</div>
+					<div class="row pr-5 pl-3 mt-3">
+						<div class="col-md-6 venue_inputs">
+							<a href="javascript:void(0)" class="btn btn-primary btn-user btn-block common_btn submit_btn" unique_id="`+unique_id+`" style="width: 100% !important;">
+	                      		Save
+	                    	</a>
+                    	</div>	
+					</div>
+				</div>`);
+
+			 $(".from_time[unique_id='"+unique_id+"']").mdtimepicker(); 
+			 $(".to_time[unique_id='"+unique_id+"']").mdtimepicker(); 
+		});
+
+
+		$(document).on("click",'.upload_icon',function(){
+			let unique_id = $(this).attr('unique_id');
+			$(".file_name[unique_id='"+unique_id+"']").click();
+			$(".file_name[unique_id='"+unique_id+"']").change(function(event){
+				
+				var file = event.target.files[0];
+				let file_name = file.name;
+				let slice_file_name;
+				if(file_name.length > 24){
+
+					slice_file_name = file_name.slice(0,24) + "...";
+				}else{
+					slice_file_name = file_name;
+				}
+        
+              	if (file) {
+
+	               	if(file.type == "image/jpeg" || file.type == "image/jpg" || file.type == "image/png"){
+
+	                var size = event.target.files[0].size;
+
+	                if(size > 5242880){
+	                    //attr remove
+	                    $(".file_name[unique_id='"+unique_id+"']").attr("img","false");
+	                    $("#alert_text").text("Image should be less than or equal to 5 MB.");
+	                    $("#validationModel").modal("show");
+	                    $("#validationModel").unbind("click");
+	                    $(".file_name_show[unique_id='"+unique_id+"']").val("");
+	                    return false;
+	                }
+
+	                var reader = new FileReader();
+	                
+	                reader.onload = function(e) {
+	                  $(".file_name[unique_id='"+unique_id+"']").attr('src', e.target.result);
+	                  $(".file_name_show[unique_id='"+unique_id+"']").val(slice_file_name);
+	                  //attr set
+	                  $(".file_name[unique_id='"+unique_id+"']").attr("img","true");
+	                }
+	        
+	               	reader.readAsDataURL(file);
+	               
+	              	}else {
+		                $(".file_name[unique_id='"+unique_id+"']").attr("img","false");
+		                $("#alert_text").text("Please select jpg, jpeg or png image format only.");
+		                $("#validationModel").modal("show");
+		                $("#validationModel").unbind("click");
+		                $(".file_name_show[unique_id='"+unique_id+"']").val("");
+		                return false;
+	             	}
+            	}
+
+			});
+
+		});
+
+
+
+
+		$(document).on("click",".checkbox_click",function(){
+			if($(this).prop("checked") == true){
+				let unique_id = $(this).attr("unique_id");
+				let day_select = $(this).data("id").toString();
+			   	let selected_days = $(".days[unique_id='"+unique_id+"']").val();
+			   	let split_selected_days = selected_days.split(",");
+			   	split_selected_days = split_selected_days.filter(function (el) {
+			   		if(el == ""){
+			   			return el != "";
+			   		}else{
+			   			return el != null;
+			   		}
+				});
+			   	
+			   	if(split_selected_days.indexOf(day_select) == -1){
+			   		if(split_selected_days.length > 0){
+			   			$(".days[unique_id='"+unique_id+"']").val($(".days[unique_id='"+unique_id+"']").val() + "," + day_select);
+			   		}else{
+			   			$(".days[unique_id='"+unique_id+"']").val(day_select);
+			   		}
+			   	}
+
+			}else{
+				let unique_id = $(this).attr("unique_id");
+				let day_select = $(this).data("id").toString();
+			   	let selected_days = $(".days[unique_id='"+unique_id+"']").val();
+			   	let split_selected_days = selected_days.split(",");
+			   	split_selected_days = split_selected_days.filter(function (el) {
+			   		if(el == ""){
+			   			return el != "";
+			   		}else{
+			   			return el != null;
+			   		}
+				});
+
+			   	
+			   	if(split_selected_days.indexOf(day_select) != -1){
+			   		split_selected_days.splice(split_selected_days.indexOf(day_select),1);
+
+			   		if(split_selected_days.length > 0){
+			   			split_selected_days = split_selected_days.toString();
+			   			$(".days[unique_id='"+unique_id+"']").val(split_selected_days);
+			   		}else{
+			   			$(".days[unique_id='"+unique_id+"']").val("");
+			   		}
+		   		}
+
+			}
+		});
+
+		$(document).on("click",".cashback_name_show",function(){
+			let remove_pre_active = $(".cashback_name_show.active").removeClass("active").children(".cashback_name_input").css({"background-color" : "#E3DFDF","cursor":"pointer"});
+			//active current unique_id
+			let unique_id_active = $(this).attr("unique_id");
+
+			$(this).addClass("active").children(".cashback_name_input").css({"background-color":"#EBEBEB","cursor":"unset"}).removeAttr("disabled");
+			//remove prev active form
+			let pre_active_form = $(".form_data_show").removeClass("active").css("display","none");
+
+			//active current form
+			$(".form_data_show[unique_id='"+unique_id_active+"']").addClass("active").css({"display" : "block"});
+		});
+
+		$(document).on("keyup keydown",".cashback_input2",function(){
+			let unique_id = $(this).attr("unique_id");
+			$(".cashback_name_show[unique_id='"+unique_id+"']").children(".cashback_name_input").val($(this).val())
+		});
+
+		$(document).on("keyup keydown",".cashback_name_input",function(){
+			let unique_id = $(this).attr("unique_id");
+			$(".cashback_input2[unique_id='"+unique_id+"']").val($(this).val())
+		});
+
+		$(document).on("click",".submit_btn",function(){
+			let unique_id = $(this).attr("unique_id");
+			alert()
+			return false;
+		});
+	});
+</script>
+
+<script type="text/javascript">
+	$(document).ready(function(){
+		let active_venue_id = $(".venue_name.active").data("id");
+		var data = {
+        	'_token': "{{csrf_token()}}",
+        	"venue_id": active_venue_id
+    	};
+
+    	ajaxForCashbackData(data)
+
+    	$(".venue_name").on("click",function(){
+    		//remove_prev_active
+    		$(".venue_name.active").removeClass("active");
+    		let venue_id = $(this).data("id");
+    		$(this).addClass("active");
+    		var data = {
+	        	'_token': "{{csrf_token()}}",
+	        	"venue_id": active_venue_id
+	    	};
+
+	    	ajaxForCashbackData(data)
+
+    	});
+	});
+
+	function ajaxForCashbackData(data){
+		$.ajax({
+	          url:"{{route('admin.cashBackAccordingToVenue')}}",
+	          type:'POST',
+	          data:data,
+	          beforeSend:function(){
+	          	$("#loaderModel").modal("show");
+				$("#loaderModel").unbind("click");
+	          },
+	          success: function(res){
+	          	console.log(res)
+	          	setTimeout(function(){
+	          		$("#loaderModel").modal("hide");
+
+	          		let cashbacks = res.cashbacks;
+	          		//blank if not save cashbacks data
+	          		$(".cashback_name_list").html("");
+	          		$(".append_data").html("");
+	          		//
+	          		for(let i=0; cashbacks.length > i; i++){
+          				let last_cashback_unique_id = $("#cashback_last_id").val();
+						let unique_id = parseInt(cashbacks[i]['unique_id_cashback']);
+          				$(".form_data_show").removeClass("active").css("display","none");
+
+	          			if(i == 0){
+
+
+	          			$(".cashback_name_list").append(`<li class="cashback_name_show active" venu_id = "`+cashbacks[i]['venu_id']+`" unique_id = "`+unique_id+`">
+								<input type="text" class="cashback_name_input" maxlength="30" value="`+cashbacks[i]['promotion_cashback_name']+`" venu_id="`+cashbacks[i]['venu_id']+`" unique_id="`+unique_id+`" placeholder="Enter Promotion Cash Back Name">
+							</li>`);
+
+
+
+							$(".append_data").append(`<div class="form_data_show active" unique_id="`+unique_id+`">
+									<div class="row pr-3 pl-3">
+										<div class="col-md-6 venue_inputs">
+											<label>
+												Promotion Cash Back Name
+											</label>
+											<input type="text" class="form-control form-control-user cashback_input2" maxlength="30" placeholder="Enter Promotion Cash Back Name" value="" unique_id="`+unique_id+`" />
+										</div>
+										<div class="col-md-6 venue_inputs">
+											<label>
+												Image
+											</label>
+											<input type="text" class="form-control form-control-user file_name_show" title="" placeholder="" value="" disabled="true" unique_id="`+unique_id+`" />
+											<img src="{{url('public/upload_icon.png')}}" title="Click to upload image" alt="" class="upload_icon" unique_id="`+unique_id+`" />
+											<input type="file" class="file_name" unique_id="`+unique_id+`" style="display:none" img="false">
+										</div>
+									</div>
+									<div class="row pr-3 pl-3 mt-3">
+										<div class="col-md-12 venue_inputs">
+											<label>
+												When
+											</label>
+											<input type="hidden" class="days" unique_id="`+unique_id+`" value="">
+											<div class="checkboxesbg">
+												<div class="d-flex flex-wrap">
+													<div class="mr-2">
+														<label class="tick_box"><span class="date">Monday</span>
+															<input type="checkbox" unique_id="`+unique_id+`" data-id="Monday" class="checkbox_click">
+															<span class="checkmark"></span>
+														</label>
+													</div>
+													<div class="mr-2">
+														<label class="tick_box"><span class="date">Tuesday</span>
+															<input type="checkbox" unique_id="`+unique_id+`" data-id="Tuesday" class="checkbox_click">
+															<span class="checkmark"></span>
+														</label>
+													</div>
+													<div class="mr-2">
+														<label class="tick_box"><span class="date">Wednesday</span>
+															<input type="checkbox" unique_id="`+unique_id+`" data-id="Wednesday" class="checkbox_click">
+															<span class="checkmark"></span>
+														</label>
+													</div>
+													<div class="mr-2">
+														<label class="tick_box"><span class="date">Thursday</span>
+															<input type="checkbox" unique_id="`+unique_id+`" data-id="Thursday" class="checkbox_click">
+															<span class="checkmark"></span>
+														</label>
+													</div>
+													<div class="mr-2">
+														<label class="tick_box"><span class="date">Friday</span>
+															<input type="checkbox" unique_id="`+unique_id+`" data-id="Friday" class="checkbox_click">
+															<span class="checkmark"></span>
+														</label>
+													</div>
+													<div class="mr-2">
+														<label class="tick_box"><span class="date">Saturday</span>
+															<input type="checkbox" unique_id="`+unique_id+`" data-id="Saturday" class="checkbox_click">
+															<span class="checkmark"></span>
+														</label>
+													</div>
+													<div>
+														<label class="tick_box"><span class="date">Sunday</span>
+															<input type="checkbox" unique_id="`+unique_id+`" data-id="Sunday" class="checkbox_click">
+															<span class="checkmark"></span>
+														</label>
+													</div>
+												</div>
+											</div>
+										</div>	
+									</div>
+									<label class="applicable-date mt-3">
+										Applicable Dates
+									</label>
+									<div class="row pr-3 pl-3 mt-0">
+										<div class="col-md-3 venue_inputs">
+											<label>
+												From Date
+											</label>
+											<input type="date" class="form-control form-control-user from_date" placeholder="From Date" value="" unique_id="`+unique_id+`" />
+										</div>
+										<div class="col-md-3 venue_inputs">
+											<label>
+												To Date
+											</label>
+											<input type="date" class="form-control form-control-user to_date" placeholder="To Date" value="" unique_id="`+unique_id+`" />
+										</div>
+										<div class="col-md-6 venue_inputs">
+											<div class="">
+												<label>
+													Created 
+												</label>
+												<input type="text" class="form-control form-control-user created_date" unique_id="`+unique_id+`"  value="" disabled style="background-color: #8D8A8A !important;" />
+											</div>
+										</div>
+									</div>
+									<div class="row pr-3 pl-3 mt-3">
+										<div class="col-md-3 venue_inputs">
+											<label>
+												From Time
+											</label>
+											<input type="text" style="cursor:pointer;" class="form-control form-control-user from_time" unique_id="`+unique_id+`" />
+										</div>
+
+										<div class="col-md-3 venue_inputs">
+											<label>
+												To Time
+											</label>
+											<input type="text" style="cursor:pointer;" class="form-control form-control-user to_time" unique_id="`+unique_id+`" />
+										</div>
+
+										<div class="col-md-6 venue_inputs">
+												<div>
+												<label>
+													Last Updated 
+												</label>
+
+												<input type="text" class="form-control form-control-user last_update"  value="" unique_id="`+unique_id+`" disabled style="background-color: #8D8A8A !important;" />
+											</div> 
+										</div>
+									</div>
+									<div class="row pr-3 pl-3 mt-3">
+										<div class="col-md-6 venue_inputs">
+											<label>
+												Cash Back Percentage
+											</label>
+											<div class="d-flex">
+													<input type="text" class="form-control form-control-user cashback_perentage double" unique_id="`+unique_id+`" placeholder="" value="0.0" style="border-radius: 0px; width: 108px; background-color: #F64141 !important; color: #fff !important; padding: 0px 28px !important;"/>
+													<input type="text" class="form-control form-control-user" placeholder="" value="%" style=" border-radius: 0px; width: 48px"/>
+											</div>
+										</div>
+										<div class="col-md-6 venue_inputs">
+											<label>
+												Status
+											</label>
+											<div class="selectdiv">
+												<select class="form-control form-group cashback_status" unique_id="`+unique_id+`" style="padding: .6rem 1rem; position: relative;" id="exampleFormControlSelect1">
+													<option value="">Select Status</option>
+													<option value="Active">Active</option>
+													<option value="Inactive">Inactive</option>
+
+												</select>
+											</div>
+										</div>
+									</div>
+									<div class="row pr-5 pl-3 mt-3">
+										<div class="col-md-6 venue_inputs">
+											<a href="javascript:void(0)" class="btn btn-primary btn-user btn-block common_btn submit_btn" unique_id="`+unique_id+`" style="width: 100% !important;">
+					                      		Save
+					                    	</a>
+				                    	</div>	
+									</div>
+								</div>`);
+
+	          			}else{
+
+	          				let last_cashback_unique_id = $("#cashback_last_id").val();
+							let unique_id = parseInt(cashbacks[i]['unique_id_cashback']);
+
+	          				$(".cashback_name_list").append(`<li class="cashback_name_show" venu_id = "`+cashbacks[i]['venu_id']+`" unique_id = "`+unique_id+`">
+								<input type="text" class="cashback_name_input" maxlength="30" value="`+cashbacks[i]['promotion_cashback_name']+`" venu_id="`+cashbacks[i]['venu_id']+`" unique_id="`+unique_id+`" placeholder="Enter Promotion Cash Back Name" style="background-color:#E3DFDF; cursor:pointer" disabled="true">
+							</li>`);
+
+
+
+	          				$(".append_data").append(`<div class="form_data_show" unique_id="`+unique_id+`">
+									<div class="row pr-3 pl-3">
+										<div class="col-md-6 venue_inputs">
+											<label>
+												Promotion Cash Back Name
+											</label>
+											<input type="text" class="form-control form-control-user cashback_input2" maxlength="30" placeholder="Enter Promotion Cash Back Name" value="" unique_id="`+unique_id+`" />
+										</div>
+										<div class="col-md-6 venue_inputs">
+											<label>
+												Image
+											</label>
+											<input type="text" class="form-control form-control-user file_name_show" title="" placeholder="" value="" disabled="true" unique_id="`+unique_id+`" />
+											<img src="{{url('public/upload_icon.png')}}" title="Click to upload image" alt="" class="upload_icon" unique_id="`+unique_id+`" />
+											<input type="file" class="file_name" unique_id="`+unique_id+`" style="display:none" img="false">
+										</div>
+									</div>
+									<div class="row pr-3 pl-3 mt-3">
+										<div class="col-md-12 venue_inputs">
+											<label>
+												When
+											</label>
+											<input type="hidden" class="days" unique_id="`+unique_id+`" value="">
+											<div class="checkboxesbg">
+												<div class="d-flex flex-wrap">
+													<div class="mr-2">
+														<label class="tick_box"><span class="date">Monday</span>
+															<input type="checkbox" unique_id="`+unique_id+`" data-id="Monday" class="checkbox_click">
+															<span class="checkmark"></span>
+														</label>
+													</div>
+													<div class="mr-2">
+														<label class="tick_box"><span class="date">Tuesday</span>
+															<input type="checkbox" unique_id="`+unique_id+`" data-id="Tuesday" class="checkbox_click">
+															<span class="checkmark"></span>
+														</label>
+													</div>
+													<div class="mr-2">
+														<label class="tick_box"><span class="date">Wednesday</span>
+															<input type="checkbox" unique_id="`+unique_id+`" data-id="Wednesday" class="checkbox_click">
+															<span class="checkmark"></span>
+														</label>
+													</div>
+													<div class="mr-2">
+														<label class="tick_box"><span class="date">Thursday</span>
+															<input type="checkbox" unique_id="`+unique_id+`" data-id="Thursday" class="checkbox_click">
+															<span class="checkmark"></span>
+														</label>
+													</div>
+													<div class="mr-2">
+														<label class="tick_box"><span class="date">Friday</span>
+															<input type="checkbox" unique_id="`+unique_id+`" data-id="Friday" class="checkbox_click">
+															<span class="checkmark"></span>
+														</label>
+													</div>
+													<div class="mr-2">
+														<label class="tick_box"><span class="date">Saturday</span>
+															<input type="checkbox" unique_id="`+unique_id+`" data-id="Saturday" class="checkbox_click">
+															<span class="checkmark"></span>
+														</label>
+													</div>
+													<div>
+														<label class="tick_box"><span class="date">Sunday</span>
+															<input type="checkbox" unique_id="`+unique_id+`" data-id="Sunday" class="checkbox_click">
+															<span class="checkmark"></span>
+														</label>
+													</div>
+												</div>
+											</div>
+										</div>	
+									</div>
+									<label class="applicable-date mt-3">
+										Applicable Dates
+									</label>
+									<div class="row pr-3 pl-3 mt-0">
+										<div class="col-md-3 venue_inputs">
+											<label>
+												From Date
+											</label>
+											<input type="date" class="form-control form-control-user from_date" placeholder="From Date" value="" unique_id="`+unique_id+`" />
+										</div>
+										<div class="col-md-3 venue_inputs">
+											<label>
+												To Date
+											</label>
+											<input type="date" class="form-control form-control-user to_date" placeholder="To Date" value="" unique_id="`+unique_id+`" />
+										</div>
+										<div class="col-md-6 venue_inputs">
+											<div class="">
+												<label>
+													Created 
+												</label>
+												<input type="text" class="form-control form-control-user created_date" unique_id="`+unique_id+`"  value="" disabled style="background-color: #8D8A8A !important;" />
+											</div>
+										</div>
+									</div>
+									<div class="row pr-3 pl-3 mt-3">
+										<div class="col-md-3 venue_inputs">
+											<label>
+												From Time
+											</label>
+											<input type="text" style="cursor:pointer;" class="form-control form-control-user from_time" unique_id="`+unique_id+`" />
+										</div>
+
+										<div class="col-md-3 venue_inputs">
+											<label>
+												To Time
+											</label>
+											<input type="text" style="cursor:pointer;" class="form-control form-control-user to_time" unique_id="`+unique_id+`" />
+										</div>
+
+										<div class="col-md-6 venue_inputs">
+												<div>
+												<label>
+													Last Updated 
+												</label>
+
+												<input type="text" class="form-control form-control-user last_update"  value="" unique_id="`+unique_id+`" disabled style="background-color: #8D8A8A !important;" />
+											</div> 
+										</div>
+									</div>
+									<div class="row pr-3 pl-3 mt-3">
+										<div class="col-md-6 venue_inputs">
+											<label>
+												Cash Back Percentage
+											</label>
+											<div class="d-flex">
+													<input type="text" class="form-control form-control-user cashback_perentage double" unique_id="`+unique_id+`" placeholder="" value="0.0" style="border-radius: 0px; width: 108px; background-color: #F64141 !important; color: #fff !important; padding: 0px 28px !important;"/>
+													<input type="text" class="form-control form-control-user" placeholder="" value="%" style=" border-radius: 0px; width: 48px"/>
+											</div>
+										</div>
+										<div class="col-md-6 venue_inputs">
+											<label>
+												Status
+											</label>
+											<div class="selectdiv">
+												<select class="form-control form-group cashback_status" unique_id="`+unique_id+`" style="padding: .6rem 1rem; position: relative;" id="exampleFormControlSelect1">
+													<option value="">Select Status</option>
+													<option value="Active">Active</option>
+													<option value="Inactive">Inactive</option>
+
+												</select>
+											</div>
+										</div>
+									</div>
+									<div class="row pr-5 pl-3 mt-3">
+										<div class="col-md-6 venue_inputs">
+											<a href="javascript:void(0)" class="btn btn-primary btn-user btn-block common_btn submit_btn" unique_id="`+unique_id+`" style="width: 100% !important;">
+					                      		Save
+					                    	</a>
+				                    	</div>	
+									</div>
+								</div>`);
+
+	          			}
+						$(".from_time[unique_id='"+unique_id+"']").mdtimepicker(); 
+						$(".to_time[unique_id='"+unique_id+"']").mdtimepicker();
+	          		}
+	          		
+	          		
+
+	          	},500);
+	          },
+	          error: function(data, textStatus, xhr) {
+	            if(data.status == 422){
+	              var result = data.responseJSON;
+	              alert('Something went worng.');
+	              window.location.href = "";
+	              $("#loaderModel").modal("hide");
 	              return false;
 	            } 
 	      	}

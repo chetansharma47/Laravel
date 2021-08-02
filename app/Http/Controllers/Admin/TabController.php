@@ -286,7 +286,7 @@ class TabController extends Controller
             $venues = Venu::whereAdminId($admin->id)->get();
             $cashback_last = Cashback::whereAdminId($admin->id)->orderBy('id','desc')->first();
             if(!empty($cashback_last)){
-                $last_id = $cashback_last->id;
+                $last_id = $cashback_last->unique_id_cashback;
             }else{
                 $last_id = 0;
             }
@@ -298,6 +298,12 @@ class TabController extends Controller
             $loyality_cashback = $this->tabBusiness()->loyalityCashBackPage($data);
             return $loyality_cashback;
         }
+    }
+
+    public function cashBackAccordingToVenue(Request $request){
+        $venue_id = $request->venue_id;
+        $venue = Venu::whereId($venue_id)->with('cashbacks')->first();
+        return $venue;
     }
 
     public function allDataAvailability(Request $request){

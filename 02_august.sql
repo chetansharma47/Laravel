@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jul 30, 2021 at 06:07 PM
+-- Generation Time: Aug 02, 2021 at 05:41 PM
 -- Server version: 5.7.35-0ubuntu0.18.04.1
 -- PHP Version: 7.2.34-10+ubuntu18.04.1+deb.sury.org+1
 
@@ -41,7 +41,7 @@ CREATE TABLE `admins` (
 --
 
 INSERT INTO `admins` (`id`, `name`, `email`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'admin', 'adminn@yopmail.com', '$2y$10$nbvTNJDjH6yIpVurSdVaOOeYAyIi8spa8oc.cNpx7mp4/oCV679A6', 'cvVVpBo0SG770AgY5sJdD1W4K3ZApXYLT6HCwoPc2IIBVV0zxrYS7MJ5QMJIBKDv', NULL, '2021-07-30 04:29:01');
+(1, 'admin', 'adminn@yopmail.com', '$2y$10$nbvTNJDjH6yIpVurSdVaOOeYAyIi8spa8oc.cNpx7mp4/oCV679A6', 'Zh2IvHebzVyNHQl2B8JoM9fuNfpoaORIxK0vt22rhLmqjBGBqaUYNT7CPej9WeXy', NULL, '2021-08-02 01:38:20');
 
 -- --------------------------------------------------------
 
@@ -65,7 +65,7 @@ CREATE TABLE `application_datas` (
 --
 
 INSERT INTO `application_datas` (`id`, `admin_id`, `logo`, `video`, `color`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 1, '0713202107532960ed467961d5b.jpg', 'file_example_MOV_480_700kB.mov', '#000', '2021-07-26 18:30:00', '2021-07-26 18:30:00', NULL);
+(1, 1, 'logo.png', 'splashVideo.mp4', '#0B68AC', '2021-07-26 18:30:00', '2021-07-26 18:30:00', NULL);
 
 -- --------------------------------------------------------
 
@@ -87,10 +87,10 @@ CREATE TABLE `application_images` (
 --
 
 INSERT INTO `application_images` (`id`, `application_data_id`, `image`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 1, '0713202104291560ed169b28835.jpg', NULL, NULL, NULL),
-(2, 1, '0713202110290360ed6aef15ed8.jpg', NULL, NULL, NULL),
-(3, 1, '0713202110290360ed6aef15ed8.jpg', NULL, NULL, NULL),
-(4, 1, '0713202112274160ed86bddc445.jpg', NULL, NULL, NULL);
+(1, 1, 'application_4_images.png', NULL, NULL, NULL),
+(2, 1, 'application_4_images.png', NULL, NULL, NULL),
+(3, 1, 'application_4_images.png', NULL, NULL, NULL),
+(4, 1, 'application_4_images.png', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -100,6 +100,7 @@ INSERT INTO `application_images` (`id`, `application_data_id`, `image`, `created
 
 CREATE TABLE `cashbacks` (
   `id` int(10) UNSIGNED NOT NULL,
+  `unique_id_cashback` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `admin_id` int(10) UNSIGNED NOT NULL,
   `venu_id` int(10) UNSIGNED NOT NULL,
   `promotion_cashback_name` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -115,6 +116,14 @@ CREATE TABLE `cashbacks` (
   `updated_at` timestamp NULL DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `cashbacks`
+--
+
+INSERT INTO `cashbacks` (`id`, `unique_id_cashback`, `admin_id`, `venu_id`, `promotion_cashback_name`, `image`, `day_on`, `from_date`, `to_date`, `from_time`, `to_time`, `cashback_percentage`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(1, '1', 1, 1, 'safsaf', 'asfasf.jpg', 'Monday', '2021-08-02', '2021-08-03', '02:00:00', '05:00:00', '10', 'Active', NULL, NULL, NULL),
+(2, '2', 1, 1, 'safsaf', 'asfasf.jpg', 'Monday', '2021-08-02', '2021-08-03', '02:00:00', '05:00:00', '10', 'Active', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -149,7 +158,7 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (22, '2021_07_28_121136_create_venus_table', 7),
 (23, '2021_07_28_125108_create_venue_users_table', 8),
 (24, '2021_07_29_120346_create_wallet_cashbacks_table', 9),
-(27, '2021_07_30_113524_create_cashbacks_table', 10);
+(28, '2021_07_30_113524_create_cashbacks_table', 10);
 
 -- --------------------------------------------------------
 
@@ -632,12 +641,12 @@ ALTER TABLE `application_images`
 -- AUTO_INCREMENT for table `cashbacks`
 --
 ALTER TABLE `cashbacks`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 --
 -- AUTO_INCREMENT for table `oauth_clients`
 --

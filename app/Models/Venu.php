@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Cashback;
 
 class Venu extends Model
 {
@@ -18,4 +19,8 @@ class Venu extends Model
     	'menu_link',
     	'status'
     ];
+
+    public function cashbacks(){
+        return $this->hasMany(Cashback::class)->whereDeletedAt(null);
+    }
 }

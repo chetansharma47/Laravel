@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Cashback extends Model
 {
     protected $fillable = [
+        'unique_id_cashback',
     	'venu_id',
     	'promotion_cashback_name',
     	'image',
