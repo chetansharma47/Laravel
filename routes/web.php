@@ -84,6 +84,7 @@ Route::group(['middleware' => 'TimeZone','namespace' => 'Admin','prefix'=>'/admi
         Route::post('unblock-users','TabController@unBlockUsers')->name('unBlockUsers');
         Route::post('authorized-unauthorized','TabController@authorizedUnauthorized')->name('authorizedUnauthorized');
         Route::post('cashback-according-to-venue','TabController@cashBackAccordingToVenue')->name('cashBackAccordingToVenue');
+        Route::post('cashback-save','TabController@cashbackSave')->name('cashbackSave');
 
         Route::post('update-user-data','TabController@updateUserData')->name('updateUserData');
 

@@ -1172,9 +1172,173 @@
 		});
 
 		$(document).on("click",".submit_btn",function(){
+
+			let date = new Date().getDate();
+			let year = new Date().getFullYear();
+			let month = new Date().getMonth() + 1;
+			if(month <= 10){
+				month = "0"+month;
+			}
+
+			if(date <= 10){
+				date = "0"+date;
+			}
+			let after_date_format = year+"-"+month+"-"+date;
+
 			let unique_id = $(this).attr("unique_id");
-			alert()
-			return false;
+			let check_name = $(".cashback_input2[unique_id='"+unique_id+"']").val();
+			let file_data = $(".file_name[unique_id='"+unique_id+"']").attr("img");
+			let days = $(".days[unique_id='"+unique_id+"']").val();
+			let from_date = $(".from_date[unique_id='"+unique_id+"']").val();
+			let to_date = $(".to_date[unique_id='"+unique_id+"']").val();
+			let from_time = $(".from_time[unique_id='"+unique_id+"']").val();
+			let to_time = $(".to_time[unique_id='"+unique_id+"']").val();
+			let cashback_perentage = $(".cashback_perentage[unique_id='"+unique_id+"']").val();
+			let cashback_status = $(".cashback_status[unique_id='"+unique_id+"']").val();
+			let image = $(".file_name[unique_id='"+unique_id+"']").attr("src");
+			let venu_id = $(".venue_name.active").data("id");
+		
+			if(check_name == ""){
+				$("#alert_text").text("Please enter promotion cashback name.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+
+			}
+
+			if(file_data == "false"){
+				$("#alert_text").text("Please upload image.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+
+			}
+
+			if(days == ""){
+				$("#alert_text").text("Please select days.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+
+			}
+
+			if(from_date == ""){
+				$("#alert_text").text("Please select from date.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+
+			}
+
+			if(to_date == ""){
+				$("#alert_text").text("Please select to date.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+
+			}
+
+			if(from_time == ""){
+				$("#alert_text").text("Please select from_time.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+
+			}
+
+			if(to_time == ""){
+				$("#alert_text").text("Please select to_time.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+
+			}
+
+			if(cashback_perentage == ""){
+				$("#alert_text").text("Please enter cash back percentage.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+
+			}else if(cashback_perentage == "0" || cashback_perentage == 0){
+				$("#alert_text").text("Please enter valid cash back percentage.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
+
+			if(cashback_status == ""){
+				$("#alert_text").text("Please select status.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+
+			}
+
+			if(from_date < after_date_format){
+				$("#alert_text").text("From date should be greater than or equal to today.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
+
+			if(from_date > to_date){
+				$("#alert_text").text("From date should be less than to today.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
+
+			if(from_date == to_date){
+				$("#alert_text").text("To date should be greater than from date.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
+
+			var data = {
+	        	'_token': "{{csrf_token()}}",
+	        	"unique_id_cashback": unique_id,
+	        	"promotion_cashback_name": check_name,
+	        	"image": image,
+	        	"day_on": days,
+	        	"from_date": from_date,
+	        	"to_date": to_date,
+	        	"from_time": from_time,
+	        	"to_time": to_time,
+	        	"cashback_percentage": cashback_perentage,
+	        	"status": cashback_status,
+	        	"venu_id" : venu_id
+	    	};
+
+
+			$.ajax({
+		          url:"{{route('admin.cashbackSave')}}",
+		          type:'POST',
+		          data:data,
+		          beforeSend:function(){
+		          	$("#loaderModel").modal("show");
+					$("#loaderModel").unbind("click");
+		          },
+		          success: function(res){
+		          	console.log(res)
+		          	setTimeout(function(){
+		          		$("#loaderModel").modal("hide");
+		          		
+
+		          	},500);
+		          },
+		          error: function(data, textStatus, xhr) {
+		            if(data.status == 422){
+		              var result = data.responseJSON;
+		              alert('Something went worng.');
+		              window.location.href = "";
+		              $("#loaderModel").modal("hide");
+		              return false;
+		            } 
+		      	}
+		    });
+
 		});
 	});
 </script>
@@ -1226,7 +1390,6 @@
 	          		for(let i=0; cashbacks.length > i; i++){
           				let last_cashback_unique_id = $("#cashback_last_id").val();
 						let unique_id = parseInt(cashbacks[i]['unique_id_cashback']);
-          				$(".form_data_show").removeClass("active").css("display","none");
 
 	          			if(i == 0){
 
@@ -1243,7 +1406,7 @@
 											<label>
 												Promotion Cash Back Name
 											</label>
-											<input type="text" class="form-control form-control-user cashback_input2" maxlength="30" placeholder="Enter Promotion Cash Back Name" value="" unique_id="`+unique_id+`" />
+											<input type="text" class="form-control form-control-user cashback_input2" maxlength="30" placeholder="Enter Promotion Cash Back Name" value="`+cashbacks[i]['promotion_cashback_name']+`" unique_id="`+unique_id+`" />
 										</div>
 										<div class="col-md-6 venue_inputs">
 											<label>
@@ -1316,13 +1479,13 @@
 											<label>
 												From Date
 											</label>
-											<input type="date" class="form-control form-control-user from_date" placeholder="From Date" value="" unique_id="`+unique_id+`" />
+											<input type="date" class="form-control form-control-user from_date" placeholder="From Date" value="`+cashbacks[i]['from_date']+`" unique_id="`+unique_id+`" />
 										</div>
 										<div class="col-md-3 venue_inputs">
 											<label>
 												To Date
 											</label>
-											<input type="date" class="form-control form-control-user to_date" placeholder="To Date" value="" unique_id="`+unique_id+`" />
+											<input type="date" class="form-control form-control-user to_date" placeholder="To Date" value="`+cashbacks[i]['to_date']+`" unique_id="`+unique_id+`" />
 										</div>
 										<div class="col-md-6 venue_inputs">
 											<div class="">
@@ -1338,14 +1501,14 @@
 											<label>
 												From Time
 											</label>
-											<input type="text" style="cursor:pointer;" class="form-control form-control-user from_time" unique_id="`+unique_id+`" />
+											<input type="text" style="cursor:pointer;" class="form-control form-control-user from_time" unique_id="`+unique_id+`" value="`+cashbacks[i]['from_time']+`" />
 										</div>
 
 										<div class="col-md-3 venue_inputs">
 											<label>
 												To Time
 											</label>
-											<input type="text" style="cursor:pointer;" class="form-control form-control-user to_time" unique_id="`+unique_id+`" />
+											<input type="text" style="cursor:pointer;" class="form-control form-control-user to_time" unique_id="`+unique_id+`" value="`+cashbacks[i]['to_time']+`" />
 										</div>
 
 										<div class="col-md-6 venue_inputs">
@@ -1393,16 +1556,13 @@
 
 	          			}else{
 
-	          				let last_cashback_unique_id = $("#cashback_last_id").val();
-							let unique_id = parseInt(cashbacks[i]['unique_id_cashback']);
-
 	          				$(".cashback_name_list").append(`<li class="cashback_name_show" venu_id = "`+cashbacks[i]['venu_id']+`" unique_id = "`+unique_id+`">
-								<input type="text" class="cashback_name_input" maxlength="30" value="`+cashbacks[i]['promotion_cashback_name']+`" venu_id="`+cashbacks[i]['venu_id']+`" unique_id="`+unique_id+`" placeholder="Enter Promotion Cash Back Name" style="background-color:#E3DFDF; cursor:pointer" disabled="true">
+								<input type="text" class="cashback_name_input" maxlength="30" value="`+cashbacks[i]['promotion_cashback_name']+`" venu_id="`+cashbacks[i]['venu_id']+`" unique_id="`+unique_id+`" placeholder="Enter Promotion Cash Back Name" style="background-color:#E3DFDF; cursor:pointer">
 							</li>`);
 
 
 
-	          				$(".append_data").append(`<div class="form_data_show" unique_id="`+unique_id+`">
+	          				$(".append_data").append(`<div class="form_data_show" style="display:none;" unique_id="`+unique_id+`">
 									<div class="row pr-3 pl-3">
 										<div class="col-md-6 venue_inputs">
 											<label>

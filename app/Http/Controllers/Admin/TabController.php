@@ -306,6 +306,13 @@ class TabController extends Controller
         return $venue;
     }
 
+    public function cashbackSave(Request $request){
+        $data = $request->all();
+        $admin = Auth::guard('admin')->user();
+        $save_cashback = $this->tabBusiness()->saveCashback($data, $admin);
+        return $save_cashback;
+    }
+
     public function allDataAvailability(Request $request){
     	if($request->isMethod('GET')){
             $admin = Auth()->guard('admin')->user();

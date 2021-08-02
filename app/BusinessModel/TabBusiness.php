@@ -8,6 +8,8 @@ use App\Models\TierCondition;
 use App\Models\WalletCashback;
 use App\User;
 use Auth;
+use App\Models\Cashback;
+use Carbon\Carbon;
 class TabBusiness extends Model
 {
     public function saveTier($data, $admin, $tier_setting = null){
@@ -64,5 +66,37 @@ class TabBusiness extends Model
         }
 
 
+    }
+
+    public function uploadBase64Img($data){
+        $destinationPath = storage_path(). DIRECTORY_SEPARATOR . env('CASHBACK_STORAGE');
+        $image1 = str_replace('data:image/jpeg;base64,', '', $data);
+        $image1 = str_replace('data:image/png;base64,', '', $image1);
+        $image1 = str_replace(' ', '+', $image1);
+        $imageName = date('mdYHis') . '1' . uniqid().'.png';
+        file_put_contents($destinationPath. '/' . $imageName, base64_decode($image1));
+        //\File::put($destinationPath. '/' . $imageName, base64_decode($image1));
+        return $imageName;
+    }
+
+
+    public function saveCashback($data, $admin){
+        $data['from_time'] = Carbon::parse(Carbon::now()->toDateString()." ".$data['from_time'])->toTimeString();
+        $data['to_time'] = Carbon::parse(Carbon::now()->toDateString()." ".$data['to_time'])->toTimeString();
+        if($data['image']){
+            $data['image'] = $this->uploadBase64Img($data['image']);
+        }
+        $find_cashback = Cashback::where("unique_id_cashback","=", $data['unique_id_cashback'])->whereDeletedAt(null)->first();
+        if(empty($find_cashback)){
+            $find_cashback = new Cashback();
+            $find_cashback->admin_id = $admin->id;
+            $find_cashback->fill($data);
+            $find_cashback->save();
+        }else{
+            $find_cashback->fill($data);
+            $find_cashback->update();
+        }
+
+        return $find_cashback;
     }
 }
