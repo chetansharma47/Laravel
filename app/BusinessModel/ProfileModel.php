@@ -148,10 +148,10 @@ class ProfileModel extends Model
                 $user_data->access_token = $user_data->createToken('andrew')->accessToken;
                 return ["status" => 8, "data" => $user_data, "error_msg" => ""];
             }else{
-                return ["status" => 5, "data" => null, "error_msg" => "Invalid email address or password."];
+                return ["status" => 5, "data" => null, "error_msg" => "Invalid mobile number / email address or password."];
             }
         }else{
-            return ["status" => 5, "data" => null, "error_msg" => "Invalid email address or password."];
+            return ["status" => 5, "data" => null, "error_msg" => "Invalid mobile number / email address or password."];
         }
     }
 
@@ -173,6 +173,9 @@ class ProfileModel extends Model
         $link = url("reset-password/$reset_password_token");
         try{
           \Mail::to($user->email)->send(new UserForgotPassword($user, $link));
+
+          DB::table('password_resets')->whereEmail($email)->delete();
+
           DB::table('password_resets')->insert(['email' => $user->email, 'token' => $reset_password_token,
                 'created_at' => Carbon::now()]);
         }catch(\Exception $ex){

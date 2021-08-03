@@ -288,12 +288,20 @@ label.error {
 	$(document).ready(function(){
 
 		jQuery.validator.addMethod("valid_email", function(value, element) {
+	        
 	      	console.log(value.indexOf("."))
-	        if(value.indexOf(".") >= 0 ){
+	        if(value.indexOf(".") >= 0 && value.includes(".@") == false){
 	          return true;
 	        }else {
 	          return false;
 	        }
+
+
+	        // if(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value)){
+	        // 	return true;
+	        // }else{
+	        // 	return false;
+	        // }
     	}, "Please enter valid email address.");
 
 

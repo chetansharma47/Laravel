@@ -172,7 +172,7 @@
 										</a>
 									</li>
 									<li class="nav-item">
-										<a class="nav-link" href="{{route('admin.login')}}" style="color: #FFDA7A;">
+										<a class="nav-link" href="{{route('admin.logout')}}" style="color: #FFDA7A;">
 											logout
 										</a>
 									</li>
@@ -1269,15 +1269,15 @@ chart.render();
 		        $( row ).find('td:eq(2)').attr('data-id', data['id']).attr('key_type','first_name').addClass('td_click');
 		        $( row ).find('td:eq(3)').attr('data-id', data['id']).attr('key_type','last_name').addClass('td_click');
 		        $( row ).find('td:eq(4)').attr('data-id', data['id']).attr('key_type','email').addClass('td_click');
-		        $( row ).find('td:eq(6)').attr('data-id', data['id']).attr('key_type','nationality').addClass('td_click');
-		        $( row ).find('td:eq(7)').attr('data-id', data['id']).attr('key_type','dob').addClass('td_click');
-		        $( row ).find('td:eq(8)').attr('data-id', data['id']).attr('key_type','gender').addClass('td_click');
-		        $( row ).find('td:eq(9)').attr('data-id', data['id']).attr('key_type','is_active').addClass('td_click');
-		        $( row ).find('td:eq(10)').attr('data-id', data['id']).attr('key_type','created_at').addClass('td_click');
-		        $( row ).find('td:eq(11)').attr('data-id', data['id']).attr('key_type','customer_tier').addClass('td_click');
-		        $( row ).find('td:eq(12)').attr('data-id', data['id']).attr('key_type','wallet_cash').addClass('td_click');
-		        $( row ).find('td:eq(13)').attr('data-id', data['id']).attr('key_type','reference_code').addClass('td_click');
-		        $( row ).find('td:eq(14)').attr('data-id', data['id']).attr('key_type','reference_by').addClass('td_click');
+		        $( row ).find('td:eq(5)').attr('data-id', data['id']).attr('key_type','nationality').addClass('td_click');
+		        $( row ).find('td:eq(6)').attr('data-id', data['id']).attr('key_type','dob').addClass('td_click');
+		        $( row ).find('td:eq(7)').attr('data-id', data['id']).attr('key_type','gender').addClass('td_click');
+		        $( row ).find('td:eq(8)').attr('data-id', data['id']).attr('key_type','is_active').addClass('td_click');
+		        $( row ).find('td:eq(9)').attr('data-id', data['id']).attr('key_type','created_at').addClass('td_click');
+		        $( row ).find('td:eq(10)').attr('data-id', data['id']).attr('key_type','customer_tier').addClass('td_click');
+		        $( row ).find('td:eq(11)').attr('data-id', data['id']).attr('key_type','wallet_cash').addClass('td_click');
+		        $( row ).find('td:eq(12)').attr('data-id', data['id']).attr('key_type','reference_code').addClass('td_click');
+		        $( row ).find('td:eq(13)').attr('data-id', data['id']).attr('key_type','reference_by').addClass('td_click');
 		    },
             "columns": [
             // {data: 'DT_RowIndex', name: 'DT_RowIndex'},
@@ -1361,11 +1361,7 @@ chart.render();
 						$(".select_all_checkbox").prop("checked",true);
 					}
 
-					if($(".single_checkbox:not(:checked)").length > 0){
-						$(".select_all_checkbox").prop("checked",false);
-					}else{
-						$(".select_all_checkbox").prop("checked",true);
-					}
+					
 		        }
             },
             createdRow: function( row, data, dataIndex ) {
@@ -1375,15 +1371,15 @@ chart.render();
 		        $( row ).find('td:eq(2)').attr('data-id', data['id']).attr('key_type','first_name').addClass('td_click');
 		        $( row ).find('td:eq(3)').attr('data-id', data['id']).attr('key_type','last_name').addClass('td_click');
 		        $( row ).find('td:eq(4)').attr('data-id', data['id']).attr('key_type','email').addClass('td_click');
-		        $( row ).find('td:eq(6)').attr('data-id', data['id']).attr('key_type','nationality').addClass('td_click');
-		        $( row ).find('td:eq(7)').attr('data-id', data['id']).attr('key_type','dob').addClass('td_click');
-		        $( row ).find('td:eq(8)').attr('data-id', data['id']).attr('key_type','gender').addClass('td_click');
-		        $( row ).find('td:eq(9)').attr('data-id', data['id']).attr('key_type','is_active').addClass('td_click');
-		        $( row ).find('td:eq(10)').attr('data-id', data['id']).attr('key_type','created_at').addClass('td_click');
-		        $( row ).find('td:eq(11)').attr('data-id', data['id']).attr('key_type','customer_tier').addClass('td_click');
-		        $( row ).find('td:eq(12)').attr('data-id', data['id']).attr('key_type','wallet_cash').addClass('td_click');
-		        $( row ).find('td:eq(13)').attr('data-id', data['id']).attr('key_type','reference_code').addClass('td_click');
-		        $( row ).find('td:eq(14)').attr('data-id', data['id']).attr('key_type','reference_by').addClass('td_click');
+		        $( row ).find('td:eq(5)').attr('data-id', data['id']).attr('key_type','nationality').addClass('td_click');
+		        $( row ).find('td:eq(6)').attr('data-id', data['id']).attr('key_type','dob').addClass('td_click');
+		        $( row ).find('td:eq(7)').attr('data-id', data['id']).attr('key_type','gender').addClass('td_click');
+		        $( row ).find('td:eq(8)').attr('data-id', data['id']).attr('key_type','is_active').addClass('td_click');
+		        $( row ).find('td:eq(9)').attr('data-id', data['id']).attr('key_type','created_at').addClass('td_click');
+		        $( row ).find('td:eq(10)').attr('data-id', data['id']).attr('key_type','customer_tier').addClass('td_click');
+		        $( row ).find('td:eq(11)').attr('data-id', data['id']).attr('key_type','wallet_cash').addClass('td_click');
+		        $( row ).find('td:eq(12)').attr('data-id', data['id']).attr('key_type','reference_code').addClass('td_click');
+		        $( row ).find('td:eq(13)').attr('data-id', data['id']).attr('key_type','reference_by').addClass('td_click');
 		    },
             "columns": [
             // {data: 'DT_RowIndex', name: 'DT_RowIndex'},
@@ -1755,6 +1751,13 @@ chart.render();
 			   		}
 
 				}
+				
+				if($('.single_checkbox:not(":checked")').length <= 0){
+					$(".select_all_checkbox").prop("checked",true);
+				}else{
+					$(".select_all_checkbox").prop("checked",false);
+				}
+
 			});
 
 

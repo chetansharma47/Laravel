@@ -17,6 +17,25 @@ class Cashback extends Model
     	'from_time',
     	'to_time',
     	'cashback_percentage',
-    	'status'
+    	'status',
+        'name_of_file_show'
     ];
+
+
+    public function getImageAttribute($value){
+
+        if(!empty($value)){
+
+            $path_img = public_path(). '/storage/cashback' . '/' . $value;
+
+            if(file_exists($path_img)){
+                return url('/') . '/' . env('CASHBACK_STORAGE_VIEW') . '/' . $value;
+            }else{
+
+                return "";
+            } 
+        }else{
+            return $value;
+        }
+    }
 }

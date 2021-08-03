@@ -25,6 +25,7 @@ Route::group(['namespace' => 'Api\v1','prefix'=>'v1'], function() {
     Route::post('verify-otp','AuthenticationController@verifyOTP');
     Route::post('register', 'AuthenticationController@register');
     Route::post('login', 'AuthenticationController@login'); 
+    Route::post('check-email', 'AuthenticationController@checkEmail'); 
     Route::post('forgot-password','AuthenticationController@forgotPassword');
     Route::get('application-data','AuthenticationController@applicationData');
     

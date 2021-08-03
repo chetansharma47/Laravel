@@ -165,7 +165,7 @@
 										</a>
 									</li>
 									<li class="nav-item">
-										<a class="nav-link" href="{{route('admin.login')}}" style="color: #FFDA7A;">
+										<a class="nav-link" href="{{route('admin.logout')}}" style="color: #FFDA7A;">
 											logout
 										</a>
 									</li>
@@ -736,6 +736,7 @@
 			$("#minus_icon").on("click",function(){
 				let tier_setting_id = $("#tier_setting_id").val();
 				let active_id = $(".tier_name_c.active").data("id");
+				let tier_name = $(".input_tier_name[data-id='"+active_id+"']").val();
 
 				let __prev_tier = $(".tier_name_c.active").prev();
 				let __next_tier = $(".tier_name_c.active").next();
@@ -755,7 +756,6 @@
 	              success: function(res){
 	              	setTimeout(function(){
 
-	              		$("#loaderModel").modal("hide");
 
 		                $(".tier_name_c[data-id='"+active_id+"']").remove();
 		                $(".condition_tier[data-id='"+active_id+"']").remove();
@@ -774,6 +774,14 @@
 
 		                	$(".condition_tier[data-id='"+__prev_tier.data("id")+"']").addClass("active_tier").css("display","block");
 						}
+
+						if(tier_name == ""){
+							tier_name = "Tier";
+						}
+
+	              		$("#loaderModel").modal("hide");
+		          		$("#success_alert_text").text(tier_name+" has been deleted successfully.");
+		          		$("#successModel").modal("show");
 	              	},500)
 	              },
 	              error: function(data, textStatus, xhr) {

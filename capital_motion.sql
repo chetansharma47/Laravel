@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Aug 02, 2021 at 05:41 PM
+-- Generation Time: Aug 03, 2021 at 03:08 PM
 -- Server version: 5.7.35-0ubuntu0.18.04.1
 -- PHP Version: 7.2.34-10+ubuntu18.04.1+deb.sury.org+1
 
@@ -17,7 +17,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `loyality_app`
+-- Database: `capital_motion`
 --
 
 -- --------------------------------------------------------
@@ -41,7 +41,7 @@ CREATE TABLE `admins` (
 --
 
 INSERT INTO `admins` (`id`, `name`, `email`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'admin', 'adminn@yopmail.com', '$2y$10$nbvTNJDjH6yIpVurSdVaOOeYAyIi8spa8oc.cNpx7mp4/oCV679A6', 'Zh2IvHebzVyNHQl2B8JoM9fuNfpoaORIxK0vt22rhLmqjBGBqaUYNT7CPej9WeXy', NULL, '2021-08-02 01:38:20');
+(1, 'admin', 'adminn@yopmail.com', '$2y$10$u591cCpemafbf1zWAuGWu.VulIp5.xCOoMm513XhVcy1jNiqS/dRG', '6UtwiRs0CBThAQHTpkyZu2TU3VCjgdSqrUXcgXPkc3YrHzCboojFmKOnnkLIbEJr', NULL, '2021-08-03 03:09:21');
 
 -- --------------------------------------------------------
 
@@ -112,6 +112,7 @@ CREATE TABLE `cashbacks` (
   `to_time` time NOT NULL,
   `cashback_percentage` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `status` enum('Active','Inactive') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name_of_file_show` text COLLATE utf8mb4_unicode_ci,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL
@@ -121,9 +122,10 @@ CREATE TABLE `cashbacks` (
 -- Dumping data for table `cashbacks`
 --
 
-INSERT INTO `cashbacks` (`id`, `unique_id_cashback`, `admin_id`, `venu_id`, `promotion_cashback_name`, `image`, `day_on`, `from_date`, `to_date`, `from_time`, `to_time`, `cashback_percentage`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, '1', 1, 1, 'safsaf', 'asfasf.jpg', 'Monday', '2021-08-02', '2021-08-03', '02:00:00', '05:00:00', '10', 'Active', NULL, NULL, NULL),
-(2, '2', 1, 1, 'safsaf', 'asfasf.jpg', 'Monday', '2021-08-02', '2021-08-03', '02:00:00', '05:00:00', '10', 'Active', NULL, NULL, NULL);
+INSERT INTO `cashbacks` (`id`, `unique_id_cashback`, `admin_id`, `venu_id`, `promotion_cashback_name`, `image`, `day_on`, `from_date`, `to_date`, `from_time`, `to_time`, `cashback_percentage`, `status`, `name_of_file_show`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(1, '1', 1, 1, 'asfaf', '0803202105520316108d983170b7.png', 'Monday,Tuesday,Thursday,Wednesday,Friday', '2021-08-04', '2021-08-06', '19:16:00', '20:17:00', '100', 'Inactive', 'upload_icon.png', NULL, '2021-08-03 00:40:05', '2021-08-03 00:40:05'),
+(2, '2', 1, 1, 'safsaf', 'asfasf.jpg', 'Monday', '2021-08-02', '2021-08-03', '02:00:00', '05:00:00', '10', 'Active', NULL, NULL, '2021-08-03 00:57:42', '2021-08-03 00:57:42'),
+(3, '3', 1, 1, 'qwqwqwqw', '0802202113511916107f8577ae01.png', 'Monday', '2021-08-03', '2021-08-04', '23:01:00', '17:20:00', '23', 'Active', NULL, '2021-08-02 08:21:19', '2021-08-03 03:57:06', '2021-08-03 03:57:06');
 
 -- --------------------------------------------------------
 
@@ -183,9 +185,14 @@ CREATE TABLE `oauth_access_tokens` (
 --
 
 INSERT INTO `oauth_access_tokens` (`id`, `user_id`, `client_id`, `name`, `scopes`, `revoked`, `created_at`, `updated_at`, `expires_at`) VALUES
+('99e65fd9a311be6a6084fda13a5753ab5ee691dfe87571c1d165a34b7de38c7a124ce26438887746', 17, 1, 'andrew', '[]', 0, '2021-08-03 01:00:37', '2021-08-03 01:00:37', '2022-08-03 06:30:37'),
 ('afffc81d4cf6c8af9634ccc0a23585a3cac53bc4ac23efc4514c8e7adb43a9e704dddb824c6fdf56', 2, 1, 'andrew', '[]', 0, '2021-07-23 02:24:04', '2021-07-23 02:24:04', '2022-07-23 07:54:04'),
+('b6c41ccb16e7e85c8d63d4eb983c12dc5565580983316a550773e187caf0a63b71550cd0f72129eb', 17, 1, 'andrew', '[]', 1, '2021-08-03 00:43:08', '2021-08-03 00:43:08', '2022-08-03 06:13:08'),
 ('bd819af719ba29d8dfafb9f0f4b325b29b84b368ca2ce217000588cbf66e64b849b0b3974bdd4ca7', 1, 1, 'andrew', '[]', 1, '2021-07-23 02:21:40', '2021-07-23 02:21:40', '2022-07-23 07:51:40'),
-('df5b900e4ec4a2ae008a99ff138b2d24b936405bc1d8cb705085483cdc6c3316167aa34af942744c', 1, 1, 'andrew', '[]', 0, '2021-07-23 02:31:24', '2021-07-23 02:31:24', '2022-07-23 08:01:24');
+('d507770d40d4c5c3b2a6339855711ca797c1aa56c59d091f3d4c2808f3242f151e66f316e308e781', 17, 1, 'andrew', '[]', 1, '2021-08-03 00:48:56', '2021-08-03 00:48:56', '2022-08-03 06:18:56'),
+('df5b900e4ec4a2ae008a99ff138b2d24b936405bc1d8cb705085483cdc6c3316167aa34af942744c', 1, 1, 'andrew', '[]', 0, '2021-07-23 02:31:24', '2021-07-23 02:31:24', '2022-07-23 08:01:24'),
+('e77adfc1cd2cba4fe1df1739788cf1ac820e15a630eb4531bf303cd6eeb2eb0c308d2b723808ec76', 17, 1, 'andrew', '[]', 1, '2021-08-03 01:00:05', '2021-08-03 01:00:05', '2022-08-03 06:30:05'),
+('ebaf53b243fc0cf5546b5bb0271822837abd2e524991711bae39a2762081706a7fa9c143a9ee6762', 17, 1, 'andrew', '[]', 1, '2021-08-03 00:42:14', '2021-08-03 00:42:14', '2022-08-03 06:12:14');
 
 -- --------------------------------------------------------
 
@@ -297,6 +304,13 @@ CREATE TABLE `password_resets` (
   `created_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Dumping data for table `password_resets`
+--
+
+INSERT INTO `password_resets` (`email`, `token`, `created_at`) VALUES
+('test@yopmail.com', '8IJG37HV7ZW2n6v66nJjb568o9i2qMuF8Ct8USfXmmXiVqTLBmXm3FhlBkxyEV12', '2021-08-03 00:49:39');
+
 -- --------------------------------------------------------
 
 --
@@ -324,7 +338,11 @@ CREATE TABLE `tier_conditions` (
 INSERT INTO `tier_conditions` (`id`, `unique_id_by_tier`, `tier_setting_id`, `tier_name`, `from_amount`, `to_amount`, `color_code`, `percentage`, `deleted_at`, `created_at`, `updated_at`) VALUES
 (1, '1', 1, 'ab', 4, 8, '#ff0000', NULL, '2021-07-28 07:21:57', '2021-07-23 02:18:57', '2021-07-28 07:21:57'),
 (2, '2', 1, 'dd', 110, 120, '#ff0000', NULL, '2021-07-28 07:24:35', '2021-07-28 07:23:40', '2021-07-28 07:24:35'),
-(3, '3', 1, 'Silvert', 1, 500, '#0cbb61', 2.3, NULL, '2021-07-29 01:30:07', '2021-07-29 23:41:09');
+(3, '3', 1, 'Silvert', 1, 500, '#0cbb61', 10, '2021-08-03 01:14:16', '2021-07-29 01:30:07', '2021-08-03 01:14:16'),
+(4, '7', 1, 'Test', 20, 30, '#ff0000', 0, '2021-08-03 04:03:42', '2021-08-03 02:22:31', '2021-08-03 04:03:42'),
+(5, '5', 1, 'Test Tier 1', 50, 70, '#ff0000', 0, '2021-08-03 03:18:59', '2021-08-03 02:23:25', '2021-08-03 03:18:59'),
+(6, '6', 1, 'safasf', 12, 13, '#ff0000', 0, NULL, '2021-08-03 04:04:01', '2021-08-03 04:04:01'),
+(7, '9', 1, 'ewe', 15, 16, '#ff0000', 0, NULL, '2021-08-03 04:04:10', '2021-08-03 04:04:10');
 
 -- --------------------------------------------------------
 
@@ -407,7 +425,8 @@ INSERT INTO `users` (`id`, `image`, `country_code`, `mobile_number`, `first_name
 (13, '0723202107514060fa750c22873.png', '+91', '16516511545', 'lpe', 'lo', 'abc1@yopmail.com', '$2y$10$FIlNFNG1RZMSjY3JRTG0vOhahKPY6/RPMZFhr.WW3Ah8bivyJMv8m', 'Mohali', 'IN', '2012-12-12', 'Male', NULL, 'Ios', 'jaskfjsajfljal', NULL, 'jnYu0hu9G384mwaQu3N6wZEzCgG9YTHkjUHE2BWPFpq2aXDKmVJKqEjosKLbWczr', '0', '1', NULL, NULL, 'Inactive', 40551173578, 'ab', NULL, NULL, '2021-07-23 02:21:40', '2021-07-28 07:21:57', NULL),
 (14, '0723202107540460fa759cbb56c.png', '+91', '1234567890', 'fsdfdsfdfjffghfgh', 'dfs', 'abc2@yopmail.com', '$2y$10$JU7vFu5UPuazyR1fgtqLbOjgrsf74CKilVwIrSf5P2rTbVBaYl0ga', 'Mohali', 'vvbb', '2012-12-12', 'Male', '40551173578', 'None', NULL, NULL, 'mfl8RAz1Y6eDIBCQ3kOLcpcNkalyUtHnlDlnWM8wME0IPixTRnvJnb3CqLa9jbGW', '0', '1', NULL, NULL, 'Active', 13652686819, 'ab', NULL, 'lpe lo', '2021-07-23 02:24:04', '2021-07-28 07:21:57', NULL),
 (15, '0723202107514060fa750c22873.png', '+91', '16516511545', 'lpe', 'lo', 'abc1@yopmail.com', '$2y$10$FIlNFNG1RZMSjY3JRTG0vOhahKPY6/RPMZFhr.WW3Ah8bivyJMv8m', 'Mohali', 'IN', '2012-12-12', 'Male', NULL, 'Ios', 'jaskfjsajfljal', NULL, 'jnYu0hu9G384mwaQu3N6wZEzCgG9YTHkjUHE2BWPFpq2aXDKmVJKqEjosKLbWczr', '0', '1', NULL, NULL, 'Inactive', 40551173578, 'ab', NULL, NULL, '2021-07-23 02:21:40', '2021-07-28 07:21:57', NULL),
-(16, '0723202107540460fa759cbb56c.png', '+91', '1234567890', 'fsdfdsfdfjffghfgh', 'dfs', 'ggg@yopmail.com', '$2y$10$JU7vFu5UPuazyR1fgtqLbOjgrsf74CKilVwIrSf5P2rTbVBaYl0ga', 'Mohali', 'vvbb', '2012-12-12', 'Male', '40551173578', 'None', NULL, NULL, 'mfl8RAz1Y6eDIBCQ3kOLcpcNkalyUtHnlDlnWM8wME0IPixTRnvJnb3CqLa9jbGW', '0', '1', NULL, NULL, 'Active', 13652686819, 'ab', NULL, 'lpe lo', '2021-07-23 02:24:04', '2021-07-28 07:21:57', NULL);
+(16, '0723202107540460fa759cbb56c.png', '+91', '1234567890', 'fsdfdsfdfjffghfgh', 'dfs', 'ggg@yopmail.com', '$2y$10$JU7vFu5UPuazyR1fgtqLbOjgrsf74CKilVwIrSf5P2rTbVBaYl0ga', 'Mohali', 'vvbb', '2012-12-12', 'Male', '40551173578', 'None', NULL, NULL, 'mfl8RAz1Y6eDIBCQ3kOLcpcNkalyUtHnlDlnWM8wME0IPixTRnvJnb3CqLa9jbGW', '0', '1', NULL, NULL, 'Active', 13652686819, 'ab', NULL, 'lpe lo', '2021-07-23 02:24:04', '2021-07-28 07:21:57', NULL),
+(17, '080320210612146108de3e5a6b1.jpeg', '+971', '546886453', 'trjjjy', 'try', 'test@yopmail.com', '$2y$10$7CX20OAUVUemJqidZpBtieoRYReIn6mr.vBpzTS0WXdanN7VL3c62', 'Abu Dhabi', 'Afghanistan', '2005-08-03', 'Male', NULL, 'Ios', '12335556', NULL, NULL, '0', '1', NULL, NULL, 'Active', 99364351825, 'safasf', NULL, NULL, '2021-08-03 00:42:14', '2021-08-03 04:04:01', NULL);
 
 -- --------------------------------------------------------
 
@@ -436,7 +455,7 @@ CREATE TABLE `venue_users` (
 --
 
 INSERT INTO `venue_users` (`id`, `venu_id`, `username`, `password`, `venue_name`, `status`, `device_model`, `mac_address`, `authorized_status`, `date_time`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 1, 'abc', '123456', 'Venue1', 'Active', 'Nokia', '11:250:11:00', 'Unauthorized', '2021-07-29 15:54:00', NULL, '2021-07-29 01:51:31', NULL);
+(1, 1, 'abc', '123456', 'Venue1', 'Active', 'Nokia', '11:250:11:00', 'Authorized', '2021-07-29 15:54:00', NULL, '2021-08-03 02:26:01', NULL);
 
 -- --------------------------------------------------------
 
@@ -641,7 +660,7 @@ ALTER TABLE `application_images`
 -- AUTO_INCREMENT for table `cashbacks`
 --
 ALTER TABLE `cashbacks`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT for table `migrations`
 --
@@ -661,12 +680,12 @@ ALTER TABLE `oauth_personal_access_clients`
 -- AUTO_INCREMENT for table `otps`
 --
 ALTER TABLE `otps`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT for table `tier_conditions`
 --
 ALTER TABLE `tier_conditions`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 --
 -- AUTO_INCREMENT for table `tier_settings`
 --
@@ -676,7 +695,7 @@ ALTER TABLE `tier_settings`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 --
 -- AUTO_INCREMENT for table `venue_users`
 --

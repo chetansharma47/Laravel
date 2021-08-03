@@ -85,6 +85,7 @@ Route::group(['middleware' => 'TimeZone','namespace' => 'Admin','prefix'=>'/admi
         Route::post('authorized-unauthorized','TabController@authorizedUnauthorized')->name('authorizedUnauthorized');
         Route::post('cashback-according-to-venue','TabController@cashBackAccordingToVenue')->name('cashBackAccordingToVenue');
         Route::post('cashback-save','TabController@cashbackSave')->name('cashbackSave');
+        Route::post('delete_cashback','TabController@deleteCashback')->name('deleteCashback');
 
         Route::post('update-user-data','TabController@updateUserData')->name('updateUserData');
 

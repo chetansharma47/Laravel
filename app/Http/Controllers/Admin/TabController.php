@@ -313,6 +313,17 @@ class TabController extends Controller
         return $save_cashback;
     }
 
+    public function deleteCashback(Request $request){
+        $active_cashback_unique_id = $request->active_cashback_unique_id;
+        $cashback_find = Cashback::whereUniqueIdCashback($active_cashback_unique_id)->first();
+        if(!empty($cashback_find)){
+
+            $cashback_find->deleted_at = Carbon::now();
+            $cashback_find->update();
+            return $cashback_find;
+        }
+    }
+
     public function allDataAvailability(Request $request){
     	if($request->isMethod('GET')){
             $admin = Auth()->guard('admin')->user();
@@ -468,6 +479,10 @@ class TabController extends Controller
                                         </label>';
                 $user_select->password = "************";
                 $user_select->DT_RowIndex = $start_from++;
+
+                if(empty($user_select->customer_tier)){
+                    $user_select->customer_tier = "N/A";
+                }
             }
 
 
@@ -537,7 +552,7 @@ class TabController extends Controller
             VenueUser::whereIn("id",$ids)->update(['authorized_status' => 'Unauthorized']);
         }
 
-        return ['status' => "success", "type" => $request->type];
+        return ['status' => "success", "type" => $request->type, 'ids' => $ids];
     }
 
     public function addingVenue(Request $request){

@@ -160,7 +160,7 @@
 										</a>
 									</li>
 									<li class="nav-item">
-										<a class="nav-link" href="{{route('admin.login')}}" style="color: #FFDA7A;">
+										<a class="nav-link" href="{{route('admin.logout')}}" style="color: #FFDA7A;">
 											logout
 										</a>
 									</li>
@@ -474,6 +474,12 @@
 			   		}
 
 				}
+
+				if($(".single_checkbox:not(:checked)").length > 0){
+					$(".select_all_checkbox").prop("checked",false);
+				}else{
+					$(".select_all_checkbox").prop("checked",true);
+				}
 			});
 
 
@@ -504,17 +510,30 @@
 		              },
 		              success: function(res){
 		              	setTimeout(function(){
-		              		console.log(res)
+		              		$(".single_checkbox").prop("checked",false);
+		              		$(".select_all_checkbox").prop("checked",false);
 		              		if(res.type == "authorized"){
 
 			              		$("#loaderModel").modal("hide");
 			              		$("#success_alert_text").text("Users has authorized.");
 			              		$("#successModel").modal("show");
+
+			              		let authorized_ids = res.ids;
+			              		for(k=0; authorized_ids.length > k; k++){
+			              			$(".td_click[data-id='"+authorized_ids[k]+"']").text("Authorized");
+			              		}
 		              		}else{
 		              			//unauthorized
+
+			              		
 		              			$("#loaderModel").modal("hide");
 			              		$("#success_alert_text").text("Users has been unauthorized successfully.");
 			              		$("#successModel").modal("show");
+
+		              			let unauthorized_ids = res.ids;
+			              		for(k=0; unauthorized_ids.length > k; k++){
+			              			$(".td_click[data-id='"+unauthorized_ids[k]+"']").text("Unauthorized");
+			              		}
 		              		}
 
 		              	},500);

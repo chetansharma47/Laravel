@@ -21,7 +21,7 @@ use App\Models\Otp;
 use App\Models\ApplicationData;
 use App\Models\ApplicationImage;
 use App\Models\Admin;
-require_once $_SERVER['DOCUMENT_ROOT'].'/capital_motion_22_july/vendor/autoload.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/capital_motion_03_august/vendor/autoload.php';
 
 class AuthenticationController extends ResponseController
 {
@@ -68,7 +68,7 @@ class AuthenticationController extends ResponseController
         if($register['status'] == 0){
             return $this->responseWithErrorCode($register['error_msg'], 400);
         }
-        return $this->responseOk("Your account has been registered successfully. Please verify the email first for login.", ['register' => $register['data']]);
+        return $this->responseOk("Now login with your mobile number, to login with email address, please verify your email address.", ['register' => $register['data']]);
     }
 
     public function login(Request $request){
@@ -142,6 +142,8 @@ class AuthenticationController extends ResponseController
         }elseif ($user_details['status'] == 5){
             return $this->responseWithErrorCode($user_details['error_msg'], 406);
         }else{
+
+
             return $this->responseOk('A reset password link has been sent to your registered email address.');
         }
     }
@@ -237,7 +239,7 @@ class AuthenticationController extends ResponseController
         }
 
         $data['otp'] = $otp;
-
+        Otp::whereMobileNumber($data['mobile_number'])->whereCountryCode($data['country_code'])->delete();
         $otp_save = new Otp();
         $otp_save->fill($data);
         $otp_save->save();
@@ -273,6 +275,15 @@ class AuthenticationController extends ResponseController
         $admin = Admin::orderBy("id","desc")->first();
         $applicationData = ApplicationData::whereAdminId($admin->id)->whereDeletedAt(null)->with('applicationImages')->first();
         return $this->responseOk("Application Datas",['application_datas' => $applicationData]);
+    }
+
+    public function checkEmail(Request $request){
+        $check_email = User::whereEmail($request->email)->first();
+        if(empty($check_email)){
+            return $this->responseOk("Email address not found.");
+        }else{
+            return $this->responseWithErrorCode("Email address already exist.",406);
+        }
     }
 
 }

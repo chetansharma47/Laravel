@@ -83,7 +83,7 @@ class TabBusiness extends Model
     public function saveCashback($data, $admin){
         $data['from_time'] = Carbon::parse(Carbon::now()->toDateString()." ".$data['from_time'])->toTimeString();
         $data['to_time'] = Carbon::parse(Carbon::now()->toDateString()." ".$data['to_time'])->toTimeString();
-        if($data['image']){
+        if(isset($data['image']) && $data['image'] != ""){
             $data['image'] = $this->uploadBase64Img($data['image']);
         }
         $find_cashback = Cashback::where("unique_id_cashback","=", $data['unique_id_cashback'])->whereDeletedAt(null)->first();
