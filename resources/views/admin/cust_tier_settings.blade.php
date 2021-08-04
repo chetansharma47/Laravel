@@ -117,6 +117,27 @@
 			margin-bottom: 0rem;
 		}
 
+
+		#confirmationModel .modal-title{
+		    text-align: center;
+		    width: 100%;
+		    font-size: 20px;
+		    font-weight: 600;
+		}
+		#confirmationModel .modal-header {
+		    background-color: #5f5f5f;
+		    color: #fff;
+		    justify-content: center;
+		}
+
+		#confirmationModel .modal-body {
+			text-align: center;
+		}
+
+		#confirmationModel .modal-body p {
+			margin-bottom: 0rem;
+		}
+
 		div#loaderImg2 {
 		    position: absolute;
 		    left: 0;
@@ -182,7 +203,7 @@
 		</div>
 	</header>
 
-	<input type="hidden" id="last_tier_cond_id" value="{{$count_condition}}">
+	<input type="hidden" id="last_tier_cond_id" value="{{$last_tier_cond_unique_id}}">
 	<input type="hidden" id="tier_setting_id">
 	<section class="mt-3 mb-3" style="padding-left: 40px;">
 		<div class="container-fluid">
@@ -305,7 +326,7 @@
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">Alert</h5>
+        <h5 class="modal-title" >Alert</h5>
         <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button> -->
@@ -326,7 +347,7 @@
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">Success</h5>
+        <h5 class="modal-title" >Success</h5>
         <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button> -->
@@ -336,6 +357,28 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary ok" style="background-color: #3ABD6F!important; border: none; border-radius: 50px; color: #fff;"  data-dismiss="modal">Ok</button>
+       <!--  <button type="button" class="btn btn-primary">Save changes</button> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="confirmationModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Success</h5>
+        <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button> -->
+      </div>
+      <div class="modal-body">
+        <p id="confirmation_alert_text">Info Text</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary confirm_ok" onclick="return removeTier();" style="background-color: #3ABD6F!important; border: none; border-radius: 50px; color: #fff;"  data-dismiss="modal">Yes</button>
+        <button type="button" class="btn btn-secondary confirm_no" style="background-color: #3ABD6F!important; border: none; border-radius: 50px; color: #fff;"  data-dismiss="modal">No</button>
        <!--  <button type="button" class="btn btn-primary">Save changes</button> -->
       </div>
     </div>
@@ -550,7 +593,7 @@
 											Color Code for Customer Tier 
 										</label>
 									<div class="d-flex align-items-center ccc" data-id="`+tier_conditions[i]['unique_id_by_tier']+`">
-										<input type="text" class="form-control form-control-user" placeholder="Color Code for Customer Tier color_code" name="color_code" maxlength="7" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" value="`+tier_conditions[i]['color_code']+`" />
+										<input type="text" class="form-control form-control-user" placeholder="#ff0000" name="color_code" maxlength="7" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" value="`+tier_conditions[i]['color_code']+`" />
 										<input type="color" class="basic" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" value="`+tier_conditions[i]['color_code']+`">
 									</div>
 										<label class="error color_code_err" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" style="display: none;">Please enter valid color code.</label>
@@ -560,7 +603,7 @@
 								<div class="col-md-6 venue_inputs">
 									<a href="javascript:void(0);" class="btn btn-primary btn-user btn-block common_btn" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" style="    margin-top: 66px;
 		    margin-bottom: 14px;">
-			                      		Save
+			                      		Update
 			                    	</a>
 		                    	</div>	
 							</div>
@@ -606,7 +649,7 @@
 											Color Code for Customer Tier 
 										</label>
 									<div class="d-flex align-items-center ccc" data-id="`+tier_conditions[i]['unique_id_by_tier']+`">
-										<input type="text" class="form-control form-control-user" placeholder="Color Code for Customer Tier color_code" name="color_code" maxlength="7" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" value="`+tier_conditions[i]['color_code']+`" />
+										<input type="text" class="form-control form-control-user" placeholder="#ff0000" name="color_code" maxlength="7" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" value="`+tier_conditions[i]['color_code']+`" />
 										<input type="color" class="basic" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" value="`+tier_conditions[i]['color_code']+`">
 									</div>
 										<label class="error color_code_err" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" style="display: none;">Please enter valid color code.</label>
@@ -616,7 +659,7 @@
 								<div class="col-md-6 venue_inputs">
 									<a href="javascript:void(0);" class="btn btn-primary btn-user btn-block common_btn" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" style="    margin-top: 66px;
 		    margin-bottom: 14px;">
-			                      		Save
+			                      		Update
 			                    	</a>
 		                    	</div>	
 							</div>
@@ -689,7 +732,7 @@
 											Color Code for Customer Tier 
 										</label>
 									<div class="d-flex align-items-center ccc" data-id="`+data_id+`">
-										<input type="text" class="form-control form-control-user" placeholder="Color Code for Customer Tier color_code" name="color_code" maxlength="7" data-id="`+data_id+`" value="#ff0000" />
+										<input type="text" class="form-control form-control-user" placeholder="#ff0000" name="color_code" maxlength="7" data-id="`+data_id+`" value="#ff0000" />
 										<input type="color" class="spectrum_`+data_id+`" data-id="`+data_id+`" value="#ff0000">
 									</div>
 										<label class="error color_code_err" data-id="`+data_id+`" style="display: none;">Please enter valid color code.</label>
@@ -742,6 +785,29 @@
 				let active_id = $(".tier_name_c.active").data("id");
 				let tier_name = $(".input_tier_name[data-id='"+active_id+"']").val();
 
+				if(tier_name == ""){
+
+					$("#confirmation_alert_text").text("Are you sure you want to delete this tier.");
+				}else{
+					$("#confirmation_alert_text").text("Are you sure you want to delete this tier ("+tier_name+").");
+				}
+
+				$("#confirmationModel").modal("show");
+				$("#confirmationModel").unbind("click");
+
+        	});
+
+        	$(".confirm_no").on("click",function(){
+        		$("#confirmationModel").modal("hide");
+        	})
+		});
+
+		function removeTier(){
+				$("#confirmationModel").modal("hide");
+				let tier_setting_id = $("#tier_setting_id").val();
+				let active_id = $(".tier_name_c.active").data("id");
+				let tier_name = $(".input_tier_name[data-id='"+active_id+"']").val();
+
 				let __prev_tier = $(".tier_name_c.active").prev();
 				let __next_tier = $(".tier_name_c.active").next();
 
@@ -784,7 +850,7 @@
 						}
 
 	              		$("#loaderModel").modal("hide");
-		          		$("#success_alert_text").text(tier_name+" has been deleted successfully.");
+		          		$("#success_alert_text").text("Tier ("+tier_name+") has been deleted successfully.");
 		          		$("#successModel").modal("show");
 	              	},500)
 	              },
@@ -797,8 +863,7 @@
 	                } 
 	              }
 	            });
-        	});
-		});
+		}
 	</script>
 
 
@@ -1023,6 +1088,13 @@
 				return false;
 			}
 
+			if(check_color_code == ""){
+				$("#alert_text").text("Please enter or select color code.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}	
+
 			if(/^#[0-9A-F]{6}$/i.test(check_color_code) == false){
 				$("#alert_text").text("Please enter valid color code.");
 				$("#validationModel").modal("show");
@@ -1051,7 +1123,12 @@
 	              	console.log(res)
 	              	setTimeout(function(){
 	              		$("#loaderModel").modal("hide");
-	              		$("#success_alert_text").text("Tier has been added successfully.");
+	              		if(res.update == "true"){
+
+	              			$("#success_alert_text").text("Tier ("+res.tier_name+") details has been updated successfully.");
+	              		}else{
+	              			$("#success_alert_text").text("Tier ("+res.tier_name+") has been added successfully.");
+	              		}
 	              		$("#successModel").modal("show");
 	              		$("#successModel").unbind("click");
 	              	},500)

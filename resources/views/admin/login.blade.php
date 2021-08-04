@@ -73,6 +73,10 @@ label.error {
     font-weight: 700;
 }
 
+.alert.alert-danger.alert-dismissible.text-center.alertz.alert_mesg.alert_msg_red {
+    margin-bottom: 10px;
+}
+
 
 	</style>
 
@@ -177,10 +181,10 @@ label.error {
 			     @endforeach
 			 </div>
 			@endif
-			@include('admin.notification')
             <div class="row">
               <div class="col-lg-12">
                 <div class="pt-5 pb-5 form-middle">
+				@include('admin.notification')
                   <form class="user" method="POST" id="validate-form">
                   	{{@csrf_field()}}
                     <div class="form-group" style="padding-right: 0; padding-left: 0">

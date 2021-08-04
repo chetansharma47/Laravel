@@ -51,11 +51,17 @@ class TabController extends Controller
             $tier_settings = TierSetting::whereAdminId($admin->id)->whereDeletedAt(null)->first();
             if(!empty($tier_settings)){
 
-                $count_condition = TierCondition::whereTierSettingId($tier_settings->id)->count();
+                $last_tier_cond = TierCondition::whereTierSettingId($tier_settings->id)->orderBy("id","desc")->first();
+                if(!empty($last_tier_cond)){
+
+                    $last_tier_cond_unique_id = $last_tier_cond->unique_id_by_tier;
+                }else{
+                    $last_tier_cond_unique_id = 0;
+                }
             }else{
-                $count_condition = 0;
+                $last_tier_cond_unique_id = 0;
             }
-    		return view('admin.cust_tier_settings',compact('count_condition'));
+    		return view('admin.cust_tier_settings',compact('last_tier_cond_unique_id'));
     	}
     }
 
@@ -154,7 +160,7 @@ class TabController extends Controller
             }
         }
         $save_tier = $this->tabBusiness()->saveTier($data, $admin, $tier_find);
-        return "success";
+        return $save_tier;
 
 
     }
@@ -333,6 +339,7 @@ class TabController extends Controller
     	}
 
         if ($request->isMethod('POST')) {
+            $admin = Auth()->guard('admin')->user();
             $column = "id";
             $asc_desc = $request->get("order")[0]['dir'];
          
@@ -375,7 +382,7 @@ class TabController extends Controller
 
             $tier_find = TierCondition::whereId($request->tier)->first();
 
-        $data = User::select("*",DB::raw('CONCAT(users.first_name, " ", users.last_name) AS full_name'),DB::raw('CONCAT(users.country_code, " ", users.mobile_number) AS country_code_with_phone_number'),DB::raw("DATE_FORMAT(dob, '%d-%M-%Y') AS dob"),DB::raw("DATE_FORMAT(created_at, '%d-%M-%Y') AS join_date"))
+            $data = User::select("*",DB::raw('CONCAT(users.first_name, " ", users.last_name) AS full_name'),DB::raw('CONCAT(users.country_code, " ", users.mobile_number) AS country_code_with_phone_number'),DB::raw("DATE_FORMAT(dob, '%d-%M-%Y') AS dob"),DB::raw("DATE_FORMAT(created_at, '%d-%M-%Y') AS join_date"))
                 ->where(function($query) use ($request, $tier_find){
                     $query->whereDeletedAt(null);
                     if($request->joined_from && $request->joined_to){
@@ -390,8 +397,8 @@ class TabController extends Controller
                         $query->whereGender($request->gender);
                     }
 
-                    if($request->customer_status && (int)$request->customer_status != 0){
-                        $query->whereIsActive((int)$request->customer_status);
+                    if($request->customer_status){
+                        $query->whereIsActive($request->customer_status);
                     }
 
                     if($tier_find){
@@ -416,19 +423,19 @@ class TabController extends Controller
         if($search){
             $data  = $data->where(function($query) use($search){
                         $query->where('customer_id', 'Like', '%'. $search . '%');
-                            $query->orWhere(DB::raw('CONCAT(users.country_code, " ", users.mobile_number)'), 'Like', '%' . $search . '%');
-                            $query->orWhere('first_name', 'Like', '%' . $search . '%');
-                            $query->orWhere('last_name', 'Like', '%' . $search . '%');
-                            $query->orWhere('email', 'Like', '%' . $search . '%');
-                            $query->orWhere('nationality', 'Like', '%' . $search . '%');
-                            $query->orWhereDate(DB::raw("DATE_FORMAT(dob, '%d-%M-%Y')"), 'Like', '%' . $search . '%');
-                            $query->orWhere('gender', 'Like', '%' . $search . '%');
-                            $query->orWhere('is_active', 'Like', '%' . $search . '%');
-                            $query->orWhereDate(DB::raw("DATE_FORMAT(created_at, '%d-%M-%Y')"), 'Like', '%' . $search . '%');
-                            $query->orWhere('customer_tier', 'Like', '%' . $search . '%');
-                            $query->orWhere('wallet_cash', 'Like', '%' . $search . '%');
-                            $query->orWhere('reference_code', 'Like', '%' . $search . '%');
-                            $query->orWhere('reference_by', 'Like', '%' . $search . '%');
+                        $query->orWhere(DB::raw('CONCAT(users.country_code, " ", users.mobile_number)'), 'Like', '%' . $search . '%');
+                        $query->orWhere('first_name', 'Like', '%' . $search . '%');
+                        $query->orWhere('last_name', 'Like', '%' . $search . '%');
+                        $query->orWhere('email', 'Like', '%' . $search . '%');
+                        $query->orWhere('nationality', 'Like', '%' . $search . '%');
+                        $query->orWhereDate(DB::raw("DATE_FORMAT(dob, '%d-%M-%Y')"), 'Like', '%' . $search . '%');
+                        $query->orWhere('gender', 'Like', '%' . $search . '%');
+                        $query->orWhere('is_active', 'Like', '%' . $search . '%');
+                        $query->orWhereDate(DB::raw("DATE_FORMAT(created_at, '%d-%M-%Y')"), 'Like', '%' . $search . '%');
+                        $query->orWhere('customer_tier', 'Like', '%' . $search . '%');
+                        $query->orWhere('wallet_cash', 'Like', '%' . $search . '%');
+                        $query->orWhere('reference_code', 'Like', '%' . $search . '%');
+                        $query->orWhere('reference_by', 'Like', '%' . $search . '%');
 
                             // ->orWhereHas('category', function($insideQuery) use ($search){
                             //     return $insideQuery->where('category_name', 'like', '%'.$search.'%');
@@ -481,7 +488,18 @@ class TabController extends Controller
                 $user_select->DT_RowIndex = $start_from++;
 
                 if(empty($user_select->customer_tier)){
-                    $user_select->customer_tier = "N/A";
+                    $tier_setting = TierSetting::whereAdminId($admin->id)->whereDeletedAt(null)->first();
+                    if(!empty($tier_setting)){
+                        $tier_cond_find_data = TierCondition::whereTierSettingId($tier_setting->id)->whereDeletedAt(null)->first();
+                        if($tier_cond_find_data){
+
+                            $user_select->customer_tier = $tier_cond_find_data->tier_name;
+                        }else{
+                            $user_select->customer_tier = "N/A";
+                        }
+                    }else{
+                        $user_select->customer_tier = "N/A";
+                    } 
                 }
             }
 

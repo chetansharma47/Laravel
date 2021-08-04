@@ -187,6 +187,10 @@ class ProfileModel extends Model
     public function reset($request,$token, $tokenData){
         $data = [];
         $user = User::where(['email' => $tokenData->email])->first();
+
+        if(Hash::check($request->password, $user->password)){
+            return 0;
+        }
         $data['password'] = Hash::make($request->password);
         $update_password = self::updateUser($data,$user);
         $deleteToken = DB::table('password_resets')->whereToken($token)->delete();

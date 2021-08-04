@@ -13,6 +13,7 @@ use Carbon\Carbon;
 class TabBusiness extends Model
 {
     public function saveTier($data, $admin, $tier_setting = null){
+        $update = "false";
     	$data['admin_id'] = $admin->id;
     	if(!empty($tier_setting)){
     		$tier_setting->fill($data);
@@ -30,6 +31,7 @@ class TabBusiness extends Model
             User::whereDeletedAt(null)->whereCustomerTier($tier_condition->tier_name)->update(['customer_tier' => $data['tier_name']]);
     		$tier_condition->fill($data);
     		$tier_condition->update();
+            $update = "true";
     	}else{
 
 	    	$tier_condition = new TierCondition();
@@ -40,7 +42,7 @@ class TabBusiness extends Model
         }
 
         User::whereDeletedAt(null)->whereCustomerTier(null)->update(['customer_tier' => $tier_condition->tier_name]);
-    	return "success";
+    	return ['status' => 'success','update' => $update,'tier_name' => $data['tier_name']];
     }
 
     public function loyalityCashBackPage($data){

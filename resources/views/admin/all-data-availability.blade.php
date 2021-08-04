@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<title>Admin Login Management</title>
+	<title>End User Management (Customer)</title>
 	<meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
 	<link rel="icon" href="{{url('public/admin/assets/img/logo-approved.png')}}" type="image/x-icon"/>
 	<link rel="preconnect" href="https://fonts.googleapis.com">
@@ -155,7 +155,7 @@
 								<ul class="navbar-nav">
 									<li class="nav-item">
 										<a class="nav-link hover_color" href="{{route('admin.adminTabs')}}" style="padding-right: 0">Admin Portal</a>
-										<a class="nav-link" href="#" style="padding-left: 0;"> <span style="color: #fff;">></span>  Admin Login Users</a>
+										<a class="nav-link" href="javascript:void(0);" style="padding-left: 0;"> <span style="color: #fff;">></span>End User Management (Customer)</a>
 									</li>
 								</ul>
 							</div>
@@ -241,11 +241,11 @@
 							<label>
 								Customer Status
 							</label>
-							<select class="form-control form-group" style="position: relative;border-radius: 0px;    padding: 9px 28px 9px 12px !important;" id="status">
+							<select class="form-control form-group" style="position: relative;border-radius: 0px;    padding: 9px 0px 9px 12px !important;" id="status">
 								<option value="">Select Customer Status</option>
-								<option value="0">All</option>
-								<option value="1">Active</option>
-								<option value="2">InActive</option>
+								<option value="">All</option>
+								<option value="Active">Active</option>
+								<option value="Inactive">InActive</option>
 							</select>
 						</div>
 						<!-- <div class="d-flex justify-content-between mt-4">

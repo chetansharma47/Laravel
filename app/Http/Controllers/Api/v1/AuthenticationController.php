@@ -21,6 +21,7 @@ use App\Models\Otp;
 use App\Models\ApplicationData;
 use App\Models\ApplicationImage;
 use App\Models\Admin;
+use Session;
 require_once $_SERVER['DOCUMENT_ROOT'].'/capital_motion_03_august/vendor/autoload.php';
 
 class AuthenticationController extends ResponseController
@@ -68,7 +69,7 @@ class AuthenticationController extends ResponseController
         if($register['status'] == 0){
             return $this->responseWithErrorCode($register['error_msg'], 400);
         }
-        return $this->responseOk("Now login with your mobile number, to login with email address, please verify your email address.", ['register' => $register['data']]);
+        return $this->responseOk("Now login with your mobile number, to login with email address Please verify the email address.", ['register' => $register['data']]);
     }
 
     public function login(Request $request){
@@ -177,6 +178,11 @@ class AuthenticationController extends ResponseController
                 return $validator;
             }
             $user = $this->profileModel->reset($request,$token,$tokenData);
+
+            if($user == 0){
+                Session::flash('danger', "New password looks same as old password, Please try a different password.");
+                return redirect()->back();
+            }
             return redirect(route('passwordReset'));
         }
     }
@@ -282,7 +288,7 @@ class AuthenticationController extends ResponseController
         if(empty($check_email)){
             return $this->responseOk("Email address not found.");
         }else{
-            return $this->responseWithErrorCode("Email address already exist.",406);
+            return $this->responseWithErrorCode("Email address already exists, Please try a different email address.",406);
         }
     }
 
