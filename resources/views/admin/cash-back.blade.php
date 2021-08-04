@@ -151,6 +151,10 @@
 		    width: 100%;
 		}
 
+		.modal-footer {
+		    padding: 0.3rem;
+		}
+
 	</style>
 </head>
 <body>
@@ -589,7 +593,7 @@
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">Information</h5>
+        <h5 class="modal-title" id="exampleModalLongTitle">Success</h5>
         <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button> -->

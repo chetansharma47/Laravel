@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<title>Venu Device Authorization</title>
+	<title>New Login Request</title>
 	<meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
 	<link rel="icon" href="{{url('public/admin/assets/img/logo-approved.png')}}" type="image/x-icon"/>
 	<link rel="preconnect" href="https://fonts.googleapis.com">
@@ -109,6 +109,10 @@
 		    margin-top: 250px;
 		}
 
+		.modal-footer {
+		    padding: 0.3rem;
+		}
+
 	</style>
 	<!-- CSS Files -->
 	<link rel="stylesheet" href="{{url('public/admin/assets/css/bootstrap.min.css')}}">
@@ -138,7 +142,7 @@
 								<ul class="navbar-nav">
 									<li class="nav-item">
 										<a class="nav-link hover_color" href="{{route('admin.adminTabs')}}" style="padding-right: 0">Admin Portal</a>
-										<a class="nav-link" href="#" style="padding-left: 0;"> <span style="color: #fff;">></span>   Loyalty Cash Back Settings</a>
+										<a class="nav-link" href="#" style="padding-left: 0;"> <span style="color: #fff;">></span>New Login Request</a>
 									</li>
 								</ul>
 							</div>
@@ -190,10 +194,10 @@
 							<th>Device Model</th>
 							<th>Mac Address</th>
 							<th>Status</th>
-							<th>Date</th>
+							<th>Date & Time</th>
 							<th class="text-center no-arrow">
 								<div class="d-flex align-items-center">
-									Selecttion 
+									Selection 
 	                                <input type="checkbox" data-id = "0" class="select_all_checkbox" key_type="checkbox" style="margin-left: 17px; margin-top: 2px;">
 								</div>
 							</th>
@@ -241,7 +245,7 @@
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">Information</h5>
+        <h5 class="modal-title" id="exampleModalLongTitle">Success</h5>
         <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button> -->

@@ -125,6 +125,10 @@
 		    margin-top: 250px;
 		}
 
+		.modal-footer {
+		    padding: 0.3rem;
+		}
+
 
 	</style>
 </head>
@@ -322,7 +326,7 @@
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">Information</h5>
+        <h5 class="modal-title" id="exampleModalLongTitle">Success</h5>
         <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button> -->
@@ -510,7 +514,7 @@
 	               	for(let i=0; i < tier_conditions.length; i++){
 	               		if(i == 0){
 		               		$("#tier_name_append").append(`<li class="active tier_name_c" data-id="`+tier_conditions[i]['unique_id_by_tier']+`">
-									<input type="text" class="input_tier_name" maxlength="30" value="`+tier_conditions[i]['tier_name']+`" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" placeholder="Enter Tier Name">`);
+									<input type="text" class="input_tier_name" title="Click to enter name" maxlength="30" value="`+tier_conditions[i]['tier_name']+`" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" placeholder="Enter Tier Name">`);
 
 
 	               		append_condition = `<div class="condition_tier active_tier" data-id="`+tier_conditions[i]['unique_id_by_tier']+`">
@@ -527,7 +531,7 @@
 									<label>
 										From Amount($)
 									</label>
-									<input type="number" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" class="form-control form-control-user from_amount" placeholder="From Amount" value="`+tier_conditions[i]['from_amount']+`" />
+									<input type="text" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" class="form-control form-control-user from_amount" maxlength="11" placeholder="From Amount" value="`+tier_conditions[i]['from_amount']+`" />
 
 									<label class="error from_amount_err" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" style="display: none;">Please enter valid color code.</label>
 								</div>
@@ -535,7 +539,7 @@
 									<label>
 										To Amount($)
 									</label>
-									<input type="number" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" class="form-control form-control-user to_amount" placeholder="To Amount" value="`+tier_conditions[i]['to_amount']+`" />
+									<input type="text" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" class="form-control form-control-user to_amount" maxlength="11" placeholder="To Amount" value="`+tier_conditions[i]['to_amount']+`" />
 
 									<label class="error to_amount_err" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" style="display: none;">Please enter valid color code.</label>
 								</div>
@@ -546,7 +550,7 @@
 											Color Code for Customer Tier 
 										</label>
 									<div class="d-flex align-items-center ccc" data-id="`+tier_conditions[i]['unique_id_by_tier']+`">
-										<input type="text" class="form-control form-control-user" placeholder="Color Code for Customer Tier color_code" name="color_code" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" value="`+tier_conditions[i]['color_code']+`" />
+										<input type="text" class="form-control form-control-user" placeholder="Color Code for Customer Tier color_code" name="color_code" maxlength="7" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" value="`+tier_conditions[i]['color_code']+`" />
 										<input type="color" class="basic" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" value="`+tier_conditions[i]['color_code']+`">
 									</div>
 										<label class="error color_code_err" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" style="display: none;">Please enter valid color code.</label>
@@ -565,7 +569,7 @@
 	               		}else{
 
 	               			$("#tier_name_append").append(`<li class="tier_name_c" data-id="`+tier_conditions[i]['unique_id_by_tier']+`">
-									<input type="text" class="input_tier_name" maxlength="30" value="`+tier_conditions[i]['tier_name']+`" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" placeholder="Enter Tier Name" style="background-color:#E3DFDF; cursor:pointer" disabled>`);
+									<input type="text" class="input_tier_name" title="Click to enter name" maxlength="30" value="`+tier_conditions[i]['tier_name']+`" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" placeholder="Enter Tier Name" style="background-color:#E3DFDF; cursor:pointer" disabled>`);
 
 
 
@@ -583,7 +587,7 @@
 									<label>
 										From Amount($)
 									</label>
-									<input type="number" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" class="form-control form-control-user from_amount" placeholder="From Amount" value="`+tier_conditions[i]['from_amount']+`" />
+									<input type="text" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" class="form-control form-control-user from_amount" maxlength="11" placeholder="From Amount" value="`+tier_conditions[i]['from_amount']+`" />
 
 									<label class="error from_amount_err" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" style="display: none;">Please enter valid color code.</label>
 								</div>
@@ -591,7 +595,7 @@
 									<label>
 										To Amount($)
 									</label>
-									<input type="number" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" class="form-control form-control-user to_amount" placeholder="To Amount" value="`+tier_conditions[i]['to_amount']+`" />
+									<input type="text" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" class="form-control form-control-user to_amount" maxlength="11" placeholder="To Amount" value="`+tier_conditions[i]['to_amount']+`" />
 
 									<label class="error to_amount_err" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" style="display: none;">Please enter valid color code.</label>
 								</div>
@@ -602,7 +606,7 @@
 											Color Code for Customer Tier 
 										</label>
 									<div class="d-flex align-items-center ccc" data-id="`+tier_conditions[i]['unique_id_by_tier']+`">
-										<input type="text" class="form-control form-control-user" placeholder="Color Code for Customer Tier color_code" name="color_code" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" value="`+tier_conditions[i]['color_code']+`" />
+										<input type="text" class="form-control form-control-user" placeholder="Color Code for Customer Tier color_code" name="color_code" maxlength="7" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" value="`+tier_conditions[i]['color_code']+`" />
 										<input type="color" class="basic" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" value="`+tier_conditions[i]['color_code']+`">
 									</div>
 										<label class="error color_code_err" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" style="display: none;">Please enter valid color code.</label>
@@ -648,7 +652,7 @@
 				$(".tier_name_c.active").removeClass('active').css("background-color","unset");
 
 				$("#tier_name_append").append(`<li class="active tier_name_c" data-id="`+data_id+`">
-					<input type="text" class="input_tier_name" maxlength="30" value="" data-id="`+data_id+`" placeholder="Enter Tier Name">`);
+					<input type="text" class="input_tier_name" title="Click to enter name" maxlength="30" value="" data-id="`+data_id+`" placeholder="Enter Tier Name">`);
 
 				$(".condition_tier.active_tier").removeClass('active_tier').css("display","none");
 
@@ -666,7 +670,7 @@
 									<label>
 										From Amount($)
 									</label>
-									<input type="number" data-id="`+data_id+`" class="form-control form-control-user from_amount" placeholder="From Amount" value="0" />
+									<input type="text" data-id="`+data_id+`" class="form-control form-control-user from_amount" maxlength="11" placeholder="From Amount" value="0" />
 
 									<label class="error from_amount_err" data-id="`+data_id+`" style="display: none;">Please enter valid color code.</label>
 								</div>
@@ -674,7 +678,7 @@
 									<label>
 										To Amount($)
 									</label>
-									<input type="number" data-id="`+data_id+`" class="form-control form-control-user to_amount" placeholder="To Amount" value="0" />
+									<input type="text" data-id="`+data_id+`" class="form-control form-control-user to_amount" maxlength="11" placeholder="To Amount" value="0" />
 
 									<label class="error to_amount_err" data-id="`+data_id+`" style="display: none;">Please enter valid color code.</label>
 								</div>
@@ -685,7 +689,7 @@
 											Color Code for Customer Tier 
 										</label>
 									<div class="d-flex align-items-center ccc" data-id="`+data_id+`">
-										<input type="text" class="form-control form-control-user" placeholder="Color Code for Customer Tier color_code" name="color_code" data-id="`+data_id+`" value="#ff0000" />
+										<input type="text" class="form-control form-control-user" placeholder="Color Code for Customer Tier color_code" name="color_code" maxlength="7" data-id="`+data_id+`" value="#ff0000" />
 										<input type="color" class="spectrum_`+data_id+`" data-id="`+data_id+`" value="#ff0000">
 									</div>
 										<label class="error color_code_err" data-id="`+data_id+`" style="display: none;">Please enter valid color code.</label>
@@ -806,6 +810,10 @@
 	        return isNumber(event, this)
 		});
 
+		$('#customer_tier_validity_check').keypress(function (event) {
+	        return isNumber1(event, this)
+		});
+
 
 		$("#transaction_amount_check_last_days").on("click",function(){
 			$(this).val("");
@@ -860,6 +868,54 @@
 			}
 
 		}
+
+
+		function isNumber1(evt, element) {
+		    var charCode = (evt.which) ? evt.which : event.keyCode
+		    $("#customer_tier_validity_check").attr("maxlength","6");
+				// if($(element).val().indexOf('.') != -1){
+				// 	$("#price").attr("maxlength","6");	
+				// }else{
+				// 	$("#price").attr("maxlength","5");
+				// }
+		    if (            
+		             // “.” CHECK DOT, AND ONLY ONE.
+		        (charCode < 48 || charCode > 57)){
+
+		        return false;
+			}else{
+
+			        return true;
+			}
+
+		}
+
+		$(document).on("keypress",".from_amount",function(){
+			return isNumber2(event, this)
+		})
+
+		$(document).on("keypress",".to_amount",function(){
+			return isNumber2(event, this)
+		})
+
+		function isNumber2(evt, element) {
+		    var charCode = (evt.which) ? evt.which : event.keyCode
+				// if($(element).val().indexOf('.') != -1){
+				// 	$("#price").attr("maxlength","6");	
+				// }else{
+				// 	$("#price").attr("maxlength","5");
+				// }
+		    if (            
+		             // “.” CHECK DOT, AND ONLY ONE.
+		        (charCode < 48 || charCode > 57)){
+
+		        return false;
+			}else{
+
+			        return true;
+			}
+
+		}
 	});
 </script>
 
@@ -870,8 +926,13 @@
 			let select_data_id = $(this).data("id");
 			//alert(select_data_id)
 			let check_transaction_amount_check_last_days = $("#transaction_amount_check_last_days").val();
+			let amount_last_d = check_transaction_amount_check_last_days.replace("Last ","");
+			amount_last_d = amount_last_d.replace(" Days","");
+			
 
 			let check_customer_tier_validity_check = $("#customer_tier_validity_check").val();
+			let tier_vali_check = check_customer_tier_validity_check.replace(" Days","");
+
 			let check_tier_name = $(".tier_name_c[data-id='"+select_data_id+"']").children().val();
 			let check_from_amount = $(".from_amount[data-id='"+select_data_id+"']").val();
 			let check_to_amount = $(".to_amount[data-id='"+select_data_id+"']").val();
@@ -884,8 +945,22 @@
 				return false;
 			}
 
+			if(parseInt(amount_last_d) <= 0){
+				$("#alert_text").text("Please enter valid customer total transaction amount check for.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
+
 			if(check_customer_tier_validity_check == ""){
 				$("#alert_text").text("Please enter customer tier validity check (Badge Change).");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
+
+			if(parseInt(tier_vali_check) <= 0){
+				$("#alert_text").text("Please enter valid customer tier validity check (Badge Change).");
 				$("#validationModel").modal("show");
 				$("#validationModel").unbind("click");
 				return false;
@@ -898,6 +973,14 @@
 				return false;
 			}
 
+			if(check_tier_name.length < 2){
+				$("#alert_text").text("Tier name should be at least 2 characters.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
+
+
 			if(check_from_amount == ""){
 				$("#alert_text").text("Please enter from amount.");
 				$("#validationModel").modal("show");
@@ -905,7 +988,7 @@
 				return false;
 			}
 
-			if(parseFloat(check_from_amount) == 0){
+			if(parseFloat(check_from_amount) < 0){
 				$("#alert_text").text("Please enter valid from amount.");
 				$("#validationModel").modal("show");
 				$("#validationModel").unbind("click");
@@ -919,7 +1002,7 @@
 				return false;
 			}
 
-			if(parseFloat(check_to_amount) == 0){
+			if(parseFloat(check_to_amount) < 0){
 				$("#alert_text").text("Please enter valid to amount.");
 				$("#validationModel").modal("show");
 				$("#validationModel").unbind("click");
@@ -934,7 +1017,7 @@
 			}
 
 			if(parseFloat(check_to_amount) == parseFloat(check_from_amount)){
-				$("#alert_text").text("To amount should be not equal to from amount.");
+				$("#alert_text").text("To amount should be greater than from amount.");
 				$("#validationModel").modal("show");
 				$("#validationModel").unbind("click");
 				return false;
@@ -968,7 +1051,7 @@
 	              	console.log(res)
 	              	setTimeout(function(){
 	              		$("#loaderModel").modal("hide");
-	              		$("#success_alert_text").text("Tier has been saved successfully.");
+	              		$("#success_alert_text").text("Tier has been added successfully.");
 	              		$("#successModel").modal("show");
 	              		$("#successModel").unbind("click");
 	              	},500)
@@ -1002,7 +1085,21 @@
 		$(".ok").on("click",function(){
 			$("#validationModel").modal("hide");
 			$("#successModel").modal("hide");
-		})
+		});
+
+		$(document).on("keypress",".form-control",function(e){
+	      if($(this).val() == ''){
+	          if(!/[0-9a-zA-Z-~!@#$%^&*()_+{}:"<>,.;'/"]/.test(String.fromCharCode(e.which)))
+	            return false;
+	      }
+		});
+
+		$(document).on("keypress",".input_tier_name",function(e){
+	      if($(this).val() == ''){
+	          if(!/[0-9a-zA-Z-~!@#$%^&*()_+{}:"<>,.;'/"]/.test(String.fromCharCode(e.which)))
+	            return false;
+	      }
+		});
 	});
 </script>
 

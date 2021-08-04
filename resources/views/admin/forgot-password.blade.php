@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<title>Login</title>
+	<title>Forgot Password</title>
 	<meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
 	<link rel="icon" href="{{url('public/admin/assets/img/logo-approved.png')}}" type="image/x-icon"/>
 	<link rel="preconnect" href="https://fonts.googleapis.com">
@@ -107,13 +107,13 @@ label.error {
 							<div class="col-md-5 col-sm-12">
 								<ul class="navbar-nav">
 									<li class="nav-item">
-										<a class="nav-link hover_color" href="#" style="padding-right: 0">Admin Panel</a>
+										<a class="nav-link" href="javascript:void(0);" style="padding-right: 0">Admin Panel</a>
 									</li>
 								</ul>
 							</div>
 							<div class="col-md-2 col-sm-12 text-center">
 								<ul class="" style="padding-left: 25px;">
-										<a class="nav-link" href="#">
+										<a class="nav-link" href="{{route('admin.adminTabs')}}">
 											<img src="{{url('public/admin/assets/img/logo-approved.png')}}"/ alt="logo-approved">
 										</a>
 								</ul>
@@ -121,8 +121,8 @@ label.error {
 							<div class="col-md-5 text-right pr-0">
 								<ul class="navbar-nav">
 									<li class="nav-item">
-										<a class="nav-link" href="{{route('admin.login')}}" style="color: #FFDA7A; text-transform: capitalize;">
-											login
+										<a class="nav-link" href="javascript:void(0);" style="color: #FFDA7A; text-transform: capitalize;">
+											Forgot Password
 										</a>
 									</li>
 								</ul>
@@ -184,12 +184,12 @@ label.error {
                   <form class="user" method="POST" id="validate-form">
                   	{{@csrf_field()}}
                     <div class="form-group" style="padding-right: 0; padding-left: 0">
-                    	<label>Login</label>
+                    	<label>Forgot Password</label>
                       <input type="email" class="form-control form-control-user" id="exampleInputEmail" onkeypress="return AvoidSpace(event)" aria-describedby="emailHelp" name="email" placeholder="Email Address">
                     </div>
                     
                     <button type="submit" class="btn btn-primary btn-user btn-block common_btn mt-5" id="submit_btn">
-                      Submit
+                      Send
                     </button>
                   </form>
                 </div>

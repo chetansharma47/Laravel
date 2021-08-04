@@ -27,7 +27,7 @@
       <tr>
         <td width="20" align="left" valign="top">&nbsp;</td>
         <td align="center" valign="top" style="padding:20px 0;">
-              <a href="javascript:void(0);" style="border:0; outline:0;"><img id="logo_img" src="{{url('public/other_css/img/app_icon.png')}}" alt="" width="100"/></a>
+              <a href="{{route('admin.adminTabs')}}" style="border:0; outline:0;"><img id="logo_img" src="{{url('public/other_css/img/app_icon.png')}}" alt="" width="100"/></a>
         </td>
         <td width="20" align="left" valign="top">&nbsp;</td>
       </tr>

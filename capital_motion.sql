@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Aug 03, 2021 at 03:08 PM
+-- Generation Time: Aug 04, 2021 at 01:15 PM
 -- Server version: 5.7.35-0ubuntu0.18.04.1
 -- PHP Version: 7.2.34-10+ubuntu18.04.1+deb.sury.org+1
 
@@ -41,7 +41,7 @@ CREATE TABLE `admins` (
 --
 
 INSERT INTO `admins` (`id`, `name`, `email`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'admin', 'adminn@yopmail.com', '$2y$10$u591cCpemafbf1zWAuGWu.VulIp5.xCOoMm513XhVcy1jNiqS/dRG', '6UtwiRs0CBThAQHTpkyZu2TU3VCjgdSqrUXcgXPkc3YrHzCboojFmKOnnkLIbEJr', NULL, '2021-08-03 03:09:21');
+(1, 'admin', 'adminn@yopmail.com', '$2y$10$MBraEhcMw7HZpPz4tR1hqOGCgo3E9fFKlyC/f.0.f99YFdlfvEUH6', '58vZlVUxVpirdwAX6zTkjVqS0oI5k4r25N4kWDgP8buTloe5KS2POWjyTqPUKjZp', NULL, '2021-08-04 02:11:57');
 
 -- --------------------------------------------------------
 
@@ -185,14 +185,59 @@ CREATE TABLE `oauth_access_tokens` (
 --
 
 INSERT INTO `oauth_access_tokens` (`id`, `user_id`, `client_id`, `name`, `scopes`, `revoked`, `created_at`, `updated_at`, `expires_at`) VALUES
+('05d2a11426458320b3992163e062538fe9d11608ae234f23d60e8b5445771baa56958b9d45a4e877', 26, 1, 'andrew', '[]', 1, '2021-08-03 23:35:53', '2021-08-03 23:35:53', '2022-08-04 05:05:53'),
+('114d4ea99993d6d507f86e93466f657f415288ed3a68758ee948e924891c65e9c0953ae7ad25349e', 24, 1, 'andrew', '[]', 1, '2021-08-03 07:34:36', '2021-08-03 07:34:36', '2022-08-03 13:04:36'),
+('1ff77bb677a925b97c3d5fb57118310d3b5513a09e5bdb2c1a0004dedcbf352b40277018b723d214', 21, 1, 'andrew', '[]', 0, '2021-08-03 07:14:06', '2021-08-03 07:14:06', '2022-08-03 12:44:06'),
+('2c4f38e22ae26818c8e4a5c708e42a30d6816a3ffcba245dce3f951c41290b2d7ea99cb74f8b583e', 20, 1, 'andrew', '[]', 1, '2021-08-04 00:02:44', '2021-08-04 00:02:44', '2022-08-04 05:32:44'),
+('2c6f2f36223d1bed110de1dd1d538f09ed1e69d6976dbbec502804ed2e5da1c8693f6062c8119547', 26, 1, 'andrew', '[]', 1, '2021-08-04 02:05:47', '2021-08-04 02:05:47', '2022-08-04 07:35:47'),
+('312a3e83193545734661d331aed6a51ddede3339d1936ea94b2b1dd4f1eba1ec0f3d745b56b1ee9e', 26, 1, 'andrew', '[]', 1, '2021-08-04 00:23:42', '2021-08-04 00:23:42', '2022-08-04 05:53:42'),
+('3d539e3bb3b299c963ed71b3943450f0115d17e16f00893a0cfaae887392ee5c4ba3bef48cb95191', 20, 1, 'andrew', '[]', 1, '2021-08-03 06:10:53', '2021-08-03 06:10:53', '2022-08-03 11:40:53'),
+('40171f267ed7a2a544cc3d21a03a1bfd1e125ef024ca05c0113fe6eeb41d94aca233a95565cdbca7', 19, 1, 'andrew', '[]', 0, '2021-08-03 05:27:06', '2021-08-03 05:27:06', '2022-08-03 10:57:06'),
+('40a5cc3bc1f35a6d34ed306e59a8edbc0ff6d0184c4ac0dd1e294808a3f83b18f4ac6ea4aca16c7d', 20, 1, 'andrew', '[]', 1, '2021-08-03 07:17:47', '2021-08-03 07:17:47', '2022-08-03 12:47:47'),
+('43c5697a84655df47632cf696c913467e94b7f250add10bde6285191dc7c874527987f7d174e81a0', 26, 1, 'andrew', '[]', 1, '2021-08-04 00:19:05', '2021-08-04 00:19:05', '2022-08-04 05:49:05'),
+('48e3894d409220fd80c17ca4190d54f11adeafec9058f2a83f01fab62d7121d72b4f2509ab5e9b58', 26, 1, 'andrew', '[]', 1, '2021-08-03 23:37:47', '2021-08-03 23:37:47', '2022-08-04 05:07:47'),
+('50f21052107d537da3cdb1a9d457909bde5d5551e669b8b0a2d842bc30aacf4f311b9a7d3403e91a', 20, 1, 'andrew', '[]', 1, '2021-08-03 05:51:23', '2021-08-03 05:51:23', '2022-08-03 11:21:23'),
+('575a067ff5f2a4e31fb2c4cf02cf8d1eb1dfeaa3e64058a3b2d2574439684e768023e09e2635a531', 20, 1, 'andrew', '[]', 1, '2021-08-03 06:18:30', '2021-08-03 06:18:30', '2022-08-03 11:48:30'),
+('5c1c8a58cf7006e93de9f6d8bf448e0dd71eebfb64d902be4556de1797fe282f7fd58e4a66d50bef', 27, 1, 'andrew', '[]', 1, '2021-08-04 00:50:05', '2021-08-04 00:50:05', '2022-08-04 06:20:05'),
+('5c883b854ee60f3f8baba865c54439fbe3931d23dc82c1ac9b5333e9b732c146ee76105d4cefd333', 20, 1, 'andrew', '[]', 1, '2021-08-04 00:08:04', '2021-08-04 00:08:04', '2022-08-04 05:38:04'),
+('5e6d69c58a3e2dc42a2224cd671c73d40b1bf8b04325d53a520fbbeb7adfb638d75f3b46ba122f22', 20, 1, 'andrew', '[]', 1, '2021-08-04 01:40:59', '2021-08-04 01:40:59', '2022-08-04 07:10:59'),
+('62a76d81cd64617c8394e40c3a7df5d7bbc2887c46d3f32566368bdc4b7e1a7e0bc9e2346bad89f4', 20, 1, 'andrew', '[]', 1, '2021-08-03 23:43:45', '2021-08-03 23:43:45', '2022-08-04 05:13:45'),
+('69426027a302f5390074bf6552724e70e1892555eaf4d9905f1943c7d0a3ef5ac8bb209a0e6c19e5', 27, 1, 'andrew', '[]', 0, '2021-08-04 00:50:54', '2021-08-04 00:50:54', '2022-08-04 06:20:54'),
+('6db356997d43eaf628809bd64649dcba4fb64bf1e550fb68a65e4737eec074d4eda0a2417ef47465', 26, 1, 'andrew', '[]', 0, '2021-08-04 02:15:25', '2021-08-04 02:15:25', '2022-08-04 07:45:25'),
+('6e5ff1cbe4409775482796004781820bbe4e649463bd5a23a76f54bbb20496b93d2a38e1e3db750a', 22, 1, 'andrew', '[]', 0, '2021-08-03 07:19:09', '2021-08-03 07:19:09', '2022-08-03 12:49:09'),
+('6f6230cbfbb29c597752c1f5a3df6deca427f0c59a2cded4cd4c8651d1267c36d6797b06daefe538', 20, 1, 'andrew', '[]', 1, '2021-08-03 07:00:53', '2021-08-03 07:00:53', '2022-08-03 12:30:53'),
+('7a0f2925b42f9481fbad1c1cb6ddf026bfeaf8ed678ddac15f94a2773b1c18acb6fbfc5239c58c02', 20, 1, 'andrew', '[]', 0, '2021-08-04 02:15:08', '2021-08-04 02:15:08', '2022-08-04 07:45:08'),
+('7aa0c0326e35e85ad852b8c94013edfdfc314b4b816de0ae58e239bc46b0dd1e7c6f11ba4ce65868', 22, 1, 'andrew', '[]', 1, '2021-08-03 07:16:56', '2021-08-03 07:16:56', '2022-08-03 12:46:56'),
+('7d87367b1a9e48dfce1154f8edfed773d6ad47bc7fe3b790d1f2e6bdc28f5525ddd46ad1715ea4b1', 20, 1, 'andrew', '[]', 1, '2021-08-03 05:41:00', '2021-08-03 05:41:00', '2022-08-03 11:11:00'),
+('86e344b4471317ef5ea02662199b88be821654b65e3232ff4d538df0df4f36ca0adee57d4fba77c8', 20, 1, 'andrew', '[]', 1, '2021-08-03 05:55:39', '2021-08-03 05:55:39', '2022-08-03 11:25:39'),
+('891ce269bdd47468c8c7d7379f75a383abc189c7175a4d874fb5a9f3833d64d435fa72efc4622dc6', 20, 1, 'andrew', '[]', 1, '2021-08-04 02:08:02', '2021-08-04 02:08:02', '2022-08-04 07:38:02'),
+('8da56fadf896ff1205f7e5b135a1990dd1dc088fff604b336195f571f7e64945eaf39ba5296fa5f8', 26, 1, 'andrew', '[]', 1, '2021-08-04 01:23:14', '2021-08-04 01:23:14', '2022-08-04 06:53:14'),
+('969dd1387b245b0b84c7d9d85e94945a05e8bfdca847d42cb553637c5e014edbd849ebd7c8a3a54a', 20, 1, 'andrew', '[]', 1, '2021-08-03 23:56:06', '2021-08-03 23:56:06', '2022-08-04 05:26:06'),
 ('99e65fd9a311be6a6084fda13a5753ab5ee691dfe87571c1d165a34b7de38c7a124ce26438887746', 17, 1, 'andrew', '[]', 0, '2021-08-03 01:00:37', '2021-08-03 01:00:37', '2022-08-03 06:30:37'),
+('9d1224ffec8681e2fd6fe2daa8a4c1ffc850bd3b2d9fd49db51748d88150e94f52de53bb1598ea39', 20, 1, 'andrew', '[]', 1, '2021-08-04 01:30:46', '2021-08-04 01:30:46', '2022-08-04 07:00:46'),
+('a657bb7a62e3f0aa7b93b5596e44ce12148280f2ab22265392aee46e7eeabf1ff89175d017254662', 26, 1, 'andrew', '[]', 1, '2021-08-04 00:20:22', '2021-08-04 00:20:22', '2022-08-04 05:50:22'),
+('add1717c14154616926c142d6080ef5b1feda60dd02350bf7c2f546e3db43bf27bf286805a47bc2f', 22, 1, 'andrew', '[]', 1, '2021-08-03 07:15:34', '2021-08-03 07:15:34', '2022-08-03 12:45:34'),
 ('afffc81d4cf6c8af9634ccc0a23585a3cac53bc4ac23efc4514c8e7adb43a9e704dddb824c6fdf56', 2, 1, 'andrew', '[]', 0, '2021-07-23 02:24:04', '2021-07-23 02:24:04', '2022-07-23 07:54:04'),
+('b2cd98c856b59ce7869a926ba3681f5d896c67f5e357197cdff08ac4bfe134deb2f34d9220478b75', 19, 1, 'andrew', '[]', 1, '2021-08-03 04:34:28', '2021-08-03 04:34:28', '2022-08-03 10:04:28'),
 ('b6c41ccb16e7e85c8d63d4eb983c12dc5565580983316a550773e187caf0a63b71550cd0f72129eb', 17, 1, 'andrew', '[]', 1, '2021-08-03 00:43:08', '2021-08-03 00:43:08', '2022-08-03 06:13:08'),
 ('bd819af719ba29d8dfafb9f0f4b325b29b84b368ca2ce217000588cbf66e64b849b0b3974bdd4ca7', 1, 1, 'andrew', '[]', 1, '2021-07-23 02:21:40', '2021-07-23 02:21:40', '2022-07-23 07:51:40'),
+('c2cb957f6c712c7e9e12983e4cee54083657f9c6c9427f849016ede5d20ae7e65ec1f9bd443a0ae4', 20, 1, 'andrew', '[]', 1, '2021-08-03 06:01:57', '2021-08-03 06:01:57', '2022-08-03 11:31:57'),
+('c3255ab7891d7575d9b18b3142c29d94cc426b45b96c4161658e1fe2c89d2a6d368ad984f1f248ba', 19, 1, 'andrew', '[]', 1, '2021-08-03 05:22:21', '2021-08-03 05:22:21', '2022-08-03 10:52:21'),
+('c694cb511c85d5208eac07d24663829706f6932075157bd4a668e4f76289c47625784a4661614524', 25, 1, 'andrew', '[]', 0, '2021-08-03 07:39:33', '2021-08-03 07:39:33', '2022-08-03 13:09:33'),
+('c78656abc2dfcd742495a634542f9f26d3265611b7bf6ca7bacf780092276a7913f2deaefc7a60c2', 20, 1, 'andrew', '[]', 1, '2021-08-03 05:45:09', '2021-08-03 05:45:09', '2022-08-03 11:15:09'),
+('c7ecadee52706ecde56cae5ae5d00b5138afab9821142fef04617f6310ff6ccef2472d71094ae817', 20, 1, 'andrew', '[]', 1, '2021-08-04 02:12:52', '2021-08-04 02:12:52', '2022-08-04 07:42:52'),
+('d22841a17439d3a5f9c6beff14baa022a5ff45fc37aeb4e5b31aadb30fc120005265e12626db5777', 23, 1, 'andrew', '[]', 0, '2021-08-03 07:24:49', '2021-08-03 07:24:49', '2022-08-03 12:54:49'),
 ('d507770d40d4c5c3b2a6339855711ca797c1aa56c59d091f3d4c2808f3242f151e66f316e308e781', 17, 1, 'andrew', '[]', 1, '2021-08-03 00:48:56', '2021-08-03 00:48:56', '2022-08-03 06:18:56'),
+('d6b35c6151eed1b517394461b11f4a39627d40e20910cfdd4ae5fe3c6caafbd05dee96d02665668d', 20, 1, 'andrew', '[]', 1, '2021-08-03 06:29:59', '2021-08-03 06:29:59', '2022-08-03 11:59:59'),
 ('df5b900e4ec4a2ae008a99ff138b2d24b936405bc1d8cb705085483cdc6c3316167aa34af942744c', 1, 1, 'andrew', '[]', 0, '2021-07-23 02:31:24', '2021-07-23 02:31:24', '2022-07-23 08:01:24'),
+('e349f14f86edfa333641ae4cb6c72921a0071775d7432ba7879ebdb820061e9d33d2f56741c96efa', 24, 1, 'andrew', '[]', 0, '2021-08-03 07:36:51', '2021-08-03 07:36:51', '2022-08-03 13:06:51'),
+('e378bd3fddfe5374ef7f19191469ae250306df40b23467e4606ccfbff1b527e4140c014b2fd4bc73', 26, 1, 'andrew', '[]', 1, '2021-08-04 00:09:07', '2021-08-04 00:09:07', '2022-08-04 05:39:07'),
+('e5065c394089ebc874fd55fd9eb6765d9d1b36c4270d912487949315e15582c9a71cc963c45df30b', 26, 1, 'andrew', '[]', 1, '2021-08-04 01:19:09', '2021-08-04 01:19:09', '2022-08-04 06:49:09'),
 ('e77adfc1cd2cba4fe1df1739788cf1ac820e15a630eb4531bf303cd6eeb2eb0c308d2b723808ec76', 17, 1, 'andrew', '[]', 1, '2021-08-03 01:00:05', '2021-08-03 01:00:05', '2022-08-03 06:30:05'),
-('ebaf53b243fc0cf5546b5bb0271822837abd2e524991711bae39a2762081706a7fa9c143a9ee6762', 17, 1, 'andrew', '[]', 1, '2021-08-03 00:42:14', '2021-08-03 00:42:14', '2022-08-03 06:12:14');
+('ebaf53b243fc0cf5546b5bb0271822837abd2e524991711bae39a2762081706a7fa9c143a9ee6762', 17, 1, 'andrew', '[]', 1, '2021-08-03 00:42:14', '2021-08-03 00:42:14', '2022-08-03 06:12:14'),
+('ebba7170e253582682eb1c5c0fde61c6c0a128bea6d0d2662a881ec0f3a06f3246d140957bd5bee3', 18, 1, 'andrew', '[]', 0, '2021-08-03 04:31:39', '2021-08-03 04:31:39', '2022-08-03 10:01:39'),
+('ef83f4fea4ffe8857402b752e85e6227dda9424abc31df4bebe74627040bf987c8eda3c1e61e7bce', 26, 1, 'andrew', '[]', 1, '2021-08-04 00:40:43', '2021-08-04 00:40:43', '2022-08-04 06:10:43'),
+('ff94ccad8c93cb6d1a4194b6a77a9d7db6b0ed57b336f7d227d3313efb0a6d7493afd9a4977a3f97', 20, 1, 'andrew', '[]', 1, '2021-08-03 05:41:27', '2021-08-03 05:41:27', '2022-08-03 11:11:27');
 
 -- --------------------------------------------------------
 
@@ -290,7 +335,9 @@ CREATE TABLE `otps` (
 
 INSERT INTO `otps` (`id`, `country_code`, `mobile_number`, `otp`, `created_at`, `updated_at`) VALUES
 (1, '+91', '8968905827', '6432', '2021-07-23 02:19:32', '2021-07-23 02:19:32'),
-(2, '+91', '8556025369', '9128', '2021-07-23 02:19:39', '2021-07-23 02:19:39');
+(5, '+971', '546642586', '5195', '2021-08-03 04:30:20', '2021-08-03 04:30:20'),
+(7, '+971', '565576866', '7964', '2021-08-03 04:33:40', '2021-08-03 04:33:40'),
+(17, '+91', '8556025369', '4214', '2021-08-03 04:45:42', '2021-08-03 04:45:42');
 
 -- --------------------------------------------------------
 
@@ -341,8 +388,8 @@ INSERT INTO `tier_conditions` (`id`, `unique_id_by_tier`, `tier_setting_id`, `ti
 (3, '3', 1, 'Silvert', 1, 500, '#0cbb61', 10, '2021-08-03 01:14:16', '2021-07-29 01:30:07', '2021-08-03 01:14:16'),
 (4, '7', 1, 'Test', 20, 30, '#ff0000', 0, '2021-08-03 04:03:42', '2021-08-03 02:22:31', '2021-08-03 04:03:42'),
 (5, '5', 1, 'Test Tier 1', 50, 70, '#ff0000', 0, '2021-08-03 03:18:59', '2021-08-03 02:23:25', '2021-08-03 03:18:59'),
-(6, '6', 1, 'safasf', 12, 13, '#ff0000', 0, NULL, '2021-08-03 04:04:01', '2021-08-03 04:04:01'),
-(7, '9', 1, 'ewe', 15, 16, '#ff0000', 0, NULL, '2021-08-03 04:04:10', '2021-08-03 04:04:10');
+(6, '6', 1, 'sQ', 0, 1, '#ff0000', 0, NULL, '2021-08-03 04:04:01', '2021-08-04 01:57:24'),
+(7, '9', 1, 'ewe', 15, 16, '#ff0000', 0, '2021-08-04 00:44:40', '2021-08-03 04:04:10', '2021-08-04 00:44:40');
 
 -- --------------------------------------------------------
 
@@ -365,7 +412,7 @@ CREATE TABLE `tier_settings` (
 --
 
 INSERT INTO `tier_settings` (`id`, `admin_id`, `transaction_amount_check_last_days`, `customer_tier_validity_check`, `deleted_at`, `created_at`, `updated_at`) VALUES
-(1, 1, 30, 30, NULL, '2021-07-23 02:18:57', '2021-07-23 02:18:57');
+(1, 1, 30, 30, NULL, '2021-07-23 02:18:57', '2021-08-04 01:13:53');
 
 -- --------------------------------------------------------
 
@@ -410,23 +457,33 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `image`, `country_code`, `mobile_number`, `first_name`, `last_name`, `email`, `password`, `city_of_residence`, `nationality`, `dob`, `gender`, `reference_code`, `device_type`, `device_token`, `reset_password_token`, `verify_email_token`, `is_block`, `is_verify`, `refresh_token`, `remember_token`, `is_active`, `customer_id`, `customer_tier`, `wallet_cash`, `reference_by`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, '0723202107514060fa750c22873.png', '+91', '16516511545', 'lpe', 'lo', 'abc1@yopmail.com', '$2y$10$FIlNFNG1RZMSjY3JRTG0vOhahKPY6/RPMZFhr.WW3Ah8bivyJMv8m', 'Mohali', 'IN', '2012-12-12', 'Male', NULL, 'Ios', 'jaskfjsajfljal', NULL, 'jnYu0hu9G384mwaQu3N6wZEzCgG9YTHkjUHE2BWPFpq2aXDKmVJKqEjosKLbWczr', '0', '1', NULL, NULL, 'Inactive', 40551173578, 'ab', NULL, NULL, '2021-07-23 02:21:40', '2021-07-28 07:21:57', NULL),
+(1, '0723202107514060fa750c22873.png', '+91', '16516511545', 'lpe', 'lo', 'abc1@yopmail.com', '$2y$10$FIlNFNG1RZMSjY3JRTG0vOhahKPY6/RPMZFhr.WW3Ah8bivyJMv8m', 'Mohali', 'IN', '2012-12-12', 'Male', NULL, 'Ios', 'jaskfjsajfljal', NULL, 'jnYu0hu9G384mwaQu3N6wZEzCgG9YTHkjUHE2BWPFpq2aXDKmVJKqEjosKLbWczr', '1', '1', NULL, NULL, 'Inactive', 40551173578, 'ab', NULL, NULL, '2021-07-23 02:21:40', '2021-08-03 06:32:58', NULL),
 (2, '0723202107540460fa759cbb56c.png', '+91', '1234567890', 'fsdfdsfdfjffghfgh', 'dfs', 'abc2@yopmail.com', '$2y$10$JU7vFu5UPuazyR1fgtqLbOjgrsf74CKilVwIrSf5P2rTbVBaYl0ga', 'Mohali', 'vvbb', '2012-12-12', 'Male', '40551173578', 'None', NULL, NULL, 'mfl8RAz1Y6eDIBCQ3kOLcpcNkalyUtHnlDlnWM8wME0IPixTRnvJnb3CqLa9jbGW', '1', '1', NULL, NULL, 'Active', 13652686819, 'ab', NULL, 'lpe lo', '2021-07-23 02:24:04', '2021-07-29 01:32:44', NULL),
-(3, '0723202107514060fa750c22873.png', '+91', '16516511545', 'lpe', 'lo', 'abc1@yopmail.com', '$2y$10$FIlNFNG1RZMSjY3JRTG0vOhahKPY6/RPMZFhr.WW3Ah8bivyJMv8m', 'Mohali', 'IN', '2012-12-12', 'Male', NULL, 'Ios', 'jaskfjsajfljal', NULL, 'jnYu0hu9G384mwaQu3N6wZEzCgG9YTHkjUHE2BWPFpq2aXDKmVJKqEjosKLbWczr', '0', '1', NULL, NULL, 'Inactive', 40551173578, 'ab', NULL, NULL, '2021-07-23 02:21:40', '2021-07-28 07:21:57', NULL),
+(3, '0723202107514060fa750c22873.png', '+91', '16516511545', 'lpe', 'lo', 'abc1@yopmail.com', '$2y$10$FIlNFNG1RZMSjY3JRTG0vOhahKPY6/RPMZFhr.WW3Ah8bivyJMv8m', 'Mohali', 'IN', '2012-12-12', 'Male', NULL, 'Ios', 'jaskfjsajfljal', NULL, 'jnYu0hu9G384mwaQu3N6wZEzCgG9YTHkjUHE2BWPFpq2aXDKmVJKqEjosKLbWczr', '1', '1', NULL, NULL, 'Inactive', 40551173578, 'ab', NULL, NULL, '2021-07-23 02:21:40', '2021-08-03 06:32:58', NULL),
 (4, '0723202107540460fa759cbb56c.png', '+91', '1234567890', 'fsdfdsfdfjffghfgh', 'dfs', 'abc2@yopmail.com', '$2y$10$JU7vFu5UPuazyR1fgtqLbOjgrsf74CKilVwIrSf5P2rTbVBaYl0ga', 'Mohali', 'vvbb', '2012-12-12', 'Male', '40551173578', 'None', NULL, NULL, 'mfl8RAz1Y6eDIBCQ3kOLcpcNkalyUtHnlDlnWM8wME0IPixTRnvJnb3CqLa9jbGW', '1', '1', NULL, NULL, 'Active', 13652686819, 'ab', NULL, 'lpe lo', '2021-07-23 02:24:04', '2021-07-29 01:32:44', NULL),
-(5, '0723202107514060fa750c22873.png', '+91', '16516511545', 'lpe', 'lo', 'abc1@yopmail.com', '$2y$10$FIlNFNG1RZMSjY3JRTG0vOhahKPY6/RPMZFhr.WW3Ah8bivyJMv8m', 'Mohali', 'IN', '2012-12-12', 'Male', NULL, 'Ios', 'jaskfjsajfljal', NULL, 'jnYu0hu9G384mwaQu3N6wZEzCgG9YTHkjUHE2BWPFpq2aXDKmVJKqEjosKLbWczr', '0', '1', NULL, NULL, 'Inactive', 40551173578, 'ab', NULL, NULL, '2021-07-23 02:21:40', '2021-07-28 07:21:57', NULL),
+(5, '0723202107514060fa750c22873.png', '+91', '16516511545', 'lpe', 'lo', 'abc1@yopmail.com', '$2y$10$FIlNFNG1RZMSjY3JRTG0vOhahKPY6/RPMZFhr.WW3Ah8bivyJMv8m', 'Mohali', 'IN', '2012-12-12', 'Male', NULL, 'Ios', 'jaskfjsajfljal', NULL, 'jnYu0hu9G384mwaQu3N6wZEzCgG9YTHkjUHE2BWPFpq2aXDKmVJKqEjosKLbWczr', '1', '1', NULL, NULL, 'Inactive', 40551173578, 'ab', NULL, NULL, '2021-07-23 02:21:40', '2021-08-03 06:32:58', NULL),
 (6, '0723202107540460fa759cbb56c.png', '+91', '1234567890', 'fsdfdsfdfjffghfgh', 'dfs', 'abc2@yopmail.com', '$2y$10$JU7vFu5UPuazyR1fgtqLbOjgrsf74CKilVwIrSf5P2rTbVBaYl0ga', 'Mohali', 'vvbb', '2012-12-12', 'Male', '40551173578', 'None', NULL, NULL, 'mfl8RAz1Y6eDIBCQ3kOLcpcNkalyUtHnlDlnWM8wME0IPixTRnvJnb3CqLa9jbGW', '0', '1', NULL, NULL, 'Active', 13652686819, 'ab', NULL, 'lpe lo', '2021-07-23 02:24:04', '2021-07-28 07:21:57', NULL),
-(7, '0723202107514060fa750c22873.png', '+91', '16516511545', 'lpe', 'lo', 'abc1@yopmail.com', '$2y$10$FIlNFNG1RZMSjY3JRTG0vOhahKPY6/RPMZFhr.WW3Ah8bivyJMv8m', 'Mohali', 'IN', '2012-12-12', 'Male', NULL, 'Ios', 'jaskfjsajfljal', NULL, 'jnYu0hu9G384mwaQu3N6wZEzCgG9YTHkjUHE2BWPFpq2aXDKmVJKqEjosKLbWczr', '0', '1', NULL, NULL, 'Inactive', 40551173578, 'ab', NULL, NULL, '2021-07-23 02:21:40', '2021-07-28 07:21:57', NULL),
+(7, '0723202107514060fa750c22873.png', '+91', '16516511545', 'lpe', 'lo', 'abc1@yopmail.com', '$2y$10$FIlNFNG1RZMSjY3JRTG0vOhahKPY6/RPMZFhr.WW3Ah8bivyJMv8m', 'Mohali', 'IN', '2012-12-12', 'Male', NULL, 'Ios', 'jaskfjsajfljal', NULL, 'jnYu0hu9G384mwaQu3N6wZEzCgG9YTHkjUHE2BWPFpq2aXDKmVJKqEjosKLbWczr', '1', '1', NULL, NULL, 'Inactive', 40551173578, 'ab', NULL, NULL, '2021-07-23 02:21:40', '2021-08-03 06:32:58', NULL),
 (8, '0723202107540460fa759cbb56c.png', '+91', '1234567890', 'fsdfdsfdfjffghfgh', 'dfs', 'abc2@yopmail.com', '$2y$10$JU7vFu5UPuazyR1fgtqLbOjgrsf74CKilVwIrSf5P2rTbVBaYl0ga', 'Mohali', 'vvbb', '2012-12-12', 'Male', '40551173578', 'None', NULL, NULL, 'mfl8RAz1Y6eDIBCQ3kOLcpcNkalyUtHnlDlnWM8wME0IPixTRnvJnb3CqLa9jbGW', '0', '1', NULL, NULL, 'Active', 13652686819, 'ab', NULL, 'lpe lo', '2021-07-23 02:24:04', '2021-07-28 07:21:57', NULL),
-(9, '0723202107514060fa750c22873.png', '+91', '16516511545', 'lpe', 'lo', 'abc1@yopmail.com', '$2y$10$FIlNFNG1RZMSjY3JRTG0vOhahKPY6/RPMZFhr.WW3Ah8bivyJMv8m', 'Mohali', 'IN', '2012-12-12', 'Male', NULL, 'Ios', 'jaskfjsajfljal', NULL, 'jnYu0hu9G384mwaQu3N6wZEzCgG9YTHkjUHE2BWPFpq2aXDKmVJKqEjosKLbWczr', '0', '1', NULL, NULL, 'Inactive', 40551173578, 'ab', NULL, NULL, '2021-07-23 02:21:40', '2021-07-28 07:21:57', NULL),
+(9, '0723202107514060fa750c22873.png', '+91', '16516511545', 'lpe', 'lo', 'abc1@yopmail.com', '$2y$10$FIlNFNG1RZMSjY3JRTG0vOhahKPY6/RPMZFhr.WW3Ah8bivyJMv8m', 'Mohali', 'IN', '2012-12-12', 'Male', NULL, 'Ios', 'jaskfjsajfljal', NULL, 'jnYu0hu9G384mwaQu3N6wZEzCgG9YTHkjUHE2BWPFpq2aXDKmVJKqEjosKLbWczr', '1', '1', NULL, NULL, 'Inactive', 40551173578, 'ab', NULL, NULL, '2021-07-23 02:21:40', '2021-08-03 06:32:58', NULL),
 (10, '0723202107540460fa759cbb56c.png', '+91', '1234567890', 'fsdfdsfdfjffghfgh', 'dfs', 'abc2@yopmail.com', '$2y$10$JU7vFu5UPuazyR1fgtqLbOjgrsf74CKilVwIrSf5P2rTbVBaYl0ga', 'Mohali', 'vvbb', '2012-12-12', 'Male', '40551173578', 'None', NULL, NULL, 'mfl8RAz1Y6eDIBCQ3kOLcpcNkalyUtHnlDlnWM8wME0IPixTRnvJnb3CqLa9jbGW', '0', '1', NULL, NULL, 'Active', 13652686819, 'ab', NULL, 'lpe lo', '2021-07-23 02:24:04', '2021-07-28 07:21:57', NULL),
-(11, '0723202107514060fa750c22873.png', '+91', '16516511545', 'lpe', 'lo', 'abc1@yopmail.com', '$2y$10$FIlNFNG1RZMSjY3JRTG0vOhahKPY6/RPMZFhr.WW3Ah8bivyJMv8m', 'Mohali', 'IN', '2012-12-12', 'Male', NULL, 'Ios', 'jaskfjsajfljal', NULL, 'jnYu0hu9G384mwaQu3N6wZEzCgG9YTHkjUHE2BWPFpq2aXDKmVJKqEjosKLbWczr', '0', '1', NULL, NULL, 'Inactive', 40551173578, 'ab', NULL, NULL, '2021-07-23 02:21:40', '2021-07-28 07:21:57', NULL),
+(11, '0723202107514060fa750c22873.png', '+91', '16516511545', 'lpe', 'lo', 'abc1@yopmail.com', '$2y$10$FIlNFNG1RZMSjY3JRTG0vOhahKPY6/RPMZFhr.WW3Ah8bivyJMv8m', 'Mohali', 'IN', '2012-12-12', 'Male', NULL, 'Ios', 'jaskfjsajfljal', NULL, 'jnYu0hu9G384mwaQu3N6wZEzCgG9YTHkjUHE2BWPFpq2aXDKmVJKqEjosKLbWczr', '1', '1', NULL, NULL, 'Inactive', 40551173578, 'ab', NULL, NULL, '2021-07-23 02:21:40', '2021-08-03 06:32:58', NULL),
 (12, '0723202107540460fa759cbb56c.png', '+91', '1234567890', 'fsdfdsfdfjffghfgh', 'dfs', 'abc2@yopmail.com', '$2y$10$JU7vFu5UPuazyR1fgtqLbOjgrsf74CKilVwIrSf5P2rTbVBaYl0ga', 'Mohali', 'vvbb', '2012-12-12', 'Male', '40551173578', 'None', NULL, NULL, 'mfl8RAz1Y6eDIBCQ3kOLcpcNkalyUtHnlDlnWM8wME0IPixTRnvJnb3CqLa9jbGW', '0', '1', NULL, NULL, 'Active', 13652686819, 'ab', NULL, 'lpe lo', '2021-07-23 02:24:04', '2021-07-28 07:21:57', NULL),
-(13, '0723202107514060fa750c22873.png', '+91', '16516511545', 'lpe', 'lo', 'abc1@yopmail.com', '$2y$10$FIlNFNG1RZMSjY3JRTG0vOhahKPY6/RPMZFhr.WW3Ah8bivyJMv8m', 'Mohali', 'IN', '2012-12-12', 'Male', NULL, 'Ios', 'jaskfjsajfljal', NULL, 'jnYu0hu9G384mwaQu3N6wZEzCgG9YTHkjUHE2BWPFpq2aXDKmVJKqEjosKLbWczr', '0', '1', NULL, NULL, 'Inactive', 40551173578, 'ab', NULL, NULL, '2021-07-23 02:21:40', '2021-07-28 07:21:57', NULL),
+(13, '0723202107514060fa750c22873.png', '+91', '16516511545', 'lpe', 'lo', 'abc1@yopmail.com', '$2y$10$FIlNFNG1RZMSjY3JRTG0vOhahKPY6/RPMZFhr.WW3Ah8bivyJMv8m', 'Mohali', 'IN', '2012-12-12', 'Male', NULL, 'Ios', 'jaskfjsajfljal', NULL, 'jnYu0hu9G384mwaQu3N6wZEzCgG9YTHkjUHE2BWPFpq2aXDKmVJKqEjosKLbWczr', '1', '1', NULL, NULL, 'Inactive', 40551173578, 'ab', NULL, NULL, '2021-07-23 02:21:40', '2021-08-03 06:32:58', NULL),
 (14, '0723202107540460fa759cbb56c.png', '+91', '1234567890', 'fsdfdsfdfjffghfgh', 'dfs', 'abc2@yopmail.com', '$2y$10$JU7vFu5UPuazyR1fgtqLbOjgrsf74CKilVwIrSf5P2rTbVBaYl0ga', 'Mohali', 'vvbb', '2012-12-12', 'Male', '40551173578', 'None', NULL, NULL, 'mfl8RAz1Y6eDIBCQ3kOLcpcNkalyUtHnlDlnWM8wME0IPixTRnvJnb3CqLa9jbGW', '0', '1', NULL, NULL, 'Active', 13652686819, 'ab', NULL, 'lpe lo', '2021-07-23 02:24:04', '2021-07-28 07:21:57', NULL),
 (15, '0723202107514060fa750c22873.png', '+91', '16516511545', 'lpe', 'lo', 'abc1@yopmail.com', '$2y$10$FIlNFNG1RZMSjY3JRTG0vOhahKPY6/RPMZFhr.WW3Ah8bivyJMv8m', 'Mohali', 'IN', '2012-12-12', 'Male', NULL, 'Ios', 'jaskfjsajfljal', NULL, 'jnYu0hu9G384mwaQu3N6wZEzCgG9YTHkjUHE2BWPFpq2aXDKmVJKqEjosKLbWczr', '0', '1', NULL, NULL, 'Inactive', 40551173578, 'ab', NULL, NULL, '2021-07-23 02:21:40', '2021-07-28 07:21:57', NULL),
 (16, '0723202107540460fa759cbb56c.png', '+91', '1234567890', 'fsdfdsfdfjffghfgh', 'dfs', 'ggg@yopmail.com', '$2y$10$JU7vFu5UPuazyR1fgtqLbOjgrsf74CKilVwIrSf5P2rTbVBaYl0ga', 'Mohali', 'vvbb', '2012-12-12', 'Male', '40551173578', 'None', NULL, NULL, 'mfl8RAz1Y6eDIBCQ3kOLcpcNkalyUtHnlDlnWM8wME0IPixTRnvJnb3CqLa9jbGW', '0', '1', NULL, NULL, 'Active', 13652686819, 'ab', NULL, 'lpe lo', '2021-07-23 02:24:04', '2021-07-28 07:21:57', NULL),
-(17, '080320210612146108de3e5a6b1.jpeg', '+971', '546886453', 'trjjjy', 'try', 'test@yopmail.com', '$2y$10$7CX20OAUVUemJqidZpBtieoRYReIn6mr.vBpzTS0WXdanN7VL3c62', 'Abu Dhabi', 'Afghanistan', '2005-08-03', 'Male', NULL, 'Ios', '12335556', NULL, NULL, '0', '1', NULL, NULL, 'Active', 99364351825, 'safasf', NULL, NULL, '2021-08-03 00:42:14', '2021-08-03 04:04:01', NULL);
+(17, '080320210612146108de3e5a6b1.jpeg', '+971', '546886453', 'trjjjy', 'try', 'test@yopmail.com', '$2y$10$7CX20OAUVUemJqidZpBtieoRYReIn6mr.vBpzTS0WXdanN7VL3c62', 'Abu Dhabi', 'Afghanistan', '2005-08-03', 'Male', NULL, 'Ios', '12335556', NULL, NULL, '1', '1', NULL, NULL, 'Active', 99364351825, 'sQ', NULL, NULL, '2021-08-03 00:42:14', '2021-08-04 01:57:24', NULL),
+(18, NULL, '+971', '546642586', 'foo', 'chi', 'rm@gj.Ben', '$2y$10$p43qtAevmHU9xOOA93FCvubMFIEJL9G1lkOBoIRwRWCDn0U2APeFS', 'Abu Dhabi', 'Afghanistan', '2003-08-03', 'Male', NULL, 'None', NULL, NULL, '5iDlHVP5B6lIIjUo5aDU6qWoFNIRW48sVWh2tIWfa231ToPAIXVJKn5xKhvCvKw4', '1', '0', NULL, NULL, 'Inactive', 59840373745, 'sQ', NULL, NULL, '2021-08-03 04:31:39', '2021-08-04 01:57:24', NULL),
+(19, NULL, '+971', '565576866', 'can', 'he', 'aa@yopmail.com', '$2y$10$Wrh637a9uTvaCsY.5t150e3t2j3RFOarGDEt6dBFgKWGvkl/KCy16', 'Abu Dhabi', 'Afghanistan', '1995-08-03', 'Male', NULL, 'Ios', '12335556', NULL, NULL, '1', '1', NULL, NULL, 'Active', 74991065220, 'sQ', NULL, NULL, '2021-08-03 04:34:28', '2021-08-04 01:57:24', NULL),
+(20, '08032021111100610924445ea89.jpeg', '+971', '501234567', 'John', 'devil', 'john@yopmail.com', '$2y$10$F/7W7CCBR7DPAZbpQI4ze..mzSXwESxDUazRXlZA8OAE89hH5NTui', 'Abu Dhabi', 'Afghanistan', '2001-08-03', 'Male', NULL, 'Ios', '12335556', NULL, NULL, '0', '1', NULL, NULL, 'Active', 20957020017, 'sQ', NULL, NULL, '2021-08-03 05:41:00', '2021-08-04 01:57:24', NULL),
+(21, NULL, '+91', '16516511', 'abc', 'koko', 'abc1234@yopmail.com', '$2y$10$AQyVO.Fg3azVhgvLYFx97O2PjjsRrJ9oFn878WF.vbfeKraOiTLyW', 'Mohali', 'IN', '2012-12-12', 'Male', NULL, 'None', NULL, NULL, 'hdMID7dBE67s8TpWEgkFi1uiQSI7YDes1NtfakeSaKlpCUW6vkkWvHL7vuasqOeX', '0', '0', NULL, NULL, 'Inactive', 63397712489, 'sQ', NULL, NULL, '2021-08-03 07:14:05', '2021-08-04 01:57:24', NULL),
+(22, NULL, '+971', '506556945', 'tugged', 'gym', 'dd@yopmail.com', '$2y$10$lgtBVETD54Nm0ycpKmo99u/8DRFt73tPrITM.s2OwmK7MLU425oRi', 'Abu Dhabi', 'Afghanistan', '1999-08-03', 'Male', NULL, 'Ios', '12335556', NULL, NULL, '0', '1', NULL, NULL, 'Active', 85475246368, 'sQ', NULL, NULL, '2021-08-03 07:15:34', '2021-08-04 01:57:24', NULL),
+(23, NULL, '+91', '955656545', 'abc', 'koko', 'abc323@yopmail.com', '$2y$10$nPDx9rf2ziq5JSk/wnd9d.JgdHi7MgDdbNH94oHD4TNFbOWTW.Z3y', 'Mohali', 'IN', '2012-12-12', 'Male', NULL, 'None', NULL, NULL, '3G2EWIrDxV0mhwuYvhftdqnX9tUpLIy81uqHptrMv2AQGU4Up0OoOjlRmSyrDQoN', '0', '0', NULL, NULL, 'Inactive', 99467059243, 'sQ', NULL, NULL, '2021-08-03 07:24:49', '2021-08-04 01:57:24', NULL),
+(24, NULL, '+91', '7351333354', 'xghxxh', 'gdhxhd', 'dev1@yopmail.com', '$2y$10$WF4gGNPm27dDbsEHHJONvuMyeFMSDQNU4CpjPB/0UwG7qu2q/Vwwu', 'Ajman', 'Croatia', '2004-08-03', 'Male', NULL, 'Android', 'temp_token', NULL, NULL, '0', '1', NULL, NULL, 'Active', 30381875622, 'sQ', NULL, NULL, '2021-08-03 07:34:36', '2021-08-04 01:57:24', NULL),
+(25, '080320211309336109400d3e64a.jpeg', '+971', '505674558', 'ghffy', 'ghhhh', 'ty@yopmail.com', '$2y$10$gN4wOe8uuA8usY1.Iu9SbOyMCJhiQDPbFNYO8ilJwnZ2KwGAdSgPK', 'Abu Dhabi', 'Afghanistan', '2005-07-03', 'Male', NULL, 'None', NULL, NULL, NULL, '0', '1', NULL, NULL, 'Inactive', 59766120979, 'sQ', NULL, NULL, '2021-08-03 07:39:33', '2021-08-04 01:57:24', NULL),
+(26, '08042021050552610a2030a2707.jpeg', '+971', '501234568', 'gizzard', 'hiccup', 'sg@yopmail.com', '$2y$10$oSpuuVJQn1cg0GrQXW/Pa.mPUklspFOPHIWr/R2vIBuVfKUCbMjlS', 'Abu Dhabi', 'Afghanistan', '1992-08-04', 'Male', NULL, 'Ios', '12335556', NULL, NULL, '0', '1', NULL, NULL, 'Active', 10813050196, 'sQ', NULL, NULL, '2021-08-03 23:35:52', '2021-08-04 01:57:24', NULL),
+(27, NULL, '+91', '8146961822', 'dev2', 'user', 'dev2@yopmail.com', '$2y$10$V0e4X3879K.p1cZG6.YVb.7rBFbgs1EcJQ6tYlxv7oE3VN6vjS.Km', 'Ajman', 'Albania', '2004-08-04', 'Male', NULL, 'Android', 'temp_token', NULL, NULL, '0', '1', NULL, NULL, 'Active', 33580845035, 'sQ', NULL, NULL, '2021-08-04 00:50:05', '2021-08-04 01:57:24', NULL);
 
 -- --------------------------------------------------------
 
@@ -455,7 +512,7 @@ CREATE TABLE `venue_users` (
 --
 
 INSERT INTO `venue_users` (`id`, `venu_id`, `username`, `password`, `venue_name`, `status`, `device_model`, `mac_address`, `authorized_status`, `date_time`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 1, 'abc', '123456', 'Venue1', 'Active', 'Nokia', '11:250:11:00', 'Authorized', '2021-07-29 15:54:00', NULL, '2021-08-03 02:26:01', NULL);
+(1, 1, 'abc', '123456', 'Venue1', 'Active', 'Nokia', '11:250:11:00', 'Unauthorized', '2021-07-29 15:54:00', NULL, '2021-08-03 06:58:09', NULL);
 
 -- --------------------------------------------------------
 
@@ -680,7 +737,7 @@ ALTER TABLE `oauth_personal_access_clients`
 -- AUTO_INCREMENT for table `otps`
 --
 ALTER TABLE `otps`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 --
 -- AUTO_INCREMENT for table `tier_conditions`
 --
@@ -695,7 +752,7 @@ ALTER TABLE `tier_settings`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 --
 -- AUTO_INCREMENT for table `venue_users`
 --

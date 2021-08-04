@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<title>Admin Managements</title>
+	<title>Admin Management</title>
 	<meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
 	<link rel="icon" href="{{url('public/admin/assets/img/logo-approved.png')}}" type="image/x-icon"/>
 	<link rel="preconnect" href="https://fonts.googleapis.com">
@@ -68,7 +68,7 @@
 							<div class="col-md-5 col-sm-12">
 								<ul class="navbar-nav">
 									<li class="nav-item">
-										<a class="nav-link hover_color" href="{{route('admin.adminTabs')}}" style="padding-right: 0">Admin Panel</a>
+										<a class="nav-link" href="javascript:void(0);" style="padding-right: 0">Admin Panel</a>
 									</li>
 								</ul>
 							</div>

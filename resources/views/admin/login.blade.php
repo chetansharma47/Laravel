@@ -107,13 +107,13 @@ label.error {
 							<div class="col-md-5 col-sm-12">
 								<ul class="navbar-nav">
 									<li class="nav-item">
-										<a class="nav-link hover_color" href="#" style="padding-right: 0">Admin Panel</a>
+										<a class="nav-link" href="javascript:void(0);" style="padding-right: 0">Admin Panel</a>
 									</li>
 								</ul>
 							</div>
 							<div class="col-md-2 col-sm-12 text-center">
 								<ul class="" style="padding-left: 25px;">
-										<a class="nav-link" href="#">
+										<a class="nav-link" href="{{route('admin.adminTabs')}}">
 											<img src="{{url('public/admin/assets/img/logo-approved.png')}}"/ alt="logo-approved">
 										</a>
 								</ul>

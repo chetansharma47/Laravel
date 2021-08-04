@@ -15,6 +15,7 @@ class CreateCashbacksTable extends Migration
     {
         Schema::create('cashbacks', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('unique_id_cashback');
             $table->integer('admin_id')->unsigned();
             $table->foreign('admin_id')->references('id')->on('admins')->onDelete('cascade');
             $table->integer('venu_id')->unsigned();
@@ -28,6 +29,7 @@ class CreateCashbacksTable extends Migration
             $table->time('to_time');
             $table->string('cashback_percentage');
             $table->enum('status',['Active','Inactive']);
+            $table->text('name_of_file_show')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
