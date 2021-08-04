@@ -231,7 +231,7 @@
 							</label>
 							<select class="form-control form-group" style="position: relative;border-radius: 0px; padding: 9px 28px 9px 12px !important;" id="gender">
 								<option value="">Select Gender</option>
-								<option value="All">All</option>
+								<option value="">All</option>
 								<option value="Male">Male</option>
 								<option value="Female">Female</option>
 								<option value="Other">Other</option>
@@ -278,7 +278,7 @@
 							<label>
 								Email ID
 							</label>
-							<input type="text" class="form-control form-control-user" placeholder="Enter Email Id" id="email" value="" style="border-radius: 0px;    padding: 9px 14px 9px 12px !important;"/>
+							<input type="text" class="form-control form-control-user" placeholder="Enter Email Id" id="email" onkeypress="return AvoidSpace(event)" value="" style="border-radius: 0px;    padding: 9px 14px 9px 12px !important;"/>
 						</div>
 						<div class="venue_inputs mb-3 px-2" style="width: inherit !important;">
 							<label>
@@ -1569,10 +1569,19 @@ chart.render();
 
 					if(key_type == "gender"){
 						$(this).focusout(function(){
-							if($(this).text() == "Male" || $(this).text() == "Female"){
+
+							if($(this).text().toLowerCase() == "male" || $(this).text().toLowerCase() == "female" || $(this).text().toLowerCase() == "other"){
+
+								if($(this).text().toLowerCase() == "male"){
+									$(this).text("Male");
+								}else if($(this).text().toLowerCase() == "female"){
+									$(this).text("Female");
+								}else if($(this).text().toLowerCase() == "other"){
+									$(this).text("Other");
+								}
 								
 							}else{
-								$("#alert_text").text("Gender should be Male, Female only.");
+								$("#alert_text").text("Gender should be Male, Female, Other only.");
 								$("#validationModel").modal("show");
 								$("#validationModel").unbind("click");
 								$(this).text(currentVal);
@@ -1593,7 +1602,8 @@ chart.render();
 			$("#update_btn").on("click",function(){
 
 				let arrayData = [];
-
+				let empty_val = "false";
+				
 				$(".td_click[edited='true']").each(function(){
 					let selected_data_id = $(this).data("id");
 					let selected_key_name = $(this).attr("key_type");
@@ -1608,9 +1618,47 @@ chart.render();
 					objectData.customer_id = customer_id;
 
 					arrayData.push(objectData);
+
+					if(selected_key_name == "first_name"){
+						if(text == ""){
+							$("#alert_text").text("Please enter first name.");
+							$("#validationModel").modal("show");
+							$("#validationModel").unbind("click");
+							empty_val = "true";
+						}
+						
+					}else if(selected_key_name == "last_name"){
+						if(text == ""){
+							$("#alert_text").text("Please enter last name.");
+							$("#validationModel").modal("show");
+							$("#validationModel").unbind("click");
+							empty_val = "true";
+						}
+
+					}else if(selected_key_name == "nationality"){
+						if(text == ""){
+							$("#alert_text").text("Please enter nationality.");
+							$("#validationModel").modal("show");
+							$("#validationModel").unbind("click");
+							empty_val = "true";
+						}
+
+					}else if(selected_key_name == "gender"){
+						if(text == ""){
+							$("#alert_text").text("Please enter gender.");
+							$("#validationModel").modal("show");
+							$("#validationModel").unbind("click");
+							empty_val = "true";
+						}
+
+					}
 					
 				});
 
+				if(empty_val == "true"){
+					$("#loaderModel").modal("hide");
+					return false;
+				}
 				if(arrayData.length <= 0){
 					$("#alert_text").text("Please edit at least one column of user.");
 					$("#validationModel").modal("show");
@@ -1856,6 +1904,24 @@ chart.render();
 
 		});
 	</script>
+
+
+<script type="text/javascript">
+    function AvoidSpace(event) {
+        var k = event ? event.which : window.event.keyCode;
+        if (k == 32) return false;
+    }
+
+    $(document).ready(function(){
+    	$(document).on("keypress",".form-control",function(e){
+	      if($(this).val() == ''){
+	          if(!/[0-9a-zA-Z-~!@#$%^&*()_+{}:"<>,.;'/"]/.test(String.fromCharCode(e.which)))
+	            return false;
+	      }
+		});
+    })
+</script>
+
 
 </body>
 </html>

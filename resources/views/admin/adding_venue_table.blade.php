@@ -492,7 +492,12 @@
 				let ids = $("#selected_checkboxes").val();
 				let type = $(this).attr('type');
 				if(ids == "" || ids == null || ids == "undefiend"){
-					$("#alert_text").text("Please select checkbox for "+type+" users.");
+					if(type == "authorized"){
+						type = "authorize";
+					}else{
+						type = "unauthorize";
+					}
+					$("#alert_text").text("Please select users to "+type+".");
 					$("#validationModel").modal("show");
 					$("#validationModel").unbind("click");
 					return false;
@@ -513,13 +518,15 @@
 						$("#loaderModel").unbind("click");
 		              },
 		              success: function(res){
+		              	console.log(res)
 		              	setTimeout(function(){
+		              		$("#selected_checkboxes").val("");
 		              		$(".single_checkbox").prop("checked",false);
 		              		$(".select_all_checkbox").prop("checked",false);
 		              		if(res.type == "authorized"){
 
 			              		$("#loaderModel").modal("hide");
-			              		$("#success_alert_text").text("Users has authorized.");
+			              		$("#success_alert_text").text("Users has been authorized successfully.");
 			              		$("#successModel").modal("show");
 
 			              		let authorized_ids = res.ids;
@@ -564,4 +571,17 @@
 
 		});
 	</script>
+
+	<script type="text/javascript">
+		$(document).ready(function(){
+	    	$(document).on("keypress",".form-control",function(e){
+		      if($(this).val() == ''){
+		          if(!/[0-9a-zA-Z-~!@#$%^&*()_+{}:"<>,.;'/"]/.test(String.fromCharCode(e.which)))
+		            return false;
+		      }
+			});
+	    });
+
+	</script>
+
 </body>
