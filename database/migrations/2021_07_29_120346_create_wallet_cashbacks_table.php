@@ -17,9 +17,9 @@ class CreateWalletCashbacksTable extends Migration
             $table->increments('id');
             $table->integer('admin_id')->unsigned();
             $table->foreign('admin_id')->references('id')->on('admins')->onDelete('cascade');
-            $table->integer('bonus')->default(0);
+            $table->double('bonus')->default(0);
             $table->string('bonus_text')->nullable();
-            $table->integer('refer_friend')->default(0);
+            $table->double('refer_friend')->default(0);
             $table->string('refer_friend_text')->nullable();
             $table->timestamps();
             $table->softDeletes();

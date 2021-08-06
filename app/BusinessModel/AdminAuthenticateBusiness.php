@@ -61,19 +61,20 @@ class AdminAuthenticateBusiness extends Model
          
         if($getDetails) {
             $email = $getDetails->email;
+            $admin_find = Admin::whereEmail($email)->first();
+            if(!empty($admin_find)){
 
-            $password = Hash::make($data['new_password']);
-            $data = array('password'=>$password);
+                if(Hash::check($data['new_password'], $admin_find->password)){
+                    return ['status' => "2", 'error' => "New password looks same as old password, Please try a different password."];
+                }
 
-            $is_updated  = Admin::where("email",$email)->update($data);
-
-            if($is_updated)
-            {
+                $password = Hash::make($data['new_password']);
+                $admin_find->password = $password;
+                $admin_find->update();
                 DB::table('password_resets')->where("email",$email)->delete();
                 return ['status' => "1", 'success' => "Your password changed successfully."];
-                
-            }else {
-                
+
+            }else{
                 return ['status' => "2", 'error' => "Unable to reset your password."];
             }
              

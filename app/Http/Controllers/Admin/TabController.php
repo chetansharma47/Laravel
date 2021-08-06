@@ -61,7 +61,7 @@ class TabController extends Controller
             }else{
                 $last_tier_cond_unique_id = 0;
             }
-    		return view('admin.cust_tier_settings',compact('last_tier_cond_unique_id'));
+    		return view('admin.cust_tier_settings',compact('last_tier_cond_unique_id','tier_settings'));
     	}
     }
 
@@ -106,14 +106,14 @@ class TabController extends Controller
         $data['transaction_amount_check_last_days'] = str_replace("Last ", "", $data['transaction_amount_check_last_days']);
         $data['transaction_amount_check_last_days'] = (int)str_replace(" Days", "", $data['transaction_amount_check_last_days']);
 
-        $data['customer_tier_validity_check'] = (int)str_replace(" Days", "", $data['customer_tier_validity_check']);
+        $data['customer_tier_validity_check'] = (int)str_replace(" Days from status change", "", $data['customer_tier_validity_check']);
         $admin = Auth()->guard('admin')->user();
 
         $tier_find = TierSetting::whereAdminId($admin->id)->first();
         $tier_cond = null;
         if(!empty($tier_find)){
 
-            $name_check = TierCondition::whereTierSettingId($tier_find->id)->where("unique_id_by_tier","!=", $data['unique_id_by_tier'])->whereTierName($data['tier_name'])->first();
+            $name_check = TierCondition::whereTierSettingId($tier_find->id)->where("unique_id_by_tier","!=", $data['unique_id_by_tier'])->whereTierName($data['tier_name'])->whereDeletedAt(null)->first();
             if(!empty($name_check)){
                 return response()->json(['tier_name_err' => "Tier name already exists."],422);
             }
@@ -351,30 +351,32 @@ class TabController extends Controller
 
          $order = $request->get("order")[0]['column'];
             if($order == 0){
-                $column = "customer_id";
+                $column = "id";
             }elseif($order == 1){
+                $column = "customer_id";
+            }elseif($order == 2){
                 $column = "mobile_number";
-            }elseif ($order == 2) {
-                $column = "first_name";
             }elseif ($order == 3) {
-                $column = "last_name";
+                $column = "first_name";
             }elseif ($order == 4) {
-                $column = "email";
+                $column = "last_name";
             }elseif ($order == 5) {
-                $column = "nationality";
+                $column = "email";
             }elseif ($order == 6) {
-                $column = "dob";
+                $column = "nationality";
             }elseif ($order == 7) {
-                $column = "gender";
+                $column = "dob";
             }elseif ($order == 8) {
-                $column = "is_active";
+                $column = "gender";
             }elseif ($order == 9) {
-                $column = "created_at";
+                $column = "is_active";
             }elseif ($order == 10) {
-                $column = "customer_tier";
+                $column = "created_at";
             }elseif ($order == 11) {
-                $column = "wallet_cash";
+                $column = "customer_tier";
             }elseif ($order == 12) {
+                $column = "wallet_cash";
+            }elseif ($order == 13) {
                 $column = "reference_code";
             }else{
                 $column = "reference_by";
@@ -416,7 +418,12 @@ class TabController extends Controller
                 })->orderBy($column,$asc_desc);
         $total = $data->get()->count();
 
-        $search = $request->get("search")["value"];
+        if(!empty($request->get("search")["value"])){
+            $search = $request->get("search")["value"];
+        }else{
+
+            $search = $request->search_txt;
+        }
         $filter = $total;
 
 
@@ -518,7 +525,7 @@ class TabController extends Controller
     }
 
     public function downloadUsers(Request $request){
-        $users = User::whereDeletedAt(null)->select('customer_id as Customer Id', 'mobile_number as Mobile Number','first_name as First Name','last_name as Last Name','email as Email Id','nationality as Nationality','dob as DOB', 'gender as Gender','is_active as Status',DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d') AS Join_On"),'customer_tier as Customer Tier','wallet_cash as Wallet Cash','reference_code as Customer Referral Code','reference_by as Referral By')->get()->toArray();
+        $users = User::whereDeletedAt(null)->select('customer_id as Customer Id', 'mobile_number as Mobile Number','first_name as First Name','last_name as Last Name','email as Email Id','nationality as Nationality','dob as DOB', 'gender as Gender','is_active as Status',DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d') AS Join_On"),'customer_tier as Customer Tier','wallet_cash as Wallet Cash','reference_code as Customer Referral Code','reference_by as Referral By')->orderBy("id","desc")->get()->toArray();
 
         return $download =  Excel::create('export-users', function($excel) use ($users){
 

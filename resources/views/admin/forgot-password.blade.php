@@ -77,6 +77,10 @@ label.error {
     margin-bottom: 10px;
 }
 
+.alert-dismissable .close, .alert-dismissible .close {
+    top: 22px!important;
+}
+
 
 
 	</style>
@@ -288,7 +292,7 @@ label.error {
 
 		jQuery.validator.addMethod("valid_email", function(value, element) {
 	      	console.log(value.indexOf("."))
-	        if(value.indexOf(".") >= 0 ){
+	        if(value.indexOf(".") >= 0 && value.includes(".@") == false ){
 	          return true;
 	        }else {
 	          return false;

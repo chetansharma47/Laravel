@@ -138,6 +138,33 @@
 		    padding: 0.3rem;
 		}
 
+		table#basic-datatables {
+		    overflow: auto;
+		    width: 100%!important;
+		    display: inline-block;
+		}
+
+		.wrap_all {
+		    display: flex;
+		    align-items: center;
+		    justify-content: space-between;
+		}
+
+		.wrap_all ul.pagination {
+		    margin-bottom: 0!important;
+		}
+
+		.wrap_all div#basic-datatables_info {
+			padding-top: 0;
+		}
+
+		td.white_space {
+		    white-space: nowrap;
+		}
+
+		th.white_space {
+		    white-space: nowrap;
+		}
 	</style>
 </head>
 <body>
@@ -269,16 +296,18 @@
 
 							<select class="form-control form-group" style="position: relative;border-radius: 0px;     padding: 9px 28px 9px 12px !important;" id="tier">
 								<option value="">Select Tier</option>
-								@foreach($tiers[0]['tierConditions'] as $condition)
-								<option value="{{$condition->id}}">{{$condition->tier_name}}</option>
-								@endforeach()
+								@if(isset($tiers[0]))
+									@foreach($tiers[0]['tierConditions'] as $condition)
+									<option value="{{$condition->id}}">{{$condition->tier_name}}</option>
+									@endforeach()
+								@endif()
 							</select>
 						</div>
 						<div class="venue_inputs mb-3 px-2" style="width: inherit !important;">
 							<label>
 								Email ID
 							</label>
-							<input type="text" class="form-control form-control-user" placeholder="Enter Email Id" id="email" onkeypress="return AvoidSpace(event)" value="" style="border-radius: 0px;    padding: 9px 14px 9px 12px !important;"/>
+							<input type="text" class="form-control form-control-user" placeholder="Enter Email ID" id="email" onkeypress="return AvoidSpace(event)" value="" style="border-radius: 0px;    padding: 9px 14px 9px 12px !important;"/>
 						</div>
 						<div class="venue_inputs mb-3 px-2" style="width: inherit !important;">
 							<label>
@@ -339,25 +368,26 @@
 			</div>
 			<div class="row">
 				<div class="col-md-12 mb-4" style="margin-top: -60px;">
-					<div class="table-responsive px-2">
+					<div class="px-2">
 						<table id="basic-datatables"  class="display table table-striped table-hover" style="padding: 0 !important" >
 							<thead>
 								<tr style="background-color: #193358;    color: #fff;">
-									<th>Customer ID</th>
-									<th>Mobile No.</th>
-									<th>First Name</th>
-									<th>Last Name</th>
-									<th>Email ID</th>
-									<th>Nationality</th>
-									<th>DOB</th>
-									<th>Gender</th>
-									<th>Status</th>
-									<th>Joined On</th>
-									<th>Customer Tier</th>
-									<th>Wallet Cash</th>
-									<th>Customer Referral Code</th>
-									<th>Referred By</th>
-									<th>
+									<th class="white_space">Sr. No.</th>
+									<th class="white_space">Customer ID</th>
+									<th class="white_space">Mobile No.</th>
+									<th class="white_space">First Name</th>
+									<th class="white_space">Last Name</th>
+									<th class="white_space">Email ID</th>
+									<th class="white_space">Nationality</th>
+									<th class="white_space">DOB</th>
+									<th class="white_space">Gender</th>
+									<th class="white_space">Status</th>
+									<th class="white_space">Joined On</th>
+									<th class="white_space">Customer Tier</th>
+									<th class="white_space">Wallet Cash</th>
+									<th class="white_space">Customer Referral Code</th>
+									<th class="white_space">Referred By</th>
+									<th class="white_space">
 										<div class="d-flex align-items-center">
 											Select 
 	                                        <input type="checkbox" data-id = "0" class="select_all_checkbox" key_type="checkbox" style="margin-left: 17px; margin-top: 2px;">
@@ -1230,7 +1260,7 @@ chart.render();
 <script type="text/javascript">
     $(document).ready(function() {
  	
-		
+		localStorage.clear();
         $('#basic-datatables').dataTable({
              dom: "Bfrtip",
             "processing": true,
@@ -1240,6 +1270,7 @@ chart.render();
                 "type": "POST",
                 "data" : {
                 	'_token': "{{csrf_token()}}",
+                	'first_time' : 'true'
                 },
                 complete:function(){
 		          tdClick();
@@ -1259,33 +1290,45 @@ chart.render();
 			          	$(".single_checkbox[data-id='"+split_selected_checkboxes[i]+"']").prop("checked", true);
 
 			        }
-					if($(".single_checkbox:not(:checked)").length > 0){
-						$(".select_all_checkbox").prop("checked",false);
-					}else{
-						$(".select_all_checkbox").prop("checked",true);
+
+			        if($(".single_checkbox").length > 0){
+
+						if($(".single_checkbox:not(:checked)").length > 0){
+							$(".select_all_checkbox").prop("checked",false);
+						}else{
+							$(".select_all_checkbox").prop("checked",true);
+						}
+			        }else{
+			        	$(".select_all_checkbox").prop("checked",false);
+			        }
+
+					if($("#basic-datatables_wrapper").find(".wrap_all").length <= 0){
+
+						$('#basic-datatables_info,#basic-datatables_paginate').wrapAll('<div class="wrap_all"></div>'); 
 					}
+
 		        }
 
             },
             createdRow: function( row, data, dataIndex ) {
 
-		        $( row ).find('td:eq(0)').attr('data-id', data['id']).attr('key_type','customer_id').addClass('td_click');
-		        $( row ).find('td:eq(1)').attr('data-id', data['id']).attr('key_type','mobile_number').addClass('td_click');
-		        $( row ).find('td:eq(2)').attr('data-id', data['id']).attr('key_type','first_name').addClass('td_click');
-		        $( row ).find('td:eq(3)').attr('data-id', data['id']).attr('key_type','last_name').addClass('td_click');
-		        $( row ).find('td:eq(4)').attr('data-id', data['id']).attr('key_type','email').addClass('td_click');
-		        $( row ).find('td:eq(5)').attr('data-id', data['id']).attr('key_type','nationality').addClass('td_click');
-		        $( row ).find('td:eq(6)').attr('data-id', data['id']).attr('key_type','dob').addClass('td_click');
-		        $( row ).find('td:eq(7)').attr('data-id', data['id']).attr('key_type','gender').addClass('td_click');
-		        $( row ).find('td:eq(8)').attr('data-id', data['id']).attr('key_type','is_active').addClass('td_click');
-		        $( row ).find('td:eq(9)').attr('data-id', data['id']).attr('key_type','created_at').addClass('td_click');
-		        $( row ).find('td:eq(10)').attr('data-id', data['id']).attr('key_type','customer_tier').addClass('td_click');
-		        $( row ).find('td:eq(11)').attr('data-id', data['id']).attr('key_type','wallet_cash').addClass('td_click');
-		        $( row ).find('td:eq(12)').attr('data-id', data['id']).attr('key_type','reference_code').addClass('td_click');
-		        $( row ).find('td:eq(13)').attr('data-id', data['id']).attr('key_type','reference_by').addClass('td_click');
+		        $( row ).find('td:eq(1)').attr('data-id', data['id']).attr('key_type','customer_id').addClass('td_click').addClass('white_space');
+		        $( row ).find('td:eq(2)').attr('data-id', data['id']).attr('key_type','mobile_number').addClass('td_click').addClass('white_space');
+		        $( row ).find('td:eq(3)').attr('data-id', data['id']).attr('key_type','first_name').addClass('td_click');
+		        $( row ).find('td:eq(4)').attr('data-id', data['id']).attr('key_type','last_name').addClass('td_click');
+		        $( row ).find('td:eq(5)').attr('data-id', data['id']).attr('key_type','email').addClass('td_click');
+		        $( row ).find('td:eq(6)').attr('data-id', data['id']).attr('key_type','nationality').addClass('td_click').addClass('white_space');
+		        $( row ).find('td:eq(7)').attr('data-id', data['id']).attr('key_type','dob').addClass('td_click').addClass('white_space');
+		        $( row ).find('td:eq(8)').attr('data-id', data['id']).attr('key_type','gender').addClass('td_click').addClass('white_space');
+		        $( row ).find('td:eq(9)').attr('data-id', data['id']).attr('key_type','is_active').addClass('td_click');
+		        $( row ).find('td:eq(10)').attr('data-id', data['id']).attr('key_type','created_at').addClass('td_click').addClass('white_space');
+		        $( row ).find('td:eq(11)').attr('data-id', data['id']).attr('key_type','customer_tier').addClass('td_click').addClass('white_space');
+		        $( row ).find('td:eq(12)').attr('data-id', data['id']).attr('key_type','wallet_cash').addClass('td_click');
+		        $( row ).find('td:eq(13)').attr('data-id', data['id']).attr('key_type','reference_code').addClass('td_click');
+		        $( row ).find('td:eq(14)').attr('data-id', data['id']).attr('key_type','reference_by').addClass('td_click').addClass('white_space');
 		    },
             "columns": [
-            // {data: 'DT_RowIndex', name: 'DT_RowIndex'},
+             	{data: 'DT_RowIndex', name: 'DT_RowIndex'},
                 {data: 'customer_id', name: 'customer_id'},
 	            {data: 'country_code_with_phone_number', name: 'country_code_with_phone_number'},
 	            {data: 'first_name', name: 'first_name'},
@@ -1307,6 +1350,19 @@ chart.render();
         });
 
         $("#search_btn").on("click",function(){
+
+        	let joined_from = $("#joined_from").val();
+        	let joined_to = $("#joined_to").val();
+
+        	if(joined_from > joined_to){
+        		$("#alert_text").text("Joining date-from should be less than or equal to Joining date-to.");
+        		$("#validationModel").modal("show");
+        		$("#validationModel").unbind("click");
+        		return false;
+        	}
+
+        	localStorage.setItem("search_click","true");
+
         	getData();
         });
 
@@ -1322,6 +1378,7 @@ chart.render();
         	let tier = $("#tier").val();
         	let email = $("#email").val();
         	let mobile_number = $("#mobile_number").val();
+        	let search_txt = $(".form-control[type='search']").val();
 
         	$("#basic-datatables").dataTable().fnDestroy();
         	$('#basic-datatables').dataTable({
@@ -1339,7 +1396,9 @@ chart.render();
                 	'customer_status' : status,
                 	'tier' : tier,
                 	'email' : email,
-                	'mobile_number' : mobile_number
+                	'mobile_number' : mobile_number,
+                	'search_txt' : search_txt,
+                	'first_time' : 'false'
                 },
                 complete:function(){
 		          tdClick();
@@ -1360,34 +1419,50 @@ chart.render();
 			          	$(".single_checkbox[data-id='"+split_selected_checkboxes[i]+"']").prop("checked", true);
 
 			        }
-					if($(".single_checkbox:not(:checked)").length > 0){
-						$(".select_all_checkbox").prop("checked",false);
-					}else{
-						$(".select_all_checkbox").prop("checked",true);
+
+			        if($(".single_checkbox").length > 0){
+
+						if($(".single_checkbox:not(:checked)").length > 0){
+							$(".select_all_checkbox").prop("checked",false);
+						}else{
+							$(".select_all_checkbox").prop("checked",true);
+						}
+			        }else{
+			        	$(".select_all_checkbox").prop("checked",false);
+			        }
+
+					if(localStorage.getItem('search_click') == "true"){
+
+						$(".form-control[type='search']").val(search_txt);
+						localStorage.setItem('search_click','false');
 					}
 
+					if($("#basic-datatables_wrapper").find(".wrap_all").length <= 0){
+
+						$('#basic-datatables_info,#basic-datatables_paginate').wrapAll('<div class="wrap_all"></div>'); 
+					}  
 					
 		        }
             },
             createdRow: function( row, data, dataIndex ) {
 
-		       $( row ).find('td:eq(0)').attr('data-id', data['id']).attr('key_type','customer_id').addClass('td_click');
-		        $( row ).find('td:eq(1)').attr('data-id', data['id']).attr('key_type','mobile_number').addClass('td_click');
-		        $( row ).find('td:eq(2)').attr('data-id', data['id']).attr('key_type','first_name').addClass('td_click');
-		        $( row ).find('td:eq(3)').attr('data-id', data['id']).attr('key_type','last_name').addClass('td_click');
-		        $( row ).find('td:eq(4)').attr('data-id', data['id']).attr('key_type','email').addClass('td_click');
-		        $( row ).find('td:eq(5)').attr('data-id', data['id']).attr('key_type','nationality').addClass('td_click');
-		        $( row ).find('td:eq(6)').attr('data-id', data['id']).attr('key_type','dob').addClass('td_click');
-		        $( row ).find('td:eq(7)').attr('data-id', data['id']).attr('key_type','gender').addClass('td_click');
-		        $( row ).find('td:eq(8)').attr('data-id', data['id']).attr('key_type','is_active').addClass('td_click');
-		        $( row ).find('td:eq(9)').attr('data-id', data['id']).attr('key_type','created_at').addClass('td_click');
-		        $( row ).find('td:eq(10)').attr('data-id', data['id']).attr('key_type','customer_tier').addClass('td_click');
-		        $( row ).find('td:eq(11)').attr('data-id', data['id']).attr('key_type','wallet_cash').addClass('td_click');
-		        $( row ).find('td:eq(12)').attr('data-id', data['id']).attr('key_type','reference_code').addClass('td_click');
-		        $( row ).find('td:eq(13)').attr('data-id', data['id']).attr('key_type','reference_by').addClass('td_click');
+		       $( row ).find('td:eq(1)').attr('data-id', data['id']).attr('key_type','customer_id').addClass('td_click').addClass('white_space');
+		        $( row ).find('td:eq(2)').attr('data-id', data['id']).attr('key_type','mobile_number').addClass('td_click').addClass('white_space');
+		        $( row ).find('td:eq(3)').attr('data-id', data['id']).attr('key_type','first_name').addClass('td_click').addClass('white_space');
+		        $( row ).find('td:eq(4)').attr('data-id', data['id']).attr('key_type','last_name').addClass('td_click').addClass('white_space');
+		        $( row ).find('td:eq(5)').attr('data-id', data['id']).attr('key_type','email').addClass('td_click');
+		        $( row ).find('td:eq(6)').attr('data-id', data['id']).attr('key_type','nationality').addClass('td_click').addClass('white_space');
+		        $( row ).find('td:eq(7)').attr('data-id', data['id']).attr('key_type','dob').addClass('td_click').addClass('white_space');
+		        $( row ).find('td:eq(8)').attr('data-id', data['id']).attr('key_type','gender').addClass('td_click');
+		        $( row ).find('td:eq(9)').attr('data-id', data['id']).attr('key_type','is_active').addClass('td_click');
+		        $( row ).find('td:eq(10)').attr('data-id', data['id']).attr('key_type','created_at').addClass('td_click').addClass('white_space');
+		        $( row ).find('td:eq(11)').attr('data-id', data['id']).attr('key_type','customer_tier').addClass('td_click').addClass('white_space');
+		        $( row ).find('td:eq(12)').attr('data-id', data['id']).attr('key_type','wallet_cash').addClass('td_click');
+		        $( row ).find('td:eq(13)').attr('data-id', data['id']).attr('key_type','reference_code').addClass('td_click');
+		        $( row ).find('td:eq(14)').attr('data-id', data['id']).attr('key_type','reference_by').addClass('td_click').addClass('white_space');
 		    },
             "columns": [
-            // {data: 'DT_RowIndex', name: 'DT_RowIndex'},
+             	{data: 'DT_RowIndex', name: 'DT_RowIndex'},
                 {data: 'customer_id', name: 'customer_id'},
 	            {data: 'country_code_with_phone_number', name: 'country_code_with_phone_number'},
 	            {data: 'first_name', name: 'first_name'},
@@ -1581,7 +1656,7 @@ chart.render();
 								}
 								
 							}else{
-								$("#alert_text").text("Gender should be Male, Female, Other only.");
+								$("#alert_text").text("Gender should be Male, Female or Other.");
 								$("#validationModel").modal("show");
 								$("#validationModel").unbind("click");
 								$(this).text(currentVal);
@@ -1607,7 +1682,7 @@ chart.render();
 				$(".td_click[edited='true']").each(function(){
 					let selected_data_id = $(this).data("id");
 					let selected_key_name = $(this).attr("key_type");
-					let text = $(this).text();
+					let text = $(this).text().trim(" ");
 					let customer_id = $(".td_click[data-id='"+selected_data_id+"']").first().text();
 					let objectData = {
 
@@ -1620,6 +1695,14 @@ chart.render();
 					arrayData.push(objectData);
 
 					if(selected_key_name == "first_name"){
+
+						if(text.length < 2){
+							$("#alert_text").text("First name should be atleast 2 characters.");
+							$("#validationModel").modal("show");
+							$("#validationModel").unbind("click");
+							empty_val = "true";
+						}
+
 						if(text == ""){
 							$("#alert_text").text("Please enter first name.");
 							$("#validationModel").modal("show");
@@ -1628,6 +1711,14 @@ chart.render();
 						}
 						
 					}else if(selected_key_name == "last_name"){
+
+						if(text.length < 2){
+							$("#alert_text").text("Last name should be atleast 2 characters.");
+							$("#validationModel").modal("show");
+							$("#validationModel").unbind("click");
+							empty_val = "true";
+						}
+
 						if(text == ""){
 							$("#alert_text").text("Please enter last name.");
 							$("#validationModel").modal("show");
@@ -1636,6 +1727,14 @@ chart.render();
 						}
 
 					}else if(selected_key_name == "nationality"){
+
+						if(text.length < 2){
+							$("#alert_text").text("Nationality should be atleast 2 characters.");
+							$("#validationModel").modal("show");
+							$("#validationModel").unbind("click");
+							empty_val = "true";
+						}
+
 						if(text == ""){
 							$("#alert_text").text("Please enter nationality.");
 							$("#validationModel").modal("show");
@@ -1683,7 +1782,7 @@ chart.render();
 		              		$("#loaderModel").modal("hide");
 		              		$("#success_alert_text").text("Users has been updated successfully.");
 		              		$("#successModel").modal("show");
-
+		              		localStorage.setItem("search_click","true");
 		              		getData();
 		              	},500);
 		              },
@@ -1919,7 +2018,31 @@ chart.render();
 	            return false;
 	      }
 		});
-    })
+    });
+
+
+
+    $(document).ready(function(){
+	    $(document).on('paste',".form-control",function (event) {
+		  	if (event.originalEvent.clipboardData.getData('Text').match(/[^\d]/)) {
+		    	event.preventDefault();
+		  	}
+		});
+
+		$(document).on('paste', '.td_click',function (event) {
+		  	if (event.originalEvent.clipboardData.getData('Text').match(/[^\d]/)) {
+		    	event.preventDefault();
+		  	}
+		});
+
+    	$(document).on("keypress",".td_click",function(e){
+	      if($(this).text() == ''){
+	          if(!/[0-9a-zA-Z-~!@#$%^&*()_+{}:"<>,.;'/"]/.test(String.fromCharCode(e.which)))
+	            return false;
+	      }
+		});
+    });
+
 </script>
 
 

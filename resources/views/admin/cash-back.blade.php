@@ -39,10 +39,14 @@
 		    max-height:180px;
 		}
 
-		.scroll-text::-webkit-scrollbar {
+		/*.scroll-text::-webkit-scrollbar {
 		    display: none;
 		}
+		*/
 
+		.tier_heading{
+			word-break: break-all;
+		}
 		.venue_inputs {
 			position: relative;
 		}
@@ -62,9 +66,9 @@
 		    
 		}
 
-		.menu-lisitng ul::-webkit-scrollbar {
+		/*.menu-lisitng ul::-webkit-scrollbar {
 		    display: none;
-		}
+		}*/
 
 		.box_icon {
 		    display: flex;
@@ -155,9 +159,41 @@
 		    padding: 0.3rem;
 		}
 
+		.d-flex {
+		    margin-bottom: 5px;
+		}
+
+		#confirmationModel .modal-title{
+		    text-align: center;
+		    width: 100%;
+		    font-size: 20px;
+		    font-weight: 600;
+		}
+		#confirmationModel .modal-header {
+		    background-color: #5f5f5f;
+		    color: #fff;
+		    justify-content: center;
+		}
+
+		#confirmationModel .modal-body {
+			text-align: center;
+		}
+
+		#confirmationModel .modal-body p {
+			margin-bottom: 0rem;
+		}
+
+		.venue_name a{
+			word-break: break-all;
+		}
+
 	</style>
 </head>
 <body>
+
+	<?php 
+		$current_date = Carbon\Carbon::now()->toDateString();
+	?>
 	<header class="curve-bg">
 		<div class="container-fluid">
 			<div class="curve-bg1">
@@ -215,7 +251,7 @@
 						<div class="scroll-text">
 							@if(!empty($tier) && isset($tier->tierConditions) && count($tier->tierConditions) > 0)
 							@foreach($tier->tierConditions as $condition)
-							<div class="d-flex align-items-center">
+							<div class="d-flex">
 								<div class="venue_inputs mr-4">
 									<label style="width: 135px;" data-id = "{{$condition->id}}" tier_name = "{{$condition->tier_name}}" class="tier_heading">
 										{{$condition->tier_name}}
@@ -223,7 +259,7 @@
 								</div>
 								<div class="venue_inputs mr-4">
 									<div class="d-flex">
-										<input type="text" class="form-control form-control-user double tier_percentage" placeholder="" value="0.0" data-id="{{$condition->id}}" style="font-size: 14px !important; border-radius: 0px; width: 50px"/>
+										<input type="text" class="form-control form-control-user double tier_percentage" placeholder="" value="{{$condition->percentage}}" data-id="{{$condition->id}}" style="font-size: 14px !important; border-radius: 0px; width: 50px"/>
 										<input type="text" class="form-control form-control-user" placeholder="Percentage" data-id="{{$condition->id}}" value="%" style="font-size: 14px !important; border-radius: 0px; width: 42px" disabled/>
 									</div>
 								</div>
@@ -248,7 +284,7 @@
 				<div class="col-md-6">
 					<div class="app_notification_bg" style="background-color: transparent;">
 						<h4>More Wallet Cash Backs</h4>
-						<div class="d-flex align-items-center">
+						<div class="d-flex">
 							<div class="venue_inputs mr-4">
 								<label style="width: 99px;" type="bonus">
 									Bonus
@@ -256,8 +292,8 @@
 							</div>
 							<div class="venue_inputs mr-4">
 								<div class="d-flex">
-									<input type="text" class="form-control form-control-user integer bonus" placeholder="" value="{{$wallet_cashback->bonus}}" style="font-size: 14px !important; border-radius: 0px; width: 106px" data-id="{{$wallet_cashback->id}}"/>
-									<input type="text" class="form-control form-control-user bonus_text"  maxlength="3" value="{{$wallet_cashback->bonus_text}}" placeholder="AED" style="font-size: 14px !important; border-radius: 0px; width: 60px" data-id="{{$wallet_cashback->id}}"/>
+									<input type="text" class="form-control form-control-user double1 bonus" placeholder="" value="{{$wallet_cashback->bonus}}" style="font-size: 14px !important; border-radius: 0px; width: 106px" data-id="{{$wallet_cashback->id}}"/>
+									<input type="text" class="form-control form-control-user bonus_text"  maxlength="3" value="{{$wallet_cashback->bonus_text}}" placeholder="AED" style="font-size: 14px !important; border-radius: 0px; width: 60px" data-id="{{$wallet_cashback->id}}" disabled="true" />
 								</div>
 								
 							</div>
@@ -267,7 +303,7 @@
 	                    		</a>
 							</div>
 						</div>	
-						<div class="d-flex align-items-center mt-2">
+						<div class="d-flex mt-2">
 							<div class="venue_inputs mr-4">
 								<label style="width: 99px;" type="refere_friend">
 									Refer A Friend
@@ -275,8 +311,8 @@
 							</div>
 							<div class="venue_inputs mr-4">
 								<div class="d-flex">
-									<input type="text" class="form-control form-control-user integer refere_friend" placeholder="" value="{{$wallet_cashback->refer_friend}}" style="font-size: 14px !important; border-radius: 0px; width: 106px" data-id="{{$wallet_cashback->id}}"/>
-									<input type="text" class="form-control form-control-user refer_friend_text" placeholder="AED" maxlength="3" value="{{$wallet_cashback->refer_friend_text}}" style="font-size: 14px !important; border-radius: 0px; width: 60px" data-id="{{$wallet_cashback->id}}"/>
+									<input type="text" class="form-control form-control-user double1 refere_friend" placeholder="" value="{{$wallet_cashback->refer_friend}}" style="font-size: 14px !important; border-radius: 0px; width: 106px" data-id="{{$wallet_cashback->id}}"/>
+									<input type="text" class="form-control form-control-user refer_friend_text" placeholder="AED" maxlength="3" value="{{$wallet_cashback->refer_friend_text}}" style="font-size: 14px !important; border-radius: 0px; width: 60px" data-id="{{$wallet_cashback->id}}" disabled="true" />
 								</div>
 							</div>
 							<div>
@@ -294,7 +330,7 @@
 				<div class="col-md-6">
 					<div class="app_notification_bg" style="background-color: transparent;">
 						<h4>More Wallet Cash Backs</h4>
-						<div class="d-flex align-items-center">
+						<div class="d-flex">
 							<div class="venue_inputs mr-4">
 								<label style="width: 99px;" type="bonus">
 									Bonus
@@ -303,7 +339,7 @@
 							<div class="venue_inputs mr-4">
 								<div class="d-flex">
 									<input type="text" class="form-control form-control-user integer bonus" placeholder="" value="0" style="font-size: 14px !important; border-radius: 0px; width: 106px" data-id=""/>
-									<input type="text" class="form-control form-control-user bonus_text" placeholder="AED"  maxlength="3" value="" style="font-size: 14px !important; border-radius: 0px; width: 60px" data-id=""/>
+									<input type="text" class="form-control form-control-user bonus_text" placeholder="AED"  maxlength="3" value="AED" style="font-size: 14px !important; border-radius: 0px; width: 60px" data-id="" disabled="true" />
 								</div>
 								
 							</div>
@@ -313,7 +349,7 @@
 	                    		</a>
 							</div>
 						</div>	
-						<div class="d-flex align-items-center mt-2">
+						<div class="d-flex mt-2">
 							<div class="venue_inputs mr-4">
 								<label style="width: 99px;" type="refere_friend">
 									Refer A Friend
@@ -322,7 +358,7 @@
 							<div class="venue_inputs mr-4">
 								<div class="d-flex">
 									<input type="text" class="form-control form-control-user integer refere_friend" placeholder="" value="0" style="font-size: 14px !important; border-radius: 0px; width: 106px" data-id=""/>
-									<input type="text" class="form-control form-control-user refer_friend_text" placeholder="AED" maxlength="3" value="" style="font-size: 14px !important; border-radius: 0px; width: 60px" data-id=""/>
+									<input type="text" class="form-control form-control-user refer_friend_text" placeholder="AED" maxlength="3" value="AED" style="font-size: 14px !important; border-radius: 0px; width: 60px" data-id="" disabled="true" />
 								</div>
 							</div>
 							<div>
@@ -609,6 +645,27 @@
   </div>
 </div>
 
+<div class="modal fade" id="confirmationModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Alert</h5>
+        <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button> -->
+      </div>
+      <div class="modal-body">
+        <p id="confirmation_alert_text">Info Text</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary confirm_ok" onclick="return removePromotionCashback();" style="background-color: #3ABD6F!important; border: none; border-radius: 50px; color: #fff;"  data-dismiss="modal">Yes</button>
+        <button type="button" class="btn btn-secondary confirm_no" style="background-color: #3ABD6F!important; border: none; border-radius: 50px; color: #fff;"  data-dismiss="modal">No</button>
+       <!--  <button type="button" class="btn btn-primary">Save changes</button> -->
+      </div>
+    </div>
+  </div>
+</div>
+
 
 <div id="loaderModel" class="modal fade" role="dialog">
   <div class="modal-dialog">
@@ -671,6 +728,10 @@
 	        return isNumber(event, this)
 		});
 
+		$(document).on("keypress",".double1",function (event) {
+	        return isNumber1(event, this)
+		});
+
 		// THE SCRIPT THAT CHECKS IF THE KEY PRESSED IS A NUMERIC OR DECIMAL VALUE.
 		function isNumber(evt, element) {
 		    var charCode = (evt.which) ? evt.which : event.keyCode
@@ -678,6 +739,29 @@
 					$(".double").attr("maxlength","4");	
 				}else{
 					$(".double").attr("maxlength","3");
+				}
+
+				console.log($(element).val())
+
+				
+		    if (            
+		        (charCode != 46 || $(element).val().indexOf('.') != -1) &&      // “.” CHECK DOT, AND ONLY ONE.
+		        (charCode < 48 || charCode > 57)){
+
+		        return false;
+			}else{
+
+			        return true;
+			}
+
+		}
+
+		function isNumber1(evt, element) {
+		    var charCode = (evt.which) ? evt.which : event.keyCode
+				if($(element).val().indexOf('.') != -1){
+					$(".double1").attr("maxlength","11");	
+				}else{
+					$(".double1").attr("maxlength","10");
 				}
 
 				console.log($(element).val())
@@ -737,7 +821,14 @@
 			let data_id = $(this).data("id");
 			let check_tier_percentage_val = $(".tier_percentage[data-id='"+data_id+"']").val();
 			let tier_name = $(".tier_heading[data-id='"+data_id+"']").attr("tier_name");
-			if(check_tier_percentage_val == "" || check_tier_percentage_val == 0 || check_tier_percentage_val == "0"){
+
+			if(check_tier_percentage_val == ""){
+				$("#alert_text").text("Please enter base cashback percentage.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
+			if(check_tier_percentage_val == 0 || check_tier_percentage_val == "0"){
 				$("#alert_text").text("Please enter valid percentage for "+tier_name+".");
 				$("#validationModel").modal("show");
 				$("#validationModel").unbind("click");
@@ -767,8 +858,15 @@
 				let check_bonus_value = $(this).parent().parent().find(".bonus").val();
 				let check_bonus_text_value = $(this).parent().parent().find(".bonus_text").val();
 
-				if(check_bonus_value == 0 || check_bonus_value == "0" || check_bonus_value == ""){
-					$("#alert_text").text("Please enter valid value for bonus");
+				if(check_bonus_value == ""){
+					$("#alert_text").text("Please enter bonus.");
+					$("#validationModel").modal("show");
+					$("#validationModel").unbind("click");
+					return false;
+				}
+
+				if(check_bonus_value == 0 || check_bonus_value == "0"){
+					$("#alert_text").text("Please enter valid value for bonus.");
 					$("#validationModel").modal("show");
 					$("#validationModel").unbind("click");
 					return false;
@@ -788,14 +886,21 @@
 		        	"wallet_cashback_id" : data_id,
 		        	"bonus" : check_bonus_value,
 		        	"bonus_text" : check_bonus_text_value,
-		        	"wallet_type" : "bonus"
+		        	"wallet_type" : "Bonus details"
 	        	};
 
 			}else if(check_name == "refere_friend"){
 				let check_refere_friend_value = $(this).parent().parent().find(".refere_friend").val();
 				let check_refere_friend_text_value = $(this).parent().parent().find(".refer_friend_text").val();
+
+				if(check_refere_friend_value == ""){
+					$("#alert_text").text("Please enter value for Refer A Friend.");
+					$("#validationModel").modal("show");
+					$("#validationModel").unbind("click");
+					return false;
+				}
 				
-				if(check_refere_friend_value == 0 || check_refere_friend_value == "0" || check_refere_friend_value == ""){
+				if(check_refere_friend_value == 0 || check_refere_friend_value == "0"){
 					$("#alert_text").text("Please enter valid value for refer a friend.");
 					$("#validationModel").modal("show");
 					$("#validationModel").unbind("click");
@@ -815,7 +920,7 @@
 		        	"wallet_cashback_id" : data_id,
 		        	"refer_friend" : check_refere_friend_value,
 		        	"refer_friend_text" : check_refere_friend_text_value,
-		        	"wallet_type" : "Refere a friend"
+		        	"wallet_type" : "Refer a friend cashback details"
 	        	};
 
 			}
@@ -825,6 +930,7 @@
 
 		$(".ok").on("click",function(){
 			$("#validationModel").modal("hide");
+			$("#successModel").modal("hide");
 		});
 
 	});
@@ -847,11 +953,11 @@
 	          		if(res.update_type == "tier_percentage"){
 
 		          		$("#loaderModel").modal("hide");
-		          		$("#success_alert_text").text(res.tier_name+" percentage has been saved successfully.");
+		          		$("#success_alert_text").text(res.tier_name+" cashback percentage details has been updated successfully.");
 		          		$("#successModel").modal("show");
 	          		}else if(res.update_type == "more_wallet_cashback"){
 	          			$("#loaderModel").modal("hide");
-		          		$("#success_alert_text").text(res.wallet_type+" has been saved successfully.");
+		          		$("#success_alert_text").text(res.wallet_type+" has been updated successfully.");
 		          		$("#successModel").modal("show");
 	          		}
 
@@ -900,7 +1006,7 @@
 								<input type="text" class="form-control form-control-user file_name_show" title="" placeholder="" value="" disabled="true" unique_id="`+unique_id+`" />
 							</div>
 							<img src="{{url('public/upload_icon.png')}}" title="Click to upload image" alt="" class="upload_icon" unique_id="`+unique_id+`" />
-							<input type="file" class="file_name" unique_id="`+unique_id+`" style="display:none" img="false">
+							<input type="file" class="file_name" unique_id="`+unique_id+`" style="display:none" img="false" accept = image/*>
 						</div>
 					</div>
 					<div class="row pr-3 pl-3 mt-3">
@@ -965,13 +1071,13 @@
 							<label>
 								From Date
 							</label>
-							<input type="date" class="form-control form-control-user from_date" placeholder="From Date" value="" unique_id="`+unique_id+`" />
+							<input type="date" class="form-control form-control-user from_date" placeholder="From Date" value="" unique_id="`+unique_id+`" min="{{$current_date}}"/>
 						</div>
 						<div class="col-md-3 venue_inputs">
 							<label>
 								To Date
 							</label>
-							<input type="date" class="form-control form-control-user to_date" placeholder="To Date" value="" unique_id="`+unique_id+`" />
+							<input type="date" class="form-control form-control-user to_date" placeholder="To Date" value="" unique_id="`+unique_id+`" min="{{$current_date}}"/>
 						</div>
 						<div class="col-md-6 venue_inputs">
 							<div class="">
@@ -1014,7 +1120,7 @@
 							</label>
 							<div class="d-flex">
 									<input type="text" class="form-control form-control-user cashback_perentage double" unique_id="`+unique_id+`" placeholder="" value="0.0" style="border-radius: 0px; width: 108px; background-color: #F64141 !important; color: #fff !important; padding: 0px 28px !important;"/>
-									<input type="text" class="form-control form-control-user" placeholder="" value="%" style=" border-radius: 0px; width: 48px"/>
+									<input type="text" class="form-control form-control-user" placeholder="" value="%" style=" border-radius: 0px; width: 48px" disabled/>
 							</div>
 						</div>
 						<div class="col-md-6 venue_inputs">
@@ -1094,7 +1200,7 @@
 	              	}else {
 		                $(".file_name[unique_id='"+unique_id+"']").attr("img","false");
 		                $(".file_name[unique_id='"+unique_id+"']").attr("show_name",null);
-		                $("#alert_text").text("Please select jpg, jpeg or png image format only.");
+		                $("#alert_text").text("Please upload .jpg, .jpeg or .png format file only.");
 		                $("#validationModel").modal("show");
 		                $("#validationModel").unbind("click");
 		                $(".file_name_show[unique_id='"+unique_id+"']").val("");
@@ -1186,6 +1292,9 @@
 
 		$(document).on("click",".open_new_tab",function(){
 	        let base_64 = $(this).children(".file_name_show").attr("src");
+	        if(base_64 == "undefined" || base_64 == undefined || base_64 == ""){
+	        	return false;
+	        }
          	fetch(base_64)
          	.then(e => e.blob())
          	.then(e => {
@@ -1200,7 +1309,7 @@
      	});
 
 		$(document).on("click",".submit_btn",function(){
-
+			let __action = $(this);
 			let date = new Date().getDate();
 			let year = new Date().getFullYear();
 			let month = new Date().getMonth() + 1;
@@ -1229,6 +1338,14 @@
 		
 			if(check_name == ""){
 				$("#alert_text").text("Please enter promotion cashback name.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+
+			}
+
+			if(check_name != "" && check_name.length < 2){
+				$("#alert_text").text("Promotion cashback name should be at least 2 characters.");
 				$("#validationModel").modal("show");
 				$("#validationModel").unbind("click");
 				return false;
@@ -1268,7 +1385,7 @@
 			}
 
 			if(from_time == ""){
-				$("#alert_text").text("Please select from_time.");
+				$("#alert_text").text("Please select from time.");
 				$("#validationModel").modal("show");
 				$("#validationModel").unbind("click");
 				return false;
@@ -1276,7 +1393,7 @@
 			}
 
 			if(to_time == ""){
-				$("#alert_text").text("Please select to_time.");
+				$("#alert_text").text("Please select to time.");
 				$("#validationModel").modal("show");
 				$("#validationModel").unbind("click");
 				return false;
@@ -1312,18 +1429,18 @@
 			}
 
 			if(from_date > to_date){
-				$("#alert_text").text("From date should be less than to today.");
+				$("#alert_text").text("To date should be greater than or equal to from date.");
 				$("#validationModel").modal("show");
 				$("#validationModel").unbind("click");
 				return false;
 			}
 
-			if(from_date == to_date){
-				$("#alert_text").text("To date should be greater than from date.");
-				$("#validationModel").modal("show");
-				$("#validationModel").unbind("click");
-				return false;
-			}
+			// if(from_date == to_date){
+			// 	$("#alert_text").text("To date should be greater than from date.");
+			// 	$("#validationModel").modal("show");
+			// 	$("#validationModel").unbind("click");
+			// 	return false;
+			// }
 
 			var data = {
 	        	'_token': "{{csrf_token()}}",
@@ -1354,12 +1471,19 @@
 		          	console.log(res)
 		          	setTimeout(function(){
 		          		$("#loaderModel").modal("hide");
-		          		$(".created_date[unique_id='"+res.unique_id_cashback+"']").val(res.created_at);
-		          		$(".last_update[unique_id='"+res.unique_id_cashback+"']").val(res.updated_at);
+		          		$(".created_date[unique_id='"+res.data.unique_id_cashback+"']").val(res.data.created_at);
+		          		$(".last_update[unique_id='"+res.data.unique_id_cashback+"']").val(res.data.updated_at);
 
-		          		$("#success_alert_text").text(res.promotion_cashback_name+ " has been saved successfully.");
+		          		if(res.update == "true"){
+
+		          			$("#success_alert_text").text("Promotion cashback details updated successfully.");
+		          		}else{
+		          			$("#success_alert_text").text("Promotion cashback details saved successfully.");
+
+		          		}
 		          		$("#successModel").modal("show");
 		          		$("#successModel").unbind("click");
+		          		__action.text("Update");
 
 		          	},500);
 		          },
@@ -1395,7 +1519,7 @@
     		$(this).addClass("active");
     		var data = {
 	        	'_token': "{{csrf_token()}}",
-	        	"venue_id": active_venue_id
+	        	"venue_id": venue_id
 	    	};
 
 	    	ajaxForCashbackData(data)
@@ -1445,7 +1569,7 @@
 						if(cashbacks[i]['image'].length > 0){
 							have_img = "true";
 						}
-
+						
 
 						let day_on = cashbacks[i]['day_on'];
 						let split_day_on = day_on.split(",");
@@ -1527,7 +1651,7 @@
 												<input type="text" class="form-control form-control-user file_name_show" title="" placeholder="" value="`+slice_file_name+`" disabled="true" unique_id="`+unique_id+`" src="`+cashbacks[i]['image']+`" style="cursor:pointer;" />
 											</div>
 											<img src="{{url('public/upload_icon.png')}}" title="Click to upload image" alt="" class="upload_icon" unique_id="`+unique_id+`" />
-											<input type="file" class="file_name" unique_id="`+unique_id+`" style="display:none" img="`+have_img+`">
+											<input type="file" class="file_name" unique_id="`+unique_id+`" style="display:none" img="`+have_img+`" accept = image/*>
 										</div>
 									</div>
 									<div class="row pr-3 pl-3 mt-3">
@@ -1592,20 +1716,20 @@
 											<label>
 												From Date
 											</label>
-											<input type="date" class="form-control form-control-user from_date" placeholder="From Date" value="`+cashbacks[i]['from_date']+`" unique_id="`+unique_id+`" />
+											<input type="date" class="form-control form-control-user from_date" placeholder="From Date" value="`+cashbacks[i]['from_date']+`" unique_id="`+unique_id+`" min="{{$current_date}}" />
 										</div>
 										<div class="col-md-3 venue_inputs">
 											<label>
 												To Date
 											</label>
-											<input type="date" class="form-control form-control-user to_date" placeholder="To Date" value="`+cashbacks[i]['to_date']+`" unique_id="`+unique_id+`" />
+											<input type="date" class="form-control form-control-user to_date" placeholder="To Date" value="`+cashbacks[i]['to_date']+`" unique_id="`+unique_id+`" min="{{$current_date}}"/>
 										</div>
 										<div class="col-md-6 venue_inputs">
 											<div class="">
 												<label>
 													Created 
 												</label>
-												<input type="text" class="form-control form-control-user created_date" unique_id="`+unique_id+`"  value="" disabled style="background-color: #8D8A8A !important;" />
+												<input type="text" class="form-control form-control-user created_date" unique_id="`+unique_id+`"  value="`+cashbacks[i]['created_at']+`" disabled style="background-color: #8D8A8A !important;" />
 											</div>
 										</div>
 									</div>
@@ -1630,7 +1754,7 @@
 													Last Updated 
 												</label>
 
-												<input type="text" class="form-control form-control-user last_update"  value="" unique_id="`+unique_id+`" disabled style="background-color: #8D8A8A !important;" />
+												<input type="text" class="form-control form-control-user last_update"  value="`+cashbacks[i]['updated_at']+`" unique_id="`+unique_id+`" disabled style="background-color: #8D8A8A !important;" />
 											</div> 
 										</div>
 									</div>
@@ -1641,7 +1765,7 @@
 											</label>
 											<div class="d-flex">
 													<input type="text" class="form-control form-control-user cashback_perentage double" unique_id="`+unique_id+`" placeholder="" value="`+cashbacks[i]['cashback_percentage']+`" style="border-radius: 0px; width: 108px; background-color: #F64141 !important; color: #fff !important; padding: 0px 28px !important;"/>
-													<input type="text" class="form-control form-control-user" placeholder="" value="%" style=" border-radius: 0px; width: 48px"/>
+													<input type="text" class="form-control form-control-user" placeholder="" value="%" style=" border-radius: 0px; width: 48px" disabled/>
 											</div>
 										</div>
 										<div class="col-md-6 venue_inputs">
@@ -1661,7 +1785,7 @@
 									<div class="row pr-5 pl-3 mt-3">
 										<div class="col-md-6 venue_inputs">
 											<a href="javascript:void(0)" class="btn btn-primary btn-user btn-block common_btn submit_btn" unique_id="`+unique_id+`" style="width: 100% !important;">
-					                      		Save
+					                      		Update
 					                    	</a>
 				                    	</div>	
 									</div>
@@ -1691,7 +1815,7 @@
 												<input type="text" class="form-control form-control-user file_name_show" title="" placeholder="" value="`+slice_file_name+`" disabled="true" unique_id="`+unique_id+`" src="`+cashbacks[i]['image']+`" style="cursor:pointer;" />
 											</div>
 											<img src="{{url('public/upload_icon.png')}}" title="Click to upload image" alt="" class="upload_icon" unique_id="`+unique_id+`" />
-											<input type="file" class="file_name" unique_id="`+unique_id+`" style="display:none" img="`+have_img+`">
+											<input type="file" class="file_name" unique_id="`+unique_id+`" style="display:none" img="`+have_img+`" accept = image/*>
 										</div>
 									</div>
 									<div class="row pr-3 pl-3 mt-3">
@@ -1756,20 +1880,20 @@
 											<label>
 												From Date
 											</label>
-											<input type="date" class="form-control form-control-user from_date" placeholder="From Date" value="`+cashbacks[i]['from_date']+`" unique_id="`+unique_id+`" />
+											<input type="date" class="form-control form-control-user from_date" placeholder="From Date" value="`+cashbacks[i]['from_date']+`" unique_id="`+unique_id+`" min="{{$current_date}}" />
 										</div>
 										<div class="col-md-3 venue_inputs">
 											<label>
 												To Date
 											</label>
-											<input type="date" class="form-control form-control-user to_date" placeholder="To Date" value="`+cashbacks[i]['to_date']+`" unique_id="`+unique_id+`" />
+											<input type="date" class="form-control form-control-user to_date" placeholder="To Date" value="`+cashbacks[i]['to_date']+`" unique_id="`+unique_id+`" min="{{$current_date}}"/>
 										</div>
 										<div class="col-md-6 venue_inputs">
 											<div class="">
 												<label>
 													Created 
 												</label>
-												<input type="text" class="form-control form-control-user created_date" unique_id="`+unique_id+`"  value="" disabled style="background-color: #8D8A8A !important;" />
+												<input type="text" class="form-control form-control-user created_date" unique_id="`+unique_id+`"  value="`+cashbacks[i]['created_at']+`" disabled style="background-color: #8D8A8A !important;" />
 											</div>
 										</div>
 									</div>
@@ -1794,7 +1918,7 @@
 													Last Updated 
 												</label>
 
-												<input type="text" class="form-control form-control-user last_update"  value="" unique_id="`+unique_id+`" disabled style="background-color: #8D8A8A !important;" />
+												<input type="text" class="form-control form-control-user last_update"  value="`+cashbacks[i]['updated_at']+`" unique_id="`+unique_id+`" disabled style="background-color: #8D8A8A !important;" />
 											</div> 
 										</div>
 									</div>
@@ -1805,7 +1929,7 @@
 											</label>
 											<div class="d-flex">
 													<input type="text" class="form-control form-control-user cashback_perentage double" unique_id="`+unique_id+`" placeholder="" value="`+cashbacks[i]['cashback_percentage']+`" style="border-radius: 0px; width: 108px; background-color: #F64141 !important; color: #fff !important; padding: 0px 28px !important;"/>
-													<input type="text" class="form-control form-control-user" placeholder="" value="%" style=" border-radius: 0px; width: 48px"/>
+													<input type="text" class="form-control form-control-user" placeholder="" value="%" style=" border-radius: 0px; width: 48px" disabled/>
 											</div>
 										</div>
 										<div class="col-md-6 venue_inputs">
@@ -1825,7 +1949,7 @@
 									<div class="row pr-5 pl-3 mt-3">
 										<div class="col-md-6 venue_inputs">
 											<a href="javascript:void(0)" class="btn btn-primary btn-user btn-block common_btn submit_btn" unique_id="`+unique_id+`" style="width: 100% !important;">
-					                      		Save
+					                      		Update
 					                    	</a>
 				                    	</div>	
 									</div>
@@ -1857,68 +1981,95 @@
 <script type="text/javascript">
 	$(document).ready(function(){
 
+
 		$("#minus_icon").on("click",function(){
 			let active_cashback_unique_id = $(".cashback_name_show.active").attr("unique_id");
 			let cashback_name_d = $(".cashback_name_input[unique_id='"+active_cashback_unique_id+"']").val();
-			let __prev_cashback = $(".cashback_name_show.active").prev();
-			let __next_cashback = $(".cashback_name_show.active").next();
+			
+			if(active_cashback_unique_id == "" || active_cashback_unique_id == undefined){
+				return false;
+			}
+			if(cashback_name_d == ""){
 
+				$("#confirmation_alert_text").text("Are you sure, you want to delete this promotion cashback?");
+			}else{
+				$("#confirmation_alert_text").text("Are you sure, you want to delete this promotion cashback ("+cashback_name_d+")?");
+			}
 
-			var data = {
-	        	'_token': "{{csrf_token()}}",
-	        	"active_cashback_unique_id": active_cashback_unique_id
-	    	};
-
-			$.ajax({
-		          url:"{{route('admin.deleteCashback')}}",
-		          type:'POST',
-		          data:data,
-		          beforeSend:function(){
-		          	$("#loaderModel").modal("show");
-					$("#loaderModel").unbind("click");
-		          },
-		          success: function(res){
-		          	setTimeout(function(){
-
-		          		$(".cashback_name_show[unique_id='"+active_cashback_unique_id+"']").remove();
-		                $(".form_data_show[unique_id='"+active_cashback_unique_id+"']").remove();
-
-		                if(__next_cashback.length > 0){
-
-							$(".cashback_name_show[unique_id='"+__next_cashback.attr("unique_id")+"']").addClass("active").children(".cashback_name_input").css({"background-color":"#EBEBEB","cursor":"unset"}).removeAttr("disabled");
-							
-							//active current form
-							$(".form_data_show[unique_id='"+__next_cashback.attr("unique_id")+"']").addClass("active").css({"display" : "block"});
-		                	
-						}else if(__prev_cashback.length > 0){
-							$(".cashback_name_show[unique_id='"+__prev_cashback.attr("unique_id")+"']").addClass("active").children(".cashback_name_input").css({"background-color":"#EBEBEB","cursor":"unset"}).removeAttr("disabled");
-							
-							//active current form
-							$(".form_data_show[unique_id='"+__prev_cashback.attr("unique_id")+"']").addClass("active").css({"display" : "block"});
-						}
-
-						if(cashback_name_d == ""){
-							cashback_name_d = "cashback";
-						}
-		          		
-		          		$("#loaderModel").modal("hide");
-		          		$("#success_alert_text").text(cashback_name_d+" has been deleted successfully.");
-		          		$("#successModel").modal("show");
-
-		          	},500);
-		          },
-		          error: function(data, textStatus, xhr) {
-		            if(data.status == 422){
-		              var result = data.responseJSON;
-		              alert('Something went worng.');
-		              window.location.href = "";
-		              $("#loaderModel").modal("hide");
-		              return false;
-		            } 
-		      	}
-		    });
+			$("#confirmationModel").modal("show");
+			$("#confirmationModel").unbind("click");
 		});
+
+		$(".confirm_no").on("click",function(){
+    		$("#confirmationModel").modal("hide");
+    	})
 	});
+
+	function removePromotionCashback(){
+		$("#confirmationModel").modal("hide");
+
+		let active_cashback_unique_id = $(".cashback_name_show.active").attr("unique_id");
+		let cashback_name_d = $(".cashback_name_input[unique_id='"+active_cashback_unique_id+"']").val();
+		let __prev_cashback = $(".cashback_name_show.active").prev();
+		let __next_cashback = $(".cashback_name_show.active").next();
+
+		var data = {
+        	'_token': "{{csrf_token()}}",
+        	"active_cashback_unique_id": active_cashback_unique_id
+    	};
+
+		$.ajax({
+	          url:"{{route('admin.deleteCashback')}}",
+	          type:'POST',
+	          data:data,
+	          beforeSend:function(){
+	          	$("#loaderModel").modal("show");
+				$("#loaderModel").unbind("click");
+	          },
+	          success: function(res){
+	          	setTimeout(function(){
+
+	          		$(".cashback_name_show[unique_id='"+active_cashback_unique_id+"']").remove();
+	                $(".form_data_show[unique_id='"+active_cashback_unique_id+"']").remove();
+
+	                if(__next_cashback.length > 0){
+
+						$(".cashback_name_show[unique_id='"+__next_cashback.attr("unique_id")+"']").addClass("active").children(".cashback_name_input").css({"background-color":"#EBEBEB","cursor":"unset"}).removeAttr("disabled");
+						
+						//active current form
+						$(".form_data_show[unique_id='"+__next_cashback.attr("unique_id")+"']").addClass("active").css({"display" : "block"});
+	                	
+					}else if(__prev_cashback.length > 0){
+						$(".cashback_name_show[unique_id='"+__prev_cashback.attr("unique_id")+"']").addClass("active").children(".cashback_name_input").css({"background-color":"#EBEBEB","cursor":"unset"}).removeAttr("disabled");
+						
+						//active current form
+						$(".form_data_show[unique_id='"+__prev_cashback.attr("unique_id")+"']").addClass("active").css({"display" : "block"});
+					}
+
+					if(cashback_name_d == ""){
+						$("#success_alert_text").text("Promotion cashback has been deleted successfully.");
+					}else{
+
+	          			$("#success_alert_text").text("Promotion cashback ("+cashback_name_d+") has been deleted successfully.");
+					}
+	          		
+	          		$("#loaderModel").modal("hide");
+	          		$("#successModel").modal("show");
+
+	          	},500);
+	          },
+	          error: function(data, textStatus, xhr) {
+	            if(data.status == 422){
+	              var result = data.responseJSON;
+	              alert('Something went worng.');
+	              window.location.href = "";
+	              $("#loaderModel").modal("hide");
+	              return false;
+	            } 
+	      	}
+	    });
+
+	}
 </script>
 
 	

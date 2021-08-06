@@ -83,6 +83,7 @@ class TabBusiness extends Model
 
 
     public function saveCashback($data, $admin){
+        $update = "false";
         $data['from_time'] = Carbon::parse(Carbon::now()->toDateString()." ".$data['from_time'])->toTimeString();
         $data['to_time'] = Carbon::parse(Carbon::now()->toDateString()." ".$data['to_time'])->toTimeString();
         if(isset($data['image']) && $data['image'] != ""){
@@ -97,8 +98,9 @@ class TabBusiness extends Model
         }else{
             $find_cashback->fill($data);
             $find_cashback->update();
+            $update = "true";
         }
 
-        return $find_cashback;
+        return ['data' => $find_cashback, 'update' => $update];
     }
 }

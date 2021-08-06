@@ -21,23 +21,6 @@ class CheckAdmin
         if(!Auth::guard('admin')->check()){
             return redirect(route('admin.login'));
         }
-
-        @$ip = $_SERVER['REMOTE_ADDR'];
-        
-        @$ipInfo = file_get_contents('http://ip-api.com/json/' . $ip);
-        @$ipInfo = json_decode($ipInfo);
-
-        if(isset($ipInfo)){
-
-            if($ipInfo->status == "fail"){
-             date_default_timezone_set("UTC");
-            }else {
-                 @$timezone = $ipInfo->timezone;
-                 date_default_timezone_set(@$timezone);
-            }
-        }else{
-            date_default_timezone_set("UTC");
-        }
         
         return $next($request);
     }

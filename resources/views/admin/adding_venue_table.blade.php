@@ -44,13 +44,13 @@
     			border-radius: 0px !important;
     			margin-bottom: 14px;
     			padding: 3px 10px !important;
-    border: 0 !important;
-    background: #EBEBEB !important;
-    font-family: 'Signika', sans-serif;
-    font-weight: 700;
-    font-size: 20px !important;
-    color: #676767 !important;
-    background-color: #EBEBEB !important;
+			    border: 0 !important;
+			    background: #EBEBEB !important;
+			    font-family: 'Signika', sans-serif;
+			    font-weight: 700;
+			    font-size: 20px !important;
+			    color: #676767 !important;
+			    background-color: #EBEBEB !important;
 		}
 		.no-arrow::before,
 		.no-arrow::after {
@@ -111,6 +111,38 @@
 
 		.modal-footer {
 		    padding: 0.3rem;
+		}
+
+		td.white_space {
+		    white-space: nowrap;
+		}
+
+		table#basic-datatables {
+		    overflow: auto;
+		    width: 100%!important;
+		    display: inline-block;
+		}
+
+		.wrap_all {
+		    display: flex;
+		    align-items: center;
+		    justify-content: space-between;
+		}
+
+		.wrap_all ul.pagination {
+		    margin-bottom: 0!important;
+		}
+
+		.wrap_all div#basic-datatables_info {
+			padding-top: 0;
+		}
+
+		td.white_space {
+		    white-space: nowrap;
+		}
+
+		th.white_space {
+		    white-space: nowrap;
 		}
 
 	</style>
@@ -189,12 +221,12 @@
 			                    </a> -->
 					<thead>
 						<tr style="background-color: #193358;    color: #fff;">
-							<th class="text-left">User</th>
-							<th class="text-left">Outlet</th>
-							<th>Device Model</th>
+							<th class="text-left" style="min-width: 140px;">User</th>
+							<th class="text-left" style="min-width: 140px;">Outlet</th>
+							<th style="min-width: 140px;">Device Model</th>
 							<th>Mac Address</th>
 							<th>Status</th>
-							<th>Date & Time</th>
+							<th style="min-width: 140px;">Date & Time</th>
 							<th class="text-center no-arrow">
 								<div class="d-flex align-items-center">
 									Selection 
@@ -343,10 +375,21 @@
 			          	$(".single_checkbox[data-id='"+split_selected_checkboxes[i]+"']").prop("checked", true);
 
 			        }
-					if($(".single_checkbox:not(:checked)").length > 0){
-						$(".select_all_checkbox").prop("checked",false);
-					}else{
-						$(".select_all_checkbox").prop("checked",true);
+
+			        if($(".single_checkbox").length > 0){
+
+						if($(".single_checkbox:not(:checked)").length > 0){
+							$(".select_all_checkbox").prop("checked",false);
+						}else{
+							$(".select_all_checkbox").prop("checked",true);
+						}
+			        }else{
+			        	$(".select_all_checkbox").prop("checked",false);
+			        }
+
+					if($("#basic-datatables_wrapper").find(".wrap_all").length <= 0){
+
+						$('#basic-datatables_info,#basic-datatables_paginate').wrapAll('<div class="wrap_all"></div>'); 
 					}
 		        }
 
@@ -356,8 +399,9 @@
 		        $( row ).find('td:eq(0)').attr('data-id', data['id']).attr('key_type','username').addClass('td_click');
 		        $( row ).find('td:eq(1)').attr('data-id', data['id']).attr('key_type','venue_name').addClass('td_click');
 		        $( row ).find('td:eq(2)').attr('data-id', data['id']).attr('key_type','device_model').addClass('td_click');
-		        $( row ).find('td:eq(3)').attr('data-id', data['id']).attr('key_type','authorized_status').addClass('td_click');
-		        $( row ).find('td:eq(4)').attr('data-id', data['id']).attr('key_type','date_time').addClass('td_click');
+		        $( row ).find('td:eq(3)').attr('data-id', data['id']).attr('key_type','mac_address').addClass('td_click');
+		        $( row ).find('td:eq(4)').attr('data-id', data['id']).attr('key_type','authorized_status').addClass('td_click');
+		        $( row ).find('td:eq(5)').attr('data-id', data['id']).attr('key_type','date_time').addClass('white_space');
 		        
 		    },
             "columns": [
@@ -525,25 +569,36 @@
 		              		$(".select_all_checkbox").prop("checked",false);
 		              		if(res.type == "authorized"){
 
+			              		let authorized_ids = res.ids;
 			              		$("#loaderModel").modal("hide");
-			              		$("#success_alert_text").text("Users has been authorized successfully.");
+
+			              		if(authorized_ids.length > 1){
+
+			              			$("#success_alert_text").text("Users has been authorized successfully.");
+			              		}else{
+			              			$("#success_alert_text").text("User has been authorized successfully.");
+			              		}
 			              		$("#successModel").modal("show");
 
-			              		let authorized_ids = res.ids;
 			              		for(k=0; authorized_ids.length > k; k++){
-			              			$(".td_click[data-id='"+authorized_ids[k]+"']").text("Authorized");
+			              			$(".td_click[data-id='"+authorized_ids[k]+"'][key_type='authorized_status']").text("Authorized");
 			              		}
 		              		}else{
 		              			//unauthorized
 
 			              		
+		              			let unauthorized_ids = res.ids;
 		              			$("#loaderModel").modal("hide");
-			              		$("#success_alert_text").text("Users has been unauthorized successfully.");
+		              			if(unauthorized_ids.length > 1){
+
+			              			$("#success_alert_text").text("Users has been unauthorized successfully.");
+		              			}else{
+		              				$("#success_alert_text").text("User has been unauthorized successfully.");
+		              			}
 			              		$("#successModel").modal("show");
 
-		              			let unauthorized_ids = res.ids;
 			              		for(k=0; unauthorized_ids.length > k; k++){
-			              			$(".td_click[data-id='"+unauthorized_ids[k]+"']").text("Unauthorized");
+			              			$(".td_click[data-id='"+unauthorized_ids[k]+"'][key_type='authorized_status']").text("Unauthorized");
 			              		}
 		              		}
 

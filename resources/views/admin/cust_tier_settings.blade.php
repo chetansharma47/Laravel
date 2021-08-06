@@ -62,9 +62,9 @@
 		    
 		}
 
-		.menu-lisitng ul::-webkit-scrollbar {
+		/*.menu-lisitng ul::-webkit-scrollbar {
 		    display: none;
-		}
+		}*/
 
 		.box_icon {
 		    display: flex;
@@ -213,14 +213,23 @@
 						<label>
 							Customer Total Transaction Amount Check for
 						</label>
-						<input type="text" class="form-control form-control-user" placeholder="Enter Number Of Days" id="transaction_amount_check_last_days" value="Last 30 Days" style="border-radius: 0px;"/>
+						<?php 
+							if(!empty($tier_settings)){
+								$transaction_amount_check_last_days = "Last ".$tier_settings->transaction_amount_check_last_days." Days";
+								$customer_tier_validity_check = $tier_settings->customer_tier_validity_check." Days from status change";
+							}else{
+								$transaction_amount_check_last_days = "Last 30 Days";
+								$customer_tier_validity_check = "30 Days from status change";
+							}
+						?>
+						<input type="text" class="form-control form-control-user" placeholder="Enter Number Of Days" id="transaction_amount_check_last_days" value="{{$transaction_amount_check_last_days}}" autocomplete="off" style="border-radius: 0px;"/>
 					</div>
 					<div class="col-md-12" style="padding-left: 0; padding-right: 0">
 						<div class="venue_inputs mr-4 mb-4">
 							<label>
 								Customer Tier Validity Check (Badge Change)
 							</label>
-							<input type="text" class="form-control form-control-user" placeholder="Enter Number Of Days" id="customer_tier_validity_check" value="30 Days" style="border-radius: 0px;"/>
+							<input type="text" class="form-control form-control-user" placeholder="Enter Number Of Days" id="customer_tier_validity_check" value="{{$customer_tier_validity_check}}" autocomplete="off" style="border-radius: 0px;"/>
 						</div>
 					</div>
 					<div class="venue_inputs mr-4 mb-4">
@@ -240,7 +249,7 @@
 					<div class="app_notification_bg" style="background-color: transparent; padding-bottom: 0;padding-left: 8px; padding-top: 10px;">
 						<h4 style="">Customer Tier Names</h4>
 					</div>
-					<div class="pb-1 pl-2 pr-3 menu-lisitng">
+					<div class="pb-1 pl-2 pr-0 menu-lisitng">
 						<ul style="margin-left: 0; background-color:#E3DFDF;" id="tier_name_append">
 							<!-- <li class="active">
 								<input type="text" class="input_tier_name" placeholder="Enter Tier Name">
@@ -368,7 +377,7 @@
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Success</h5>
+        <h5 class="modal-title">Alert</h5>
         <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button> -->
@@ -785,11 +794,16 @@
 				let active_id = $(".tier_name_c.active").data("id");
 				let tier_name = $(".input_tier_name[data-id='"+active_id+"']").val();
 
+
+				if(active_id == "" || active_id == undefined){
+					return false;
+				}
+
 				if(tier_name == ""){
 
-					$("#confirmation_alert_text").text("Are you sure you want to delete this tier.");
+					$("#confirmation_alert_text").text("Are you sure you, want to delete this tier?");
 				}else{
-					$("#confirmation_alert_text").text("Are you sure you want to delete this tier ("+tier_name+").");
+					$("#confirmation_alert_text").text("Are you sure you, want to delete this tier ("+tier_name+")?");
 				}
 
 				$("#confirmationModel").modal("show");
@@ -875,6 +889,18 @@
 	        return isNumber(event, this)
 		});
 
+	 	$('#transaction_amount_check_last_days').on('paste', function (event) {
+		  if (event.originalEvent.clipboardData.getData('Text').match(/[^\d]/)) {
+		    event.preventDefault();
+		  }
+		});
+
+		$('#customer_tier_validity_check').on('paste', function (event) {
+		  if (event.originalEvent.clipboardData.getData('Text').match(/[^\d]/)) {
+		    event.preventDefault();
+		  }
+		});
+
 		$('#customer_tier_validity_check').keypress(function (event) {
 	        return isNumber1(event, this)
 		});
@@ -906,7 +932,7 @@
 
 				if(customer_tier_validity_check){
 
-					$("#customer_tier_validity_check").val(customer_tier_validity_check+" Days");
+					$("#customer_tier_validity_check").val(customer_tier_validity_check+" Days from status change");
 				}
 				localStorage.setItem("customer_tier_validity_check","false");
 		    }
@@ -988,6 +1014,7 @@
 	function saveClick(){
 
 		$(".venue_inputs .common_btn").unbind().on("click",function(){
+			let __action = $(this);
 			let select_data_id = $(this).data("id");
 			//alert(select_data_id)
 			let check_transaction_amount_check_last_days = $("#transaction_amount_check_last_days").val();
@@ -996,7 +1023,7 @@
 			
 
 			let check_customer_tier_validity_check = $("#customer_tier_validity_check").val();
-			let tier_vali_check = check_customer_tier_validity_check.replace(" Days","");
+			let tier_vali_check = check_customer_tier_validity_check.replace(" Days from status change","");
 
 			let check_tier_name = $(".tier_name_c[data-id='"+select_data_id+"']").children().val();
 			let check_from_amount = $(".from_amount[data-id='"+select_data_id+"']").val();
@@ -1004,28 +1031,28 @@
 			let check_color_code = $(".ccc[data-id='"+select_data_id+"']").children().val();
 
 			if(check_transaction_amount_check_last_days == ""){
-				$("#alert_text").text("Please enter customer total transaction amount check for.");
+				$("#alert_text").text("Please enter customer total transaction days.");
 				$("#validationModel").modal("show");
 				$("#validationModel").unbind("click");
 				return false;
 			}
 
 			if(parseInt(amount_last_d) <= 0){
-				$("#alert_text").text("Please enter valid customer total transaction amount check for.");
+				$("#alert_text").text("Please enter valid customer total transaction days.");
 				$("#validationModel").modal("show");
 				$("#validationModel").unbind("click");
 				return false;
 			}
 
 			if(check_customer_tier_validity_check == ""){
-				$("#alert_text").text("Please enter customer tier validity check (Badge Change).");
+				$("#alert_text").text("Please enter customer tier validity check (Badge Change) days.");
 				$("#validationModel").modal("show");
 				$("#validationModel").unbind("click");
 				return false;
 			}
 
 			if(parseInt(tier_vali_check) <= 0){
-				$("#alert_text").text("Please enter valid customer tier validity check (Badge Change).");
+				$("#alert_text").text("Please enter valid customer tier validity check (Badge Change) days.");
 				$("#validationModel").modal("show");
 				$("#validationModel").unbind("click");
 				return false;
@@ -1053,7 +1080,7 @@
 				return false;
 			}
 
-			if(parseFloat(check_from_amount) < 0){
+			if(parseFloat(check_from_amount) <= 0){
 				$("#alert_text").text("Please enter valid from amount.");
 				$("#validationModel").modal("show");
 				$("#validationModel").unbind("click");
@@ -1067,7 +1094,7 @@
 				return false;
 			}
 
-			if(parseFloat(check_to_amount) < 0){
+			if(parseFloat(check_to_amount) <= 0){
 				$("#alert_text").text("Please enter valid to amount.");
 				$("#validationModel").modal("show");
 				$("#validationModel").unbind("click");
@@ -1131,6 +1158,7 @@
 	              		}
 	              		$("#successModel").modal("show");
 	              		$("#successModel").unbind("click");
+	              		__action.text("Update");
 	              	},500)
 	              },
 	              error: function(data, textStatus, xhr) {

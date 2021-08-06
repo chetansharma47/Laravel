@@ -164,6 +164,11 @@ div#loaderModel .modal-dialog {
 }
 
 
+button.close.close_icon{
+  top:50%!important;
+  right: 5px;
+}
+
   </style>
 
 </head>
@@ -278,6 +283,7 @@ div#loaderModel .modal-dialog {
 
               <div class="col-lg-12">
                 <div class="pt-5 pb-5 form-middle">
+                  @include('admin.notification')
                   <form method="POST" class="user" id="validate_form">
                     {{csrf_field()}}
                     <div class="form-group" style="padding-right: 0; padding-left: 0">
