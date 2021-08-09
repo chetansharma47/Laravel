@@ -36,7 +36,7 @@
 		.scroll-text {
 			width: 403px;
 	    	overflow-y: auto;
-		    max-height:180px;
+		    max-height:505px;
 		}
 
 		/*.scroll-text::-webkit-scrollbar {

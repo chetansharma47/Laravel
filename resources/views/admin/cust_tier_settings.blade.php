@@ -1080,7 +1080,7 @@
 				return false;
 			}
 
-			if(parseFloat(check_from_amount) <= 0){
+			if(parseFloat(check_from_amount) < 0){
 				$("#alert_text").text("Please enter valid from amount.");
 				$("#validationModel").modal("show");
 				$("#validationModel").unbind("click");
@@ -1094,7 +1094,7 @@
 				return false;
 			}
 
-			if(parseFloat(check_to_amount) <= 0){
+			if(parseFloat(check_to_amount) < 0){
 				$("#alert_text").text("Please enter valid to amount.");
 				$("#validationModel").modal("show");
 				$("#validationModel").unbind("click");

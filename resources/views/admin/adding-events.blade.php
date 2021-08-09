@@ -139,12 +139,12 @@
 							<div class="d-flex justify-content-between">
 								<li style="background-color: #ECECEC;">
 									<a href="javascript:void(0);">
-										<img src="../assets/img/icon.png" alt="icon"/>
+										<img src="{{url('public/admin/assets/img/icon.png')}}" alt="icon"/>
 									</a>
 								</li>
 								<li style="background-color: #ECECEC;">
 									<a href="javascript:void(0);">
-										<img src="../assets/img/icon1.png" alt="icon1"/>
+										<img src="{{url('public/admin/assets/img/icon1.png')}}" alt="icon1"/>
 									</a>
 								</li>
 							</div>
