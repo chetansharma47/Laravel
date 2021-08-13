@@ -22,7 +22,8 @@ use App\Models\ApplicationData;
 use App\Models\ApplicationImage;
 use App\Models\Admin;
 use Session;
-require_once $_SERVER['DOCUMENT_ROOT'].'/capital_motion_03_august/vendor/autoload.php';
+use App\Models\Venu;
+require_once $_SERVER['DOCUMENT_ROOT'].'/capital_motion_05_august/vendor/autoload.php';
 
 class AuthenticationController extends ResponseController
 {
@@ -290,6 +291,17 @@ class AuthenticationController extends ResponseController
         }else{
             return $this->responseWithErrorCode("Email address already exists, Please try a different email address.",406);
         }
+    }
+
+    public function venueListing(Request $request){
+        $user = Auth::guard()->user();
+        $venues = Venu::select("venue_name","image")->whereDeletedAt(null)->get();
+        return $this->responseOk("Venue Listing", $venues);
+    }
+
+    public function venueDetails(Request $request, $venue_id){
+        $venue = Venu::whereId($venue_id)->first();
+        return $this->responseOk('Venue Details', $venue);
     }
 
 }

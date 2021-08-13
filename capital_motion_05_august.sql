@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Aug 06, 2021 at 04:06 PM
+-- Generation Time: Aug 13, 2021 at 06:27 PM
 -- Server version: 5.7.35-0ubuntu0.18.04.1
 -- PHP Version: 7.2.34-10+ubuntu18.04.1+deb.sury.org+1
 
@@ -41,7 +41,7 @@ CREATE TABLE `admins` (
 --
 
 INSERT INTO `admins` (`id`, `name`, `email`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'admin', 'adminn@yopmail.com', '$2y$10$MM0//hGlDn4uCg4rTNDiaudMWYEJZcY7wrLLvRu16miH5BtZB7pxa', 'W3jh7OabJDLipx5ThUmht3wHd3LhFmjn5Qyj8ul1fiLWgb6CujmzcLDT7qwfD20Y', NULL, '2021-08-05 22:40:52');
+(1, 'admin', 'adminn@yopmail.com', '$2y$10$MM0//hGlDn4uCg4rTNDiaudMWYEJZcY7wrLLvRu16miH5BtZB7pxa', 'uXkeIwr8MdGwPI1VSzwFVIUB6oT3NIYyII3qQ3RuZurKALioc9SEsWNCfEdWllxy', NULL, '2021-08-12 12:56:02');
 
 -- --------------------------------------------------------
 
@@ -171,6 +171,13 @@ CREATE TABLE `oauth_access_tokens` (
   `expires_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Dumping data for table `oauth_access_tokens`
+--
+
+INSERT INTO `oauth_access_tokens` (`id`, `user_id`, `client_id`, `name`, `scopes`, `revoked`, `created_at`, `updated_at`, `expires_at`) VALUES
+('e4a1162c3f63c9aad124a35dd3c6a1b878b3bf3452d2a17c02ae00ddbd178d60deb6da71ddc7abdc', 1, 1, 'andrew', '[]', 0, '2021-08-12 07:55:57', '2021-08-12 07:55:57', '2022-08-12 13:25:57');
+
 -- --------------------------------------------------------
 
 --
@@ -278,7 +285,11 @@ CREATE TABLE `password_resets` (
 --
 
 INSERT INTO `password_resets` (`email`, `token`, `created_at`) VALUES
-('adminn@yopmail.com', 'b1ms4o7DPtmDiFTQWMz5uMC27ZAXaVFT', NULL);
+('adminn@yopmail.com', 'b1ms4o7DPtmDiFTQWMz5uMC27ZAXaVFT', NULL),
+('adminn@yopmail.com', 'm0R3dn0twB2ksrTNZoB05Gis7HEo7tiD', NULL),
+('adminn@yopmail.com', 'SJegQkFpn5Y1v7J9V9ABMStNIfrx5hzM', NULL),
+('adminn@yopmail.com', 'scz30il6RMyUyFgeDyr5YSmS5mBhuP1z', NULL),
+('adminn@yopmail.com', 'u8nRiwIDfwtheTHRhb2G7xTj1aGmr4Zd', NULL);
 
 -- --------------------------------------------------------
 
@@ -300,6 +311,14 @@ CREATE TABLE `tier_conditions` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Dumping data for table `tier_conditions`
+--
+
+INSERT INTO `tier_conditions` (`id`, `unique_id_by_tier`, `tier_setting_id`, `tier_name`, `from_amount`, `to_amount`, `color_code`, `percentage`, `deleted_at`, `created_at`, `updated_at`) VALUES
+(1, '1', 1, 'Loream Ipsum Loream Ipsum Lokl', 0, 10, '#ff0000', 0, NULL, '2021-08-09 12:57:36', '2021-08-09 13:00:33'),
+(2, '2', 1, 'Loream Ipsum Loream Ipsum Lore', 11, 20, '#ff0000', 0, NULL, '2021-08-09 12:57:57', '2021-08-09 13:00:37');
+
 -- --------------------------------------------------------
 
 --
@@ -315,6 +334,13 @@ CREATE TABLE `tier_settings` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `tier_settings`
+--
+
+INSERT INTO `tier_settings` (`id`, `admin_id`, `transaction_amount_check_last_days`, `customer_tier_validity_check`, `deleted_at`, `created_at`, `updated_at`) VALUES
+(1, 1, 30, 30, NULL, '2021-08-09 12:57:36', '2021-08-09 12:57:36');
 
 -- --------------------------------------------------------
 
@@ -354,6 +380,13 @@ CREATE TABLE `users` (
   `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`id`, `image`, `country_code`, `mobile_number`, `first_name`, `last_name`, `email`, `password`, `city_of_residence`, `nationality`, `dob`, `gender`, `reference_code`, `device_type`, `device_token`, `reset_password_token`, `verify_email_token`, `is_block`, `is_verify`, `refresh_token`, `remember_token`, `is_active`, `customer_id`, `customer_tier`, `wallet_cash`, `reference_by`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(1, NULL, '+91', '955656545', 'abc', 'koko', 'abc323@yopmail.com', '$2y$10$q5pO5q2ZeDMMkj1EY99CfOAj22./93ATmlEUZ8jCBLdYbAWt5328K', 'Mohali', 'IN', '2012-12-12', 'Male', NULL, 'None', NULL, NULL, 'XGbMFn8OcoJCiiITMgixJ14PHNSkLPUiE12yysZ6GuB9HJPWkgptGW7rolEGtQVG', '0', '0', NULL, NULL, 'Inactive', 72915437694, 'Loream Ipsum Loream Ipsum Lokl', NULL, NULL, '2021-08-12 07:55:57', '2021-08-12 07:55:57', NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -383,8 +416,8 @@ CREATE TABLE `venue_users` (
 INSERT INTO `venue_users` (`id`, `venu_id`, `username`, `password`, `venue_name`, `status`, `device_model`, `mac_address`, `authorized_status`, `date_time`, `created_at`, `updated_at`, `deleted_at`) VALUES
 (1, 1, 'Dummy User 1Dummy User 1Dummy', '123456', 'Venue1', 'Active', 'Nokia M71', '11:00:12:11:00', 'Unauthorized', '2021-08-05 00:00:00', NULL, NULL, NULL),
 (2, 1, 'Dummy User 2Dummy User 2Dummy ', '123456', 'Venue1', 'Active', 'Samsung M71', '00:00:00:00:00', 'Authorized', '2021-08-06 00:00:00', NULL, '2021-08-05 06:21:22', NULL),
-(3, 2, 'Dummy User 3Dummy User 3Dummy', '123456', 'Venue2Venue2Venue2Venue2Venue2', 'Active', 'Apple M71', '99:00:12:11:00', 'Unauthorized', '2021-08-15 00:00:00', NULL, '2021-08-05 06:21:28', NULL),
-(4, 2, 'Dummy User 4Dummy User 4Dummy', '123456', 'Venue2Venue2Venue2Venue2Venue2', 'Active', 'Moto G M71', '81:00:12:11:00', 'Unauthorized', '2021-08-18 00:00:00', NULL, '2021-08-05 06:21:28', NULL);
+(3, 2, 'Dummy User 3Dummy User 3Dummy', '123456', 'Venue2Venue2Venue2Venue2Venue2', 'Active', 'Apple M71', '99:00:12:11:00', 'Unauthorized', '2021-08-15 00:00:00', NULL, '2021-08-12 12:56:21', NULL),
+(4, 2, 'Dummy User 4Dummy User 4Dummy', '123456', 'Venue2Venue2Venue2Venue2Venue2', 'Active', 'Moto G M71', '81:00:12:11:00', 'Authorized', '2021-08-18 00:00:00', NULL, '2021-08-12 12:56:17', NULL);
 
 -- --------------------------------------------------------
 
@@ -396,6 +429,7 @@ CREATE TABLE `venus` (
   `id` int(10) UNSIGNED NOT NULL,
   `admin_id` int(10) UNSIGNED NOT NULL,
   `venue_name` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `unique_id` int(11) DEFAULT NULL,
   `address` text COLLATE utf8mb4_unicode_ci,
   `venue_description` longtext COLLATE utf8mb4_unicode_ci,
   `phone_number` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -413,9 +447,9 @@ CREATE TABLE `venus` (
 -- Dumping data for table `venus`
 --
 
-INSERT INTO `venus` (`id`, `admin_id`, `venue_name`, `address`, `venue_description`, `phone_number`, `google_map_location_link`, `book_now_link`, `image`, `menu_link`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 1, 'Venue1', 'Mohali', 'Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum ', '1234567890', 'https://www.google.com', 'www.google.com', 'dummy.png', 'www.google.com', 'Active', NULL, NULL, NULL),
-(2, 1, 'Venue2Venue2Venue2Venue2Venue2', 'Chandigarh', 'Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum ', '9876543210', 'https://www.facebook.com', 'www.facebook.com', 'dummy.png', 'www.facebook.com', 'Active', NULL, NULL, NULL);
+INSERT INTO `venus` (`id`, `admin_id`, `venue_name`, `unique_id`, `address`, `venue_description`, `phone_number`, `google_map_location_link`, `book_now_link`, `image`, `menu_link`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(1, 1, 'Venue1', 1, 'Mohali', 'Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum', '1234567890', 'https://www.google.com', 'https://www.google.com', '0812202118530899611520bcbdc02.jpeg', 'https://www.google.com', 'Active', NULL, '2021-08-12 13:23:08', NULL),
+(2, 1, 'Venue2Venue2Venue2Venue2Venue2', 2, 'Chandigarh', 'Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum', '9876543210', 'https://www.facebook.com', 'https://www.facebook.com', '0812202118533569611520d799218.jpeg', 'https://www.facebook.com', 'Active', NULL, '2021-08-12 13:23:35', NULL);
 
 -- --------------------------------------------------------
 
@@ -603,22 +637,22 @@ ALTER TABLE `oauth_personal_access_clients`
 -- AUTO_INCREMENT for table `otps`
 --
 ALTER TABLE `otps`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `tier_conditions`
 --
 ALTER TABLE `tier_conditions`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT for table `tier_settings`
 --
 ALTER TABLE `tier_settings`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 --
 -- AUTO_INCREMENT for table `venue_users`
 --

@@ -18,6 +18,7 @@ class CreateVenusTable extends Migration
             $table->integer('admin_id')->unsigned();
             $table->foreign('admin_id')->references('id')->on('admins')->onDelete('cascade');
             $table->string('venue_name');
+            $table->integer('unique_id')->nullable();
             $table->text('address')->nullable();
             $table->longText('venue_description')->nullable();
             $table->string('phone_number');

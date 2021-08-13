@@ -10,6 +10,7 @@ class Venu extends Model
     protected $fillable = [
     	'admin_id',
     	'venue_name',
+        'unique_id',
     	'address',
     	'venue_description',
     	'phone_number',

@@ -246,7 +246,7 @@
 		<div class="container-fluid">
 			<div class="row">
 				<div class="col-md-6">
-					<div class="app_notification_bg" style="background-color: transparent;">
+					<div class="app_notification_bg" style="background-color: #E5E5E5;">
 						<h4>Base Cash Back Percentage</h4>
 						<div class="scroll-text">
 							@if(!empty($tier) && isset($tier->tierConditions) && count($tier->tierConditions) > 0)
@@ -282,7 +282,7 @@
 
 				@if(!empty($wallet_cashback))
 				<div class="col-md-6">
-					<div class="app_notification_bg" style="background-color: transparent;">
+					<div class="app_notification_bg" style="background-color: #E5E5E5;">
 						<h4>More Wallet Cash Backs</h4>
 						<div class="d-flex">
 							<div class="venue_inputs mr-4">
@@ -328,7 +328,7 @@
 				@else
 
 				<div class="col-md-6">
-					<div class="app_notification_bg" style="background-color: transparent;">
+					<div class="app_notification_bg" style="background-color: #E5E5E5;">
 						<h4>More Wallet Cash Backs</h4>
 						<div class="d-flex">
 							<div class="venue_inputs mr-4">

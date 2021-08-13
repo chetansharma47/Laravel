@@ -22,6 +22,7 @@ use Redirect;
 use Illuminate\Support\Facades\Input;
 use Mail;
 use App\BusinessModel\AdminAuthenticateBusiness;
+use App\BusinessModel\VenueBusinessModel;
 use App\BusinessModel\TabBusiness;
 use App\Http\Controllers\Admin\ResponseController;
 use App\Models\TierSetting;
@@ -38,6 +39,10 @@ class TabController extends Controller
 
     public function tabBusiness(){
         return new TabBusiness();
+    }
+
+    public function venueBusinessModel(){
+        return new VenueBusinessModel();
     }
     public function adminTabs(Request $request){
     	if($request->isMethod('GET')){
@@ -631,6 +636,36 @@ class TabController extends Controller
     public function generalSettings(Request $request){
         if($request->isMethod('GET')){
             return view('admin.general-settings');
+        }
+    }
+
+
+    public function venueList(Request $request){
+        if($request->isMethod('GET')){
+            $auth = Auth::guard('admin')->user();
+            $vlist = Venu::whereAdminId($auth->id)->orderBy('unique_id','asc')->get();
+            return response()->json(['list' => $vlist]);
+        }
+    }
+
+    public function venueRemove(Request $request){
+        if($request->isMethod('POST')){
+            $admin = Auth::guard('admin')->user();
+            $vlist = Venu::whereAdminId($admin->id)->whereUniqueId($request->elem_id)->whereDeletedAt(null)->first();
+            if(!empty($vlist)){
+                $vlist->deleted_at = Carbon::now();
+                $vlist->update();
+                return response()->json('Venue successfully Deleted');
+            }
+        }
+    }
+
+    public function venuSave(Request $request){
+        if($request->isMethod('POST')){
+            $admin = Auth::guard('admin')->user();
+            $data = $request->all();
+            $saveVenu = $this->venueBusinessModel()->VenueCreate($data,$admin);
+            return response()->json(['message' => 'Venue save successfully','data' => $saveVenu]);
         }
     }
 }

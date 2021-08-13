@@ -34,7 +34,7 @@ class ForgotAdminPassword extends Mailable
         ->view('admin.email.admin-forgot-password')
         ->with([
             'link'   => $this->link,
-            'logo'   => public_path('app_icon.png'),
+            'logo'   => public_path('admin/assets/email_img/CM-Logo-2.png'),
         ]);
     }
 }

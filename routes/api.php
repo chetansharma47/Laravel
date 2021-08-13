@@ -37,5 +37,8 @@ Route::group(['namespace' => 'Api\v1','prefix'=>'v1'], function() {
 
         Route::post('update-user', 'AuthenticationController@updateUser');
 
-        });
+        Route::get('venue-listing','AuthenticationController@venueListing');
+        Route::get('venue-details/{venue_id}','AuthenticationController@venueDetails');
+
+    });
 });

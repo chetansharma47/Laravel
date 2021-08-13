@@ -106,6 +106,11 @@ Route::group(['middleware' => 'TimeZone','namespace' => 'Admin','prefix'=>'/admi
         Route::match(['GET','POST'],'adding-events','TabController@addingEvents')->name('addingEvents');
         Route::match(['GET','POST'],'offer-settings','TabController@offerSettings')->name('offerSettings');
         Route::match(['GET','POST'],'venue-user','TabController@venueUser')->name('venueUser');
+
+        Route::match(['GET','POST'],'venue-ls','TabController@venueList')->name('venuels');
+        Route::match(['GET','POST'],'venue-remove','TabController@venueRemove')->name('remove_elem');
+        Route::match(['GET','POST'],'venue-save','TabController@venuSave')->name('venusave');
+        
         Route::match(['GET','POST'],'notification-settings','TabController@notificationSetting')->name('notificationSetting');
         Route::match(['GET','POST'],'admin-user','TabController@adminUser')->name('adminUser');
         Route::match(['GET','POST'],'performance-dashboard','TabController@performanceDashboard')->name('performanceDashboard');
