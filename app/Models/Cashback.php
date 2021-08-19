@@ -21,6 +21,12 @@ class Cashback extends Model
         'name_of_file_show'
     ];
 
+    public $appends = ['type_of_table'];
+
+    public function getTypeOfTableAttribute($value){
+        return "promotion";  // whatever you want add here
+    }
+
 
     public function getImageAttribute($value){
 
@@ -37,5 +43,9 @@ class Cashback extends Model
         }else{
             return $value;
         }
+    }
+
+    public function venu(){
+        return $this->belongsTo(Venu::class);
     }
 }

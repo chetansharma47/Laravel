@@ -25,6 +25,7 @@ class CreateVenusTable extends Migration
             $table->text('google_map_location_link');
             $table->text('book_now_link');
             $table->string('image');
+            $table->string('name_of_file_show')->nullable();
             $table->text('menu_link');
             $table->enum('status',['None','Active','Inactive']);
             $table->timestamps();

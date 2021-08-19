@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<title>Adding Venue</title>
+	<title>Add Venue</title>
 	<meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
 	<link rel="icon" href="{{url('public/admin/assets/img/logo-approved.png')}}" type="image/x-icon"/>
 	<link rel="preconnect" href="https://fonts.googleapis.com">
@@ -68,8 +68,6 @@
 		#validationModel .modal-body p {
 			margin-bottom: 0rem;
 		}
-
-
 		#successModel .modal-title{
 		    text-align: center;
 		    width: 100%;
@@ -147,6 +145,7 @@
 		input .input_tier_name{
 			background-color: #EAEAEA!important;
 		}
+		
 	</style>
 
 	<!-- CSS Files -->
@@ -431,21 +430,25 @@
 					$("#loaderModel").unbind("click");
 				},
 				success:function(data){
-					  $("#loaderModel").modal("hide");
 					setTimeout(function(){
-						 $("#loaderModel").modal("hide");
+					  	$("#loaderModel").modal("hide");
 					},500);
 					let list = data.list;
 					let list_length = list.length;
 					for(let i=0; i<list.length; i++){
 
-							var imgname = list[i].image;
-							var length = imgname.length;
+							var imgname = list[i].name_of_file_show;
+							if(imgname != null && imgname != "" && imgname != undefined){
 
-							if(length>24){
-								var slice = imgname.slice(0,24)+'...';
+								var length = imgname.length;
+
+								if(length>24){
+									var slice = imgname.slice(0,24)+'...';
+								}else{
+									var slice = imgname;
+								}
 							}else{
-								var slice = imgname;
+								var slice = "";
 							}
 
 						$('.uniqid_db').html('<span uniq-id="'+list[i].unique_id+'"class="last_db_id"></span>');
@@ -460,9 +463,7 @@
 				var first_id = $('.menu-lisitng ul.listitem li').first().attr('unique-id');
 				$('.formdata_show[unique-id='+first_id+']').addClass('tab-active');
 
-				if(!first_id){
-					$('.menu-lisitng ul.listitem').append(`<li class="venu_norecord">No Record Found</li>`);
-				}
+				
 			}
 
 			});
@@ -495,7 +496,7 @@
 
 		//Plus icon add menu list or remove or active
 		$("#plus_icon").on('click',function(){
-				$(".venu_norecord").remove();
+				
 				var incattr = $('.last_db_id').attr('uniq-id');
 				var inc = 0;
 				if(!incattr){
@@ -540,15 +541,15 @@
 					type:'POST',
 					dataType:'JSON',
 					beforeSend:function(){
-	          $("#loaderModel").modal("show");
+	          			$("#loaderModel").modal("show");
 						$("#loaderModel").unbind("click");
 					},
 					success:function(data){
 							setTimeout(function(){
-	         		$("#loaderModel").modal("hide");
-	        		$("#successModel").modal("show");
-	        		$("#success_alert_text").text(data);
-	        		$("#successModel").unbind("click");
+			         		$("#loaderModel").modal("hide");
+			        		$("#successModel").modal("show");
+			        		$("#success_alert_text").text(data);
+			        		$("#successModel").unbind("click");
 							$('.formdata_show.tab-active').remove();
 							$('.venu_list.tab-active').remove();
 							if(_next_venue > 0){
@@ -574,16 +575,16 @@
 				}
 
 	      	$("#successModel").modal("show");
-	    		$("#success_alert_text").text('Venue successfully Deleted');
+	    		$("#success_alert_text").text('Venue deleted successfully');
         	$("#successModel").unbind("click");
 			}
 		}
 
 function venuform(uniqueid,vname,vaddr,vdesc,vphone,vmap,vbook,vimage,vmenu,vstatus,dataId,imagename){
 	if(imagename){
-		var imageurl = `<input name="venu_img" readonly type="text" class="form-control venu_img form-control-user" src="{{url('public/storage/venue')}}/${imagename}" value="${(vimage) ? `${vimage}`: ''	}" unique-id="${uniqueid}" style="cursor:pointer;" />`
+		var imageurl = `<input name="venu_img" readonly type="text" class="form-control venu_img form-control-user" src="${imagename}" value="${(vimage) ? `${vimage}`: ''	}" unique-id="${uniqueid}" style="cursor:pointer;" />`
 	}else{
-		var imageurl = `<input name="venu_img" readonly type="text" class="form-control venu_img form-control-user" src="" value="" style="cursor:default;" unique-id="${uniqueid}"/>`
+		var imageurl = `<input name="venu_img" readonly type="text" class="form-control venu_img form-control-user" src="" value="" style="cursor:pointer;" unique-id="${uniqueid}"/>`
 	}
 	return `<div class="formdata_show ${(uniqueid==1) ? 'tab-active':''}" id="uniq-${uniqueid}" unique-id="${uniqueid}">
 						<div class="row pr-5 pl-3 ">
@@ -592,14 +593,15 @@ function venuform(uniqueid,vname,vaddr,vdesc,vphone,vmap,vbook,vimage,vmenu,vsta
 								Venue Name
 							</label>
 							<input id="vname" name="venu_name" type="text"  maxlength="30" class="form-control venu_name form-control-user" value="${(vname) ? `${vname}` : ''}" unique-id="${uniqueid}" placeholder="Venue Name" />
-							<input hidden class="venu_imghidden" unique-id="${uniqueid}">
+							<input type="text" hidden class="venu_imghidden" unique-id="${uniqueid}">
+							<input type="text" hidden class="venue_imagehidden2" value="${(imagename)?imagename:''}" unique-id="${uniqueid}">
 						</div>
 						<div class="col-md-6 venue_inputs">
 							<label>
 								Image
 							</label>
 							${imageurl}
-							<label for="img_upload"><img unique-id="${uniqueid}"  src="{{url('public/upload_icon.png')}}" alt="upload-icon-img" class="upload_icon" style="width:30px; cursor:pointer;"><label>
+							<label for="img_upload" data-toggle="tooltip" data-placement="top" title="Click to upload image"><img unique-id="${uniqueid}"  src="{{url('public/upload_icon.png')}}" alt="upload-icon-img" class="upload_icon" style="width:30px; cursor:pointer;"></label>
 							<input type="file" unique-id="${uniqueid}" src="" id="img_upload" class="img_upload" hidden />
 						</div>
 					</div>
@@ -614,7 +616,7 @@ function venuform(uniqueid,vname,vaddr,vdesc,vphone,vmap,vbook,vimage,vmenu,vsta
 							<label>
 								Menu Link
 							</label>
-							<input type="url" class="form-control venu_menu" name="venu_menu" unique-id="${uniqueid}" maxlength="200" placeholder="Menu Link" value="${(vmenu) ? `${vmenu}` : ''}"/>
+							<input type="url" class="form-control venu_menu" name="venu_menu" unique-id="${uniqueid}" maxlength="300" placeholder="Menu Link" value="${(vmenu) ? `${vmenu}` : ''}"/>
 						</div>
 					</div>
 					<div class="row pr-5 pl-3">
@@ -622,8 +624,7 @@ function venuform(uniqueid,vname,vaddr,vdesc,vphone,vmap,vbook,vimage,vmenu,vsta
 							<label>
 								Venue Description
 							</label>
-							<textarea maxlength="999" name="venu_desc" class="form-control venu_desc" style="font-size: 14px !important; font-family: Lato;
-font-style: normal; font-weight: 400; color: ##494949" id="" rows="5" placeholder="Venue Description" unique-id="${uniqueid}" >${(vdesc) ? `${vdesc}` : ''}</textarea>
+							<textarea maxlength="300" name="venu_desc" class="form-control venu_desc" style="font-size: 14px !important; padding:6px 10px;" rows="5" placeholder="Venue Description" unique-id="${uniqueid}" >${(vdesc) ? `${vdesc}` : ''}</textarea>
 						</div>
 					</div>
 					<div class="row pr-5 pl-3 mt-3">
@@ -631,7 +632,7 @@ font-style: normal; font-weight: 400; color: ##494949" id="" rows="5" placeholde
 							<label>
 								Phone Contact
 							</label>
-							<input type="tel" name="venu_phone" value="${(vphone) ? `${vphone}` : ''}" class="form-control venu_phone form-control-user" maxlength="15" placeholder="Phone Contact" unique-id="${uniqueid}" />
+							<input type="tel" name="venu_phone" value="${(vphone) ? `${vphone}` : ''}" class="form-control venu_phone form-control-user" minlength="8" maxlength="15" placeholder="Phone Contact" unique-id="${uniqueid}" />
 						</div>
 					</div>
 					<div class="row pr-5 pl-3 mt-3">
@@ -654,8 +655,8 @@ font-style: normal; font-weight: 400; color: ##494949" id="" rows="5" placeholde
 								Status
 							</label>
 							<div class="selectdiv">
-								<select class="form-control venu_status form-group" name="venu_status" unique-id="${uniqueid}"  style="padding: .6rem 1rem; position: relative;">
-									<option readonly value="${(vstatus) ? `${vstatus}` : ''}">${(vstatus) ? `${vstatus}` : 'Select venu status'}</option>
+								<select class="form-control venu_status form-group" name="venu_status" unique-id="${uniqueid}"  style="padding: .6rem 1rem; position: relative; cursor:pointer;">
+									<option readonly value="${(vstatus) ? `${vstatus}` : ''}">${(vstatus) ? `${vstatus}` : 'Select venue status'}</option>
 									<option value="Active">Active</option>
 									<option value="Inactive">Inactive</option>
 								</select>
@@ -704,13 +705,14 @@ $(document).on('change','#img_upload',function(e){
 				$(".venu_img[unique-id="+form_activeid+"]").attr('src',e.target.result);
 				$(".venu_img[unique-id="+form_activeid+"]").val(slice_name);
 				$(".venu_imghidden[unique-id="+form_activeid+"]").val(file_nameshow);
+				$(".venue_imagehidden2[unique-id="+form_activeid+"]").val('');
 				$("#img_upload[unique-id="+form_activeid+"]").attr('src',e.target.result);
 			}
 
 			reader.readAsDataURL(file);
 
 		}else{
-			$("#alert_text").text("Image must be in jpeg, jpg and png format");
+			$("#alert_text").text("Image must be of .jpg, .jpeg and .png format.");
       $("#validationModel").modal("show");
       $("#validationModel").unbind("click");
 		}
@@ -724,9 +726,9 @@ $(document).on('click','.venu_img',function(){
 	fetch(get_base64)
    	.then(e => e.blob())
    	.then(e => {
-        console.log("-- ",e)
+        // console.log("-- ",e)
         let obj = URL.createObjectURL(e);
-        console.log("-- ",obj)
+        // console.log("-- ",obj)
         window.open(obj);
    	})
    	.catch(e => {
@@ -751,6 +753,7 @@ $(document).on('click','.venuSave',function(){
 	let dataId = $(this).attr('data-id');
 	let vname = $(".venu_name[unique-id='"+uniq+"']").val();
 	let vimg = $('.venu_img[unique-id='+uniq+']').attr('src');
+	let vimg_value = $('.venu_img[unique-id='+uniq+']').val();
 	let vimg_val = $('.venu_imghidden[unique-id='+uniq+']').val();
 	let hidevimg = $('#img_upload[unique-id='+uniq+']').attr('src');
 	let vaddr = $('.venu_addr[unique-id='+uniq+']').val();
@@ -760,9 +763,17 @@ $(document).on('click','.venuSave',function(){
 	let vmap = $('.venu_map[unique-id='+uniq+']').val();
 	let vbook = $('.venu_tab_book[unique-id='+uniq+']').val();
 	let vstatus = $('.venu_status[unique-id='+uniq+']').val();
+	let hidden_img2 =  $(".venue_imagehidden2[unique-id="+uniq+"]").val();
 
 	if(vname == ""){
-		$("#alert_text").text("Please enter your venu name.");
+		$("#alert_text").text("Please enter venue name");
+		$("#validationModel").modal("show");
+		$("#validationModel").unbind("click");
+		return false;
+	}
+
+	if(vname.match(/^\s*$/)){
+		$("#alert_text").text("Please enter valid venue name");
 		$("#validationModel").modal("show");
 		$("#validationModel").unbind("click");
 		return false;
@@ -774,29 +785,22 @@ $(document).on('click','.venuSave',function(){
 		$("#validationModel").unbind("click");
 		return false;
 	}
-	// hidden validation
-	if(hidevimg ==""){
-		$("#alert_text").text("Please upload image.");
-		$("#validationModel").modal("show");
-		$("#validationModel").unbind("click");
-		return false;
-	}
 
 	// hidden image validation value
-	if(vimg_val ==""){
+	if(vimg_value ==""){
 		$("#alert_text").text("Please upload image.");
 		$("#validationModel").modal("show");
 		$("#validationModel").unbind("click");
 		return false;
 	}
 	if(vaddr == ""){
-		$("#alert_text").text("Please enter your address.");
+		$("#alert_text").text("Please enter address.");
 		$("#validationModel").modal("show");
 		$("#validationModel").unbind("click");
 		return false;
 	}
 	if(vmenu == ""){
-		$("#alert_text").text("Please enter your menu link");
+		$("#alert_text").text("Please enter menu link");
 		$("#validationModel").modal("show");
 		$("#validationModel").unbind("click");
 		return false;
@@ -807,20 +811,33 @@ $(document).on('click','.venuSave',function(){
 		$("#validationModel").unbind("click");
 		return false;
 	}
+
+	if(vmenu.indexOf(" ") >=0){
+		$("#alert_text").text("Please enter valid menu link");
+		$("#validationModel").modal("show");
+		$("#validationModel").unbind("click");
+		return false;
+	}
 	if(vdesc == ""){
-		$("#alert_text").text("Please enter your venue description");
+		$("#alert_text").text("Please enter venue description");
 		$("#validationModel").modal("show");
 		$("#validationModel").unbind("click");
 		return false;
 	}
 	if(vphone == ""){
-		$("#alert_text").text("Please enter your phone contact");
+		$("#alert_text").text("Please enter phone contact");
 		$("#validationModel").modal("show");
 		$("#validationModel").unbind("click");
 		return false;
 	}
 	if(vmap == ""){
-		$("#alert_text").text("Please enter your google map location link");
+		$("#alert_text").text("Please enter google map location link");
+		$("#validationModel").modal("show");
+		$("#validationModel").unbind("click");
+		return false;
+	}
+	if(vmap.indexOf(" ") >=0){
+		$("#alert_text").text("Please enter google map location link");
 		$("#validationModel").modal("show");
 		$("#validationModel").unbind("click");
 		return false;
@@ -833,13 +850,19 @@ $(document).on('click','.venuSave',function(){
 	}
 
 	if(vbook == ""){
-		$("#alert_text").text("Please enter your book now link");
+		$("#alert_text").text("Please enter book now link");
 		$("#validationModel").modal("show");
 		$("#validationModel").unbind("click");
 		return false;
 	}
 	if(!vbook.match(/(^http:\/\/)|(^https:\/\/)/) ){
-		$("#alert_text").text("Please enter your valid book now link");
+		$("#alert_text").text("Please enter valid book now link");
+		$("#validationModel").modal("show");
+		$("#validationModel").unbind("click");
+		return false;
+	}
+	if(vbook.indexOf(" ") >=0){
+		$("#alert_text").text("Please enter valid book now link");
 		$("#validationModel").modal("show");
 		$("#validationModel").unbind("click");
 		return false;
@@ -854,7 +877,7 @@ $(document).on('click','.venuSave',function(){
 	$.ajax({
 		url:'{{ route("admin.venusave") }}',
 		dataType:'JSON',
-		data:{uniq:uniq,vname:vname,vimg:vimg,vaddr:vaddr,vimg_val:vimg_val,vmenu:vmenu,vdesc:vdesc,vphone:vphone,vmap:vmap,vbook:vbook,vstatus:vstatus,dataId:dataId,'_token':'{{ csrf_token() }}'},
+		data:{uniq:uniq,vname:vname,vimg:vimg,vaddr:vaddr,vimg_val:vimg_val,vmenu:vmenu,vdesc:vdesc,vphone:vphone,vmap:vmap,vbook:vbook,vstatus:vstatus,dataId:dataId,hidden_img2:hidden_img2,'_token':'{{ csrf_token() }}'},
 		type:'POST',
 		beforeSend:function(){
       $("#loaderModel").modal("show");
@@ -862,13 +885,26 @@ $(document).on('click','.venuSave',function(){
 		},
 		success:function(data){
 			setTimeout(function(){
-				$("#loaderModel").modal("hide");
+			$("#loaderModel").modal("hide");
 	    	$("#successModel").modal("show");
 	  		$("#success_alert_text").text(data.message);
 	  		$("#successModel").unbind("click");
 	  		$(".formdata_show.tab-active .common_btn").attr('src',data.data['id']);
 	  	},500);
-		}
+		},error: function(data, textStatus, xhr) {
+            if(data.status == 422){
+              setTimeout(function(){
+              	$("#loaderModel").modal("hide");
+                  	var result = data.responseJSON;
+                 	if(result['venue_name_err'] && result['venue_name_err'].length > 0){
+                 		$("#alert_text").text(result['venue_name_err']);
+						$("#validationModel").modal("show");
+						$("#validationModel").unbind("click");
+                 	}
+                  return false;
+              },500);
+            } 
+      	}
 	});
 
 });

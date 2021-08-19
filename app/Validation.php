@@ -218,6 +218,70 @@ class Validation extends Model
 
     }
 
+    public static function todayEvent($validation = null, $message = null){
+
+
+      $validation = [
+            'timezone'      => 'required'
+
+      ];
+
+      $message = [
+        'timezone.required'       =>  "Please enter timezone."
+      ];
+
+      return $data = ['validation' => $validation, 'message' => $message];
+
+    }
+
+    public static function offerList($validation = null, $message = null){
+
+
+      $validation = [
+            'timezone'      => 'required'
+
+      ];
+
+      $message = [
+        'timezone.required'       =>  "Please enter timezone."
+      ];
+
+      return $data = ['validation' => $validation, 'message' => $message];
+
+    }
+
+    public static function eventAndPromotion($validation = null, $message = null){
+
+
+      $validation = [
+            'timezone'      => 'required'
+
+      ];
+
+      $message = [
+        'timezone.required'       =>  "Please enter timezone."
+      ];
+
+      return $data = ['validation' => $validation, 'message' => $message];
+
+    }
+
+    public static function cashbackListing($validation = null, $message = null){
+
+
+      $validation = [
+            'timezone'      => 'required'
+
+      ];
+
+      $message = [
+        'timezone.required'       =>  "Please enter timezone."
+      ];
+
+      return $data = ['validation' => $validation, 'message' => $message];
+
+    }
+
 
 
 

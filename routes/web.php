@@ -110,6 +110,18 @@ Route::group(['middleware' => 'TimeZone','namespace' => 'Admin','prefix'=>'/admi
         Route::match(['GET','POST'],'venue-ls','TabController@venueList')->name('venuels');
         Route::match(['GET','POST'],'venue-remove','TabController@venueRemove')->name('remove_elem');
         Route::match(['GET','POST'],'venue-save','TabController@venuSave')->name('venusave');
+        Route::match(['GET','POST'],'all-venu','TabController@allVenuEvents')->name('allvenu');
+        Route::match(['GET','POST'],'particular-venu','TabController@ParticularVenu')->name('particularVenu');
+        Route::match(['GET','POST'],'save-event','TabController@SaveEvent')->name('saveEvent');
+        Route::match(['GET','POST'],'events-alldata','TabController@eventsallData')->name('eventsalldata');
+        Route::match(['GET','POST'],'events-remove','TabController@eventRemove')->name('eventremove');
+
+
+        Route::match(['GET','POST'],'venu-select','TabController@venuSelect')->name('venu_select');
+        Route::match(['GET','POST'],'save-offers','TabController@saveOffers')->name('saveoffers');
+        Route::match(['GET','POST'],'all-offers','TabController@AllOffers')->name('alloffers');
+        Route::match(['GET','POST'],'offer-remove','TabController@offerRemove')->name('offerremove');
+        
         
         Route::match(['GET','POST'],'notification-settings','TabController@notificationSetting')->name('notificationSetting');
         Route::match(['GET','POST'],'admin-user','TabController@adminUser')->name('adminUser');

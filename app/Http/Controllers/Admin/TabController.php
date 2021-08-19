@@ -33,6 +33,10 @@ use App\Models\Venu;
 use App\Models\VenueUser;
 use App\Models\WalletCashback;
 use App\Models\Cashback;
+use App\Models\Event;
+use App\Models\Offer;
+use App\Models\OfferSetting;
+use App\Models\City;
 
 class TabController extends Controller
 {
@@ -599,7 +603,9 @@ class TabController extends Controller
 
     public function offerSettings(Request $request){
         if($request->isMethod('GET')){
-            return view('admin.offer-settings');
+            $admin = Auth::guard('admin')->user();
+            $venu = Venu::whereAdminId($admin->id)->whereDeletedAt(null)->get();
+            return view('admin.offer-settings',compact('venu'));
         }
     }
 
@@ -655,7 +661,7 @@ class TabController extends Controller
             if(!empty($vlist)){
                 $vlist->deleted_at = Carbon::now();
                 $vlist->update();
-                return response()->json('Venue successfully Deleted');
+                return response()->json('Venue deleted successfully');
             }
         }
     }
@@ -664,9 +670,141 @@ class TabController extends Controller
         if($request->isMethod('POST')){
             $admin = Auth::guard('admin')->user();
             $data = $request->all();
+
+            $check_venue = Venu::whereDeletedAt(null)->where('unique_id','!=',$data['uniq'])->whereVenueName($data['vname'])->first();
+
+            if(!empty($check_venue)){
+                return response()->json(['venue_name_err' => "Venue name already exists."],422);
+            }
             $saveVenu = $this->venueBusinessModel()->VenueCreate($data,$admin);
-            return response()->json(['message' => 'Venue save successfully','data' => $saveVenu]);
+            return response()->json($saveVenu);
         }
+    }
+
+    Public function allVenuEvents(Request $request){
+        if($request->isMethod('GET')){
+             $admin = Auth::guard('admin')->user();
+             $vlist = Venu::whereAdminId($admin->id)->whereDeletedAt(null)->get();
+             if($vlist){
+                return response()->json(['message' => 200 , 'venulist' => $vlist]);
+             }
+                return response()->json(['message' => 404]);
+        }
+    }
+
+    public function ParticularVenu(Request $request){
+        if($request->isMethod('POST')){
+            $admin = Auth::guard('admin')->user();
+             $venuelist = Venu::whereAdminId($admin->id)->whereId($request->venu_id)->first();
+             if($venuelist){
+                return response()->json(['message' => 200 ,'venuls' => $venuelist]);
+             }
+                return response()->json(['message' => 404]);
+        }
+    }
+
+    public function SaveEvent(Request $request){
+        if($request->isMethod('POST')){
+            $admin = Auth::guard('admin')->user();
+            $data = $request->all();
+
+
+            $check_event = Event::whereDeletedAt(null)->where('unique_id','!=',$data['uniq'])->whereEventName($data['eventname'])->first();
+
+            if(!empty($check_event)){
+                return response()->json(['event_name_err' => "Event name already exists."],422);
+            }
+
+            $saveEvent = $this->venueBusinessModel()->eventCreate($data,$admin);
+            if($saveEvent){
+                return response()->json($saveEvent);
+            }
+            return response()->json(['message' => 404]);
+        }
+    }
+
+    public function eventsallData(Request $request){
+        if($request->isMethod('GET')){
+            $admin = Auth::guard('admin')->user();
+            $venu_list = Venu::whereDeletedAt(null)->get();
+            $eventlist = Event::whereAdminId($admin->id)->orderBy('unique_id','asc')->with('venu','venueAll')->get();
+            return response()->json(['list' => $eventlist]);
+        }
+    }
+
+
+    public function eventRemove(Request $request){
+        if($request->isMethod('POST')){
+            $admin = Auth::guard('admin')->user();
+            $event_remove = Event::whereAdminId($admin->id)->whereUniqueId($request->uniq_id)->first();
+
+            if(!empty($event_remove)){
+                $event_remove->deleted_at = Carbon::now();
+                $event_remove->update();
+                return response()->json('Event deleted successfully');
+            }
+        }
+    }
+
+
+    public function venuSelect(Request $request){
+        if($request->isMethod('POST')){
+            $admin = Auth::guard('admin')->user();
+            $venuOffers = Venu::whereAdminId($admin->id)->whereId($request->venuid)->whereDeletedAt(null)->first();
+            $cityall = City::all();
+
+            if($venuOffers){
+                return response()->json(['message' => 200 , 'venuOffers' => $venuOffers,'cityall' => $cityall]);
+            }
+                return response()->json(['message' => 404]);
+
+        }
+    }
+    public function saveOffers(Request $request){
+        if($request->isMethod('POST')){
+            $admin = Auth::guard('admin')->user();
+            $data = $request->all();
+
+
+            if($data['offer_name'] != "Birthday Offer"){
+
+                $check_offer = Offer::whereDeletedAt(null)->where('unique_id','!=',$data['uniq_id'])->whereOfferName($data['offer_name'])->first();
+
+                if(!empty($check_offer)){
+                    return response()->json(['offer_name_err' => "Offer name already exists."],422);
+                }
+            }
+
+            $saveOffer = $this->venueBusinessModel()->offersCreate($data,$admin);
+            if($saveOffer){
+                return response()->json($saveOffer);
+            }
+                return response()->json('Something wnet wrong');
+            
+        }
+    }
+
+    public function AllOffers(Request $request){
+        if($request->isMethod('GET')){
+            $admin = Auth::guard('admin')->user();
+            $offer = Offer::whereAdminId($admin->id)->orderBy('unique_id','asc')->with(['offerSetting','venu','offerSetting.city'])->get();
+            $cityall = City::all();
+            return ['offer' => $offer, 'cityall' => $cityall];
+        }
+    }
+
+    public function offerRemove(Request $request){
+         if($request->isMethod('POST')){
+             $admin = Auth::guard('admin')->user();
+             $data = $request->all();
+             $offer_remove = Offer::whereAdminId($admin->id)->whereUniqueId($request->uniq_id)->first();
+
+            if(!empty($offer_remove)){
+                $offer_remove->deleted_at = Carbon::now();
+                $offer_remove->update();
+                return response()->json('Offer deleted successfully');
+            }
+         }
     }
 }
 

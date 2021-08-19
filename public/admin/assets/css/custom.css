@@ -8,9 +8,9 @@ input,textarea {
 	border: 2px solid #8e8888 !important;
 	color: #000 !important;
 }
-input:focus {
+/*input:focus {
 	border: 2px solid #193358 !important;
-}
+}*/
 input::-webkit-input-placeholder {
 	color: #989797  !important;
 }

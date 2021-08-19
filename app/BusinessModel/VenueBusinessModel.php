@@ -8,6 +8,10 @@ use App\Models\VenuUser;
 use App\User;
 use Auth;
 use Carbon\Carbon;
+use App\Models\Event;
+use App\Models\Offer;
+use App\Models\OfferSetting;
+use App\Models\City;
 
 class VenueBusinessModel extends Model
 {
@@ -32,13 +36,16 @@ class VenueBusinessModel extends Model
 	Public function VenueCreate($data,$admin){
 		$venue_name = $data['vname'];
 
-		if($data['vimg']){
-
-			$data['vimg'] = $this->UploadBase64Data($data['vimg'],$data['vimg_val']);
+		if(empty($data['hidden_img2'])){
+			if($data['vimg']){
+				$data['vimg'] = $this->UploadBase64Data($data['vimg'],$data['vimg_val']);
+			}
 		}
+		
 
 		//exist query
 		$venue = Venu::whereAdminId($admin->id)->whereUniqueId($data['uniq'])->whereDeletedAt(null)->first();
+
 
 		if(empty($venue)){
 			$venue = new Venu();
@@ -51,9 +58,41 @@ class VenueBusinessModel extends Model
 			$venue->google_map_location_link = $data['vmap'];
 			$venue->book_now_link = $data['vbook'];
 			$venue->image = $data['vimg'];
+			$venue->name_of_file_show = $data['vimg_val'];
 			$venue->menu_link= $data['vmenu'];
 			$venue->status= $data['vstatus'];
 			$venue->save();
+
+			$offer_data = Offer::whereAdminId($admin->id)->orderBy('unique_id','desc')->first();
+
+            if(empty($offer_data)){
+                $new_uniq_id = 1;
+            }else{
+                $new_uniq_id = $offer_data->unique_id+1;
+            }
+
+            $offer = new Offer();
+            $offer->admin_id = $admin->id;
+            $offer->venu_id = $venue->id;
+            $offer->unique_id = $new_uniq_id;
+            $offer->offer_name = 'Birthday Offer';
+            $offer->offer_desc = 'Birthday Offer';
+            $offer->image = 'app_icon.png';
+            $offer->name_of_file_show = 'app icon';
+            $offer->status = 'Active';
+            $offer->offer_type = 'BirthdayOffer';
+            $offer->save();
+
+            if($offer){
+	            $offerSetting = new OfferSetting();
+	            $offerSetting->offer_id = $offer->id;
+	            $offerSetting->offer_type = 'BirthdayOffer';
+	            $offerSetting->save();
+	        }
+
+			if($venue && $offer){
+				$message = 'Venue added successfully';
+			}
 
 		}else{
 
@@ -63,15 +102,169 @@ class VenueBusinessModel extends Model
 			$venue->phone_number = $data['vphone'];
 			$venue->google_map_location_link = $data['vmap'];
 			$venue->book_now_link = $data['vbook'];
-			$venue->image = $data['vimg'];
+			if(empty($data['hidden_img2'])){
+				$venue->image = $data['vimg'];
+				$venue->name_of_file_show = $data['vimg_val'];
+			}
 			$venue->menu_link= $data['vmenu'];
 			$venue->status= $data['vstatus'];
 			$venue->update();
 
+			if($venue){
+				$message = 'Venue details updated successfully';
+			}
+
 		}
 
-		return $venue;
+		return ['data' => $venue, 'message' => $message];
 
+	}
+
+	public function eventCreate($data,$admin){
+		if(empty($data['event_img_exists'])){
+			if($data['eventimg']){
+				$data['eventimg'] = $this->UploadBase64Data($data['eventimg'],$data['org_img_valu']);
+			}
+		}
+
+		$event = Event::whereAdminId($admin->id)->whereUniqueId($data['uniq'])->whereDeletedAt(null)->first();
+
+		if(empty($event)){
+			$event = new Event();
+			$event->admin_id = $admin->id;
+			$event->unique_id = $data['uniq'];
+			$event->venu_id = $data['eventvenueid'];
+			$event->event_name = $data['eventname'];
+			$event->event_description = $data['eventdesc'];
+			$event->when_day = $data['get_selected_days'];
+			$event->from_date = $data['from_date'];
+			$event->to_date = $data['to_date'];
+			$event->event_time = $data['event_time_data'];
+			$event->to_time = $data['to_time_data'];
+			$event->image = $data['eventimg'];
+			$event->name_of_file_show = $data['org_img_valu'];
+			$event->status = $data['event_status'];
+			$event->save();
+
+			if($event){
+				$message = 'Event added successfully';
+			}
+
+		}else{
+			$event->venu_id = $data['eventvenueid'];
+			$event->event_name = $data['eventname'];
+			$event->event_description = $data['eventdesc'];
+			$event->when_day =  $data['get_selected_days'];
+			$event->from_date = $data['from_date'];
+			$event->to_date = $data['to_date'];
+			$event->event_time = $data['event_time_data'];
+			$event->to_time = $data['to_time_data'];
+			if(empty($data['event_img_exists'])){
+				if($data['eventimg']){
+					$event->image = $data['eventimg'];
+					$event->name_of_file_show = $data['org_img_valu'];
+				}
+			}
+			
+			$event->status = $data['event_status'];
+			$event->update();
+
+			if($event){
+				$message = 'Event details updated successfully';
+			}
+		}
+
+		return ['data' => $event, 'message' => $message];
+	}
+
+	public function offersCreate($data,$admin){
+		if(empty($data['offer_img_hidden2'])){
+			if($data['offer_img_hidden_attr']){
+				$data['offer_img_hidden_attr'] = $this->UploadBase64Data($data['offer_img_hidden_attr'],$data['offer_img_hidden_value']);
+			}
+		}
+
+		$offer = Offer::whereAdminId($admin->id)->whereUniqueId($data['uniq_id'])->whereDeletedAt(null)->first();
+
+		if(empty($offer)){
+
+			$offer = new Offer();
+			$offer->admin_id = $admin->id;
+			$offer->venu_id = $data['venu_id'];
+			$offer->unique_id = $data['uniq_id'];
+			$offer->offer_name = $data['offer_name'];
+			$offer->offer_desc = $data['offer_desc'];
+			$offer->image = $data['offer_img_hidden_attr'];
+			$offer->from_date = $data['offer_from_date'];
+			$offer->to_date = $data['offer_to_date'];
+			$offer->time = $data['offer_time_data'];
+			$offer->to_time = $data['offer_to_time_data'];
+			$offer->status = $data['offer_status'];
+			$offer->offer_type = 'Normal';
+			$offer->name_of_file_show = $data['offer_img_hidden_value'];
+			$offer->save();
+
+			if($offer){
+				$message = 'Offer added successfully';
+			}
+
+		}else{
+
+			$offer->venu_id = $data['venu_id'];
+			$offer->offer_name = $data['offer_name'];
+			$offer->offer_desc = $data['offer_desc'];
+			if(empty($data['offer_img_hidden2'])){
+				if($data['offer_img_hidden_attr']){
+					$offer->image = $data['offer_img_hidden_attr'];
+					$offer->name_of_file_show = $data['offer_img_hidden_value'];
+				}
+			}
+			$offer->from_date = $data['offer_from_date'];
+			$offer->to_date = $data['offer_to_date'];
+			$offer->time = $data['offer_time_data'];
+			$offer->status = $data['offer_status'];
+			$offer->update();
+
+			if($offer){
+				$message = 'Offer details updated successfully';
+			}
+
+		}
+
+		$offersetting = OfferSetting::whereOfferId($offer->id)->first();
+
+		if(empty($offersetting)){
+			$offersetting = new OfferSetting;
+			$offersetting->offer_id = $offer->id;
+			$offersetting->dob = "Today";
+			$offersetting->gender = $data['gender_condition'];
+			$offersetting->date = $data['date_condition'];
+			$offersetting->city_id = $data['city_condition'];
+			$offersetting->txn_start_period = $data['txn_start_condition'];
+			$offersetting->txn_end_period = $data['txn_end_condition'];
+			$offersetting->txn_amount_condition = $data['txn_condition'];
+			$offersetting->from_price = $data['from_price_condition'];
+			$offersetting->to_price = $data['to_price_condition'];
+			$offersetting->offer_type = 'Normal';
+			$offersetting->save();
+
+		}else{
+
+			$offersetting->dob = $data['dob_condition'];
+			$offersetting->gender = $data['gender_condition'];
+			$offersetting->date = $data['date_condition'];
+			$offersetting->city_id = $data['city_condition'];
+			$offersetting->txn_start_period = $data['txn_start_condition'];
+			$offersetting->txn_end_period = $data['txn_end_condition'];
+			$offersetting->txn_amount_condition = $data['txn_condition'];
+			$offersetting->from_price = $data['from_price_condition'];
+			$offersetting->to_price = $data['to_price_condition'];
+			$offersetting->offer_type = 'Normal';
+			$offersetting->update();
+
+		}
+
+		return ['data' => $offer, 'message' => $message];
 	}
 
 }

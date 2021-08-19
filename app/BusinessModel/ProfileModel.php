@@ -58,9 +58,15 @@ class ProfileModel extends Model
 
     public function getProfile($id){
         if(empty($id)){
-            return Auth::guard()->user();
+            $user = Auth::guard()->user();
+            $tier = TierCondition::whereTierName($user->customer_tier)->first();
+            $user->tier = $tier;
+            return $user;
         }else{
-            return User::whereId($id)->first();
+            $user = User::whereId($id)->first();
+            $tier = TierCondition::whereTierName($user->customer_tier)->first();
+            $user->tier = $tier;
+            return $user;
         }
     }
 
