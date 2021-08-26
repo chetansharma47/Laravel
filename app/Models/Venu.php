@@ -48,11 +48,11 @@ class Venu extends Model
     }
 
     public function offers(){
-        return $this->hasMany(Offer::class);
+        return $this->hasMany(Offer::class)->whereDeletedAt(null)->where('status', '=', 'Active');
     }
 
     public function events(){
-        return $this->hasMany(Event::class);
+        return $this->hasMany(Event::class)->whereDeletedAt(null)->where('status', '=', 'Active');
     }
 
 }
