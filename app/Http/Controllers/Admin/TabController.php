@@ -298,7 +298,7 @@ class TabController extends Controller
             $admin = Auth::guard('admin')->user();
             $tier = TierSetting::whereAdminId($admin->id)->with('tierConditions')->first();
             $wallet_cashback = WalletCashback::whereAdminId($admin->id)->whereDeletedAt(null)->first();
-            $venues = Venu::whereAdminId($admin->id)->get();
+            $venues = Venu::whereAdminId($admin->id)->whereDeletedAt(null)->get();
             $cashback_last = Cashback::whereAdminId($admin->id)->orderBy('id','desc')->first();
             if(!empty($cashback_last)){
                 $last_id = $cashback_last->unique_id_cashback;
