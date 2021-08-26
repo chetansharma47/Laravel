@@ -91,7 +91,7 @@ class VenueBusinessModel extends Model
 	        }
 
 			if($venue && $offer){
-				$message = 'Venue added successfully';
+				$message = 'Venue added successfully.';
 			}
 
 		}else{
@@ -111,7 +111,7 @@ class VenueBusinessModel extends Model
 			$venue->update();
 
 			if($venue){
-				$message = 'Venue details updated successfully';
+				$message = 'Venue details updated successfully.';
 			}
 
 		}
@@ -147,7 +147,7 @@ class VenueBusinessModel extends Model
 			$event->save();
 
 			if($event){
-				$message = 'Event added successfully';
+				$message = 'Event added successfully.';
 			}
 
 		}else{
@@ -170,7 +170,7 @@ class VenueBusinessModel extends Model
 			$event->update();
 
 			if($event){
-				$message = 'Event details updated successfully';
+				$message = 'Event details updated successfully.';
 			}
 		}
 
@@ -205,7 +205,7 @@ class VenueBusinessModel extends Model
 			$offer->save();
 
 			if($offer){
-				$message = 'Offer added successfully';
+				$message = 'Offer added successfully.';
 			}
 
 		}else{
@@ -226,7 +226,7 @@ class VenueBusinessModel extends Model
 			$offer->update();
 
 			if($offer){
-				$message = 'Offer details updated successfully';
+				$message = 'Offer details updated successfully.';
 			}
 
 		}

@@ -19,7 +19,6 @@ class CreateVenueUsersTable extends Migration
             $table->foreign('venu_id')->references('id')->on('venus')->onDelete('cascade');
             $table->string('username');
             $table->string('password');
-            $table->string('venue_name');
             $table->enum('status',['None','Active','Inactive'])->default('None');
             $table->string('device_model')->nullable();
             $table->string('mac_address')->nullable();

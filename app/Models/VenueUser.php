@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Venu;
 
 class VenueUser extends Model
 {
@@ -10,12 +11,14 @@ class VenueUser extends Model
     	'venu_id',
     	'username',
     	'password',
-    	'venue_name',
     	'status',
     	'device_model',
     	'mac_address',
     	'authorized_status',
     	'date_time'
-
     ];
+
+    public function venu(){
+       return $this->belongsTo(Venu::class);
+    }
 }

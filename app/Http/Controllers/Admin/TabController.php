@@ -226,14 +226,14 @@ class TabController extends Controller
         if($search){
             $data  = $data->where(function($query) use($search){
                         $query->where('username', 'Like', '%'. $search . '%');
-                            $query->orWhere('venue_name', 'Like', '%' . $search . '%');
+                            //$query->orWhere('venue_name', 'Like', '%' . $search . '%');
                             $query->orWhere('device_model', 'Like', '%' . $search . '%');
                             $query->orWhere('mac_address', 'Like', '%' . $search . '%');
                             $query->orWhere('authorized_status', 'Like', '%' . $search . '%');
                             $query->orWhere(DB::raw("DATE_FORMAT(date_time, '%d %M %Y %h:%i %p')"), 'Like', '%' . $search . '%');
-                            // ->orWhereHas('category', function($insideQuery) use ($search){
-                            //     return $insideQuery->where('category_name', 'like', '%'.$search.'%');
-                            // })
+                            $query->orWhereHas('venu', function($insideQuery) use ($search){
+                                return $insideQuery->where('venue_name', 'like', '%'.$search.'%');
+                            });
                     });
 
             $filter = $data->get()->count();
@@ -242,7 +242,7 @@ class TabController extends Controller
 
         $data = $data->offset($request->start);
         $data = $data->take($request->length);
-        $data = $data->get();
+        $data = $data->with('venu')->get();
 
 
         $start_from = $request->start;
@@ -611,7 +611,9 @@ class TabController extends Controller
 
     public function venueUser(Request $request){
         if($request->isMethod('GET')){
-            return view('admin.venue-user');
+            $admin = Auth::guard('admin')->user();
+            $venulist = Venu::whereAdminId($admin->id)->whereDeletedAt(null)->get();
+            return view('admin.venue-user',compact('venulist'));
         }
     }
 
@@ -645,6 +647,105 @@ class TabController extends Controller
         }
     }
 
+    public function CreateVenue(Request $request){
+        if($request->isMethod('POST')){
+
+            $admin = Auth::guard('admin')->user();
+
+            $checkUser = VenueUser::whereUsername($request->v_user)->first();
+
+            if(!empty($checkUser)){
+                return response()->json(['username_err' => 'Username already exists.'],422);
+            }
+
+            $hashpassword = Hash::make($request->v_password);
+
+            $venuecreate = new VenueUser;
+            $venuecreate->username = $request->v_user;
+            $venuecreate->password = $hashpassword;
+            $venuecreate->venu_id = $request->v_name;
+            $venuecreate->status = $request->v_status;
+            $venuecreate->save();
+
+            if($venuecreate){
+                return response()->json(['message' => 'Venue user added successfully.']);
+            }
+
+                return response()->json(['username_err' => 'Something went wrong.'],422);
+        }
+
+        if($request->isMethod('GET')){
+            if($request->ajax()){
+                return Datatables()->of(VenueUser::query())->make(true);
+            }
+        }
+    }
+
+    public function venueTableRecords(Request $request){
+
+        if($request->isMethod('POST')){
+            $asc_desc = $request->get('order')[0]['dir'];
+            $column_id = $request->get('order')[0]['column'];
+            $search = $request->get("search")["value"];
+            $colname = $request->get('columns');
+
+            $column = $colname[0]['data'];
+
+            if($column_id == 0){
+                $column = $colname[0]['data'];
+            }else if($column_id == 1){
+                $column = $colname[1]['data'];
+            }else if($column_id == 2){
+                $column = $colname[2]['data'];
+            }else if($column_id == 3){
+                $column = $colname[3]['data'];
+            }else if($column_id == 4){
+                $column = $colname[4]['data'];
+            }else if($column_id == 5){
+                $column = $colname[5]['data'];
+            }else if($column_id == 6){
+                $column = $colname[6]['data'];
+            }else if($column_id == 7){
+                $column = $colname[7]['data'];
+            }
+
+            $data = VenueUser::orderBy($column,$asc_desc);
+            $total = $data->get()->count();
+            $filter = $total;
+
+            if($search){
+                 $data  = $data->where(function($query) use($search){
+                        $query->where('username', 'Like', '%'. $search . '%');
+                        $query->orWhere('status', 'Like', '%' . $search . '%');
+                        $query->orWhere(DB::raw("DATE_FORMAT(created_at, '%Y %M %d %H:%i:%s %p')"), 'Like', '%' . $search . '%');
+                        $query->orWhereHas('venu', function($query) use ($search){
+                                $query->where('venue_name', 'like', '%'.$search.'%');
+                            });
+                        $query->orWhere(DB::raw("DATE_FORMAT(updated_at, '%Y %M %d %H:%i:%s %p')"), 'Like', '%' . $search . '%');
+                    });
+            
+
+
+                $filter = $data->get()->count();
+            }
+
+            $data = $data->offset($request->start);
+            $data = $data->take($request->length);
+            $data = $data->with('venu:id,venue_name')->get();
+
+            $return_data = [
+                    "data" => $data,
+                    "draw" => (int)$request->draw,
+                    "recordsTotal" => $total,
+                    "recordsFiltered" => $filter,
+                    "input" => $request->all(),
+            ];
+
+            return response()->json($return_data);
+
+        }
+    }
+
 
     public function venueList(Request $request){
         if($request->isMethod('GET')){
@@ -661,7 +762,7 @@ class TabController extends Controller
             if(!empty($vlist)){
                 $vlist->deleted_at = Carbon::now();
                 $vlist->update();
-                return response()->json('Venue deleted successfully');
+                return response()->json('Venue deleted successfully.');
             }
         }
     }
@@ -741,7 +842,7 @@ class TabController extends Controller
             if(!empty($event_remove)){
                 $event_remove->deleted_at = Carbon::now();
                 $event_remove->update();
-                return response()->json('Event deleted successfully');
+                return response()->json('Event deleted successfully.');
             }
         }
     }
@@ -765,21 +866,17 @@ class TabController extends Controller
             $admin = Auth::guard('admin')->user();
             $data = $request->all();
 
-
-            if($data['offer_name'] != "Birthday Offer"){
-
-                $check_offer = Offer::whereDeletedAt(null)->where('unique_id','!=',$data['uniq_id'])->whereOfferName($data['offer_name'])->first();
+                $check_offer = Offer::whereDeletedAt(null)->where('unique_id','!=',$data['uniq_id'])->whereOfferName($data['offer_name'])->whereVenuId($data['venu_id'])->first();
 
                 if(!empty($check_offer)){
                     return response()->json(['offer_name_err' => "Offer name already exists."],422);
                 }
-            }
 
             $saveOffer = $this->venueBusinessModel()->offersCreate($data,$admin);
             if($saveOffer){
                 return response()->json($saveOffer);
             }
-                return response()->json('Something wnet wrong');
+                return response()->json('Something went wrong.');
             
         }
     }
@@ -802,7 +899,7 @@ class TabController extends Controller
             if(!empty($offer_remove)){
                 $offer_remove->deleted_at = Carbon::now();
                 $offer_remove->update();
-                return response()->json('Offer deleted successfully');
+                return response()->json('Offer deleted successfully.');
             }
          }
     }

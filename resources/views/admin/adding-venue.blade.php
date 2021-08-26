@@ -145,6 +145,15 @@
 		input .input_tier_name{
 			background-color: #EAEAEA!important;
 		}
+
+		option:not(:checked) {
+		  background-color: #fff;
+		}
+
+		.venu_desc::-webkit-scrollbar{
+			width: 0px;
+			scrollbar-width: 0px;
+		}
 		
 	</style>
 
@@ -159,13 +168,6 @@
 		body {
 			background: #fff !important;
 		}
-		/*.curve-bg .navbar-nav li.nav-item:nth-child(1) {
-			width: 100%;
-			margin-right: 0;
-		}*/
-	/*	.curve-bg .navbar-nav li.nav-item:nth-child(2) {
-			width: 0;
-		}*/
 	</style>
 </head>
 <body>
@@ -177,34 +179,6 @@
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 						<span class="navbar-toggler-icon"></span>
 					</button>
-
-					<!-- <div class="collapse navbar-collapse" id="navbarSupportedContent">
-						<ul class="navbar-nav">
-							<li class="nav-item">
-								<a class="nav-link hover_color" href="admin_tabs.html" style="padding-right: 0">Admin Portal</a>
-								<a class="nav-link" href="#" style="padding-left: 0;"> <span style="color: #fff;">></span> Add Restaurants, Events, Offers</a>
-							</li>
-							<li class="nav-item">
-								<a class="nav-link" href="admin_tabs.html">
-									<img src="../assets/img/logo-approved.png"/ alt="logo-approved">
-								</a>
-							</li>
-							<li class="nav-item">
-								<a class="nav-link" href="#">User: Nadeer</a>
-							</li>
-							<li class="nav-item">
-								<a class="nav-link" href="admin_tabs.html" style="color: #FFDA7A;">
-									Admin
-								</a>
-							</li>
-							<li class="nav-item">
-								<a class="nav-link" href="login.html" style="color: #FFDA7A;">
-									logout
-								</a>
-							</li>
-						</ul>
-					</div> -->
-
 					<div class="collapse navbar-collapse" id="navbarSupportedContent">
 						<div class="row w-100">
 							<div class="col-md-5 col-sm-12">
@@ -233,7 +207,7 @@
 										</a>
 									</li>
 									<li class="nav-item">
-										<a class="nav-link" href="{{route('admin.login')}}" style="color: #FFDA7A;">
+										<a class="nav-link" href="{{route('admin.logout')}}" style="color: #FFDA7A;">
 											logout
 										</a>
 									</li>
@@ -317,7 +291,7 @@
         </button> -->
       </div>
       <div class="modal-body">
-        <p id="alert_text">Info Text</p>
+        <p id="alert_text">info</p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary ok" style="background-color: #3ABD6F!important; border: none; border-radius: 50px; color: #fff;"  data-dismiss="modal">Ok</button>
@@ -332,7 +306,7 @@
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">Information</h5>
+        <h5 class="modal-title" id="exampleModalLongTitle">Success</h5>
         <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button> -->
@@ -656,9 +630,9 @@ function venuform(uniqueid,vname,vaddr,vdesc,vphone,vmap,vbook,vimage,vmenu,vsta
 							</label>
 							<div class="selectdiv">
 								<select class="form-control venu_status form-group" name="venu_status" unique-id="${uniqueid}"  style="padding: .6rem 1rem; position: relative; cursor:pointer;">
-									<option readonly value="${(vstatus) ? `${vstatus}` : ''}">${(vstatus) ? `${vstatus}` : 'Select venue status'}</option>
-									<option value="Active">Active</option>
-									<option value="Inactive">Inactive</option>
+									<option value="">Select Status</option>
+									<option ${(vstatus=='Active')?'selected':''} value="Active">Active</option>
+									<option ${(vstatus=='Inactive')?'selected':''} value="Inactive">Inactive</option>
 								</select>
 							</div>
 						</div>
@@ -694,25 +668,33 @@ $(document).on('change','#img_upload',function(e){
 		if(file.type == "image/jpeg" || file.type == "image/png" || file.type == "image/jpg"){
 
 			var size = file.size;
-
 			if(size > 5242880){
+				// event.target.value="";
+				$(".venu_img[unique-id="+form_activeid+"]").attr('src','');
+				$(".venu_img[unique-id="+form_activeid+"]").attr('value','');
+				$(".venu_imghidden[unique-id="+form_activeid+"]").val('');
+				$("#img_upload[unique-id="+form_activeid+"]").attr('src','');
 				$("#alert_text").text("Image should be less than or equal to 5 MB.");
         $("#validationModel").modal("show");
         $("#validationModel").unbind("click");
-			}
-			var reader = new FileReader();
+        
+				return false;
+			}else{
+					var reader = new FileReader();
 			reader.onload = function(e){
 				$(".venu_img[unique-id="+form_activeid+"]").attr('src',e.target.result);
-				$(".venu_img[unique-id="+form_activeid+"]").val(slice_name);
-				$(".venu_imghidden[unique-id="+form_activeid+"]").val(file_nameshow);
+				$(".venu_img[unique-id="+form_activeid+"]").attr('value',slice_name);
+				$(".venu_imghidden[unique-id="+form_activeid+"]").attr('value',file_nameshow);
 				$(".venue_imagehidden2[unique-id="+form_activeid+"]").val('');
 				$("#img_upload[unique-id="+form_activeid+"]").attr('src',e.target.result);
 			}
+			}
+		
 
 			reader.readAsDataURL(file);
 
 		}else{
-			$("#alert_text").text("Image must be of .jpg, .jpeg and .png format.");
+			$("#alert_text").text("Please upload .jpg, .jpeg or .png format file only.");
       $("#validationModel").modal("show");
       $("#validationModel").unbind("click");
 		}
@@ -766,14 +748,14 @@ $(document).on('click','.venuSave',function(){
 	let hidden_img2 =  $(".venue_imagehidden2[unique-id="+uniq+"]").val();
 
 	if(vname == ""){
-		$("#alert_text").text("Please enter venue name");
+		$("#alert_text").text("Please enter venue name.");
 		$("#validationModel").modal("show");
 		$("#validationModel").unbind("click");
 		return false;
 	}
 
 	if(vname.match(/^\s*$/)){
-		$("#alert_text").text("Please enter valid venue name");
+		$("#alert_text").text("Please enter valid venue name.");
 		$("#validationModel").modal("show");
 		$("#validationModel").unbind("click");
 		return false;
@@ -799,76 +781,96 @@ $(document).on('click','.venuSave',function(){
 		$("#validationModel").unbind("click");
 		return false;
 	}
+
+	if(vaddr.match(/^\s*$/)){
+		$("#alert_text").text("Please enter valid address.");
+		$("#validationModel").modal("show");
+		$("#validationModel").unbind("click");
+		return false;
+	}
 	if(vmenu == ""){
-		$("#alert_text").text("Please enter menu link");
+		$("#alert_text").text("Please enter menu link.");
 		$("#validationModel").modal("show");
 		$("#validationModel").unbind("click");
 		return false;
 	}
 	if(!vmenu.match(/(^http:\/\/)|(^https:\/\/)/)){
-		$("#alert_text").text("Please enter valid menu link");
+		$("#alert_text").text("Please enter valid menu link.");
 		$("#validationModel").modal("show");
 		$("#validationModel").unbind("click");
 		return false;
 	}
 
 	if(vmenu.indexOf(" ") >=0){
-		$("#alert_text").text("Please enter valid menu link");
+		$("#alert_text").text("Please enter valid menu link.");
 		$("#validationModel").modal("show");
 		$("#validationModel").unbind("click");
 		return false;
 	}
 	if(vdesc == ""){
-		$("#alert_text").text("Please enter venue description");
-		$("#validationModel").modal("show");
-		$("#validationModel").unbind("click");
-		return false;
-	}
-	if(vphone == ""){
-		$("#alert_text").text("Please enter phone contact");
-		$("#validationModel").modal("show");
-		$("#validationModel").unbind("click");
-		return false;
-	}
-	if(vmap == ""){
-		$("#alert_text").text("Please enter google map location link");
-		$("#validationModel").modal("show");
-		$("#validationModel").unbind("click");
-		return false;
-	}
-	if(vmap.indexOf(" ") >=0){
-		$("#alert_text").text("Please enter google map location link");
-		$("#validationModel").modal("show");
-		$("#validationModel").unbind("click");
-		return false;
-	}
-	if(!vmap.match(/(^http:\/\/)|(^https:\/\/)/)){
-		$("#alert_text").text("Please enter valid google map location link");
+		$("#alert_text").text("Please enter venue description.");
 		$("#validationModel").modal("show");
 		$("#validationModel").unbind("click");
 		return false;
 	}
 
+	if(vdesc.match(/^\s*$/)){
+		$("#alert_text").text("Please enter valid venue description.");
+		$("#validationModel").modal("show");
+		$("#validationModel").unbind("click");
+		return false;
+	}
+	
+	if(vphone == ""){
+		$("#alert_text").text("Please enter phone contact.");
+		$("#validationModel").modal("show");
+		$("#validationModel").unbind("click");
+		return false;
+	}
+	if(vphone.length < 8){
+		$("#alert_text").text("Phone number should be between 8 to 15 digits.");
+		$("#validationModel").modal("show");
+		$("#validationModel").unbind("click");
+		return false;
+	}
+	if(vmap == ""){
+		$("#alert_text").text("Please enter google map location link.");
+		$("#validationModel").modal("show");
+		$("#validationModel").unbind("click");
+		return false;
+	}
+	if(!vmap.match(/(^http:\/\/)|(^https:\/\/)/)){
+		$("#alert_text").text("Please enter valid google map location link.");
+		$("#validationModel").modal("show");
+		$("#validationModel").unbind("click");
+		return false;
+	}
+	if(vmap.indexOf(" ") >=0){
+		$("#alert_text").text("Please enter valid google map location link.");
+		$("#validationModel").modal("show");
+		$("#validationModel").unbind("click");
+		return false;
+	}
 	if(vbook == ""){
-		$("#alert_text").text("Please enter book now link");
+		$("#alert_text").text("Please enter book now link.");
 		$("#validationModel").modal("show");
 		$("#validationModel").unbind("click");
 		return false;
 	}
 	if(!vbook.match(/(^http:\/\/)|(^https:\/\/)/) ){
-		$("#alert_text").text("Please enter valid book now link");
+		$("#alert_text").text("Please enter valid book now link.");
 		$("#validationModel").modal("show");
 		$("#validationModel").unbind("click");
 		return false;
 	}
 	if(vbook.indexOf(" ") >=0){
-		$("#alert_text").text("Please enter valid book now link");
+		$("#alert_text").text("Please enter valid book now link.");
 		$("#validationModel").modal("show");
 		$("#validationModel").unbind("click");
 		return false;
 	}
 	if(vstatus == ""){
-		$("#alert_text").text("Please select venue status");
+		$("#alert_text").text("Please select venue status.");
 		$("#validationModel").modal("show");
 		$("#validationModel").unbind("click");
 		return false;
@@ -908,6 +910,14 @@ $(document).on('click','.venuSave',function(){
 	});
 
 });
+
+	// for restrict first time blank space
+	
+		$(document).on('keydown','.venu_name, .venu_desc, .venu_addr, .venu_phone, .venu_menu, .venu_map, .venu_tab_book, .input_tier_name',function(e){
+			if(e.which===32 && e.target.selectionStart===0){
+				return false;
+			}
+		});
 
 </script>
 		

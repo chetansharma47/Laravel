@@ -28,7 +28,7 @@ use App\Models\Offer;
 use App\Models\OfferSetting;
 use App\Models\Cashback;
 use App\Models\City;
-require_once $_SERVER['DOCUMENT_ROOT'].'/capital_motion_18_august/vendor/autoload.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/capital_motion_24_august/vendor/autoload.php';
 
 class AuthenticationController extends ResponseController
 {
@@ -139,7 +139,7 @@ class AuthenticationController extends ResponseController
         $this->responseOk("Logged out successfully");
     }
 
-    public function forgotPassword(Request $request){
+    public function forgotPassword(Request $request){ 
         $this->is_validationRule(Validation::userAppForgot($Validation = "", $message = "") , $request);
         $user_details = $this->profileModel->forgot($request);
         if($user_details['status'] == 0){
@@ -149,8 +149,6 @@ class AuthenticationController extends ResponseController
         }elseif ($user_details['status'] == 5){
             return $this->responseWithErrorCode($user_details['error_msg'], 406);
         }else{
-
-
             return $this->responseOk('A reset password link has been sent to your registered email address.');
         }
     }
@@ -245,7 +243,7 @@ class AuthenticationController extends ResponseController
         $message = "Your OTP for Society App is ".$otp;
 
         try {
-            $response = $sms->sendToOne($data['country_code'].$data['mobile_number'], $message);
+            $response = $sms->sendToOne($data['country_code'].$data['mobile_number'], $message,'CM-Society');
         } catch (\Exception $e) {
             return $this->responseWithErrorCode("Please enter valid phone number.",400);
         }
@@ -300,37 +298,43 @@ class AuthenticationController extends ResponseController
 
     public function venueListing(Request $request){
         $user = Auth::guard()->user();
-        $venues = Venu::select("id","venue_name","image")->whereDeletedAt(null)->get();
+        $venues = Venu::select("id","venue_name","image")->whereDeletedAt(null)->whereStatus('Active')->get();
         return $this->responseOk("Venue Listing", ['venue_listing' => $venues]);
     }
 
     public function venueDetails(Request $request, $venue_id){
-        $venue = Venu::whereId($venue_id)->with('events')->first();
+        $venue = Venu::whereId($venue_id)->whereDeletedAt(null)->whereStatus('Active')->first();
         return $this->responseOk('Venue Details', ['venue_details' => $venue]);
     }
 
     public function eventListing(Request $request){
         $user = Auth::guard()->user();
-        $events = Event::whereDeletedAt(null)->with('venu')->get();
+        $active_venue_ids = Venu::where('status' , 'Active')->where('deleted_at' , null)->pluck('id');
+        $events = Event::whereDeletedAt(null)->whereStatus('Active')->whereIn('venu_id', $active_venue_ids)->with('venu')->get();
+
         return $this->responseOk('Event Listing', ['event_listing' => $events]);
     }
 
-    public function eventDetails(Request $request, $event_id){
-        $event = Event::whereId($event_id)->with('venu')->first();
+    public function eventDetails(Request $request, $event_id) {
+        $event = Event::whereId($event_id)->whereDeletedAt(null)->first();
         return $this->responseOk('Event Details', ['event_details' => $event]);
     }
 
     public function offerListing(Request $request){
-         $this->is_validationRule(Validation::offerList($Validation = "", $message = "") , $request);
+        $this->is_validationRule(Validation::offerList($Validation = "", $message = "") , $request);
         $user = Auth::guard()->user();
         $find_city = City::whereCityName($user->city_of_residence)->first();
         $pluck_for_in = OfferSetting::whereCityId($find_city->id)->whereGender($user->gender)->pluck('offer_id');
-        $offers = Offer::whereDeletedAt(null)->whereDate('from_date', '<=', Carbon::now()->toDateString())->whereIn('id',$pluck_for_in)->with('offerSetting','venu')->get();
+
+        $active_venue_ids = Venu::where('status' , 'Active')->where('deleted_at' , null)->pluck('id');
+
+        $offers = Offer::whereDeletedAt(null)->whereStatus('Active')->whereDate('from_date', '<=', Carbon::now()->toDateString())->whereIn('id',$pluck_for_in)->whereIn('venu_id', $active_venue_ids)->with('offerSetting','venu')->get();
+
         return $this->responseOk('Offer Listing', ['offer_listing' => $offers]);
     }
 
     public function offerDetails(Request $request, $offer_id){
-        $offer = Offer::whereId($offer_id)->with('offerSetting','venu')->first();
+        $offer = Offer::whereId($offer_id)->whereDeletedAt(null)->whereStatus('Active')->with('offerSetting','venu')->first();
         return $this->responseOk('Offer Details', ['offer_details' => $offer]);
     }
 
@@ -341,10 +345,13 @@ class AuthenticationController extends ResponseController
         $user = Auth::guard()->user();
         $today_date = Carbon::now();
 
+        $active_venue_ids = Venu::where('status' , 'Active')->where('deleted_at' , null)->pluck('id');
+
         $cashbacks = Cashback::where(function($query) use ($user,$today_date){
                         $query->whereDeletedAt(null);
                         $query->whereDate('from_date', '<=', $today_date->toDateString());
                         $query->whereDate('to_date','>=', $today_date->toDateString());
+                        $query->whereIn('venu_id', $active_venue_ids);
                     })->with('venu')->get();        
         return $this->responseOk('Cashback Listing', ['cashback_listing' => $cashbacks]);
     }
@@ -362,11 +369,15 @@ class AuthenticationController extends ResponseController
         $today_date = Carbon::now();
 
         $user = Auth::guard()->user();
-        $events = Event::where(function($query) use ($user,$today_date){
+        $active_venue_ids = Venu::where('status' , 'Active')->where('deleted_at' , null)->pluck('id');
+        $events = Event::where(function($query) use ($user,$today_date, $active_venue_ids){
                         $query->whereDeletedAt(null);
+                        $query->whereStatus('Active');
                         $query->whereDate('from_date', '<=', $today_date->toDateString());
                         $query->whereDate('to_date','>=', $today_date->toDateString());
+                        $query->whereIn('venu_id', $active_venue_ids);
                     })->with('venu')->get();
+
         return $this->responseOk('Today Event Listing', ['event_listing' => $events]);
     }
 
@@ -381,16 +392,23 @@ class AuthenticationController extends ResponseController
         $today_date = Carbon::now();
 
         $user = Auth::guard()->user();
-        $events = Event::where(function($query) use ($user,$today_date){
+
+        $active_venue_ids = Venu::where('status' , 'Active')->where('deleted_at' , null)->pluck('id');
+
+        $events = Event::where(function($query) use ($user,$today_date, $active_venue_ids){
                         $query->whereDeletedAt(null);
+                        $query->whereStatus('Active');
                         $query->whereDate('from_date', '<=', $today_date->toDateString());
                         $query->whereDate('to_date','>=', $today_date->toDateString());
+                        $query->whereIn('venu_id', $active_venue_ids);
                     })->with('venu')->get();
 
-        $promotion = Cashback::where(function($query) use ($user,$today_date){
+        $promotion = Cashback::where(function($query) use ($user,$today_date, $active_venue_ids){
                         $query->whereDeletedAt(null);
+                        $query->whereStatus('Active');
                         $query->whereDate('from_date', '<=', $today_date->toDateString());
                         $query->whereDate('to_date','>=', $today_date->toDateString());
+                        $query->whereIn('venu_id', $active_venue_ids);
                     })->with('venu')->get();
 
         $collect = collect($events)->merge($promotion);

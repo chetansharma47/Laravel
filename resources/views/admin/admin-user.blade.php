@@ -134,7 +134,7 @@
 										</a>
 									</li>
 									<li class="nav-item">
-										<a class="nav-link" href="{{route('admin.login')}}" style="color: #FFDA7A;">
+										<a class="nav-link" href="{{route('admin.logout')}}" style="color: #FFDA7A;">
 											logout
 										</a>
 									</li>

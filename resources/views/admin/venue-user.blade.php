@@ -22,58 +22,106 @@
 		});
 	</script>
     <style type="text/css">
-    #basic-datatables_wrapper,
+		#basic-datatables_wrapper,
 		#basic-datatables2_wrapper,
 		#basic-datatables3_wrapper {
 			padding: 0 !important;
 		}
-    	.common_btn {
-    width: 129px!important;
-    font-size: 16px!important;
-}
+		.common_btn {
+		    width: 129px!important;
+		    font-size: 16px!important;
+		}
 		section.mt-5 .container-fluid {
-    width: 100%;
-    padding-right: 25px;
-    padding-left: 25px;
-}
-.d-flex.justify-content-between.mt-4 {
-   margin-left: 10px;
-    margin-right: 10px;
-}
-.common_btn {
-    width: 129px!important;
-    font-size: 16px!important;
-}
-.row.left-side {
-    margin-left: -5px;
-}
-html .mt-5, html .my-5 {
-    margin-top: 1rem!important;
-}
- 
+		    width: 100%;
+		    padding-right: 25px;
+		    padding-left: 25px;
+		}
+		.d-flex.justify-content-between.mt-4 {
+		   margin-left: 10px;
+		    margin-right: 10px;
+		}
+		.common_btn {
+		    width: 129px!important;
+		    font-size: 16px!important;
+		}
+		.row.left-side {
+		    margin-left: -5px;
+		}
+		html .mt-5, html .my-5 {
+		    margin-top: 1rem!important;
+		}
+		 
 
-#basic-datatables_length {
+		#basic-datatables_length {
 			display: none;
 		}
 		.page-item.active .page-link {
 			background-color: #193358;
-    		border-color: #193358;
+			border-color: #193358;
 		}
 		.page-item.active .page-link:hover {
 			color: #fff !important
 		}
 		div.dataTables_wrapper div.dataTables_filter input {
-			    font-size: 14px !important;
-    			border-radius: 0px !important;
-    			margin-bottom: 14px;
-    			padding: 3px 10px !important;
-    border: 0 !important;
-    background: #EBEBEB !important;
-    font-family: 'Signika', sans-serif;
-    font-weight: 700;
-    font-size: 20px !important;
-    color: #676767 !important;
-    background-color: #EBEBEB !important;
+			font-size: 14px !important;
+			border-radius: 0px !important;
+			margin-bottom: 14px;
+			padding: 3px 10px !important;
+			border: 0 !important;
+			background: #EBEBEB !important;
+			font-family: 'Signika', sans-serif;
+			font-weight: 700;
+			font-size: 20px !important;
+			color: #676767 !important;
+			background-color: #EBEBEB !important;
+		}
+
+		#successModel .modal-title{
+		    text-align: center;
+		    width: 100%;
+		    font-size: 20px;
+		    font-weight: 600;
+		}
+		#successModel .modal-header {
+		    background-color: #5f5f5f;
+		    color: #fff;
+		    justify-content: center;
+		}
+
+		#successModel .modal-body {
+			text-align: center;
+		}
+
+		#successModel .modal-body p {
+			margin-bottom: 0rem;
+		}
+
+		div#loaderImg2 {
+		    position: absolute;
+		    left: 0;
+		    right: 0;
+		    text-align: center;
+		    margin-top: 250px;
+		}
+
+		#validationModel .modal-title{
+		    text-align: center;
+		    width: 100%;
+		    font-size: 20px;
+		    font-weight: 600;
+		}
+		#validationModel .modal-header {
+		    background-color: #5f5f5f;
+		    color: #fff;
+		    justify-content: center;
+		}
+
+		#validationModel .modal-body {
+			text-align: center;
+		}
+
+		#validationModel .modal-body p {
+			margin-bottom: 0rem;
 		}
     </style>
 	<!-- CSS Files -->
@@ -138,7 +186,7 @@ html .mt-5, html .my-5 {
 										</a>
 									</li>
 									<li class="nav-item">
-										<a class="nav-link" href="{{route('admin.login')}}" style="color: #FFDA7A;">
+										<a class="nav-link" href="{{route('admin.logout')}}" style="color: #FFDA7A;">
 											logout
 										</a>
 									</li>
@@ -158,45 +206,49 @@ html .mt-5, html .my-5 {
 						<label style="font-weight: 400;">
 							Username
 						</label>
-						<input type="text" class="form-control form-control-user" placeholder="Username" value="Username" style="border-radius: 10px"/>
+						<input type="hidden" name="token" value="{{ csrf_token() }}" id="token">
+						<input type="text" name="venue_username" id="venue_username" class="form-control form-control-user input-control" placeholder="Username" maxlength="30"/>
 					</div>
 					<div class="venue_inputs mb-3 px-2 pl-3">
 						<label style="font-weight: 400;">
 							Password
 						</label>
-						<input type="password" class="form-control form-control-user" placeholder="Password" value="Password" style="border-radius: 10px; font-family: 'Lato', sans-serif;"/>
+						<input name="venue_user_password" id="venue_user_password" type="password" class="form-control form-control-user input-control" placeholder="Password"/>
 					</div>
 					<div class="venue_inputs mb-3 px-2 pl-3">
 						<label style="font-weight: 400;">
 							Venue Selection
 						</label>
-						<select class="form-control form-group" style="position: relative;border-radius: 10px;" id="exampleFormControlSelect1">
-							<option>Select Venue Selection</option>
-							<option>Salt</option>
-							<option>Caramel</option>
-							<option>Tiki</option>
+						<select name="venue_selection" id="venue_selection" class="form-control form-group" style="position: relative;border-radius: 10px;">
+							<option readonly value="">Select Venue Selection</option>
+							@if(count($venulist) > 0)
+								@foreach($venulist as $valu)
+									<option value="{{ $valu->id }}">{{ $valu->venue_name }}</option>
+								@endforeach
+							@endif
 						</select>
 					</div>
 					<div class="venue_inputs mb-3 px-2 pl-3">
 						<label style="font-weight: 400;">
 							Status
 						</label>
-						<select class="form-control form-group" style="position: relative;border-radius: 10px;" id="exampleFormControlSelect1">
-							<option>Active</option>
-							<option>Inactive</option>
+						<select class="form-control form-group" id="venue_user_status" style="position: relative;border-radius: 10px;" name="venue_user_status">
+							<option value="" readonly="">Select Status</option>
+							<option value="Active">Active</option>
+							<option value="Inactive">Inactive</option>
 						</select>
 					</div>
-					<div class="d-flex justify-content-between mt-4">
-						<div>
-							<a href="" class="btn btn-primary btn-user btn-block common_btn" style="     font-size: 18px; text-transform: none">
+					<div class="d-flex justify-content-start mt-4 ml-3">
+						<!-- <div> -->
+							<a href="javascript:void(0)" name="venue_add_new" id="venue_add_new" class="btn btn-primary btn-user btn-block common_btn" style="font-size: 18px; text-transform: none">
 								Add New
 							</a>
-						</div>
-						<div>
-							<a href="" class="btn btn-primary btn-user btn-block common_btn" style="    font-size: 18px; text-transform: none">
+						<!-- </div> -->
+						<!-- <div>
+							<a href="" class="btn btn-primary btn-user btn-block common_btn" style="font-size: 18px; text-transform: none">
 								Update
 							</a>
-						</div>
+						</div> -->
 					</div>
 				</div>
 			</div>
@@ -212,80 +264,18 @@ html .mt-5, html .my-5 {
 			<div class="row left-side">
 				<div class="col-md-12 mb-4" style="margin-top: -44px;">
 					<div class="table-responsive">
-						<table id="basic-datatables" class="display table table-striped table-hover" style="padding: 0">
+						<table id="basic-datatables" class="venue_ls display table table-striped table-hover" style="padding: 0">
 							<thead>
-								<tr style="background-color: #193358;    color: #fff;">
+								<tr style="background-color: #193358; color: #fff;">
+									<th>Id</th>
 									<th>Username</th>
-									<th>Password</th>
 									<th>Role</th>
 									<th>Status</th>
 									<th>Created On</th>
-									<th>Created By</th>
 									<th>Updated On</th>
-									<th>Updated By</th>
 								</tr>
 							</thead>
 							<tbody>
-								<tr>
-									<td>NadChanllenge</td>
-									<td>*******</td>
-									<td>Admin</td>
-									<td>Active</td>
-									<td>21 June 2021 8:00 AM</td>
-									<td>Nadeer</td>
-									<td>21 June 2021 8:00 AM</td>
-									<td>Nadeer</td>
-								</tr>
-								<tr>
-									<td>Melvin</td>
-									<td>*******</td>
-									<td>Admin</td>
-									<td>Active</td>
-									<td>21 June 2021 8:00 AM</td>
-									<td>Nadeer</td>
-									<td>21 June 2021 8:00 AM</td>
-									<td>Nadeer</td>
-								</tr>
-								<tr>
-									<td>NadChanllenge</td>
-									<td>*******</td>
-									<td>Admin</td>
-									<td>Active</td>
-									<td>21 June 2021 8:00 AM</td>
-									<td>Nadeer</td>
-									<td>21 June 2021 8:00 AM</td>
-									<td>Nadeer</td>
-								</tr>
-								<tr>
-									<td>Melvin</td>
-									<td>*******</td>
-									<td>Admin</td>
-									<td>Active</td>
-									<td>21 June 2021 8:00 AM</td>
-									<td>Nadeer</td>
-									<td>21 June 2021 8:00 AM</td>
-									<td>Nadeer</td>
-								</tr>
-								<tr>
-									<td>NadChanllenge</td>
-									<td>*******</td>
-									<td>Admin</td>
-									<td>Active</td>
-									<td>21 June 2021 8:00 AM</td>
-									<td>Nadeer</td>
-									<td>21 June 2021 8:00 AM</td>
-									<td>Nadeer</td>
-								</tr>
-								<tr>
-									<td>Melvin</td>
-									<td>*******</td>
-									<td>Admin</td>
-									<td>Active</td>
-									<td>21 June 2021 8:00 AM</td>
-									<td>Nadeer</td>
-									<td>21 June 2021 8:00 AM</td>
-									<td>Nadeer</td>
-								</tr>
 							</tbody>
 						</table>
 					</div>
@@ -294,6 +284,62 @@ html .mt-5, html .my-5 {
 			</div>
 		</div>
 	</section>
+
+<!-- validation model -->
+
+<div class="modal fade" id="validationModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Alert</h5>
+        <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button> -->
+      </div>
+      <div class="modal-body">
+        <p id="alert_text">Info Text</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary ok" style="background-color: #3ABD6F!important; border: none; border-radius: 50px; color: #fff;"  data-dismiss="modal">Ok</button>
+       <!--  <button type="button" class="btn btn-primary">Save changes</button> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- success modal show -->
+<div class="modal fade" id="successModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Information</h5>
+        <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button> -->
+      </div>
+      <div class="modal-body">
+        <p id="success_alert_text">Info Text</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary ok" style="background-color: #3ABD6F!important; border: none; border-radius: 50px; color: #fff;"  data-dismiss="modal">Ok</button>
+       <!--  <button type="button" class="btn btn-primary">Save changes</button> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- loader modal -->
+
+<div id="loaderModel" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <div class="loaderImg2" id="loaderImg2">
+               <img src = "{{url('public/loader.gif')}}">
+            </div>
+
+  </div>
+</div>
+
 <!--   Core JS Files   -->
 	<script src="{{url('public/admin/assets/js/core/jquery.3.2.1.min.js')}}"></script>
 	<script src="{{url('public/admin/assets/js/core/popper.min.js')}}"></script>
@@ -320,7 +366,7 @@ html .mt-5, html .my-5 {
 	<script src="{{url('public/admin/assets/js/plugin/datatables/datatables.min.js')}}"></script>
 
 	<!-- Bootstrap Notify -->
-	<!-- <script src="../assets/js/plugin/bootstrap-notify/bootstrap-notify.min.js"></script> -->
+	<!-- <script src="{{url('public/admin/assets/js/plugin/bootstrap-notify/bootstrap-notify.min.js')}}"></script> -->
 
 	<!-- jQuery Vector Maps -->
 	<script src="{{url('public/admin/assets/js/plugin/jqvmap/jquery.vmap.min.js')}}"></script>
@@ -334,262 +380,134 @@ html .mt-5, html .my-5 {
 
 	<!-- Atlantis DEMO methods, don't include it in your project! -->
 	<script src="{{url('public/admin/assets/js/setting-demo.js')}}"></script>
-	<script src="{{url('public/admin/assets/js/demo.js')}}"></script>
-	<script src="https://canvasjs.com/assets/script/canvasjs.min.js')}}"></script>
+	<!-- <script src="{{url('public/admin/assets/js/demo.js')}}"></script> -->
+	<!-- <script src="https://canvasjs.com/assets/script/canvasjs.min.js')}}"></script> -->
+	
 	<script>
-window.onload = function () {
+		
+		// Validate venue user form & save, display record
 
-var chart = new CanvasJS.Chart("chartContainer", {
-	animationEnabled: true,
-	title:{
-		text: ""
-	},
-	axisX:{
-		valueFormatString: "DD MMM",
-		crosshair: {
-			enabled: true,
-			snapToDataPoint: true
-		}
-	},
-	axisY: {
-		title: "",
-		valueFormatString: "2k",
-		crosshair: {
-			enabled: true,
-			snapToDataPoint: true,
-			labelFormatter: function(e) {
-				return "$" + CanvasJS.formatNumber(e.value, "2k");
+		$('#venue_add_new').on("click",function(){
+			$(".invalid_cls").remove();
+			var vuser = $('#venue_username').val();
+			var vuser_password = $('#venue_user_password').val();
+			var vselection = $('#venue_selection').val();
+			var vstatus = $('#venue_user_status').val();
+			var vtoken = $('#token').val();
+			
+			if($('#venue_username').val()==""){
+				$("#alert_text").text("Please enter username.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+			return false;
+
 			}
-		}
-	},
-	data: [{
-		type: "area",
-		xValueFormatString: "DD MMM",
-		yValueFormatString: "2k",
-		dataPoints: [
-			{ x: new Date(2016, 07, 01), y: 76.727997 },
-			{ x: new Date(2016, 07, 02), y: 75.459999 },
-			{ x: new Date(2016, 07, 03), y: 76.011002 },
-			{ x: new Date(2016, 07, 04), y: 75.751999 }
-		]
-	}]
-});
-chart.render();
 
+			if($('#venue_user_password').val()==""){
+				$("#alert_text").text("Please enter password.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+			return false;
 
-var chart = new CanvasJS.Chart("chartContainer1", {
-	animationEnabled: true,
-	title:{
-		text: ""
-	},
-	axisX:{
-		valueFormatString: "DD MMM",
-		crosshair: {
-			enabled: true,
-			snapToDataPoint: true
-		}
-	},
-	axisY: {
-		title: "",
-		valueFormatString: "2k",
-		crosshair: {
-			enabled: true,
-			snapToDataPoint: true,
-			labelFormatter: function(e) {
-				return "$" + CanvasJS.formatNumber(e.value, "2k");
 			}
-		}
-	},
-	data: [{
-		type: "area",
-		xValueFormatString: "DD MMM",
-		yValueFormatString: "2k",
-		dataPoints: [
-			{ x: new Date(2016, 07, 01), y: 76.727997 },
-			{ x: new Date(2016, 07, 02), y: 75.459999 },
-			{ x: new Date(2016, 07, 03), y: 76.011002 },
-			{ x: new Date(2016, 07, 04), y: 75.751999 }
-		]
-	}]
-});
-chart.render();
 
-var chart = new CanvasJS.Chart("chartContainer2", {
-	animationEnabled: true,
-	title:{
-		text: ""
-	},
-	axisX:{
-		valueFormatString: "DD MMM",
-		crosshair: {
-			enabled: true,
-			snapToDataPoint: true
-		}
-	},
-	axisY: {
-		title: "",
-		valueFormatString: "2k",
-		crosshair: {
-			enabled: true,
-			snapToDataPoint: true,
-			labelFormatter: function(e) {
-				return "$" + CanvasJS.formatNumber(e.value, "2k");
+			if($("#venue_selection").val()==""){
+				$("#alert_text").text("Please select venue.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+			return false;
+
 			}
-		}
-	},
-	data: [{
-		type: "area",
-		xValueFormatString: "DD MMM",
-		yValueFormatString: "2k",
-		dataPoints: [
-			{ x: new Date(2016, 07, 01), y: 76.727997 },
-			{ x: new Date(2016, 07, 02), y: 75.459999 },
-			{ x: new Date(2016, 07, 03), y: 76.011002 },
-			{ x: new Date(2016, 07, 04), y: 75.751999 }
-		]
-	}]
-});
-chart.render();
 
-var chart = new CanvasJS.Chart("chartContainer3", {
-	animationEnabled: true,
-	title:{
-		text: ""
-	},
-	axisX:{
-		valueFormatString: "DD MMM",
-		crosshair: {
-			enabled: true,
-			snapToDataPoint: true
-		}
-	},
-	axisY: {
-		title: "",
-		valueFormatString: "2k",
-		crosshair: {
-			enabled: true,
-			snapToDataPoint: true,
-			labelFormatter: function(e) {
-				return "$" + CanvasJS.formatNumber(e.value, "2k");
+			if($("#venue_user_status").val()==""){
+				$("#alert_text").text("Please select status.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+			return false;
+
 			}
-		}
-	},
-	data: [{
-		type: "area",
-		xValueFormatString: "DD MMM",
-		yValueFormatString: "2k",
-		dataPoints: [
-			{ x: new Date(2016, 07, 01), y: 76.727997 },
-			{ x: new Date(2016, 07, 02), y: 75.459999 },
-			{ x: new Date(2016, 07, 03), y: 76.011002 },
-			{ x: new Date(2016, 07, 04), y: 75.751999 }
-		]
-	}]
-});
-chart.render();
 
-var chart = new CanvasJS.Chart("chartContainer4", {
-	animationEnabled: true,
-	theme: "light2", // "light1", "light2", "dark1", "dark2"
-	title:{
-		text: "Products Offer Redemption"
-	},
-	axisY: {
-		title: ""
-	},
-	data: [{        
-		type: "column",  
-		showInLegend: true, 
-		legendMarkerColor: "grey",
-		legendText: "",
-		dataPoints: [      
-			{ y: 6,  label: "Special Treat" },
-			{ y: 4, label: "Birthday Coffee" },
-			{ y: 2,  label: "Free Pizza" },
-			{ y: 0,  label: "Free Coffee" }
-		]
-	}]
-});
-chart.render();
-
-}
-
-</script>
-	<script>
-		$('#lineChart').sparkline([102,109,120,99,110,105,115], {
-			type: 'line',
-			height: '70',
-			width: '100%',
-			lineWidth: '2',
-			lineColor: 'rgba(255, 255, 255, .5)',
-			fillColor: 'rgba(255, 255, 255, .15)'
-		});
-
-		$('#lineChart2').sparkline([99,125,122,105,110,124,115], {
-			type: 'line',
-			height: '70',
-			width: '100%',
-			lineWidth: '2',
-			lineColor: 'rgba(255, 255, 255, .5)',
-			fillColor: 'rgba(255, 255, 255, .15)'
-		});
-
-		$('#lineChart3').sparkline([105,103,123,100,95,105,115], {
-			type: 'line',
-			height: '70',
-			width: '100%',
-			lineWidth: '2',
-			lineColor: 'rgba(255, 255, 255, .5)',
-			fillColor: 'rgba(255, 255, 255, .15)'
-		});
-	</script>	
-	<script >
-		$(document).ready(function() {
-			$('#basic-datatables').DataTable({
+			$.ajax({
+				url:'{{ route("admin.createvenue") }}',
+				type:'POST',
+				dataType:'JSON',
+				data:{v_user:vuser,v_password:vuser_password,v_name:vselection,v_status:vstatus,'_token':vtoken},
+				beforeSend:function(){
+          $("#loaderModel").modal("show");
+					$("#loaderModel").unbind("click");
+				},
+				success:function(data){
+					setTimeout(function(){
+						$("#loaderModel").modal("hide");
+		        $("#successModel").modal("show");
+	        	$("#success_alert_text").text(data.message);
+	        	$("#successModel").unbind("click");
+						$('#basic-datatables').DataTable().ajax.reload();
+					},500);
+				},error: function(data, textStatus, xhr) {
+          if(data.status == 422){
+            setTimeout(function(){
+            		$("#loaderModel").modal("hide");
+                var result = data.responseJSON;
+               	if(result['username_err'] && result['username_err'].length > 0){
+               		$("#alert_text").text(result['username_err']);
+									$("#validationModel").modal("show");
+									$("#validationModel").unbind("click");
+               	}
+                return false;
+            },500);
+          } 
+      	}
 			});
 
-			$('#multi-filter-select').DataTable( {
-				"pageLength": 5,
-				initComplete: function () {
-					this.api().columns().every( function () {
-						var column = this;
-						var select = $('<select class="form-control"><option value=""></option></select>')
-						.appendTo( $(column.footer()).empty() )
-						.on( 'change', function () {
-							var val = $.fn.dataTable.util.escapeRegex(
-								$(this).val()
-								);
-
-							column
-							.search( val ? '^'+val+'$' : '', true, false )
-							.draw();
-						} );
-
-						column.data().unique().sort().each( function ( d, j ) {
-							select.append( '<option value="'+d+'">'+d+'</option>' )
-						} );
-					} );
-				}
-			});
-
-			// Add Row
-			$('#add-row').DataTable({
-				"pageLength": 5,
-			});
-
-			var action = '<td> <div class="form-button-action"> <button type="button" data-toggle="tooltip" title="" class="btn btn-link btn-primary btn-lg" data-original-title="Edit Task"> <i class="fa fa-edit"></i> </button> <button type="button" data-toggle="tooltip" title="" class="btn btn-link btn-danger" data-original-title="Remove"> <i class="fa fa-times"></i> </button> </div> </td>';
-
-			$('#addRowButton').click(function() {
-				$('#add-row').dataTable().fnAddData([
-					$("#addName").val(),
-					$("#addPosition").val(),
-					$("#addOffice").val(),
-					action
-					]);
-				$('#addRowModal').modal('hide');
-
-			});
 		});
+
+		function displayVenue(){
+			let table =$("#basic-datatables").DataTable({
+				processing:true,
+				serverSide:true,
+				retrieve: true,
+				paging: true,
+				searching:true,
+				ajax:{
+					url:"{{ route('admin.venuetable') }}",
+					type:"POST",
+					data:{'_token':'{{csrf_token()}}'},
+				},
+				columns:[
+					{data:'id',name:'id'},
+					{data:'username',name:'username'},
+					{data:'venu.venue_name', name:'venu.venue_name'},
+					{data:'status', name:'status'},
+					{data:'created_at', name:'created_at'},
+					{data:'updated_at', name:'updated_at'},
+				]
+			});
+		}
+
+		displayVenue();
+
+		$(document).ready(function(){
+			$(".ok").on("click",function(){
+				$("#validationModel").modal("hide");
+				$("#successModel").modal("hide");
+			})
+		});
+		$('#basic-datatables_filter label input[type="search"]').addClass('input_control_search');
+		
+
+		$('.input-control').on('keydown',function(e){
+			if(e.which===32){
+				return false;
+			}
+		});
+
+		$(document).on('keydown','.input_control_search',function(e){
+			if(e.which===32 && e.target.selectionStart===0){
+				return false;
+			}
+		});
+
 	</script>
 </body>
 </html>

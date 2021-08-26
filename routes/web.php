@@ -116,6 +116,8 @@ Route::group(['middleware' => 'TimeZone','namespace' => 'Admin','prefix'=>'/admi
         Route::match(['GET','POST'],'events-alldata','TabController@eventsallData')->name('eventsalldata');
         Route::match(['GET','POST'],'events-remove','TabController@eventRemove')->name('eventremove');
 
+        Route::match(['GET','POST'],'venue-create-display','TabController@CreateVenue')->name('createvenue');
+        Route::match(['GET','POST'],'venue-table','TabController@venueTableRecords')->name('venuetable');
 
         Route::match(['GET','POST'],'venu-select','TabController@venuSelect')->name('venu_select');
         Route::match(['GET','POST'],'save-offers','TabController@saveOffers')->name('saveoffers');

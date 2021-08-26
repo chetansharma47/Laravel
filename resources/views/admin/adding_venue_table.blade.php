@@ -407,7 +407,7 @@
             "columns": [
             // {data: 'DT_RowIndex', name: 'DT_RowIndex'},
                 {data: 'username', name: 'username'},
-	            {data: 'venue_name', name: 'venue_name'},
+	            {data: 'venu.venue_name', name: 'venu.venue_name'},
 	            {data: 'device_model', name: 'device_model'},
 	            {data: 'mac_address', name: 'mac_address'},
 	            {data: 'authorized_status', name: 'authorized_status'},

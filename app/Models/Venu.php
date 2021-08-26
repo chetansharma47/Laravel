@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Cashback;
 use App\Models\Offer;
 use App\Models\Event;
+use App\Models\VenueUser;
 
 
 class Venu extends Model
@@ -53,4 +54,5 @@ class Venu extends Model
     public function events(){
         return $this->hasMany(Event::class);
     }
+
 }

@@ -134,6 +134,16 @@
 			margin-bottom: 0rem;
 		}
 
+		.event_desc::-webkit-scrollbar{
+			width: 0px;
+			scrollbar-width: 0px;
+		}
+		.google_map::-webkit-scrollbar{
+			width: 0px;
+			scrollbar-width: 0px;
+		}
+		
+
 	</style>
 	<style>
 		body {
@@ -180,7 +190,7 @@
 										</a>
 									</li>
 									<li class="nav-item">
-										<a class="nav-link" href="{{route('admin.login')}}" style="color: #FFDA7A;">
+										<a class="nav-link" href="{{route('admin.logout')}}" style="color: #FFDA7A;">
 											logout
 										</a>
 									</li>
@@ -276,7 +286,7 @@
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">Information</h5>
+        <h5 class="modal-title" id="exampleModalLongTitle">Success</h5>
         <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button> -->
@@ -388,17 +398,16 @@
 					  			var slice_name = imagename;
 					  		}
 								$('#uniq_id_db').html(`<span id="unique" uniq-id="${list[i].unique_id}"></span>`);
-
-								if(list[i].deleted_at==null){
+								console.log(list[i]);
+								if(list[i].deleted_at==null && list[i].venu.deleted_at==null){
 
 									$('.menu-lisitng ul.listitem').append(`<li class="event_list" uniq-id="${list[i].unique_id}" data-id="${list[i].id}" data-tab="uniq-${list[i].unique_id}"><input type="text" class="input_tier_name" maxlength="30" uniq-id="${list[i].unique_id}" value="${list[i].event_name}"></li>`);
-
 									$('.formdata').append(eventform(list[i].unique_id,list[i].event_name,list[i].event_description,list[i].from_date,list[i].to_date,list[i].when_day,list[i].event_time,list[i].to_time,list[i].status,list[i].image,list[i].venu_id,list[i].venu,list[i].venue_all,slice_name));
 
 										for(var j=0; j<list[i].venue_all.length; j++){
 											var venu_data_id = list[i].venue_all[j].id;
 											var venu_data_name = list[i].venue_all[j].venue_name;
-											var option = `<option value="${venu_data_id}">${venu_data_name}</option>`;
+											var option = `<option value="${venu_data_id}" ${list[i].venu_id == venu_data_id ? 'selected' : ''}>${venu_data_name}</option>`;
 											$('.venue_name[uniq-id='+list[i].unique_id+']').append(option);
 										}
 								}
@@ -415,7 +424,6 @@
 		}
 
 		eventRecords();
-		
 
 		function eventform(id,eventname,desc,fromdate,todate,whenday,event_time,to_time,status,image,venuid,venuEvelist,venu_other_list,slice_name){
 			// for checkboxes seleted days 
@@ -530,7 +538,7 @@
 							</label>
 							<div class="selectdiv">
 								<select class="form-control venue_name form-group" uniq-id="${id}" name="venue_name" style="padding: .6rem 1rem; position: relative; cursor:pointer;">
-								<option value="${(venuid)?venuEvelist.id:''}">${(venuid)?venuEvelist.venue_name:'Select Venue name'}</option>
+								<option value="">Select Venue name</option>
 								</select>
 							</div>
 							<div class="mt-3">
@@ -624,7 +632,7 @@
 									Google Map Location Link
 								</label>
 
-								<textarea class="form-control google_map" style="font-size: 14px !important; background-color: #8D8A8A !important; overflow-y: hidden;" rows="3" placeholder="Google Map Location Link" uniq-id="${id}" disabled>${(venuid)?venuEvelist.google_map_location_link:''}</textarea>
+								<textarea class="form-control google_map" style="font-size: 14px !important; background-color: #8D8A8A !important; padding:6px 10px;" rows="3" placeholder="Google Map Location Link" uniq-id="${id}" disabled>${(venuid)?venuEvelist.google_map_location_link:''}</textarea>
 							</div>
 						</div>
 					</div>
@@ -647,7 +655,7 @@
 									Book Now Link
 								</label>
 
-								<textarea class="form-control book_link" uniq-id="${id}" style="font-size: 14px !important; background-color: #8D8A8A !important" rows="2" placeholder="Book Now Link" disabled >${(venuid)?venuEvelist.book_now_link:''}</textarea>
+								<textarea class="form-control book_link" uniq-id="${id}" style="font-size: 14px !important; background-color: #8D8A8A !important; padding:6px 10px;" rows="2" placeholder="Book Now Link" disabled >${(venuid)?venuEvelist.book_now_link:''}</textarea>
 							</div> 
 						</div>
 					</div>
@@ -658,9 +666,9 @@
 							</label>
 							<div class="selectdiv">
 								<select class="form-control event_status form-group" uniq-id="${id}" style="padding: .6rem 1rem; position: relative; cursor:pointer;">
-									<option value="${(status)?status:''}" readonly>${(status)?status:'Select Event Status'}</option>
-									<option value="Active">Active</option>
-									<option value="Inactive">Inactive</option>
+									<option value="">Select Status</option>
+									<option ${(status=='Active')?'selected':''} value="Active">Active</option>
+									<option ${(status=='Inactive')?'selected':''} value="Inactive">Inactive</option>
 								</select>
 							</div>
 						</div>
@@ -705,7 +713,7 @@
 			var get_inc_last_id = $('#uniq_id_db #unique').attr('uniq-id');
 			$('.menu-lisitng ul.listitem li').removeClass('active');
 			$('.form_data').removeClass('active');
-			$('.menu-lisitng ul.listitem').append(`<li class="event_list active" data-tab="uniq-${get_inc_last_id}" uniq-id="${get_inc_last_id}" href="javascript:void(0);"><input type="text" class="input_tier_name" maxlength="30" value="" uniq-id="${get_inc_last_id}" placeholder="Enter Venue Name"></li>`);
+			$('.menu-lisitng ul.listitem').append(`<li class="event_list active" data-tab="uniq-${get_inc_last_id}" uniq-id="${get_inc_last_id}" href="javascript:void(0);"><input type="text" class="input_tier_name" maxlength="30" value="" uniq-id="${get_inc_last_id}" placeholder="Enter Event Name"></li>`);
 
 			var recent_id = $('.event_list.active').attr('uniq-id');
 
@@ -771,7 +779,7 @@
 				}
 
 					$("#successModel").modal("show");
-		  		$("#success_alert_text").text('Event successfully Deleted');
+		  		$("#success_alert_text").text('Event deleted successfully.');
 		    	$("#successModel").unbind("click");
 			}
 		}
@@ -811,22 +819,29 @@ if(file){
 			var size = file.size;
 
 			if(size > 5242880){
+				event.target.value="";
+				$(".event_img[uniq-id="+form_activeid+"]").attr('src','');
+				$(".event_img[uniq-id="+form_activeid+"]").attr('value','');
+				$(".event_imghidden[uniq-id="+form_activeid+"]").val('');
+				$("#img_upload[uniq-id="+form_activeid+"]").attr('src','');
 				$("#alert_text").text("Image should be less than or equal to 5 MB.");
         $("#validationModel").modal("show");
         $("#validationModel").unbind("click");
+				
+        return false;
 			}
 			var reader = new FileReader();
 			reader.onload = function(e){
 				$(".event_img[uniq-id="+form_activeid+"]").attr('src',e.target.result);
-				$(".event_img[uniq-id="+form_activeid+"]").val(slice_name);
-				$(".event_imghidden[uniq-id="+form_activeid+"]").val(file_nameshow);
+				$(".event_img[uniq-id="+form_activeid+"]").attr('value',slice_name);
+				$(".event_imghidden[uniq-id="+form_activeid+"]").attr('value',file_nameshow);
 				$("#img_upload[uniq-id="+form_activeid+"]").attr('src',e.target.result);
 				$('.event_imghidden2[uniq-id='+form_activeid+']').val('');
 			}
 			reader.readAsDataURL(file);
 
 		}else{
-			$("#alert_text").text("Image must be of .jpg, .jpeg and .png format.");
+			$("#alert_text").text("Please upload .jpg, .jpeg or .png format file only.");
       $("#validationModel").modal("show");
       $("#validationModel").unbind("click");
 		}
@@ -849,6 +864,7 @@ if(file){
 });
 
 		$(document).on('click','.common_btn',function(){
+
 			let uniq = $(this).attr('uniq-id');
 			let eventname = $('.event_name[uniq-id='+uniq+']').val();
 			let eventimg = $('.event_img[uniq-id='+uniq+']').attr('src');
@@ -865,6 +881,8 @@ if(file){
 			let to_time_data = $('.to_time[uniq-id='+uniq+']').attr('data-time');
 			let event_status = $('.event_status[uniq-id='+uniq+']').val();
 			let days_slected = $('.day[uniq-id='+uniq+']').val();
+			let curr_time = new Date();
+			let time_string = curr_time.toTimeString().slice(0,8);
 
   		let array = [];
   		 $('.day:checked[uniq-id='+uniq+']').each(function() {
@@ -880,79 +898,100 @@ if(file){
 				return false;
 			}
 			if(eventname.match(/^\s*$/)){
-				$("#alert_text").text("Please enter event name");
+				$("#alert_text").text("Please enter event name.");
 				$("#validationModel").modal("show");
 				$("#validationModel").unbind("click");
 				return false;
 			}
 			if(eventimg==""){
-				$("#alert_text").text("Please upload image");
+				$("#alert_text").text("Please upload image.");
 				$("#validationModel").modal("show");
 				$("#validationModel").unbind("click");
 				return false;
 			}
 			if(org_img_valu==""){
-				$("#alert_text").text("Please upload image");
+				$("#alert_text").text("Please upload image.");
 				$("#validationModel").modal("show");
 				$("#validationModel").unbind("click");
 				return false;
 			}
 			if(eventdesc==""){
-				$("#alert_text").text("Please enter event description");
+				$("#alert_text").text("Please enter event description.");
 				$("#validationModel").modal("show");
 				$("#validationModel").unbind("click");
 				return false;
 			}
-			if(array==""){
-  		 		$("#alert_text").text("Please select days");
-					$("#validationModel").modal("show");
-					$("#validationModel").unbind("click");
-					return false;
-  		 }
-			if(from_date==""){
-				$("#alert_text").text("Please enter from date");
-				$("#validationModel").modal("show");
-				$("#validationModel").unbind("click");
-				return false;
-			}
-			if(to_date==""){
-				$("#alert_text").text("Please enter to date");
-				$("#validationModel").modal("show");
-				$("#validationModel").unbind("click");
-				return false;
-			}
-			if(from_date > to_date){
-				$("#alert_text").text("To date must be greater than From date.");
-				$("#validationModel").modal("show");
-				$("#validationModel").unbind("click");
-				return false;
-			}
-			if(to_date == from_date){
-				$("#alert_text").text("To date should not be equal to From date");
+			if(eventdesc.match(/^\s*$/)){
+				$("#alert_text").text("Please enter valid event description.");
 				$("#validationModel").modal("show");
 				$("#validationModel").unbind("click");
 				return false;
 			}
 			if(eventvenueid==""){
-				$("#alert_text").text("Please select venue name");
+				$("#alert_text").text("Please select venue name.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
+			if(array==""){
+  		 		$("#alert_text").text("Please select days.");
+					$("#validationModel").modal("show");
+					$("#validationModel").unbind("click");
+					return false;
+  		 }
+			if(from_date==""){
+				$("#alert_text").text("Please select from date.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
+			if(to_date==""){
+				$("#alert_text").text("Please select to date.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
+			if(from_date > to_date){
+				$("#alert_text").text("To date should be greater than from date.");
 				$("#validationModel").modal("show");
 				$("#validationModel").unbind("click");
 				return false;
 			}
 			if(event_time==""){
-				$("#alert_text").text("Please select from time");
+				$("#alert_text").text("Please select from time.");
 				$("#validationModel").modal("show");
 				$("#validationModel").unbind("click");
 				return false;
 			}
+			
+			// if(event_time_data <= time_string){
+			// 	$("#alert_text").text("From time shoud be greater than current time.");
+			// 	$("#validationModel").modal("show");
+			// 	$("#validationModel").unbind("click");
+			// 	return false;
+			// }
 			if(to_time==""){
-				$("#alert_text").text("Please select to time");
+				$("#alert_text").text("Please select to time.");
 				$("#validationModel").modal("show");
 				$("#validationModel").unbind("click");
 				return false;
 			}
+			if(event_time_data >= to_time_data){
+				$("#alert_text").text("To time should be greater than from time.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
+
+			// if(event_time_data == to_time_data){
+			// 	$("#alert_text").text("To time should be greater than from time.");
+			// 	$("#validationModel").modal("show");
+			// 	$("#validationModel").unbind("click");
+			// 	return false;
+			// }
+
 			if(event_status==""){
-				$("#alert_text").text("Please select status");
+				$("#alert_text").text("Please select status.");
 				$("#validationModel").modal("show");
 				$("#validationModel").unbind("click");
 				return false;
@@ -1068,6 +1107,26 @@ if(file){
 				$('.book_link[uniq-id='+uniq_id+']').val('');
 			}
 		});
+
+		// for restrict first time blank space
+	
+		$(document).on('keydown','.event_desc, .input_tier_name, .event_name',function(e){
+			if(e.which===32 && e.target.selectionStart===0){
+				return false;
+			}
+		});
+
+		// $(document).on('change','.event_time',function(){
+		// 	var select_time = $(this).attr('data-time');
+		// 	let curr_time = new Date();
+		// 	let time_string = curr_time.toTimeString().slice(0,8);
+
+		// 	if(select_time < time_string){
+		// 		$("#alert_text").text("From time shoud be greater than current time.");
+		// 		$("#validationModel").modal("show");
+		// 		$("#validationModel").unbind("click");
+		// 	}
+		// });
 
 	</script>
 </body>

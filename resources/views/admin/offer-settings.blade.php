@@ -146,6 +146,15 @@
 		.offer_form_data.active{
 			display: block;
 		}
+
+		.offer_desc::-webkit-scrollbar{
+			width: 0px;
+			scrollbar-width: 0px;
+		}
+		.offer_venu_googlemap::-webkit-scrollbar{
+			width: 0px;
+			scrollbar-width: 0px;
+		}
 	</style>
 </head>
 <body>
@@ -186,7 +195,7 @@
 										</a>
 									</li>
 									<li class="nav-item">
-										<a class="nav-link" href="{{route('admin.login')}}" style="color: #FFDA7A;">
+										<a class="nav-link" href="{{route('admin.logout')}}" style="color: #FFDA7A;">
 											logout
 										</a>
 									</li>
@@ -303,7 +312,7 @@
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">Information</h5>
+        <h5 class="modal-title" id="exampleModalLongTitle">Success</h5>
         <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button> -->
@@ -390,7 +399,7 @@
 		}
 		
 		// offer form 
-		function offerform(uniqid,venuid,offer_name,offer_desc,imagename,from_date,to_date,offer_setting,status,time,to_time,slice_name,dataid,venudata,offer_id,datacity,offertype,gender){
+		function offerform(uniqid,venuid,offer_name,offer_desc,imagename,from_date,to_date,offer_setting,txn_condition,status,time,to_time,slice_name,dataid,venudata,offer_id,datacity,offertype,gender,setting_from_price,setting_to_price){
 
 			if(imagename){
 				var imageurl = `<input type="text" readonly class="form-control form-control-user offer_image" style="cursor:pointer;" value="${(imagename)?slice_name:''}" src="${imagename}" venu-id="${venuid}" uniq-id="${uniqid}">`
@@ -416,9 +425,9 @@
 	    	let to_new_hr = to_newtime[0];
 	    	let to_new_min = to_newtime[1];
 	    	let to_new_time_12 = to_new_hr + ':' + to_new_min + ' ' + am_pm.toUpperCase();
-	    	var to_time_input = `<input type="text" offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}" ${(offertype=='BirthdayOffer')?'disabled':''} class="form-control form-control-user offer_to_time" style="cursor:pointer;" readonly data-time="${(to_time)?to_time:''}" value="${to_new_time_12}" venu-id="${venuid}" uniq-id="${uniqid}">`
+	    	var to_time_input = `<input type="text" offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}" ${(offertype=='BirthdayOffer')?'disabled':''} class="form-control form-control-user offer_to_time" ${(offertype=='Normal')?'style="cursor:pointer;"':''} readonly data-time="${(to_time)?to_time:''}" value="${to_new_time_12}" venu-id="${venuid}" uniq-id="${uniqid}">`
 	    }else{
-	    	var to_time_input = `<input type="text" offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}" ${(offertype=='BirthdayOffer')?'disabled':''} class="form-control form-control-user offer_to_time" style="cursor:pointer;" readonly data-time="" value="" venu-id="${venuid}" uniq-id="${uniqid}">`
+	    	var to_time_input = `<input type="text" offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}" ${(offertype=='BirthdayOffer')?'disabled':''} class="form-control form-control-user offer_to_time" ${(offertype=='Normal')?'style="cursor:pointer;"':''} readonly data-time="" value="" venu-id="${venuid}" uniq-id="${uniqid}">`
 	    }
 
 
@@ -436,10 +445,10 @@
 	    	let new_hr = newtime[0];
 	    	let new_min = newtime[1];
 	    	let new_time_12 = new_hr + ':' + new_min + ' ' + am_pm.toUpperCase();
-	    	var time_input = `<input type="text" offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}" ${(offertype=='BirthdayOffer')?'disabled':''} class="form-control form-control-user offer_time" style="cursor:pointer;" readonly data-time="${(time)?time:''}" value="${new_time_12}" venu-id="${venuid}" uniq-id="${uniqid}">`
+	    	var time_input = `<input type="text" offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}" ${(offertype=='BirthdayOffer')?'disabled':''} class="form-control form-control-user offer_time" ${(offertype=='Normal')?'style="cursor:pointer;"':''}   readonly data-time="${(time)?time:''}" value="${new_time_12}" venu-id="${venuid}" uniq-id="${uniqid}">`
 
 	    }else{
-	    	var time_input = `<input type="text" offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}" ${(offertype=='BirthdayOffer')?'disabled':''} class="form-control form-control-user offer_time" style="cursor:pointer;" readonly data-time="${(time)?time:''}" value="" venu-id="${venuid}" uniq-id="${uniqid}">`
+	    	var time_input = `<input type="text" offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}" ${(offertype=='BirthdayOffer')?'disabled':''} class="form-control form-control-user offer_time" ${(offertype=='Normal')?'style="cursor:pointer;"':''} readonly data-time="${(time)?time:''}" value="" venu-id="${venuid}" uniq-id="${uniqid}">`
 	    }
 
 			return `<div class="offer_form_data" id="uniq-${uniqid}" venu-id="${venuid}" uniq-id="${uniqid}"><div class="criteria_section">
@@ -456,7 +465,7 @@
 										<label>
 											DOB
 										</label>
-										<input type="text" class="form-control form-control-user criteria_dob" venu-id="${venuid}" uniq-id="${uniqid}" value="Today" readonly style="font-size: 14px !important; padding:.6rem 1rem; border-radius: 10px;">
+										<input type="text" class="form-control form-control-user criteria_dob" venu-id="${venuid}" uniq-id="${uniqid}" value="Today" disabled style="font-size: 14px !important; padding:.6rem 1rem; border-radius: 10px;">
 									</div>
 									<div class="col-md-3 venue_inputs">
 										<label>
@@ -494,7 +503,7 @@
 											City of residence
 										</label>
 										<select offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}" ${(offertype=='BirthdayOffer')?'disabled':''} class="form-control form-group criteria_city" style="padding: .6rem 1rem; position: relative; font-size: 14px !important; border-radius: 10px;background-size: 12px!important; background-position: 91% 50%!important; cursor:pointer;" venu-id="${venuid}" uniq-id="${uniqid}">
-										<option value="${(datacity)?datacity.id:''}" >${(datacity)?datacity.city_name:'Select City'}</option>
+										<option value="">Select City</option>
 										</select>
 									</div>
 									<div class="col-md-3 venue_inputs">
@@ -502,9 +511,9 @@
 											Transaction Amount Condition
 										</label>
 										<select offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}" ${(offertype=='BirthdayOffer')?'disabled':''} class="form-control form-group criteria_txn_condition" style="padding: .6rem 1rem; position: relative; font-size: 14px !important; border-radius: 10px;background-size: 12px!important; background-position: 91% 50%!important; cursor:pointer;" venu-id="${venuid}" uniq-id="${uniqid}">
-											<option value="${(offer_id) ? offer_setting.txn_amount_condition : ''}">${(offer_id) ? offer_setting.txn_amount_condition : 'Select Amount'}</option>
-											<option value="Between">Between</option>
-											<option value="Greater Than">Greater Than</option>
+											<option value="">Select Amount</option>
+											<option value="Between" ${(txn_condition=='Between')?'selected':''}>Between</option>
+											<option value="Greater Than" ${(txn_condition=='Greater Than')?'selected':''}>Greater Than</option>
 										</select>
 									</div>
 									<div class="col-md-3 venue_inputs">
@@ -512,8 +521,8 @@
 											Transaction Amount
 										</label>
 										<div class="d-flex">
-											<input type="text" offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}" ${(offertype=='BirthdayOffer')?'disabled':''} class="form-control form-control-user criteria_from_price" placeholder="From Price" style="font-size: 14px !important; border-radius: 10px; margin-right: 12px;"  venu-id="${venuid}" value="${(offer_id) ? offer_setting.from_price : ''}" uniq-id="${uniqid}" maxlength="10">
-											<input type="text" offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}" ${(offertype=='BirthdayOffer')?'disabled':''} class="form-control form-control-user criteria_to_price" placeholder="To Price" style="font-size: 14px !important; border-radius: 10px;" value="${(offer_id) ? offer_setting.to_price : ''}" maxlength="10" venu-id="${venuid}" uniq-id="${uniqid}">
+											<input type="text" offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}" ${(offertype=='BirthdayOffer')?'disabled':''} class="form-control form-control-user criteria_from_price" placeholder="From Price" style="font-size: 14px !important; border-radius: 10px; margin-right: 12px;"  venu-id="${venuid}" value="${(setting_from_price) ? setting_from_price : ''}" uniq-id="${uniqid}" maxlength="10">
+											<input type="text" offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}" ${(offertype=='BirthdayOffer')?'disabled':''} class="form-control form-control-user criteria_to_price" placeholder="To Price" style="font-size: 14px !important; border-radius: 10px;" value="${(setting_to_price) ? setting_to_price : ''}" maxlength="10" venu-id="${venuid}" uniq-id="${uniqid}">
 										</div>
 									</div>
 								</div>
@@ -526,14 +535,14 @@
 							<label>
 								Offer Name
 							</label>
-							<input type="text" offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}" ${(offertype=='BirthdayOffer')?'disabled':''}  class="form-control form-control-user offer_name" placeholder="Offer Name" value="${(offer_name)?offer_name:''}" maxlength="30" venu-id="${venuid}" uniq-id="${uniqid}">
+							<input type="text" offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}" class="form-control form-control-user offer_name" placeholder="Offer Name" value="${(offer_name)?offer_name:''}" maxlength="30" venu-id="${venuid}" uniq-id="${uniqid}">
 						</div>
 						<div class="col-md-6 venue_inputs">
 							<label>
 								Venue Name
 							</label>
 
-							<input type="text" class="form-control form-control-user offer_venu_list" value="${(venudata)?venudata.venue_name:""}" venu-id="${venuid}" uniq-id="${uniqid}" style="cursor:pointer;" readonly>
+							<input type="text" class="form-control form-control-user offer_venu_list" value="${(venudata)?venudata.venue_name:""}" venu-id="${venuid}" uniq-id="${uniqid}" disabled>
 							
 						</div>
 					</div>
@@ -542,7 +551,7 @@
 							<label>
 								Offer Description
 							</label>
-							<textarea offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}" ${(offertype=='BirthdayOffer')?'disabled':''} class="form-control offer_desc" style="font-size: 14px !important; padding:6px 10px;" rows="2" placeholder="Offer Description" maxlength="1000" venu-id="${venuid}" uniq-id="${uniqid}">${(offer_desc)?offer_desc:''}</textarea>
+							<textarea offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}"  class="form-control offer_desc" style="font-size: 14px !important; padding:6px 10px;" rows="2" placeholder="Offer Description" maxlength="1000" venu-id="${venuid}" uniq-id="${uniqid}">${(offer_desc)?offer_desc:''}</textarea>
 						</div>
 						<div class="col-md-6 venue_inputs">
 							<div class="">
@@ -550,7 +559,7 @@
 									Address (Should Be Auto Filled)
 								</label>
 
-								<input type="text" class="form-control form-control-user offer_venu_address" placeholder="Venu Address" value="${(venudata)?venudata.address:''}" style="background-color: #8D8A8A !important" readonly venu-id="${venuid}" uniq-id="${uniqid}">
+								<input type="text" class="form-control form-control-user offer_venu_address" placeholder="Venu Address" value="${(venudata)?venudata.address:''}" style="background-color: #8D8A8A !important" disabled venu-id="${venuid}" uniq-id="${uniqid}">
 							</div>
 						</div>
 					</div>
@@ -560,7 +569,7 @@
 								Image
 							</label>
 							${imageurl}
-							<label for="img_upload">
+							<label for="img_upload" data-toggle="tooltip" data-placement="top" title="Click to upload image">
 							<img venu-id="${venuid}" uniq-id="${uniqid}" src="{{url('public/upload_icon.png')}}" alt="upload-icon-img" class="upload_icon" style="width:30px; cursor:pointer;">
 							<input type="file" id="img_upload" class="img_upload" src="" venu-id="${venuid}" uniq-id="${uniqid}" hidden value="">
 							<input type="text" class="offer_imagehidden" venu-id="${venuid}" uniq-id="${uniqid}" hidden value="${(imagename)?imagename:''}">
@@ -573,7 +582,7 @@
 									Phone Contact (Should Be Auto Filled)
 								</label>
 
-								<input type="text" class="form-control form-control-user offer_venu_phone" placeholder="Venu Contact" value="${(venudata)?venudata.phone_number:''}" readonly venu-id="${venuid}" uniq-id="${uniqid}" style="background-color: #8D8A8A !important">
+								<input type="text" class="form-control form-control-user offer_venu_phone" placeholder="Venu Contact" value="${(venudata)?venudata.phone_number:''}" disabled venu-id="${venuid}" uniq-id="${uniqid}" style="background-color: #8D8A8A !important">
 							</div>
 						</div>	
 					</div>
@@ -598,7 +607,7 @@
 								<label>
 									Google Map Location Link (Should Be Auto Filled)
 								</label>
-								<textarea class="form-control offer_venu_googlemap" style="font-size: 14px !important; background-color: #8D8A8A !important; overflow-y: hidden;" rows="3" readonly placeholder="Book Now Link" disabled="" venu-id="${venuid}" uniq-id="${uniqid}">${(venudata)?venudata.google_map_location_link:''}</textarea>
+								<textarea class="form-control offer_venu_googlemap" style="font-size: 14px !important; background-color: #8D8A8A !important; padding:6px 10px;" rows="3" readonly placeholder="Book Now Link" disabled="" venu-id="${venuid}" uniq-id="${uniqid}">${(venudata)?venudata.google_map_location_link:''}</textarea>
 							</div>
 						</div>
 					</div>
@@ -620,7 +629,7 @@
 								<label>
 									Book Now Link (Should Be Auto Filled)
 								</label>
-								<textarea class="form-control offer_venu_booknow" style="font-size: 14px !important; background-color: #8D8A8A !important" rows="2" placeholder="Book Now Link" disabled="" venu-id="${venuid}" uniq-id="${uniqid}">${(venudata)?venudata.book_now_link:''}</textarea>
+								<textarea class="form-control offer_venu_booknow" style="font-size: 14px !important; padding:6px 10px; background-color: #8D8A8A !important" rows="2" placeholder="Book Now Link" disabled="" venu-id="${venuid}" uniq-id="${uniqid}">${(venudata)?venudata.book_now_link:''}</textarea>
 							</div> 
 						</div>
 					</div>
@@ -631,9 +640,9 @@
 							</label>
 							<div class="selectdiv">
 								<select class="form-control form-group offer_status" style="padding: .6rem 1rem; position: relative; cursor:pointer;" venu-id="${venuid}" uniq-id="${uniqid}">
-									<option value="${(status)?status:''}">${(status)?status:'Select Status'}</option>
-									<option value="Active">Active</option>
-									<option value="Inactive">Inactive</option>
+									<option value="">Select Status</option>
+									<option ${(status=='Active')?'selected':''} value="Active">Active</option>
+									<option ${(status=='Inactive')?'selected':''} value="Inactive">Inactive</option>
 
 								</select>
 							</div>
@@ -785,12 +794,12 @@ let venu_tab_id = $('.venu-tab-list.active').attr('venu-id');
 				}
 
 				$("#successModel").modal("show");
-	  		$("#success_alert_text").text('Offer deleted successfully');
+	  		$("#success_alert_text").text('Offer deleted successfully.');
 	    	$("#successModel").unbind("click");
 			}
 			}else{
 				$("#successModel").modal("show");
-	  		$("#success_alert_text").text('Offer can not be deleted');
+	  		$("#success_alert_text").text('Offer can not be deleted.');
 	    	$("#successModel").unbind("click");
 			}
 			
@@ -819,22 +828,28 @@ let venu_tab_id = $('.venu-tab-list.active').attr('venu-id');
 					var size = file.size;
 
 					if(size > 5242880){
+						event.target.value="";
+						$(".offer_image[uniq-id="+form_activeid+"]").attr('src','');
+						$(".offer_image[uniq-id="+form_activeid+"]").attr('value','');
+						$(".offer_imagehidden[uniq-id="+form_activeid+"]").val('');
+						$(".img_upload[uniq-id="+form_activeid+"]").attr('src','');
 						$("#alert_text").text("Image should be less than or equal to 5 MB.");
 		        $("#validationModel").modal("show");
 		        $("#validationModel").unbind("click");
+						return false;
 					}
 					var reader = new FileReader();
 					reader.onload = function(e){
 						$(".offer_image[uniq-id="+form_activeid+"]").attr('src',e.target.result);
-						$(".offer_image[uniq-id="+form_activeid+"]").val(slice_name);
-						$(".offer_imagehidden[uniq-id="+form_activeid+"]").val(file_nameshow);
+						$(".offer_image[uniq-id="+form_activeid+"]").attr('value',slice_name);
+						$(".offer_imagehidden[uniq-id="+form_activeid+"]").attr('value',file_nameshow);
 						$(".img_upload[uniq-id="+form_activeid+"]").attr('src',e.target.result);
 						$('.offer_imagehidden2[uniq-id='+form_activeid+']').val('');
 					}
 					reader.readAsDataURL(file);
 
 				}else{
-					$("#alert_text").text("Image must be in jpeg, jpg and png format");
+					$("#alert_text").text("Please upload .jpg, .jpeg or .png format file only.");
 		      $("#validationModel").modal("show");
 		      $("#validationModel").unbind("click");
 				}
@@ -914,179 +929,177 @@ $(document).on('click','.common_btn',function(){
 	let offer_to_time_data = $('.offer_to_time[uniq-id='+uniq_id+']').attr('data-time');
 	let offer_status = $('.offer_status[uniq-id='+uniq_id+']').val();
 	let offer_venu_name = $('.offer_venu_list[uniq-id='+uniq_id+']').val();
+	let curr_time = new Date();
+	let time_string = curr_time.toTimeString().slice(0,8);
 
 
 if(dob_condition=="" && txn_condition_attr == "BirthdayOffer"){
-	$("#alert_text").text("Please enter D.O.B");
+	$("#alert_text").text("Please enter D.O.B.");
 	$("#validationModel").modal("show");
 	$("#validationModel").unbind("click");
 	return false;
 }
 if(gender_condition=="" && txn_condition_attr == "Normal"){
-		$("#alert_text").text("Please select Gender");
+		$("#alert_text").text("Please select gender.");
 		$("#validationModel").modal("show");
 		$("#validationModel").unbind("click");
 		return false;
 	}
 if(txn_start_condition=="" && txn_condition_attr == "Normal"){
-		$("#alert_text").text("Please enter Transaction Start Date");
+		$("#alert_text").text("Please select transaction start period date.");
 		$("#validationModel").modal("show");
 		$("#validationModel").unbind("click");
 		return false;
 	}
 if(txn_end_condition=="" && txn_condition_attr == "Normal"){
-		$("#alert_text").text("Please enter Transaction End Date");
+		$("#alert_text").text("Please select transaction end period date.");
 		$("#validationModel").modal("show");
 		$("#validationModel").unbind("click");
 		return false;
 	}
 	if(txn_start_condition > txn_end_condition && txn_condition_attr == "Normal"){
-		$("#alert_text").text("Transaction End Date must be Greater than Start Date");
-		$("#validationModel").modal("show");
-		$("#validationModel").unbind("click");
-		return false;
-	}
-	if(txn_start_condition == txn_end_condition && txn_condition_attr == "Normal"){
-		$("#alert_text").text("Transaction Start Date and End Date must not be equal");
+		$("#alert_text").text("Transaction end date should be greater than transaction start date.");
 		$("#validationModel").modal("show");
 		$("#validationModel").unbind("click");
 		return false;
 	}
 if(date_condition=="" && txn_condition_attr == "Normal"){
-		$("#alert_text").text("Please enter Date");
+		$("#alert_text").text("Please select date.");
 		$("#validationModel").modal("show");
 		$("#validationModel").unbind("click");
 		return false;
 	}
 
 	if(date_condition!==txn_start_condition && txn_condition_attr == "Normal"){
-		$("#alert_text").text("Date must be same as Transaction Start Date");
+		$("#alert_text").text("Date should be same as transaction start date.");
 		$("#validationModel").modal("show");
 		$("#validationModel").unbind("click");
 		return false;
 	}
 if(city_condition=="" && txn_condition_attr == "Normal"){
-	$("#alert_text").text("Please select Residence City");
+	$("#alert_text").text("Please select residence city.");
 	$("#validationModel").modal("show");
 	$("#validationModel").unbind("click");
 	return false;
 }
 if(txn_condition=="" && txn_condition_attr == "Normal"){
-	$("#alert_text").text("Please select Transaction Amount Condition");
+	$("#alert_text").text("Please select transaction amount condition.");
 	$("#validationModel").modal("show");
 	$("#validationModel").unbind("click");
 	return false;
 }
 if(from_price_condition=="" && txn_condition_attr == "Normal"){
-	$("#alert_text").text("Please enter Transaction From Price");
+	$("#alert_text").text("Please enter transaction from price.");
 	$("#validationModel").modal("show");
 	$("#validationModel").unbind("click");
 	return false;
 }
 
-if(txn_condition_attr == 'Between'){
+if(txn_condition == 'Between'){
 	if(to_price_condition==""){
-		$("#alert_text").text("Please enter Transaction To Price");
+		$("#alert_text").text("Please enter transaction to price.");
 		$("#validationModel").modal("show");
 		$("#validationModel").unbind("click");
 		return false;
 	}
 
 	if(from_price_condition == to_price_condition && txn_condition_attr == "Normal"){
-		$("#alert_text").text("Transaction From and To Price must not be equal");
+		$("#alert_text").text("Transaction to price should be greater than from price.");
 		$("#validationModel").modal("show");
 		$("#validationModel").unbind("click");
 		return false;
 	}
-	if(from_price_condition > to_price_condition && txn_condition_attr == "Normal"){
-		$("#alert_text").text("Transaction To Price must be greater than From Price");
+	if(parseInt(from_price_condition) >= parseInt(to_price_condition) && txn_condition_attr == "Normal"){
+		$("#alert_text").text("Transaction to price should be greater than from price.");
 		$("#validationModel").modal("show");
 		$("#validationModel").unbind("click");
 		return false;
 	}
 }
 
-if(offer_name=="" && txn_condition_attr == "Normal"){
-	$("#alert_text").text("Please enter Offer name");
+if(offer_name==""){
+	$("#alert_text").text("Please enter offer name.");
 	$("#validationModel").modal("show");
 	$("#validationModel").unbind("click");
 	return false;
 }
-if(offer_name.match(/^\s*$/) && txn_condition_attr == "Normal"){
-	$("#alert_text").text("Please enter valid Offer name");
+if(offer_name.match(/^\s*$/)){
+	$("#alert_text").text("Please enter valid offer name.");
 	$("#validationModel").modal("show");
 	$("#validationModel").unbind("click");
 	return false;
 }
 if(offer_venu_name==""){
-	$("#alert_text").text("Please select venu name");
+	$("#alert_text").text("Please select venu name.");
 	$("#validationModel").modal("show");
 	$("#validationModel").unbind("click");
 	return false;
 }
-if(offer_desc=="" && txn_condition_attr == "Normal"){
-	$("#alert_text").text("Please enter offer description");
+if(offer_desc==""){
+	$("#alert_text").text("Please enter offer description.");
 	$("#validationModel").modal("show");
 	$("#validationModel").unbind("click");
 	return false;
 }
 
-if(offer_desc.match(/^\s*$/) && txn_condition_attr == "Normal"){
-	$("#alert_text").text("Please enter valid offer description");
+if(offer_desc.match(/^\s*$/)){
+	$("#alert_text").text("Please enter valid offer description.");
 	$("#validationModel").modal("show");
 	$("#validationModel").unbind("click");
 	return false;
 }
 if(offer_img_src==""){
-	$("#alert_text").text("Please upload image");
+	$("#alert_text").text("Please upload image.");
 	$("#validationModel").modal("show");
 	$("#validationModel").unbind("click");
 	return false;
 }
 if(offer_img_value==""){
-	$("#alert_text").text("Please upload image");
+	$("#alert_text").text("Please upload image.");
 	$("#validationModel").modal("show");
 	$("#validationModel").unbind("click");
 	return false;
 }
 if(offer_from_date=="" && txn_condition_attr == "Normal"){
-	$("#alert_text").text("Please enter From Date");
+	$("#alert_text").text("Please select from date.");
 	$("#validationModel").modal("show");
 	$("#validationModel").unbind("click");
 	return false;
 }
 if(offer_to_date=="" && txn_condition_attr == "Normal"){
-		$("#alert_text").text("Please enter To Date");
+		$("#alert_text").text("Please select to date");
 		$("#validationModel").modal("show");
 		$("#validationModel").unbind("click");
 		return false;
 }
 if(offer_from_date > offer_to_date && txn_condition_attr == "Normal"){
-	$("#alert_text").text("Offer End Date must be Greater than Start Date");
-	$("#validationModel").modal("show");
-	$("#validationModel").unbind("click");
-	return false;
-}
-if(offer_from_date == offer_to_date && txn_condition_attr == "Normal"){
-	$("#alert_text").text("Offers Start Date and End Date must not be equal");
+	$("#alert_text").text("Offer end date should be greater than start date.");
 	$("#validationModel").modal("show");
 	$("#validationModel").unbind("click");
 	return false;
 }
 if(offer_time=="" && txn_condition_attr == "Normal"){
-	$("#alert_text").text("Please enter Time");
+	$("#alert_text").text("Please select from time.");
 	$("#validationModel").modal("show");
 	$("#validationModel").unbind("click");
 	return false;
 }
 if(offer_to_time=="" && txn_condition_attr == "Normal"){
-	$("#alert_text").text("Please enter To Time");
+	$("#alert_text").text("Please select to time.");
 	$("#validationModel").modal("show");
 	$("#validationModel").unbind("click");
 	return false;
 }
+
+if(offer_time_data >= offer_to_time_data && txn_condition_attr == "Normal"){
+	$("#alert_text").text("To time should be greater than from time.");
+	$("#validationModel").modal("show");
+	$("#validationModel").unbind("click");
+	return false;
+}
+
 if(offer_status==""){
-	$("#alert_text").text("Please select Status");
+	$("#alert_text").text("Please select status.");
 	$("#validationModel").modal("show");
 	$("#validationModel").unbind("click");
 	return false;
@@ -1110,7 +1123,6 @@ let offersdata = {
 	offer_time_data:offer_time_data,
 	offer_to_time_data:offer_to_time_data,
 	offer_status:offer_status,
-	// offer_venu_name:offer_venu_name,
 	offer_img_hidden_value:offer_img_hidden_value,
 	offer_img_hidden_attr:offer_img_hidden_attr,
 	uniq_id:uniq_id,
@@ -1118,6 +1130,8 @@ let offersdata = {
 	offer_img_hidden2,offer_img_hidden2,
 	"_token":"{{ csrf_token() }}",
 }
+
+console.log(offersdata);
 
 $.ajax({
 	url:'{{ route("admin.saveoffers") }}',
@@ -1233,12 +1247,12 @@ function alloffers(){
 	  		$('#uniqid').attr('uniq-id',dataoffer[i].unique_id);
 
 	  		if(dataoffer[i].deleted_at==null){
-	  			$('.menu-lisitng ul.listitem').append(`<li id="venu-${dataoffer[i].venu_id}" class="offers_list" uniq-id="${dataoffer[i].unique_id}" venu-id="${dataoffer[i].venu_id}" data-id="${dataoffer[i].id}" data-tab="uniq-${dataoffer[i].unique_id}"><input type="text" offertype="${(dataoffer[i].offer_type=='BirthdayOffer')?dataoffer[i].offer_type:'Normal'}" ${(dataoffer[i].offer_type=='BirthdayOffer')?'readonly':''} class="input_tier_name" maxlength="30" uniq-id="${dataoffer[i].unique_id}" venu-id="${dataoffer[i].venu_id}" value="${dataoffer[i].offer_name}"></li>`);
+	  			$('.menu-lisitng ul.listitem').append(`<li id="venu-${dataoffer[i].venu_id}" class="offers_list" uniq-id="${dataoffer[i].unique_id}" venu-id="${dataoffer[i].venu_id}" data-id="${dataoffer[i].id}" data-tab="uniq-${dataoffer[i].unique_id}"><input type="text" offertype="${(dataoffer[i].offer_type=='BirthdayOffer')?dataoffer[i].offer_type:'Normal'}"  class="input_tier_name" maxlength="30" uniq-id="${dataoffer[i].unique_id}" venu-id="${dataoffer[i].venu_id}" value="${dataoffer[i].offer_name}"></li>`);
 
-	  			$('.formdata').append(offerform(dataoffer[i].unique_id,dataoffer[i].venu_id,dataoffer[i].offer_name,dataoffer[i].offer_desc,dataoffer[i].image,dataoffer[i].from_date,dataoffer[i].to_date,dataoffer[i].offer_setting,dataoffer[i].status,dataoffer[i].time,dataoffer[i].to_time,slice_name,dataoffer[i].id,dataoffer[i].venu,dataoffer[i].offer_setting.id,dataoffer[i].offer_setting.city,dataoffer[i].offer_type,dataoffer[i].offer_setting.gender));
+	  			$('.formdata').append(offerform(dataoffer[i].unique_id,dataoffer[i].venu_id,dataoffer[i].offer_name,dataoffer[i].offer_desc,dataoffer[i].image,dataoffer[i].from_date,dataoffer[i].to_date,dataoffer[i].offer_setting,dataoffer[i].offer_setting.txn_amount_condition,dataoffer[i].status,dataoffer[i].time,dataoffer[i].to_time,slice_name,dataoffer[i].id,dataoffer[i].venu,dataoffer[i].offer_setting.id,dataoffer[i].offer_setting.city,dataoffer[i].offer_type,dataoffer[i].offer_setting.gender,dataoffer[i].offer_setting.from_price,dataoffer[i].offer_setting.to_price));
 
 	  			for(var j=0; j<datacity.length; j++){
-						$('.criteria_city[uniq-id='+dataoffer[i].unique_id+']').append(`<option value="${datacity[j].id}">${datacity[j].city_name}</option>`);
+						$('.criteria_city[uniq-id='+dataoffer[i].unique_id+']').append(`<option value="${(datacity[j].id)?datacity[j].id:''}" ${(dataoffer[i].offer_setting.city_id==datacity[j].id)?'selected':''}>${datacity[j].city_name}</option>`);
 					}
 					if(dataoffer[i].offer_setting.txn_amount_condition === 'Greater Than'){
 						$('.criteria_to_price[uniq-id='+dataoffer[i].unique_id+']').css('display','none');
@@ -1278,5 +1292,15 @@ $(document).on('input','.criteria_txn_condition',function(){
 		$('.criteria_to_price[uniq-id='+uniq_id+']').css('display','block');
 	}
 });
+
+
+// for restrict first time blank space
+	
+$(document).on('keydown','.offer_desc, .offer_name, .input_tier_name',function(e){
+	if(e.which===32 && e.target.selectionStart===0){
+		return false;
+	}
+});
+
 	</script>
 </body>
