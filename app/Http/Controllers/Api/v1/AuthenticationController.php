@@ -303,7 +303,7 @@ class AuthenticationController extends ResponseController
     }
 
     public function venueDetails(Request $request, $venue_id){
-        $venue = Venu::whereId($venue_id)->whereDeletedAt(null)->whereStatus('Active')->first();
+        $venue = Venu::whereId($venue_id)->whereDeletedAt(null)->whereStatus('Active')->with('events')->first();
         return $this->responseOk('Venue Details', ['venue_details' => $venue]);
     }
 
@@ -316,7 +316,7 @@ class AuthenticationController extends ResponseController
     }
 
     public function eventDetails(Request $request, $event_id) {
-        $event = Event::whereId($event_id)->whereDeletedAt(null)->first();
+        $event = Event::whereId($event_id)->whereDeletedAt(null)->with('venu')->first();
         return $this->responseOk('Event Details', ['event_details' => $event]);
     }
 
