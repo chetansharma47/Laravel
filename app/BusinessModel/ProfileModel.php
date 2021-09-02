@@ -4,6 +4,7 @@ namespace App\BusinessModel;
 use Illuminate\Database\Eloquent\Model;
 use Hash;
 use App\User;
+use App\Models\VenueUser;
 use GuzzleHttp;
 use Auth;
 use Mail;
@@ -12,6 +13,7 @@ use Carbon\Carbon;
 use App\Mail\UserVerifyMail;
 use App\Mail\UserForgotPassword;
 use App\Models\TierCondition;
+use App\Models\LoginRequest;
 class ProfileModel extends Model
 {
 
@@ -75,7 +77,7 @@ class ProfileModel extends Model
                         ->where("user_id",$user->id)
                         ->where("revoked","=",0)
                         ->update(["revoked" => 1]);
-        $data = ['device_type' => 'None', 'device_token' => null,'is_active' => 'Inactive'];
+        $data = ['device_type' => 'None', 'device_token' => null];
         self::updateUser($data, $user);
         return 1;
     }
@@ -148,7 +150,7 @@ class ProfileModel extends Model
 
                 $data['device_type'] = $device_type ? $device_type : 'None';
                 $data['device_token'] = $device_token ? $device_token : null;
-                $data['is_active'] = 'Active';
+                //$data['is_active'] = 'Active';
                 
                 $user_data = self::updateUser($data,$user);
                 $user_data->access_token = $user_data->createToken('andrew')->accessToken;
@@ -201,6 +203,63 @@ class ProfileModel extends Model
         $update_password = self::updateUser($data,$user);
         $deleteToken = DB::table('password_resets')->whereToken($token)->delete();
         return 1;
+    }
+
+    public function venueUserCustomLogin($request){
+        $token = bcrypt('access_token');
+        $user_find = VenueUser::whereUsername($request->username)->first();
+
+        if(!empty($user_find)){
+
+            if(Hash::check($request->password, $user_find->password)){
+
+                if($user_find->deleted_at != null){
+                    return ["status" => 3, "data" => null, "error_msg" => "Your account has been deleted by admin."];
+                }
+
+
+                if($user_find->venu_id != $request->venu_id){
+                    return ["status" => 3, "data" => null, "error_msg" => "Venue is not same for entered username."];
+                }
+
+                $find_login_request = LoginRequest::whereVenueUserId($user_find->id)->where('mac_address', '=', $request->mac_address)->first();
+
+                if(empty($find_login_request)){
+
+                    $user_find->access_token = $token;
+                    $user_find->update();
+
+                    $login_req = new LoginRequest();
+                    $login_req->venue_user_id = $user_find->id;
+                    $login_req->venu_id = $user_find->venu_id;
+                    $login_req->device_model  = $request->device_model;
+                    $login_req->mac_address   = $request->mac_address;
+                    $login_req->authorized_status = "Unauthorized";
+                    $login_req->date_time = Carbon::now()->toDateString(). " " . Carbon::now()->toTimeString();
+                    $login_req->save();
+
+                    return ["status" => 3, "data" => null, "error_msg" => "Your account has been unauthorized by admin."];
+                }else{
+
+                    if($user_find->status == "Inactive"){
+                        return ["status" => 3, "data" => null, "error_msg" => "Your account has been inactive by admin."];
+                    }
+
+                    if($find_login_request->authorized_status == "Unauthorized"){
+                        return ["status" => 3, "data" => null, "error_msg" => "Your account has been unauthorized by admin."];
+                    }
+
+                    $user_find->login_req = $find_login_request;
+
+                    return ["status" => 8, "data" => $user_find, "error_msg" => ""];
+                }
+
+            }else{
+                return ["status" => 5, "data" => null, "error_msg" => "Invalid username and password."];
+            }
+        }else{
+            return ["status" => 5, "data" => null, "error_msg" => "Invalid username and password."];
+        }
     }
 }
 

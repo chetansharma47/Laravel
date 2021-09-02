@@ -180,7 +180,7 @@
 							<div class="col-md-2 col-sm-12 text-center">
 								<ul class="" style="padding-left: 25px;">
 										<a class="nav-link" href="{{route('admin.adminTabs')}}">
-											<img src="{{url('public/admin/assets/img/logo-approved.png')}}"/ alt="logo-approved">
+											<img src="{{url('public/admin/assets/img/logo-approved.png')}}" style="width: 100px;" alt="logo-approved"/>
 										</a>
 								</ul>
 							</div>
@@ -1233,6 +1233,12 @@ function alloffers(){
 
 	  	var dataoffer = data.offer;
 	  	var datacity = data.cityall;
+	  	let last_offer = data.last_offer;
+
+	  	if(last_offer != "" || last_offer != undefined){
+
+  			$('#uniqid').attr('uniq-id',last_offer.unique_id);
+	  	}
 	  	
 	  	for(var i=0; i < dataoffer.length; i++){
 
@@ -1244,7 +1250,6 @@ function alloffers(){
 	  			var slice_name = imagename;
 	  		}
 
-	  		$('#uniqid').attr('uniq-id',dataoffer[i].unique_id);
 
 	  		if(dataoffer[i].deleted_at==null){
 	  			$('.menu-lisitng ul.listitem').append(`<li id="venu-${dataoffer[i].venu_id}" class="offers_list" uniq-id="${dataoffer[i].unique_id}" venu-id="${dataoffer[i].venu_id}" data-id="${dataoffer[i].id}" data-tab="uniq-${dataoffer[i].unique_id}"><input type="text" offertype="${(dataoffer[i].offer_type=='BirthdayOffer')?dataoffer[i].offer_type:'Normal'}"  class="input_tier_name" maxlength="30" uniq-id="${dataoffer[i].unique_id}" venu-id="${dataoffer[i].venu_id}" value="${dataoffer[i].offer_name}"></li>`);

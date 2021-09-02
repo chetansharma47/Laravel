@@ -20,10 +20,13 @@ class CreateVenueUsersTable extends Migration
             $table->string('username');
             $table->string('password');
             $table->enum('status',['None','Active','Inactive'])->default('None');
-            $table->string('device_model')->nullable();
-            $table->string('mac_address')->nullable();
+            $table->string('device_model')->nullable()->default('N/A');
+            $table->string('mac_address')->nullable()->default('N/A');
             $table->enum('authorized_status',['Unauthorized','Authorized'])->default('Unauthorized');
             $table->dateTime('date_time')->nullable();
+            $table->string('created_by');
+            $table->string('updated_by');
+            $table->longText('access_token')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

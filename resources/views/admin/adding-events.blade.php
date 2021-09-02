@@ -175,7 +175,7 @@
 							<div class="col-md-2 col-sm-12 text-center">
 								<ul class="" style="padding-left: 25px;">
 										<a class="nav-link" href="{{route('admin.adminTabs')}}">
-											<img src="{{url('public/admin/assets/img/logo-approved.png')}}"alt="logo-approved">
+											<img src="{{url('public/admin/assets/img/logo-approved.png')}}" style="width: 100px;" alt="logo-approved">
 										</a>
 								</ul>
 							</div>
@@ -386,6 +386,12 @@
 					  	},500);
 
 					  	let list = data.list;
+					  	let last_event = data.last_event;
+					  	
+					  	if(last_event != "" || last_event != undefined){
+
+					  		$('#uniq_id_db').html(`<span id="unique" uniq-id="${last_event.unique_id}"></span>`);
+					  	}
 
 					  	for(var i=0; i<list.length; i++){
 
@@ -397,8 +403,8 @@
 					  		}else{
 					  			var slice_name = imagename;
 					  		}
-								$('#uniq_id_db').html(`<span id="unique" uniq-id="${list[i].unique_id}"></span>`);
-								console.log(list[i]);
+								
+								//console.log(list[i]);
 								if(list[i].deleted_at==null && list[i].venu.deleted_at==null){
 
 									$('.menu-lisitng ul.listitem').append(`<li class="event_list" uniq-id="${list[i].unique_id}" data-id="${list[i].id}" data-tab="uniq-${list[i].unique_id}"><input type="text" class="input_tier_name" maxlength="30" uniq-id="${list[i].unique_id}" value="${list[i].event_name}"></li>`);

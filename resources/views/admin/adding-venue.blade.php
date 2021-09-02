@@ -192,7 +192,7 @@
 							<div class="col-md-2 col-sm-12 text-center">
 								<ul class="" style="padding-left: 25px;">
 										<a class="nav-link" href="{{route('admin.adminTabs')}}">
-											<img src="{{url('public/admin/assets/img/logo-approved.png')}}"/ alt="logo-approved">
+											<img src="{{url('public/admin/assets/img/logo-approved.png')}}" style="width: 100px;" alt="logo-approved"/>
 										</a>
 								</ul>
 							</div>
@@ -409,6 +409,13 @@
 					},500);
 					let list = data.list;
 					let list_length = list.length;
+					let last_venue = data.last_venue;
+
+					if(last_venue != "" || last_venue != undefined){
+
+						$('.uniqid_db').html('<span uniq-id="'+last_venue.unique_id+'"class="last_db_id"></span>');
+					}
+
 					for(let i=0; i<list.length; i++){
 
 							var imgname = list[i].name_of_file_show;
@@ -425,7 +432,7 @@
 								var slice = "";
 							}
 
-						$('.uniqid_db').html('<span uniq-id="'+list[i].unique_id+'"class="last_db_id"></span>');
+						
 
 						if(list[i].deleted_at==null){
 						$('.menu-lisitng ul.listitem').append(`<li class="venu_list" unique-id="${list[i].unique_id}" data-id="${list[i].id}" data-tab="uniq-${list[i].unique_id}"><input type="text" class="input_tier_name" maxlength="30" unique-id="${list[i].unique_id}" value="${list[i].venue_name}" placeholder="Enter Venue Name"></li>`);

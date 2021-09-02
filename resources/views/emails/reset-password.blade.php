@@ -1,386 +1,261 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html>
 <head>
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Reset Password</title>
-  <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
+<meta charset="utf-8">
+<title>Reset Your Password</title>
+<meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
   <link rel="icon" href="{{url('public/admin/assets/img/logo-approved.png')}}" type="image/x-icon"/>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Signika:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-  <!-- Fonts and icons -->
-  <script src="{{url('public/admin/assets/js/plugin/webfont/webfont.min.js')}}"></script>
-  <script>
-    WebFont.load({
-      google: {"families":["Lato:300,400,700,900"]},
-      custom: {"families":["Flaticon", "Font Awesome 5 Solid", "Font Awesome 5 Regular", "Font Awesome 5 Brands", "simple-line-icons"], urls: ['../public/admin/assets/css/fonts.min.css']},
-      active: function() {
-        sessionStorage.fonts = true;
-      }
-    });
-  </script>
-
-  <!-- CSS Files -->
-  <link rel="stylesheet" href="{{url('public/admin/assets/css/bootstrap.min.css')}}">
-  <link rel="stylesheet" href="{{url('public/admin/assets/css/atlantis.min.css')}}">
-
-  <!-- CSS Just for demo purpose, don't include it in your project -->
-  <link rel="stylesheet" href="{{url('public/admin/assets/css/custom.css')}}">
-  <style>
-    body {
-      background: #fff !important;
-    }
-
-/*    .login_card input{
-          font-family: inherit;
-
-    }*/
-    .login_card input {
-      color: #676767 !important;
-
-    }
-    .login_card input::-webkit-input-placeholder {
-       font-family: 'Signika', sans-serif !important;
-      font-weight: 700 !important;
-      /*color: #c1c1c1 !important;*/
-    }
-    /*.login_card input[pass]::-webkit-input-placeholder {
-      font-family: 'lato', sans-serif !important;
-      font-weight: 700 !important;
-    }*/
-    .curve-bg .navbar-nav {
-    width: 100%;
-    justify-content: space-between;
-    align-items: center;
-}
-.curve-bg .navbar-nav .nav-item {
-  margin-right: 0 !important;
-}
-.curve-bg .navbar-nav li.nav-item:nth-child(1) {
-  width: inherit; }
-
-.curve-bg .navbar-nav li.nav-item:nth-child(2) {
-  width: inherit;
-  margin-right:0 !important;
-}
-
-
-.forgot_modal .modal-content {
-  position: relative;
-}
-.forgot_modal .close_btn {
-  border-radius: 50%;
-    background-color: #60be80;
-    opacity: 1;
-    height: 40px;
-    width: 40px;
-    position: absolute;
-    right: 0;
-    top: 4px;
-    box-shadow: 4px 4px 15px 4px rgba(0, 0, 0, 0.3);
-}
-.forgot_modal .close_btn span {
-  font-size: 33px;
-    color: #fff;
-    /* margin-top: 20px; */
-    top: 3px;
-    position: absolute;
-    right: 10px;
-}
-.forgot_modal .close_btn.close:not(:disabled):not(.disabled):focus {
-  outline: 0;
-    opacity: 1;
-}
-.forgot_modal .close_btn.close:not(:disabled):not(.disabled):hover {
-  opacity: 1;
-}
-/*.err {
-    font-size: 14px;
-    font-weight: 600;
-    color: #ec0202!important;
-}*/
-
-.login_card label.err {
-    color: #ce3333 !important;
-    font-size: 14px!important;
-    font-weight: 700;
-}
-
-  .backend_err {
-    margin-left: 40%;
-    margin-top: 2%;
-}
-
-.alert_mesg,
-.alert_msg_red {
-    width: 100%;
-    margin-bottom: 20px !important;
-}
-button.close.close_icon {
-    position: absolute!important;
-    top: 50%;
-    right: 0;
-    opacity: 1;
-    color: #fff;
-    /* transform: translate(-50%, -50%); */
-}
-
-}
-.pass_group img.show_icon {
-    z-index: 99;
-    cursor:pointer!important;
-}
-
-
-.loader {
-  border: 8px solid #f3f3f3;
-    border-radius: 50%;
-    border-top: 8px solid #60be80;
-    border-bottom: 8px solid #60be80;
-    width: 60px;
-    height: 60px;
-  -webkit-animation: spin 2s linear infinite;
-  animation: spin 2s linear infinite;
-}
-
-@-webkit-keyframes spin {
-  0% { -webkit-transform: rotate(0deg); }
-  100% { -webkit-transform: rotate(360deg); }
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-div#loaderModel .modal-dialog {
-    text-align: -webkit-center !important;
-    text-align: -moz-center !important;
-    text-align: -o-center !important;
-    margin-top: 240px;
-  /*text-align: center !important;*/
-}
-
-button.close.close_icon{
-  top:50%!important;
-}
-
-  </style>
-
 </head>
-<body>
-  <header class="curve-bg">
-    <div class="container-fluid">
-      <div class="curve-bg1">
-        <nav class="navbar navbar-expand-lg">
-          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
 
-          <!-- <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav">
-              <li class="nav-item">
-                <a class="nav-link hover_color" href="#">Admin Panel</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="login.html">
-                  <img src="../assets/img/logo-approved.png"/ alt="logo-approved">
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="login.html" style="color: #FFDA7A; text-transform: capitalize;">
-                  login
-                </a>
-            </ul>
-          </div> -->
-          <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <div class="row w-100">
-              <div class="col-md-5 col-sm-12">
-                <!-- <ul class="navbar-nav">
-                  <li class="nav-item">
-                    <a class="nav-link hover_color" href="#" style="padding-right: 0">Admin Panel</a>
-                  </li>
-                </ul> -->
-              </div>
-              <div class="col-md-2 col-sm-12 text-center">
-                <ul class="" style="padding-left: 25px;">
-                    <a class="nav-link" href="javascript:void(0);">
-                      <img src="{{url('public/admin/assets/img/logo-approved.png')}}"/ alt="logo-approved">
-                    </a>
-                </ul>
-              </div>
-              <div class="col-md-5 text-right pr-0">
-               <!--  <ul class="navbar-nav">
-                  <li class="nav-item">
-                    <a class="nav-link" href="{{route('admin.login')}}" style="color: #FFDA7A; text-transform: capitalize;">
-                      login
-                    </a>
-                  </li>
-                </ul> -->
-              </div>
-            </div>
-          </div>
-        </nav>
-      </div>
+<style type="text/css">
+  #password-error {
+    display: block;
+    font-size: 14px!important;
+    color: #ce3333!important;
+    margin-top: 4px;
+  }
+
+  #confirm_password-error {
+    display: block;
+    font-size: 14px!important;
+    color: #ce3333!important;
+    margin-top: 4px;
+  }
+</style>
+
+<body style="background-color: #f9fafb; padding: 0;
+    margin: 0;">
+  <table width="600" border="0" align="center" cellpadding="0" cellspacing="0" style="margin-top: 48px;">
+    <tr>
+       <td align="center" style="padding-bottom: 15px;">
+         <a href="javascript:void(0);" style="border:0; outline:0; cursor: unset;"><img src="{{url('public/admin/assets/email_img/CM-Logo-2.png')}}" alt="" width="100"/></a>
+       </td>
+    </tr>
+  </table>
+
+  <table width="600" border="0" align="center" cellpadding="0" cellspacing="0">
+    <form method="POST" class="user" id="validate_form">
+    {{csrf_field()}}
+  <tr>
+    <td width="20" align="left" valign="top">
+      <table width="100%" border="0" cellspacing="0" cellpadding="0"  style="background-image: url('{{url('public/admin/assets/email_img/curve-bg.png')}}'); background-repeat: no-repeat; background-size: cover; border-top-left-radius: 30px;border-top-right-radius: 30px;     background-position: bottom; cursor: unset;">
+        
+        <tr>
+          <td width="20" align="left" valign="top">&nbsp;</td>
+          <td align="center" valign="top" style="padding:5px 0;">
+            <a href="javascript:void(0);" style="border:0; outline:0;cursor: unset;">
+              <img src="{{url('public/admin/assets/email_img/CR-Logo.png')}}" alt="CR-Logo" width="100"/>
+            </a>
+          </td>
+          <td width="20" align="left" valign="top">&nbsp;</td>
+        </tr>
+        <tr>
+          <td width="20" align="left" valign="top">&nbsp;</td>
+          <td align="center" valign="top" style="font-family: 'Lato', sans-serif;
+     font-weight: 700; color: #fff; padding-bottom: 17px;">
+            Reset Your Password
+          </td>
+          <td width="20" align="left" valign="top">&nbsp;</td>
+        </tr>
+    </table>
+  </td>
+  </tr>
+  <!-- <tr>
+    <td height="1" align="left" valign="top" bgcolor="#d9d9d9"></td>
+  </tr> -->
+  
+  <tr>
+
+    @if($errors->any())
+    <div class="backend_err">
+        <ul>
+
+            @foreach($errors->all() as $error) 
+           
+                <li class="err">{{ $error }}</li>
+
+            @endforeach 
+
+        </ul>
     </div>
-  </header>
-  <div class="container">
-    <!-- <section class="login_content input_label">
-      <form>
-        <div class="logo-wrapper"><img src="../assets/img/logo.png" alt="logo"/></div>
-        <span class="new-life">Admin Login</span>
-        <div class="mt_form">
-          <div>
-            <div class="form-group">
-              <label for="" class="pb-1">
-                Email Address
-              </label>
-              <input type="text" class="form-control" placeholder="Email Address" required />
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="" class="pb-1">
-                Password
-              </label>
-            <input type="password" class="form-control" placeholder="Password" required />
-          </div>
-          <div>
-            <p class="forget">
-              <a  href="forgot.html" class="reset_pass to_register">Forgot Password?</a>
-            </p>
-            <a class="btn btn-success submit" href="index.html">Login</a>
-          </div>
-        </div>
-      </form>
-    </section> -->
-    <div class="row justify-content-center">
+    @endif
 
-      <div class="col-xl-10 col-lg-12 col-md-9">
-
-        <div class="border-0 my-5 login_card">
-          <div class="p-0">
-            <!-- Nested Row within Card Body -->
-            <div class="row">
+    @include('admin.notification')
+    <td align="left" valign="top" style="background:#fff; padding:30px 20px;border-bottom-left-radius: 30px;border-bottom-right-radius: 30px;">
+      <table width="100%" border="0" cellspacing="0" cellpadding="0">
 
 
-           @if($errors->any())
-              <div class="backend_err">
-                  <ul>
+      <tr>
+        <td align="left" valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td align="center" valign="top" style="font-family: 'Signika', sans-serif;
+     font-weight: 700;">
+             <img src="{{url('public/admin/assets/email_img/pass.png')}}" alt="pass" style="position: absolute;
+    width: 20px;
+    z-index: 99;
+        margin-top: 15px;
+    margin-left: 16px;" />
+              <input type="password" class="form-control form-control-user" id="password" name="password" maxlength="100" placeholder="New Password" onkeypress="return AvoidSpace(event)" style="padding: 13px 45px 13px 49px;
+    border: 0 !important;
+    background-color: #EBEBEB !important;
+    border-radius: 12px;
+    font-family: 'Signika', sans-serif;
+    font-weight: 700;
+    font-size: 20px !important;
+    outline: 0;
+    position: relative;
+    z-index: 9;">
 
-                      @foreach($errors->all() as $error) 
-                     
-                          <li class="err">{{ $error }}</li>
-
-                      @endforeach 
-
-                  </ul>
-              </div>
-              @endif
-
-
-              <div class="col-lg-12">
-                <div class="pt-5 pb-5 form-middle">
-                @include('admin.notification')
-                  <form method="POST" class="user" id="validate_form">
-                    {{csrf_field()}}
-                    <div class="form-group" style="padding-right: 0; padding-left: 0">
-                      <label>New Password</label>
-                      <input type="password" class="form-control form-control-user" id="password" name="password" aria-describedby="emailHelp" placeholder="New Password" onkeypress="return AvoidSpace(event)">
-                      <label id="password-error" class="error err" for="password"></label>
-                    </div>
-                    <div class="form-group" style="padding-right: 0; padding-left: 0">
-                      <label>Confirm Password</label>
-                      <input type="password" class="form-control form-control-user" name="confirm_password" placeholder="Confirm Password" onkeypress="return AvoidSpace(event)">
-                      <label id="confirm_password-error" class="error err" for="confirm_password"></label>
-                    </div>
-                    <button type="submit" id="submit_btn" class="btn btn-primary btn-user btn-block common_btn mt-5">
-                      Submit
-                    </button>
-                  </form>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-    </div>
-  </div>
-<!--   Core JS Files   -->
-  <script src="{{url('public/admin/assets/js/core/jquery.3.2.1.min.js')}}"></script>
-  <script src="{{url('public/admin/assets/js/core/popper.min.js')}}"></script>
-  <script src="{{url('public/admin/assets/js/core/bootstrap.min.js')}}"></script>
-
-  <!-- jQuery UI -->
-  <script src="{{url('public/admin/assets/js/plugin/jquery-ui-1.12.1.custom/jquery-ui.min.js')}}"></script>
-  <script src="{{url('public/admin/assets/js/plugin/jquery-ui-touch-punch/jquery.ui.touch-punch.min.js')}}"></script>
-
-  <!-- jQuery Scrollbar -->
-  <script src="{{url('public/admin/assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js')}}"></script>
+             <!--  <img src="assets/eye.png" alt="eye" style="position: absolute;
+    width: 20px;
+    z-index: 99;
+        margin-top: 20px;
+        margin-left: -32px;" /> -->
+            <label id="password-error" style="display: none;" class="error err" for="password"></label>
+            </td>
+          </tr>
+          <tr>
+            <td align="center" valign="top" style="font-family: 'Signika', sans-serif;
+     font-weight: 700; padding-top: 15px">
+             <img src="{{url('public/admin/assets/email_img/pass.png')}}" alt="pass" style="position: absolute;
+    width: 20px;
+    z-index: 99;
+        margin-top: 15px;
+    margin-left: 16px;" />
+              <input type="password" class="form-control form-control-user" name="confirm_password" id="confirm_password" placeholder="Confirm Password" onkeypress="return AvoidSpace(event)"  style="    padding: 13px 45px 13px 49px;
+    border: 0 !important;
+    background-color: #EBEBEB !important;
+    border-radius: 12px;
+    font-family: 'Signika', sans-serif;
+    font-weight: 700;
+    font-size: 20px !important;
+    outline: 0;
+    position: relative;
+    z-index: 9;">
+              <img src="{{url('public/admin/assets/email_img/eye.png')}}" id="eye" alt="eye" style="position: absolute;
+                      width: 20px;
+                      z-index: 99;
+                      margin-top: 20px;
+                      margin-left: -32px;" />
 
 
-  <!-- Chart JS -->
-  <script src="{{url('public/admin/assets/js/plugin/chart.js/chart.min.js')}}"></script>
+            <label id="confirm_password-error" style="display: none;" class="error err" for="confirm_password"></label>
+            </td>
+          </tr>
+       <!--    <tr>
+            <td align="left" valign="top">&nbsp;</td>
+          </tr> -->
 
-  <!-- jQuery Sparkline -->
-  <script src="{{url('public/admin/assets/js/plugin/jquery.sparkline/jquery.sparkline.min.js')}}"></script>
+          <!-- <tr>
+            <td align="left" valign="top" style="font-family: 'Lato', sans-serif;
+     font-weight: 400; font-size:14px; color:#474747;">We have received a request to reset your Capital Motion account password associate with this email address.
+            If you have not made this request, you can ignore this email and we assure you that your account is completely secure.<br><br>
 
-  <!-- Chart Circle -->
-  <script src="{{url('public/admin/assets/js/plugin/chart-circle/circles.min.js')}}"></script>
+            If you do need to reset your Capital Motion password, click the button given below.
+            </td>
+          </tr> -->
+          <tr>
+            <td height="10" align="left" valign="top"></td>
+          </tr>
+          <tr>
+            <td height="10" align="left" valign="top"></td>
+          </tr>
+           <!--   <tr>
+            <td align="left" valign="top" style="font-family:arial, sans-serif; font-size: 15px; font-weight:  bold; color:#474747;">ThankYou Team</b></td>
+          </tr>  -->   
 
-  <!-- Datatables -->
-  <script src="{{url('public/admin/assets/js/plugin/datatables/datatables.min.js')}}"></script>
+          <tr>
+            <td align="left" valign="top">&nbsp;</td>
+          </tr>
 
-  <!-- Bootstrap Notify -->
-  <!-- <script src="../assets/js/plugin/bootstrap-notify/bootstrap-notify.min.js"></script> -->
-
-  <!-- jQuery Vector Maps -->
-  <script src="{{url('public/admin/assets/js/plugin/jqvmap/jquery.vmap.min.js')}}"></script>
-  <script src="{{url('public/admin/assets/js/plugin/jqvmap/maps/jquery.vmap.world.js')}}"></script>
-
-  <!-- Sweet Alert -->
-  <script src="{{url('public/admin/assets/js/plugin/sweetalert/sweetalert.min.js')}}"></script>
-
-  <!-- Atlantis JS -->
-  <script src="{{url('public/admin/assets/js/atlantis.min.js')}}"></script>
-
-  <!-- Atlantis DEMO methods, don't include it in your project! -->
-  <script src="{{url('public/admin/assets/js/setting-demo.js')}}"></script>
-  <script src="{{url('public/admin/assets/js/demo.js')}}"></script>
-  <script>
-    $('#lineChart').sparkline([102,109,120,99,110,105,115], {
-      type: 'line',
-      height: '70',
-      width: '100%',
-      lineWidth: '2',
-      lineColor: 'rgba(255, 255, 255, .5)',
-      fillColor: 'rgba(255, 255, 255, .15)'
-    });
-
-    $('#lineChart2').sparkline([99,125,122,105,110,124,115], {
-      type: 'line',
-      height: '70',
-      width: '100%',
-      lineWidth: '2',
-      lineColor: 'rgba(255, 255, 255, .5)',
-      fillColor: 'rgba(255, 255, 255, .15)'
-    });
-
-    $('#lineChart3').sparkline([105,103,123,100,95,105,115], {
-      type: 'line',
-      height: '70',
-      width: '100%',
-      lineWidth: '2',
-      lineColor: 'rgba(255, 255, 255, .5)',
-      fillColor: 'rgba(255, 255, 255, .15)'
-    });
-  </script> 
+          <tr>
+            <td align="center" valign="top"> 
+              <a href="javascript:void(0);" id="submit_btn" style="font-family: 'Lato', sans-serif;
+                font-weight: 600;
+                font-size: 25px;
+                color: #474747;
+                background-color: #0B68AC;
+                padding: 12px 9px;
+                max-width: 260px;
+                display: block;
+                text-align: center;
+                margin: 0 auto;
+                color: #fff;
+                text-decoration: none;
+                border-radius: 50px;
+                margin-bottom: 41px;">Update Your Password
+              </a>
+          </td>
+          </tr>
+        </table></td>
+      </tr>
+      <!-- <tr>
+        <td height="" align="left" valign="top">&nbsp;</td>
+      </tr> -->
+    </table>
+  </td>
+  </tr>
+    </form>
 
 
-  <script>
+  <!-- <tr>
+    <td align="left" valign="top" style="background:#193358; padding:20px; text-align:center;">
+      <table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td align="center" valign="top" style="font-family:arial, sans-serif; font-size:13px; color:#fff;">©Copyright2021</td>
+      </tr>
+    </table></td>
+  </tr> -->
+</table>
+<table border="0" align="center" cellpadding="0" cellspacing="0" style="background-image: url('{{url('public/admin/assets/email_img/footer-bg.png')}}'); background-repeat: no-repeat; background-size: cover; border-top-left-radius: 30px;border-top-right-radius: 30px;     background-position: top; width: 100%; padding: 30px 0px 2px;     margin-top: 82px; cursor: unset;">
+  <tr>
+    <td align="center">
+       <a href="javascript:void(0);" style="border:0; outline:0; cursor: unset;"><img src="{{url('public/admin/assets/email_img/CM-Logo-2.png')}}" alt="" width="100"/></a>
+     </td>
+  </tr>
+  <tr>
+     <td align="center" style="font-family: 'Lato', sans-serif;
+    font-weight: 400; font-size: 14px; color: #fff; padding: 12px 0 32px;">
+       Thank you for using Capital Motion Society App
+     </td>
+  </tr>
+  <tr>
+    <td align="center" style="font-family: 'Lato', sans-serif;
+    font-weight: 400; font-size: 12px; color: #fff; padding-bottom: 12px;">
+      Office SG3, Al Bandar, Al Raha Beach,<br/> Abudhabi, UAE - P O Box 130122
+    </td>
+  </tr>
+  <tr>
+    <td align="center" style="font-family: 'Lato', sans-serif;
+    font-weight: 400; font-size: 12px; color: #fff; padding-bottom: 12px;">
+      Phone: +971 2449 9036 / Toll Free 800 6996
+    </td>
+  </tr>
+  <tr>
+    <td align="center" style="font-family: 'Lato', sans-serif;
+    font-weight: 400; font-size: 12px; color: #fff; padding-bottom: 12px;">
+      Email: info@capitalmotion.com
+    </td>
+  </tr>
+  <tr>
+    <td align="center" style="font-family: 'Lato', sans-serif;
+    font-weight: 400; font-size: 12px; color: #000; padding-bottom: 12px;">
+      © Capital Motion 2021
+    </td>
+  </tr>
+</table>
+
+
+
+</body>
+<script src="{{url('public/admin/assets/js/core/jquery.3.2.1.min.js')}}"></script>
+
+
+<script>
       
      $(".alert-success").fadeTo(5000, 5000).slideUp(500, function(){
       $(".alert-success").slideUp(500);
@@ -397,10 +272,9 @@ button.close.close_icon{
    </script>
 
 
-   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.1.62/jquery.inputmask.bundle.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.1.62/jquery.inputmask.bundle.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js" integrity="sha256-sPB0F50YUDK0otDnsfNHawYmA5M0pjjUf4TvRJkGFrI=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/additional-methods.min.js" integrity="sha256-vb+6VObiUIaoRuSusdLRWtXs/ewuz62LgVXg2f1ZXGo=" crossorigin="anonymous"></script>
-
 
 
 <script type="text/javascript">
@@ -413,34 +287,72 @@ button.close.close_icon{
         return pattern.test(value)
     }, "Password must contain at least one number, one uppercase letter and one special character.");
 
-    $("#validate_form").validate({
-        rules: {
-            password: {
-                required: true,
-                minlength: 6,
-                maxlength:100,
-                //checkallowedchars: true
-            },
-            confirm_password: {
-                required: true,
-                equalTo: "#password"
-            }
-        },
-        messages: {
-            password: {
-                required: "Please enter new password.",
-                minlength: "New password must be at least 6 characters long."
-            },
-            confirm_password: {
-                required: "Please enter confirm password.",
-                equalTo: "New password and confirm password must be same."
-            }
-        },submitHandler:function(form){
-            $("#submit_btn").attr("disabled",true);
-            form.submit();
-                
-          }
+    $("#submit_btn").on("click",function(){
+      let password = $("#password").val();
+      let confirm_password = $("#confirm_password").val();
+      let validate = "false";
+      
+      if(password.length <= 5){
+        $("#password-error").text("New password must be at least 6 characters long.").show();
+        validate = "true";
+      }else{
+        $("#password-error").text("").hide();
+      }
+
+      if(password == ""){
+        $("#password-error").text("Please enter new password.").show();
+        validate = "true";
+      }
+
+      if(password != confirm_password){
+        $("#confirm_password-error").text("New password and confirm password must be same.").show();
+        validate = "true";
+      }else{
+        $("#confirm_password-error").text("").hide();
+      }
+
+      if(confirm_password == ""){
+        $("#confirm_password-error").text("Please enter confirm password.").show();
+        validate = "true";
+      }
+
+
+      if(validate == "true"){
+        return false;
+      }else{
+        $("#validate_form").submit();
+      }
+
     });
+
+    // $("#validate_form").validate({
+    //     rules: {
+    //         password: {
+    //             required: true,
+    //             minlength: 6,
+    //             maxlength:100,
+    //             //checkallowedchars: true
+    //         },
+    //         confirm_password: {
+    //             required: true,
+    //             equalTo: "#password"
+    //         }
+    //     },
+    //     messages: {
+    //         password: {
+    //             required: "Please enter new password.",
+    //             minlength: "New password must be at least 6 characters long."
+    //         },
+    //         confirm_password: {
+    //             required: "Please enter confirm password.",
+    //             equalTo: "New password and confirm password must be same."
+    //         }
+    //     },submitHandler:function(form){
+    //         $("#submit_btn").attr("disabled",true);
+    //         form.submit();
+                
+    //       }
+    // });
   });
 </script>
 
@@ -448,8 +360,19 @@ button.close.close_icon{
     function AvoidSpace(event) {
         var k = event ? event.which : window.event.keyCode;
         if (k == 32) return false;
-    }
+    } 
+
+    $(document).ready(function(){
+      $("#eye").on("click",function(){
+        let check_type = $(this).parent().children("#confirm_password").attr("type");
+
+        if(check_type == "password"){
+
+          $(this).parent().children("#confirm_password").attr("type","text");
+        }else{
+          $(this).parent().children("#confirm_password").attr("type","password");
+        }
+      });
+    });
 </script>
-
-
-</body>
+</html>

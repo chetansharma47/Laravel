@@ -150,7 +150,21 @@
 		    padding: 0.3rem;
 		}
 
+		.cmn {
+			background-color: #3ABD6F !important;
+		    border: 1px solid #3ABD6F !important;
+		    /* background: linear-gradient( 
+		167deg
+		 , rgb(237 31 36) 0%, rgb(90 0 3) 100%) !important; */
+		    font-size: 18px;
+		    border-radius: 50px;
+		    font-weight: 700 !important;
+		    text-transform: uppercase;
+		}
 
+		.cmn:hover{
+			color: #fff!important;
+		}
 	</style>
 </head>
 <body>
@@ -175,7 +189,7 @@
 							<div class="col-md-2 col-sm-12 text-center">
 								<ul class="" style="padding-left: 25px;">
 										<a class="nav-link" href="{{route('admin.adminTabs')}}">
-											<img src="{{url('public/admin/assets/img/logo-approved.png')}}"/ alt="logo-approved">
+											<img src="{{url('public/admin/assets/img/logo-approved.png')}}" style="width: 100px;" alt="logo-approved"/>
 										</a>
 								</ul>
 							</div>
@@ -222,15 +236,37 @@
 								$customer_tier_validity_check = "30 Days from status change";
 							}
 						?>
-						<input type="text" class="form-control form-control-user" placeholder="Enter Number Of Days" id="transaction_amount_check_last_days" value="{{$transaction_amount_check_last_days}}" autocomplete="off" style="border-radius: 0px;"/>
+						<div class="d-flex align-items-center">
+							<input type="text" class="form-control form-control-user" placeholder="Enter Number Of Days" id="transaction_amount_check_last_days" value="{{$transaction_amount_check_last_days}}" autocomplete="off" style="border-radius: 0px;"/>
+
+							<div>
+								<a href="javascript:void(0);" id="total_transaction" class="btn btn-primary btn-user btn-block cmn" style="padding: 0px; font-size: 20px; width: 110px;    margin-left: 11px;">
+	                      			SAVE
+	                    		</a>
+							</div>
+							
+						</div>
+
 					</div>
 					<div class="col-md-12" style="padding-left: 0; padding-right: 0">
 						<div class="venue_inputs mr-4 mb-4">
 							<label>
 								Customer Tier Validity Check (Badge Change)
 							</label>
-							<input type="text" class="form-control form-control-user" placeholder="Enter Number Of Days" id="customer_tier_validity_check" value="{{$customer_tier_validity_check}}" autocomplete="off" style="border-radius: 0px;"/>
+
+							<div class="d-flex align-items-center">
+								<input type="text" class="form-control form-control-user" placeholder="Enter Number Of Days" id="customer_tier_validity_check" value="{{$customer_tier_validity_check}}" autocomplete="off" style="border-radius: 0px;"/>
+
+								<div>
+									<a href="javascript:void(0);" id="validate_check" class="btn btn-primary btn-user btn-block cmn" style="padding: 0px; font-size: 20px; width: 110px;    margin-left: 11px;">
+		                      			SAVE
+		                    		</a>
+								</div>
+							</div>
+
 						</div>
+
+
 					</div>
 					<div class="venue_inputs mr-4 mb-4">
 						<label>
@@ -1205,6 +1241,105 @@
 	            return false;
 	      }
 		});
+	});
+</script>
+
+<script type="text/javascript">
+	$(document).ready(function(){
+		$("#total_transaction").on("click",function(){
+
+			let check_transaction_amount_check_last_days = $("#transaction_amount_check_last_days").val();
+			let amount_last_d = check_transaction_amount_check_last_days.replace("Last ","");
+			amount_last_d = amount_last_d.replace(" Days","");
+
+			if(check_transaction_amount_check_last_days == ""){
+				$("#alert_text").text("Please enter customer total transaction days.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
+
+			if(parseInt(amount_last_d) <= 0){
+				$("#alert_text").text("Please enter valid customer total transaction days.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
+
+
+			var data = {
+	            '_token': "{{csrf_token()}}",
+	            'transaction_amount_check_last_days': amount_last_d
+            };
+
+          	$.ajax({
+	              url:"{{route('admin.totalTransactionAmountForDays')}}",
+	              type:'POST',
+	              data:data,
+	              success: function(res){
+	              	console.log(res)
+	              	setTimeout(function(){
+	              		$("#loaderModel").modal("hide");
+	              		$("#success_alert_text").text("Customer total transaction days has been updated successfully.");
+	              		$("#successModel").modal("show");
+	              		$("#successModel").unbind("click");
+	              	},500)
+	              },
+	              error: function(data, textStatus, xhr) {
+	                if(data.status == 422){
+	                 
+	                } 
+	              }
+        	});
+
+		});
+
+		$("#validate_check").on("click",function(){
+			let check_customer_tier_validity_check = $("#customer_tier_validity_check").val();
+			let tier_vali_check = check_customer_tier_validity_check.replace(" Days from status change","");
+
+
+			if(check_customer_tier_validity_check == ""){
+				$("#alert_text").text("Please enter customer tier validity check (Badge Change) days.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
+
+			if(parseInt(tier_vali_check) <= 0){
+				$("#alert_text").text("Please enter valid customer tier validity check (Badge Change) days.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
+
+			var data = {
+	            '_token': "{{csrf_token()}}",
+	            'customer_tier_validity_check': tier_vali_check
+            };
+
+          	$.ajax({
+	              url:"{{route('admin.totalValidateCheckForDays')}}",
+	              type:'POST',
+	              data:data,
+	              success: function(res){
+	              	console.log(res)
+	              	setTimeout(function(){
+	              		$("#loaderModel").modal("hide");
+	              		$("#success_alert_text").text("Customer tier validity check (Badge Change) days has been updated successfully.");
+	              		$("#successModel").modal("show");
+	              		$("#successModel").unbind("click");
+	              	},500)
+	              },
+	              error: function(data, textStatus, xhr) {
+	                if(data.status == 422){
+	                 
+	                } 
+	              }
+        	});
+
+
+		})
 	});
 </script>
 

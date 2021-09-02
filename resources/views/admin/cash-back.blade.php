@@ -215,7 +215,7 @@
 							<div class="col-md-2 col-sm-12 text-center">
 								<ul class="" style="padding-left: 25px;">
 										<a class="nav-link" href="{{route('admin.adminTabs')}}">
-											<img src="{{url('public/admin/assets/img/logo-approved.png')}}"/ alt="logo-approved">
+											<img src="{{url('public/admin/assets/img/logo-approved.png')}}" style="width: 100px;" alt="logo-approved"/>
 										</a>
 								</ul>
 							</div>
@@ -1588,8 +1588,8 @@
 						let fr_select;
 						let sa_select;
 						let su_select;
-						let select_active;
-						let select_inactive;
+						let select_active = '';
+						let select_inactive = '';
 
 
 						if(split_day_on.indexOf("Monday") != -1){

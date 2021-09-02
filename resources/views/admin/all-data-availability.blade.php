@@ -189,7 +189,7 @@
 							<div class="col-md-2 col-sm-12 text-center">
 								<ul class="" style="padding-left: 25px;">
 										<a class="nav-link" href="{{route('admin.adminTabs')}}">
-											<img src="{{url('public/admin/assets/img/logo-approved.png')}}"/ alt="logo-approved">
+											<img src="{{url('public/admin/assets/img/logo-approved.png')}}" style="width: 100px;" alt="logo-approved"/>
 										</a>
 								</ul>
 							</div>
@@ -248,8 +248,9 @@
 							</label>
 							<select class="form-control form-group" style="position: relative;border-radius: 0px;     padding: 9px 28px 9px 12px !important;" id="exampleFormControlSelect1">
 								<option>Select Venue </option>
-								<option>All</option>
-								<option>India</option>
+								@foreach($venues as $venue)
+								<option value="{{$venue->id}}">{{$venue->venue_name}}</option>
+								@endforeach()
 							</select>
 						</div>
 						<div class="venue_inputs mb-3 px-2">
@@ -340,10 +341,17 @@
 						</div>
 
 						<div>
-							<a href="" class="btn btn-primary btn-user btn-block common_btn" style="     font-size: 18px; width: 154px; margin-right: 15px; text-transform: none; padding: 8px 0;">
+							<a href="javascript:void(0);" id="activate_user" class="btn btn-primary btn-user btn-block common_btn" style="font-size: 18px; width: 154px; margin-right: 15px; text-transform: none; padding: 8px 0;">
 								Activate User
 							</a>
 						</div>
+
+						<div>
+							<a href="javascript:void(0);" id="deactivate_user" class="btn btn-primary btn-user btn-block common_btn" style="font-size: 18px; width: 154px; margin-right: 15px; text-transform: none; padding: 8px 0;">
+								Deactivate User
+							</a>
+						</div>
+
 						<div>
 							<a href="javascript:void(0)" id="update_btn" class="btn btn-primary btn-user btn-block common_btn" style="     font-size: 18px; width: 154px; margin-right: 15px; text-transform: none; padding: 8px 0;">
 								Update
@@ -1942,6 +1950,9 @@ chart.render();
 		              		$("#success_alert_text").text("Users has been blocked successfully.");
 		              		$("#successModel").modal("show");
 
+		              		$(".single_checkbox").prop("checked",false);
+		              		$(".select_all_checkbox").prop("checked",false);
+
 		              	},500);
 		              },
 		              error: function(data, textStatus, xhr) {
@@ -1984,6 +1995,114 @@ chart.render();
 		              		$("#loaderModel").modal("hide");
 		              		$("#success_alert_text").text("Users has been un-blocked successfully.");
 		              		$("#successModel").modal("show");
+
+		              		$(".single_checkbox").prop("checked",false);
+		              		$(".select_all_checkbox").prop("checked",false);
+
+		              	},500);
+		              },
+		              error: function(data, textStatus, xhr) {
+		                if(data.status == 422){
+		                  var result = data.responseJSON;
+		                  alert('Something went worng.');
+		                  window.location.href = "";
+		                  return false;
+		                } 
+	              	}
+	            });
+
+			});
+
+
+
+			$("#activate_user").on("click",function(){
+				let ids = $("#selected_checkboxes").val();
+				if(ids == "" || ids == null || ids == "undefiend"){
+					$("#alert_text").text("Please select checkbox for activate users.");
+					$("#validationModel").modal("show");
+					$("#validationModel").unbind("click");
+					return false;
+				}
+				
+				var data = {
+	            	'_token': "{{csrf_token()}}",
+	            	"ids": ids
+	            };
+
+	          	$.ajax({
+		              url:"{{route('admin.activateUsers')}}",
+		              type:'POST',
+		              data:data,
+		              beforeSend:function(){
+		              	$("#loaderModel").modal("show");
+						$("#loaderModel").unbind("click");
+		              },
+		              success: function(res){
+		              	setTimeout(function(){
+		              		console.log(res)
+
+		              		let userids = res.ids;
+		              		for(let p=0; userids.length > p; p++){
+		              			$(".td_click[key_type='is_active'][data-id='"+userids[p]+"']").text("Active");
+		              		}
+		              		$("#loaderModel").modal("hide");
+		              		$("#success_alert_text").text("Users has been activated successfully.");
+		              		$("#successModel").modal("show");
+
+		              		$(".single_checkbox").prop("checked",false);
+		              		$(".select_all_checkbox").prop("checked",false);
+
+		              	},500);
+		              },
+		              error: function(data, textStatus, xhr) {
+		                if(data.status == 422){
+		                  var result = data.responseJSON;
+		                  alert('Something went worng.');
+		                  window.location.href = "";
+		                  return false;
+		                } 
+	              	}
+	            });
+
+			});
+
+			$("#deactivate_user").on("click",function(){
+				let ids = $("#selected_checkboxes").val();
+				if(ids == "" || ids == null || ids == "undefiend"){
+					$("#alert_text").text("Please select checkbox for deactivate users.");
+					$("#validationModel").modal("show");
+					$("#validationModel").unbind("click");
+					return false;
+				}
+				
+				var data = {
+	            	'_token': "{{csrf_token()}}",
+	            	"ids": ids
+	            };
+
+	          	$.ajax({
+		              url:"{{route('admin.deactivateUsers')}}",
+		              type:'POST',
+		              data:data,
+		              beforeSend:function(){
+		              	$("#loaderModel").modal("show");
+						$("#loaderModel").unbind("click");
+		              },
+		              success: function(res){
+		              	setTimeout(function(){
+		              		console.log(res)
+
+		              		let userids = res.ids;
+		              		for(let p=0; userids.length > p; p++){
+		              			$(".td_click[key_type='is_active'][data-id='"+userids[p]+"']").text("Inactive");
+		              		}
+
+		              		$("#loaderModel").modal("hide");
+		              		$("#success_alert_text").text("Users has been deactivated successfully.");
+		              		$("#successModel").modal("show");
+
+		              		$(".single_checkbox").prop("checked",false);
+		              		$(".select_all_checkbox").prop("checked",false);
 
 		              	},500);
 		              },

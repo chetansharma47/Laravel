@@ -28,7 +28,7 @@ use App\Models\Offer;
 use App\Models\OfferSetting;
 use App\Models\Cashback;
 use App\Models\City;
-require_once $_SERVER['DOCUMENT_ROOT'].'/capital_motion_24_august/vendor/autoload.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/capital_motion_02_september/vendor/autoload.php';
 
 class AuthenticationController extends ResponseController
 {
@@ -195,8 +195,8 @@ class AuthenticationController extends ResponseController
    
 
     public function viewMessageResetPassword(){
-        $title = "Password Reset Success";
-        $message = "Password has been reset successfully.";
+        $title = "Reset Your Password";
+        $message = "Your password has been succesfully updated.";
         $type = "success";
         $link = "";
         return view('emails.feedback', compact('title', 'message', 'type'));

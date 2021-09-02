@@ -81,6 +81,10 @@ label.error {
     top: 22px!important;
 }
 
+.alert_mesg, .alert_msg_red {
+    margin-bottom: 0px!important;
+}
+
 
 
 	</style>
@@ -123,7 +127,7 @@ label.error {
 							<div class="col-md-2 col-sm-12 text-center">
 								<ul class="" style="padding-left: 25px;">
 										<a class="nav-link" href="{{route('admin.adminTabs')}}">
-											<img src="{{url('public/admin/assets/img/logo-approved.png')}}"/ alt="logo-approved">
+											<img src="{{url('public/admin/assets/img/logo-approved.png')}}" style="width: 100px;" alt="logo-approved"/>
 										</a>
 								</ul>
 							</div>

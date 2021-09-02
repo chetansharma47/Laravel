@@ -15,7 +15,10 @@ class VenueUser extends Model
     	'device_model',
     	'mac_address',
     	'authorized_status',
-    	'date_time'
+    	'date_time',
+        'access_token',
+        'created_by',
+        'updated_by'
     ];
 
     public function venu(){

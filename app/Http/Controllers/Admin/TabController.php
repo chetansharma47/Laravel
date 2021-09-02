@@ -37,6 +37,8 @@ use App\Models\Event;
 use App\Models\Offer;
 use App\Models\OfferSetting;
 use App\Models\City;
+use App\Models\LoginRequest;
+use Illuminate\Support\Arr;
 
 class TabController extends Controller
 {
@@ -202,22 +204,22 @@ class TabController extends Controller
         }
 
         $order = $request->get("order")[0]['column'];
-        if($order == 0){
+        if($order == 1){
             $column = "username";
-        }elseif($order == 1){
+        }elseif($order == 2){
             $column = "venue_name";
-        }elseif ($order == 2) {
-            $column = "device_model";
         }elseif ($order == 3) {
-            $column = "mac_address";
+            $column = "device_model";
         }elseif ($order == 4) {
+            $column = "mac_address";
+        }elseif ($order == 5) {
             $column = "authorized_status";
-        }else{
+        }elseif($order == 6){
             $column = "date_time";
         }
 
-        $data = VenueUser::select("*",DB::raw("DATE_FORMAT(date_time, '%d %M %Y %h:%i %p') AS date_time"))->orderBy($column,$asc_desc);
-        $total = $data->get()->count();
+        $data =LoginRequest::select("*",DB::raw("DATE_FORMAT(date_time, '%d %M %Y %h:%i %p') AS date_time"),DB::raw("(select username from venue_users where id = login_requests.venue_user_id) AS username"),DB::raw("(select venue_name from venus where id = login_requests.venu_id) AS venue_name"))->whereDeletedAt(null)->orderBy($column,$asc_desc);
+        $total = $data->count();
 
         $search = $request->get("search")["value"];
         $filter = $total;
@@ -225,11 +227,15 @@ class TabController extends Controller
 
         if($search){
             $data  = $data->where(function($query) use($search){
-                        $query->where('username', 'Like', '%'. $search . '%');
+                            
+                            $query->orWhereHas('venuUser', function($insideQuery) use ($search){
+                                return $insideQuery->where('username', 'like', '%'.$search.'%');
+                            });
+
                             //$query->orWhere('venue_name', 'Like', '%' . $search . '%');
                             $query->orWhere('device_model', 'Like', '%' . $search . '%');
                             $query->orWhere('mac_address', 'Like', '%' . $search . '%');
-                            $query->orWhere('authorized_status', 'Like', '%' . $search . '%');
+                            $query->orWhere('authorized_status', 'Like', $search . '%');
                             $query->orWhere(DB::raw("DATE_FORMAT(date_time, '%d %M %Y %h:%i %p')"), 'Like', '%' . $search . '%');
                             $query->orWhereHas('venu', function($insideQuery) use ($search){
                                 return $insideQuery->where('venue_name', 'like', '%'.$search.'%');
@@ -343,8 +349,9 @@ class TabController extends Controller
     	if($request->isMethod('GET')){
             $admin = Auth()->guard('admin')->user();
             $tiers = TierSetting::whereAdminId($admin->id)->with('tierConditions')->get();
+            $venues = Venu::whereAdminId($admin->id)->whereDeletedAt(null)->get();
 
-    		return view('admin.all-data-availability',compact('tiers'));
+    		return view('admin.all-data-availability',compact('tiers','venues'));
     	}
 
         if ($request->isMethod('POST')) {
@@ -581,9 +588,9 @@ class TabController extends Controller
     public function authorizedUnauthorized(Request $request){
         $ids = explode(",", $request->ids);
         if($request->type == "authorized"){
-            VenueUser::whereIn("id",$ids)->update(['authorized_status' => 'Authorized']);
+            LoginRequest::whereIn("id",$ids)->update(['authorized_status' => 'Authorized']);
         }else{
-            VenueUser::whereIn("id",$ids)->update(['authorized_status' => 'Unauthorized']);
+            LoginRequest::whereIn("id",$ids)->update(['authorized_status' => 'Unauthorized']);
         }
 
         return ['status' => "success", "type" => $request->type, 'ids' => $ids];
@@ -665,6 +672,9 @@ class TabController extends Controller
             $venuecreate->password = $hashpassword;
             $venuecreate->venu_id = $request->v_name;
             $venuecreate->status = $request->v_status;
+            $venuecreate->date_time = Carbon::now();
+            $venuecreate->created_by = "Admin";
+            $venuecreate->updated_by = "Admin";
             $venuecreate->save();
 
             if($venuecreate){
@@ -684,43 +694,47 @@ class TabController extends Controller
     public function venueTableRecords(Request $request){
 
         if($request->isMethod('POST')){
+            $admin_id = Auth::guard('admin')->user()->id;
             $asc_desc = $request->get('order')[0]['dir'];
             $column_id = $request->get('order')[0]['column'];
             $search = $request->get("search")["value"];
             $colname = $request->get('columns');
 
-            $column = $colname[0]['data'];
+            $column = "id";
 
-            if($column_id == 0){
-                $column = $colname[0]['data'];
-            }else if($column_id == 1){
-                $column = $colname[1]['data'];
-            }else if($column_id == 2){
-                $column = $colname[2]['data'];
-            }else if($column_id == 3){
-                $column = $colname[3]['data'];
-            }else if($column_id == 4){
-                $column = $colname[4]['data'];
-            }else if($column_id == 5){
-                $column = $colname[5]['data'];
-            }else if($column_id == 6){
-                $column = $colname[6]['data'];
-            }else if($column_id == 7){
-                $column = $colname[7]['data'];
+            $order = $request->get("order")[0]['column'];
+
+            if($order == 1){
+                $column = "username";
+            }else if($order == 2){
+                $column = "password";
+            }else if($order == 3){
+                $column = "venue_name";
+            }else if($order == 4){
+                $column = "status";
+            }else if($order == 5){
+                $column = "created_at";
+            }else if($order == 6){
+                $column = "created_by";
+            }else if($order == 7){
+                $column = "updated_at";
+            }else if($order == 8) {
+                $column = "updated_by";
             }
 
-            $data = VenueUser::orderBy($column,$asc_desc);
-            $total = $data->get()->count();
+            $data = VenueUser::select('*',DB::raw("(select venue_name from venus where id = venue_users.venu_id) AS venue_name"))->whereDeletedAt(null)->orderBy($column,$asc_desc);
+            $total = $data->count();
             $filter = $total;
 
             if($search){
                  $data  = $data->where(function($query) use($search){
                         $query->where('username', 'Like', '%'. $search . '%');
-                        $query->orWhere('status', 'Like', '%' . $search . '%');
-                        $query->orWhere(DB::raw("DATE_FORMAT(created_at, '%Y %M %d %H:%i:%s %p')"), 'Like', '%' . $search . '%');
                         $query->orWhereHas('venu', function($query) use ($search){
                                 $query->where('venue_name', 'like', '%'.$search.'%');
                             });
+                        $query->orWhere('status', 'Like', '%' . $search . '%');
+                        $query->orWhere(DB::raw("DATE_FORMAT(created_at, '%Y %M %d %H:%i:%s %p')"), 'Like', '%' . $search . '%');
+                        $query->orWhere('status', 'Like', '%' . $search . '%');
                         $query->orWhere(DB::raw("DATE_FORMAT(updated_at, '%Y %M %d %H:%i:%s %p')"), 'Like', '%' . $search . '%');
                     });
             
@@ -731,7 +745,20 @@ class TabController extends Controller
 
             $data = $data->offset($request->start);
             $data = $data->take($request->length);
-            $data = $data->with('venu:id,venue_name')->get();
+            $data = $data->get();
+
+            $start_from = $request->start;
+            if($start_from == 0){
+                $start_from  = 1;
+            }
+            if($start_from % 10 == 0){
+                $start_from = $start_from + 1;
+            }
+
+            foreach($data as $da){
+                $da->password = "******";
+                $da->DT_RowIndex = $start_from++;
+            }
 
             $return_data = [
                     "data" => $data,
@@ -746,12 +773,45 @@ class TabController extends Controller
         }
     }
 
+    public function editVenueTable(Request $request){
+        if($request->isMethod('POST')){
+            $allData = $request->arr;
+
+            foreach ($allData as $v) {
+
+                if($v['key_type'] == "username"){
+
+                    $venu_user_duplicate = VenueUser::where('id','!=', $v['data_id'])->where('username','=', $v['text'])->first();
+                    if($venu_user_duplicate){
+                        
+                        return response()->json(['venue_username_err' => "Username already exists."], 422);
+                    }
+                }
+            }
+
+            foreach($allData as $val){
+                $venu = VenueUser::find($val['data_id']);
+
+                if($val['key_type'] == 'password'){
+                    $hash = Hash::make($val['text']);
+                    $venu->update([ $val['key_type'] => $hash ]);
+                }else{
+
+                    $venu->update([ $val['key_type'] => $val['text'] ]);
+                }
+            }
+
+            return response()->json(['msg' => 'Users has been updated successfully.']);
+        }
+    }
+
 
     public function venueList(Request $request){
         if($request->isMethod('GET')){
             $auth = Auth::guard('admin')->user();
-            $vlist = Venu::whereAdminId($auth->id)->orderBy('unique_id','asc')->get();
-            return response()->json(['list' => $vlist]);
+            $last_venue = Venu::whereAdminId($auth->id)->orderBy('id','desc')->first();
+            $vlist = Venu::whereAdminId($auth->id)->whereDeletedAt(null)->orderBy('unique_id','asc')->get();
+            return response()->json(['list' => $vlist,'last_venue' => $last_venue]);
         }
     }
 
@@ -762,6 +822,8 @@ class TabController extends Controller
             if(!empty($vlist)){
                 $vlist->deleted_at = Carbon::now();
                 $vlist->update();
+
+                VenueUser::whereIn('venu_id',[$vlist->id])->update(['deleted_at' => Carbon::now()]);
                 return response()->json('Venue deleted successfully.');
             }
         }
@@ -828,8 +890,9 @@ class TabController extends Controller
         if($request->isMethod('GET')){
             $admin = Auth::guard('admin')->user();
             $venu_list = Venu::whereDeletedAt(null)->get();
-            $eventlist = Event::whereAdminId($admin->id)->orderBy('unique_id','asc')->with('venu','venueAll')->get();
-            return response()->json(['list' => $eventlist]);
+            $last_event = Event::whereAdminId($admin->id)->orderBy("id","desc")->first();
+            $eventlist = Event::whereAdminId($admin->id)->whereDeletedAt(null)->orderBy('unique_id','asc')->with('venu','venueAll')->get();
+            return response()->json(['list' => $eventlist,'last_event' => $last_event]);
         }
     }
 
@@ -884,9 +947,10 @@ class TabController extends Controller
     public function AllOffers(Request $request){
         if($request->isMethod('GET')){
             $admin = Auth::guard('admin')->user();
-            $offer = Offer::whereAdminId($admin->id)->orderBy('unique_id','asc')->with(['offerSetting','venu','offerSetting.city'])->get();
+            $last_offer = Offer::whereAdminId($admin->id)->orderBy("id","desc")->first();
+            $offer = Offer::whereAdminId($admin->id)->whereDeletedAt(null)->orderBy('unique_id','asc')->with(['offerSetting','venu','offerSetting.city'])->get();
             $cityall = City::all();
-            return ['offer' => $offer, 'cityall' => $cityall];
+            return ['offer' => $offer, 'cityall' => $cityall,'last_offer' => $last_offer];
         }
     }
 
@@ -902,6 +966,35 @@ class TabController extends Controller
                 return response()->json('Offer deleted successfully.');
             }
          }
+    }
+
+
+    public function activateUsers(Request $request){
+        $ids = explode(",", $request->ids);
+        User::whereIn("id", $ids)->update(['is_active' => "Active"]);
+        return ['status' => "success","ids" => $ids];
+    }
+
+    public function deactivateUsers(Request $request){
+        $ids = explode(",", $request->ids);
+        User::whereIn("id", $ids)->update(['is_active' => "Inactive"]);
+        return ['status' => "success","ids" => $ids];
+    }
+
+    public function totalTransactionAmountForDays(Request $request){
+        $days = $request->transaction_amount_check_last_days;
+        $admin = Auth::guard('admin')->user();
+        TierSetting::whereAdminId($admin->id)->update(['transaction_amount_check_last_days' => $days]);
+        return "success";
+    }
+
+    public function totalValidateCheckForDays(Request $request){
+
+        $days = $request->customer_tier_validity_check;
+        $admin = Auth::guard('admin')->user();
+        TierSetting::whereAdminId($admin->id)->update(['customer_tier_validity_check' => $days]);
+        return "success";
+
     }
 }
 

@@ -135,8 +135,8 @@ class AuthenticationController extends ResponseController
 
 
     public function feedbackReset(Request $request){
-      $title   = "Password Reset Success";
-      $message = " Your password has been reset successfully.";
+      $title   = "Reset Your Password";
+      $message = "Your password has been succesfully updated.";
       $type    = "success";
       return view("admin.email.feedback" , compact("title" , "message" , "type"));
     }

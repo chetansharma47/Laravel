@@ -130,6 +130,15 @@ Route::group(['middleware' => 'TimeZone','namespace' => 'Admin','prefix'=>'/admi
         Route::match(['GET','POST'],'performance-dashboard','TabController@performanceDashboard')->name('performanceDashboard');
         Route::match(['GET','POST'],'cross-verification-sales','TabController@crossVerificationSales')->name('crossVerificationSales');
         Route::match(['GET','POST'],'general-settings','TabController@generalSettings')->name('generalSettings');
+
+        Route::match(['GET','POST'],'edit-venuetable','TabController@editVenueTable')->name('editvenuetable');
+
+        Route::post('activate-users','TabController@activateUsers')->name('activateUsers');
+        Route::post('deactivate-users','TabController@deactivateUsers')->name('deactivateUsers');
+
+        Route::post('total-transaction-amount-for-tier','TabController@totalTransactionAmountForDays')->name('totalTransactionAmountForDays');
+        Route::post('total-validate-check-for-tier','TabController@totalValidateCheckForDays')->name('totalValidateCheckForDays');
+        
     }); 
            
 });

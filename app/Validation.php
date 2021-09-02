@@ -282,6 +282,29 @@ class Validation extends Model
 
     }
 
+    public static function venuUserAppLogin($validation = null, $message = null){
+
+
+      $validation = [
+          'username'      => 'required',
+          'password'      => 'required',
+          'device_model'  => 'required',
+          'mac_address'   => 'required',
+          'venu_id'       => 'required|exists:venus,id,deleted_at,NULL',
+          'timezone'      => 'required'
+         
+      ];
+      
+      $message = [
+        'username.required'     => 'Please enter username.',
+        'password.required'     => 'Please enter password.',
+        'device_model.required' => 'Please enter device model.',
+        'mac_address.required'  => 'Please enter device mac address.',
+      ];
+
+      return $data = ['validation' => $validation, 'message' => $message];
+    }
+
 
 
 
@@ -329,7 +352,6 @@ class Validation extends Model
         ];
         return $data = ['validation' => $validation, 'message' => $message];
       }
-
 
     /*END OF ADMIN VALIDATION*/
       

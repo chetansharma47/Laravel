@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<title>New Login Request</title>
+	<title>Venue Device Authorization</title>
 	<meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
 	<link rel="icon" href="{{url('public/admin/assets/img/logo-approved.png')}}" type="image/x-icon"/>
 	<link rel="preconnect" href="https://fonts.googleapis.com">
@@ -29,10 +29,10 @@
 		#basic-datatables_length {
 			display: none;
 		}
-		.page-item.active .page-link {
+		/*.page-item.active .page-link {
 			background-color: #193358;
     		border-color: #193358;
-		}
+		}*/
 		.page-item.active .page-link:hover {
 			color: #fff !important
 		}
@@ -144,6 +144,10 @@
 		th.white_space {
 		    white-space: nowrap;
 		}
+		.page-item.active .page-link {
+			background-color: #193358!important;
+    	border-color: #193358!important;
+		}
 
 	</style>
 	<!-- CSS Files -->
@@ -174,14 +178,14 @@
 								<ul class="navbar-nav">
 									<li class="nav-item">
 										<a class="nav-link hover_color" href="{{route('admin.adminTabs')}}" style="padding-right: 0">Admin Portal</a>
-										<a class="nav-link" href="#" style="padding-left: 0;"> <span style="color: #fff;">></span>New Login Request</a>
+										<a class="nav-link" href="#" style="padding-left: 0;"> <span style="color: #fff;">></span>Venue Device Authorization</a>
 									</li>
 								</ul>
 							</div>
 							<div class="col-md-2 col-sm-12 text-center">
 								<ul class="" style="padding-left: 25px;">
 										<a class="nav-link" href="{{route('admin.adminTabs')}}">
-											<img src="{{url('public/admin/assets/img/logo-approved.png')}}"/ alt="logo-approved">
+											<img src="{{url('public/admin/assets/img/logo-approved.png')}}" style="width: 100px;" alt="logo-approved"/>
 										</a>
 								</ul>
 							</div>
@@ -221,10 +225,11 @@
 			                    </a> -->
 					<thead>
 						<tr style="background-color: #193358;    color: #fff;">
-							<th class="text-left" style="min-width: 140px;">User</th>
+							<th class="text-left" style="min-width: 140px;">Id</th>
+							<th class="text-left" style="min-width: 140px;">Username</th>
 							<th class="text-left" style="min-width: 140px;">Outlet</th>
 							<th style="min-width: 140px;">Device Model</th>
-							<th>Mac Address</th>
+							<th style="min-width: 200px;">Mac Address</th>
 							<th>Status</th>
 							<th style="min-width: 140px;">Date & Time</th>
 							<th class="text-center no-arrow">
@@ -350,6 +355,7 @@
 		$(document).ready(function(){
 			$('#basic-datatables').dataTable({
              dom: "Bfrtip",
+             order: [6,'asc'],
             "processing": true,
             "serverSide": true,
             "ajax": {
@@ -396,17 +402,17 @@
             },
             createdRow: function( row, data, dataIndex ) {
 
-		        $( row ).find('td:eq(0)').attr('data-id', data['id']).attr('key_type','username').addClass('td_click');
-		        $( row ).find('td:eq(1)').attr('data-id', data['id']).attr('key_type','venue_name').addClass('td_click');
-		        $( row ).find('td:eq(2)').attr('data-id', data['id']).attr('key_type','device_model').addClass('td_click');
-		        $( row ).find('td:eq(3)').attr('data-id', data['id']).attr('key_type','mac_address').addClass('td_click');
-		        $( row ).find('td:eq(4)').attr('data-id', data['id']).attr('key_type','authorized_status').addClass('td_click');
-		        $( row ).find('td:eq(5)').attr('data-id', data['id']).attr('key_type','date_time').addClass('white_space');
+		        $( row ).find('td:eq(1)').attr('data-id', data['id']).attr('key_type','username').addClass('td_click');
+		        $( row ).find('td:eq(2)').attr('data-id', data['id']).attr('key_type','venue_name').addClass('td_click');
+		        $( row ).find('td:eq(3)').attr('data-id', data['id']).attr('key_type','device_model').addClass('td_click');
+		        $( row ).find('td:eq(4)').attr('data-id', data['id']).attr('key_type','mac_address').addClass('td_click');
+		        $( row ).find('td:eq(5)').attr('data-id', data['id']).attr('key_type','authorized_status').addClass('td_click');
+		        $( row ).find('td:eq(6)').attr('data-id', data['id']).attr('key_type','date_time').addClass('white_space');
 		        
 		    },
             "columns": [
-            // {data: 'DT_RowIndex', name: 'DT_RowIndex'},
-                {data: 'username', name: 'username'},
+          		{data: 'DT_RowIndex', name: 'DT_RowIndex'},
+              	{data: 'username', name: 'username'},
 	            {data: 'venu.venue_name', name: 'venu.venue_name'},
 	            {data: 'device_model', name: 'device_model'},
 	            {data: 'mac_address', name: 'mac_address'},

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<title>Venue User Management</title>
+	<title>Venue Login Users</title>
 	<meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
 	<link rel="icon" href="{{url('public/admin/assets/img/logo-approved.png')}}" type="image/x-icon"/>
 	<link rel="preconnect" href="https://fonts.googleapis.com">
@@ -27,6 +27,20 @@
 		#basic-datatables3_wrapper {
 			padding: 0 !important;
 		}
+		select.form-control.form-group.status_select {
+    height: 39px!important;
+    font-size: 12px;
+        width: 75px;
+
+}
+td.td_edit.white_space.venu_edit {
+    min-width: 113px;
+    word-break: break-all;
+}
+select.form-control.form-group.status_select:focus{
+	    border-color: #fff;
+
+}
 		.common_btn {
 		    width: 129px!important;
 		    font-size: 16px!important;
@@ -40,6 +54,10 @@
 		   margin-left: 10px;
 		    margin-right: 10px;
 		}
+		div#basic-datatables_wrapper .col-sm-12 {
+    overflow: auto;
+    display: inline-block;
+}
 		.common_btn {
 		    width: 129px!important;
 		    font-size: 16px!important;
@@ -116,6 +134,10 @@
 		    justify-content: center;
 		}
 
+		#basic-datatables tbody tr td {
+			line-height: 55px;
+		}
+
 		#validationModel .modal-body {
 			text-align: center;
 		}
@@ -123,6 +145,18 @@
 		#validationModel .modal-body p {
 			margin-bottom: 0rem;
 		}
+		.break-all{
+			word-break: break-all;
+			min-width: 211px;
+			width: 100%;
+		}
+		.col_min_width{
+			min-width: 211px;
+			width: 100%;
+		}
+		.td_edit[key_type=password] { -webkit-text-security: disc; color:#6f6f6f;    line-height: 55px;
+ }
+
     </style>
 	<!-- CSS Files -->
 	<link rel="stylesheet" href="{{url('public/admin/assets/css/bootstrap.min.css')}}">
@@ -147,6 +181,9 @@
 		.venue_inputs {
 			width: 100%;
 		}
+	.date_white_space{
+    white-space: nowrap;
+}
 	</style>
 </head>
 <body>
@@ -171,7 +208,7 @@
 							<div class="col-md-2 col-sm-12 text-center">
 								<ul class="" style="padding-left: 25px;">
 										<a class="nav-link" href="{{route('admin.adminTabs')}}">
-											<img src="{{url('public/admin/assets/img/logo-approved.png')}}"/ alt="logo-approved">
+											<img src="{{url('public/admin/assets/img/logo-approved.png')}}" style="width: 100px;" alt="logo-approved"/>
 										</a>
 								</ul>
 							</div>
@@ -217,10 +254,10 @@
 					</div>
 					<div class="venue_inputs mb-3 px-2 pl-3">
 						<label style="font-weight: 400;">
-							Venue Selection
+							Venue
 						</label>
-						<select name="venue_selection" id="venue_selection" class="form-control form-group" style="position: relative;border-radius: 10px;">
-							<option readonly value="">Select Venue Selection</option>
+						<select name="venue_selection" id="venue_selection" class="form-control form-group" style="position: relative;border-radius: 10px; cursor: pointer;">
+							<option readonly value="">Select Venue</option>
 							@if(count($venulist) > 0)
 								@foreach($venulist as $valu)
 									<option value="{{ $valu->id }}">{{ $valu->venue_name }}</option>
@@ -232,23 +269,23 @@
 						<label style="font-weight: 400;">
 							Status
 						</label>
-						<select class="form-control form-group" id="venue_user_status" style="position: relative;border-radius: 10px;" name="venue_user_status">
+						<select class="form-control form-group" id="venue_user_status" style="position: relative;border-radius: 10px; cursor: pointer;" name="venue_user_status">
 							<option value="" readonly="">Select Status</option>
 							<option value="Active">Active</option>
 							<option value="Inactive">Inactive</option>
 						</select>
 					</div>
-					<div class="d-flex justify-content-start mt-4 ml-3">
-						<!-- <div> -->
+					<div class="d-flex justify-content-between px-3">
+						<div>
 							<a href="javascript:void(0)" name="venue_add_new" id="venue_add_new" class="btn btn-primary btn-user btn-block common_btn" style="font-size: 18px; text-transform: none">
 								Add New
 							</a>
-						<!-- </div> -->
-						<!-- <div>
-							<a href="" class="btn btn-primary btn-user btn-block common_btn" style="font-size: 18px; text-transform: none">
+						</div>
+						<div>
+							<a href="javascript:void(0)" class="btn btn-primary btn-user btn-block update_btn common_btn" style="font-size: 18px; text-transform: none">
 								Update
 							</a>
-						</div> -->
+						</div>
 					</div>
 				</div>
 			</div>
@@ -267,12 +304,15 @@
 						<table id="basic-datatables" class="venue_ls display table table-striped table-hover" style="padding: 0">
 							<thead>
 								<tr style="background-color: #193358; color: #fff;">
-									<th>Id</th>
+									<th>Sr.No.</th>
 									<th>Username</th>
+									<th>Password</th>
 									<th>Role</th>
 									<th>Status</th>
 									<th>Created On</th>
+									<th>Created By</th>
 									<th>Updated On</th>
+									<th>Updated By</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -312,7 +352,7 @@
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">Information</h5>
+        <h5 class="modal-title" id="exampleModalLongTitle">success</h5>
         <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button> -->
@@ -399,12 +439,36 @@
 				$("#alert_text").text("Please enter username.");
 				$("#validationModel").modal("show");
 				$("#validationModel").unbind("click");
-			return false;
+				return false;
+
+			}
+
+			if($('#venue_username').val().length < 2){
+				$("#alert_text").text("Username should be at least 2 characters long.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
 
 			}
 
 			if($('#venue_user_password').val()==""){
 				$("#alert_text").text("Please enter password.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+
+			}
+
+			if($('#venue_user_password').val().length < 6 ){
+				$("#alert_text").text("Password must be at least 6 characters.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+			return false;
+
+			}
+
+			if($('#venue_user_password').val().length > 100 ){
+				$("#alert_text").text("Password may not be greater than 100 characters.");
 				$("#validationModel").modal("show");
 				$("#validationModel").unbind("click");
 			return false;
@@ -442,6 +506,10 @@
 		        $("#successModel").modal("show");
 	        	$("#success_alert_text").text(data.message);
 	        	$("#successModel").unbind("click");
+	        	$('#venue_username').val('');
+						$('#venue_user_password').val('');
+						$("#venue_selection").val('');
+						$("#venue_user_status").val('');
 						$('#basic-datatables').DataTable().ajax.reload();
 					},500);
 				},error: function(data, textStatus, xhr) {
@@ -469,20 +537,41 @@
 				retrieve: true,
 				paging: true,
 				searching:true,
+				order: [0, 'desc'],
 				ajax:{
 					url:"{{ route('admin.venuetable') }}",
 					type:"POST",
 					data:{'_token':'{{csrf_token()}}'},
 				},
+				createdRow: function( row, data, dataIndex ) {
+
+				
+		        $( row ).find('td:eq(1)').attr('data-id', data['id']).attr('key_type','username').addClass('td_edit').addClass('white_space').addClass('break-all');
+		        $( row ).find('td:eq(2)').attr('data-id', data['id']).attr({key_type:'password',type:'password'}).addClass('td_edit').addClass('white_space').addClass('break-all').html('<span>'+data.password+'</span>');
+		        $( row ).find('td:eq(3)').attr('data-id', data['id']).attr('key_type','venue_name').addClass('td_edit').addClass('white_space').addClass('venu_edit').addClass('col_min_width');
+		        $( row ).find('td:eq(4)').attr('data-id', data['id']).attr('key_type','status').html(`<select class="form-control form-group status_select" style="cursor:pointer; width:max-content;">
+													<option value="Active" ${(data.status == "Active") ? 'selected' : ''}>Active</option>
+													<option value="Inactive" ${(data.status == "Inactive") ? 'selected' : ''}>Inactive</option>
+												</select>`);
+		        $( row ).find('td:eq(5)').attr('data-id', data['id']).attr('key_type','created_at').addClass('td_edit').addClass('white_space').addClass('date_white_space').addClass('col_min_width');
+		        $( row ).find('td:eq(6)').attr('data-id', data['id']).attr('key_type','created_by').addClass('td_edit').addClass('white_space');
+		        $( row ).find('td:eq(7)').attr('data-id', data['id']).attr('key_type','updated_at').addClass('td_edit').addClass('white_space').addClass('date_white_space').addClass('col_min_width');
+		        $( row ).find('td:eq(8)').attr('data-id', data['id']).attr('key_type','updated_by').addClass('td_edit').addClass('white_space');
+		    },
 				columns:[
-					{data:'id',name:'id'},
+					{data: 'DT_RowIndex', name: 'DT_RowIndex'},
 					{data:'username',name:'username'},
-					{data:'venu.venue_name', name:'venu.venue_name'},
+					{data:'password',name:'password'},
+					{data:'venue_name', name:'venue_name'},
 					{data:'status', name:'status'},
 					{data:'created_at', name:'created_at'},
+					{data:'created_by', name:'created_by'},
 					{data:'updated_at', name:'updated_at'},
+					{data:'updated_by', name:'updated_by'},
 				]
+			
 			});
+				
 		}
 
 		displayVenue();
@@ -506,6 +595,144 @@
 			if(e.which===32 && e.target.selectionStart===0){
 				return false;
 			}
+		});
+
+
+		$(document).on('dblclick','.td_edit',function(){
+
+			var dataId = $(this).attr('data-id');
+			var keyType = $(this).attr('key_type');
+			var content = $(this).text();
+
+			if(keyType == 'username' || keyType == 'password' || keyType == 'status' ){
+				$(this).attr('contenteditable',true);
+				$(this).attr("onkeypress", "return (this.innerText.length <= 50)");
+			}
+
+			if(keyType=='password'){
+				$(this).text('');
+				$(this).attr('contenteditable',true);
+				$(this).attr("onkeypress", "return (this.innerText.length <= 50)");
+			}
+
+			if(keyType == 'username' || keyType == 'password' ){
+				
+				$(this).on('keydown',function(e){
+					if(e.which==32){
+						return false;
+					}
+				});
+
+			}
+
+			// if(keyType == 'username'){
+
+			// }
+
+		});
+
+		$(document).on("change",".status_select",function(){
+			$(this).parent().addClass("td_edit").attr("contenteditable","true");
+		});
+
+
+		$('.update_btn').click(function(){
+
+		if($('.td_edit[contenteditable=true]').length <= 0){
+			$("#alert_text").text("Please edit at least one value.");
+			$("#validationModel").modal("show");
+			$("#validationModel").unbind("click");
+			return false;
+		}
+
+		var	arr = [];
+		$('.td_edit[contenteditable=true]').each(function(){
+			let data_id = $(this).attr('data-id');
+			let keyType = $(this).attr('key_type');
+			let text;
+
+			if(keyType == "status"){
+				text = $(this).children(".status_select").val();
+			}else{
+				text = $(this).text();
+			}
+
+
+			
+			if(keyType == 'username'){
+
+				if(text == ""){
+					$("#alert_text").text("Please enter username.");
+					$("#validationModel").modal("show");
+					$("#validationModel").unbind("click");
+					return false;
+				}
+
+				if(text.length < 2){
+					$("#alert_text").text("Username should be atleast 2 characters.");
+					$("#validationModel").modal("show");
+					$("#validationModel").unbind("click");
+					return false;
+				}
+
+			}
+			else if(keyType == 'password'){
+				if(text == ""){
+					$("#alert_text").text("Please enter password.");
+					$("#validationModel").modal("show");
+					$("#validationModel").unbind("click");
+					return false;
+				}
+			}
+
+			var objectData = {}
+
+			objectData.data_id = data_id;
+			objectData.key_type = keyType;
+			objectData.text = text;
+
+			arr.push(objectData);
+
+			});
+
+		var objectData = {
+			'_token':'{{ csrf_token() }}',
+			'arr':arr,
+		}
+
+			$.ajax({
+				url:'{{ route("admin.editvenuetable") }}',
+				dataType:'JSON',
+				type:'POST',
+				data:objectData,
+				beforeSend:function(){
+          		$("#loaderModel").modal("show");
+					$("#loaderModel").unbind("click");
+				},
+				success:function(data){
+					setTimeout(function(){
+					$("#loaderModel").modal("hide");
+				  	$("#successModel").modal("show");
+		        	$("#success_alert_text").text(data.msg);
+		        	$("#successModel").unbind("click");
+		        	$('#basic-datatables').DataTable().ajax.reload();
+					},500);
+				},error: function(data, textStatus, xhr) {
+	                if(data.status == 422){
+	                  setTimeout(function(){
+	                  	$("#loaderModel").modal("hide");
+		                  	var result = data.responseJSON;
+		                  	if(result['venue_username_err'] && result['venue_username_err'].length > 0){
+			                  	$("#alert_text").text(result['venue_username_err']);
+								$("#validationModel").modal("show");
+								$("#validationModel").unbind("click");
+		                 	}
+		                  return false;
+	                  },500);
+	                } 
+	              }
+			});
+
 		});
 
 	</script>
