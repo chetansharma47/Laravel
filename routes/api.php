@@ -30,7 +30,7 @@ Route::group(['namespace' => 'Api\v1','prefix'=>'v1'], function() {
     Route::get('application-data','AuthenticationController@applicationData');
     Route::get('city-listing','AuthenticationController@cityListing');
     
-    Route::group(['middleware' => 'auth:api'], function(){
+    Route::group(['middleware' => ['auth:api','checkBlockDelete']], function(){
 
         Route::get('logout', 'AuthenticationController@logout');
 
