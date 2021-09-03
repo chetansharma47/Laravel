@@ -4,7 +4,7 @@ namespace App\BusinessModel;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Venu;
-use App\Models\VenuUser;
+use App\Models\VenueUser;
 use App\User;
 use Auth;
 use Carbon\Carbon;

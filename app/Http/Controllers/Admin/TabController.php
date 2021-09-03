@@ -228,7 +228,7 @@ class TabController extends Controller
         if($search){
             $data  = $data->where(function($query) use($search){
                             
-                            $query->orWhereHas('venuUser', function($insideQuery) use ($search){
+                            $query->orWhereHas('venueUser', function($insideQuery) use ($search){
                                 return $insideQuery->where('username', 'like', '%'.$search.'%');
                             });
 

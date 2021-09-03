@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Venu;
-use App\Models\VenuUser;
+use App\Models\VenueUser;
 
 class LoginRequest extends Model
 {
@@ -21,7 +21,7 @@ class LoginRequest extends Model
     	return $this->belongsTo(Venu::class);
     }
 
-    public function venuUser(){
-    	return $this->belongsTo(VenuUser::class);
+    public function venueUser(){
+    	return $this->belongsTo(VenueUser::class);
     }
 }
