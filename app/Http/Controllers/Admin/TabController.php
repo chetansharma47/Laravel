@@ -809,7 +809,7 @@ class TabController extends Controller
     public function venueList(Request $request){
         if($request->isMethod('GET')){
             $auth = Auth::guard('admin')->user();
-            $last_venue = Venu::whereAdminId($auth->id)->orderBy('id','desc')->first();
+            $last_venue = Venu::whereAdminId($auth->id)->orderBy('unique_id','desc')->first();
             $vlist = Venu::whereAdminId($auth->id)->whereDeletedAt(null)->orderBy('unique_id','asc')->get();
             return response()->json(['list' => $vlist,'last_venue' => $last_venue]);
         }
@@ -890,7 +890,7 @@ class TabController extends Controller
         if($request->isMethod('GET')){
             $admin = Auth::guard('admin')->user();
             $venu_list = Venu::whereDeletedAt(null)->get();
-            $last_event = Event::whereAdminId($admin->id)->orderBy("id","desc")->first();
+            $last_event = Event::whereAdminId($admin->id)->orderBy("unique_id","desc")->first();
             $eventlist = Event::whereAdminId($admin->id)->whereDeletedAt(null)->orderBy('unique_id','asc')->with('venu','venueAll')->get();
             return response()->json(['list' => $eventlist,'last_event' => $last_event]);
         }
@@ -947,7 +947,7 @@ class TabController extends Controller
     public function AllOffers(Request $request){
         if($request->isMethod('GET')){
             $admin = Auth::guard('admin')->user();
-            $last_offer = Offer::whereAdminId($admin->id)->orderBy("id","desc")->first();
+            $last_offer = Offer::whereAdminId($admin->id)->orderBy("unique_id","desc")->first();
             $offer = Offer::whereAdminId($admin->id)->whereDeletedAt(null)->orderBy('unique_id','asc')->with(['offerSetting','venu','offerSetting.city'])->get();
             $cityall = City::all();
             return ['offer' => $offer, 'cityall' => $cityall,'last_offer' => $last_offer];
