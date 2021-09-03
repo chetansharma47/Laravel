@@ -9,7 +9,7 @@
 
 <style type="text/css">
   .ii a[href] {
-    color: #fff;
+    color: #fff!important;
 }
 
 </style>
@@ -155,7 +155,7 @@
   <tr>
     <td align="center" style="font-family: 'Lato', sans-serif;
     font-weight: 400; font-size: 12px; color: #fff; padding-bottom: 12px;">
-      Email: <span style="color: #fff;">info@capitalmotion.com</span>
+      Email: <span style="color: #fff;"><a href="javascript:void(0);" style="color: #fff!important">info@capitalmotion.com</a></span>
     </td>
   </tr>
   <tr>

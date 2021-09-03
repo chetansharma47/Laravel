@@ -1950,6 +1950,7 @@ chart.render();
 		              		$("#success_alert_text").text("Users has been blocked successfully.");
 		              		$("#successModel").modal("show");
 
+		              		$("#selected_checkboxes").val("");
 		              		$(".single_checkbox").prop("checked",false);
 		              		$(".select_all_checkbox").prop("checked",false);
 
@@ -1996,6 +1997,7 @@ chart.render();
 		              		$("#success_alert_text").text("Users has been un-blocked successfully.");
 		              		$("#successModel").modal("show");
 
+		              		$("#selected_checkboxes").val("");
 		              		$(".single_checkbox").prop("checked",false);
 		              		$(".select_all_checkbox").prop("checked",false);
 
@@ -2049,6 +2051,7 @@ chart.render();
 		              		$("#success_alert_text").text("Users has been activated successfully.");
 		              		$("#successModel").modal("show");
 
+		              		$("#selected_checkboxes").val("");
 		              		$(".single_checkbox").prop("checked",false);
 		              		$(".select_all_checkbox").prop("checked",false);
 
@@ -2101,6 +2104,7 @@ chart.render();
 		              		$("#success_alert_text").text("Users has been deactivated successfully.");
 		              		$("#successModel").modal("show");
 
+		              		$("#selected_checkboxes").val("");
 		              		$(".single_checkbox").prop("checked",false);
 		              		$(".select_all_checkbox").prop("checked",false);
 

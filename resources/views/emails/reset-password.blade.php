@@ -25,10 +25,33 @@
     color: #ce3333!important;
     margin-top: 4px;
   }
+
+  .alert {
+    max-width: 600px;
+    margin: 40px auto 0px auto;
+    width: 100%;
+    padding: 10px 0px;
+    position: relative;
+  }
+
+  button.close.close_icon {
+    position: absolute;
+    right: 8px;
+    top: 20px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    height: 24px;
+    width: 24px;
+  }
+
+  :focus {
+    outline: -webkit-focus-ring-color auto 0px;
+  }
 </style>
 
 <body style="background-color: #f9fafb; padding: 0;
     margin: 0;">
+    @include('admin.notification')
   <table width="600" border="0" align="center" cellpadding="0" cellspacing="0" style="margin-top: 48px;">
     <tr>
        <td align="center" style="padding-bottom: 15px;">
@@ -84,7 +107,7 @@
     </div>
     @endif
 
-    @include('admin.notification')
+    
     <td align="left" valign="top" style="background:#fff; padding:30px 20px;border-bottom-left-radius: 30px;border-bottom-right-radius: 30px;">
       <table width="100%" border="0" cellspacing="0" cellpadding="0">
 
@@ -375,4 +398,11 @@
       });
     });
 </script>
+
+<script type="text/javascript">
+  $(".close_icon").on("click",function(){
+    $(".alert").css("display","none");
+  });
+</script>
+
 </html>

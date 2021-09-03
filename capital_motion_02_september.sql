@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Sep 02, 2021 at 06:20 PM
+-- Generation Time: Sep 03, 2021 at 03:20 PM
 -- Server version: 5.7.35-0ubuntu0.18.04.1
 -- PHP Version: 7.2.34-10+ubuntu18.04.1+deb.sury.org+1
 
@@ -41,7 +41,7 @@ CREATE TABLE `admins` (
 --
 
 INSERT INTO `admins` (`id`, `name`, `email`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'Nadeer', 'phpapi870@gmail.com', '$2y$10$ksxq8opwxiROSIARjFd4j.9339hPksFnslzJmb0PNpZ2qkKpdJU2G', 'u4tzIaH9w26x97cUsGbfnOlxxn8hbTq7qVdnsHzNYVAz6NG9nWFsVYHPkAnA6vSO', NULL, '2021-09-02 12:31:44');
+(1, 'Nadeer', 'phpapi870@gmail.com', '$2y$10$ksxq8opwxiROSIARjFd4j.9339hPksFnslzJmb0PNpZ2qkKpdJU2G', 'c8PJN6IWgfdSeYWkKAyhiHcEBx42Ahz9nvCI1Zq0VR5Pbm7kf23YQSLHH3aEVQdi', NULL, '2021-09-03 08:57:42');
 
 -- --------------------------------------------------------
 
@@ -183,8 +183,8 @@ CREATE TABLE `events` (
 --
 
 INSERT INTO `events` (`id`, `admin_id`, `venu_id`, `unique_id`, `event_name`, `event_description`, `when_day`, `from_date`, `to_date`, `event_time`, `to_time`, `status`, `image`, `name_of_file_show`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 1, 4, 1, 'first event', 'gjkfhjjyi', 'Monday', '2021-09-01', '2021-09-08', '00:44:00', '21:44:00', 'Active', '09022021124333956130799dc30c7.jpeg', 'download.jpeg', '2021-09-01 10:15:03', '2021-09-02 07:13:33', NULL),
-(2, 1, 4, 5, 'five', 'gerherasgwgwgwrg', 'Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday', '2021-09-02', '2021-09-02', '12:45:00', '13:45:00', 'Active', '090220211255364361307c70db49e.jpeg', 'download.jpeg', '2021-09-02 07:25:36', '2021-09-02 07:25:36', NULL),
+(1, 1, 4, 1, 'first event', 'gjkfhjjyi', 'Monday', '2021-09-01', '2021-09-08', '00:44:00', '21:44:00', 'Active', '09022021124333956130799dc30c7.jpeg', 'download.jpeg', '2021-09-01 10:15:03', '2021-09-02 14:23:54', '2021-09-02 14:23:54'),
+(2, 1, 4, 5, 'five', 'gerherasgwgwgwrg', 'Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday', '2021-09-02', '2021-09-02', '12:45:00', '13:45:00', 'Active', '090220211255364361307c70db49e.jpeg', 'download.jpeg', '2021-09-02 07:25:36', '2021-09-02 14:23:25', '2021-09-02 14:23:25'),
 (3, 1, 4, 4, 'four', 'k67ektyj', 'Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday', '2021-09-02', '2021-09-02', '12:55:00', '16:55:00', 'Active', '090220211256216561307c9deb4e1.png', 'Screenshot 2021-07-14 at 4.10.47 PM (1).png', '2021-09-02 07:26:21', '2021-09-02 07:26:21', NULL),
 (4, 1, 4, 3, 'three', 'fhtrhrth', 'Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday', '2021-09-02', '2021-09-10', '12:58:00', '18:58:00', 'Active', '090220211259202561307d50c88cb.jpeg', 'download.jpeg', '2021-09-02 07:28:57', '2021-09-02 07:29:20', NULL);
 
@@ -212,10 +212,7 @@ CREATE TABLE `login_requests` (
 --
 
 INSERT INTO `login_requests` (`id`, `venue_user_id`, `venu_id`, `device_model`, `mac_address`, `authorized_status`, `date_time`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 1, 1, 'Nokia', '11:00:11:11:11:00', 'Unauthorized', '2021-09-01 12:54:07', '2021-09-01 07:24:07', '2021-09-01 07:42:11', NULL),
-(2, 2, 2, 'Nokia', '21:00:11:11', 'Unauthorized', '2021-09-01 13:13:23', '2021-09-01 07:43:23', '2021-09-01 07:43:23', NULL),
-(3, 3, 1, 'iPad', '9D7EDDF0-CEB6-44AB-AAB4-EBF589294138', 'Authorized', '2021-09-02 11:47:56', '2021-09-02 06:17:56', '2021-09-02 06:19:34', NULL),
-(4, 3, 1, 'iPad', '0241FA87-AF7C-4077-944B-709E5418F392', 'Authorized', '2021-09-02 11:51:15', '2021-09-02 06:21:15', '2021-09-02 06:22:56', NULL);
+(1, 1, 1, 'Nokia', '11:00:11:11:11:00', 'Authorized', '2021-09-03 10:23:26', '2021-09-03 04:53:26', '2021-09-03 04:53:37', NULL);
 
 -- --------------------------------------------------------
 
@@ -282,8 +279,10 @@ CREATE TABLE `oauth_access_tokens` (
 INSERT INTO `oauth_access_tokens` (`id`, `user_id`, `client_id`, `name`, `scopes`, `revoked`, `created_at`, `updated_at`, `expires_at`) VALUES
 ('306f483ad9077a820ef262f819a9f8de2ef3d1330b0e918b4671d87563c1eb62417b3dd88b18234e', 1, 1, 'andrew', '[]', 0, '2021-08-31 04:19:06', '2021-08-31 04:19:06', '2022-08-31 09:49:06'),
 ('395e8f8b26cc8a276140c1c238908ba90ee1f3f259be56b310793e87deddea84d72e130967eaea4d', 2, 1, 'andrew', '[]', 1, '2021-09-02 01:46:26', '2021-09-02 01:46:26', '2022-09-02 07:16:26'),
+('6013bb357ae1fa3b736bc9c6421a76260e13103ee442bb98f66802d2d75795429ef3742780a5f3b6', 6, 1, 'andrew', '[]', 0, '2021-09-03 03:59:25', '2021-09-03 03:59:25', '2022-09-03 09:29:25'),
 ('737e2637365668eea033fd85fa759924f3fa48de2e28053a52af30ced67d973083f16e2e067e9d57', 2, 1, 'andrew', '[]', 1, '2021-09-02 00:50:31', '2021-09-02 00:50:31', '2022-09-02 06:20:31'),
 ('7ecd92bf8d9e6645190f6e4df47ef6579d23988509494e4a67fe7257c785f882867452a4436a58dc', 3, 1, 'andrew', '[]', 1, '2021-09-02 01:13:26', '2021-09-02 01:13:26', '2022-09-02 06:43:26'),
+('9dff29e31b90b133cdd7042b66973e859fcf5723becf87669de3caf20054047f2d9a3f6c581cebdc', 5, 1, 'andrew', '[]', 0, '2021-09-03 03:49:24', '2021-09-03 03:49:24', '2022-09-03 09:19:24'),
 ('ae5bdac374e7bfb96b2b2db9ecfd9df1bfdb0106d132120cc5076c92338cf734f3bb94154db58bae', 3, 1, 'andrew', '[]', 0, '2021-09-02 01:14:32', '2021-09-02 01:14:32', '2022-09-02 06:44:32'),
 ('bea09b70df6ce7451bab255cd34aeec6ba36e3726f681280f9f25617bc29d492d4c0dfbe0b728e26', 2, 1, 'andrew', '[]', 1, '2021-09-01 02:43:35', '2021-09-01 02:43:35', '2022-09-01 08:13:35'),
 ('c09937b2e5ff59aaff517082c2e324ddd1b156e1dea1fbedd2f63088b7e980c692eccdc17861ac4a', 2, 1, 'andrew', '[]', 0, '2021-09-02 02:04:35', '2021-09-02 02:04:35', '2022-09-02 07:34:35'),
@@ -600,10 +599,12 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `image`, `country_code`, `mobile_number`, `first_name`, `last_name`, `email`, `password`, `city_of_residence`, `nationality`, `dob`, `gender`, `reference_code`, `device_type`, `device_token`, `reset_password_token`, `verify_email_token`, `is_block`, `is_verify`, `refresh_token`, `remember_token`, `is_active`, `customer_id`, `customer_tier`, `wallet_cash`, `reference_by`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, '08312021094906612dfb120c43b.jpg', '+91', '955656545', 'abc', 'koko', 'phpapi8s70@gmail.com', '$2y$10$jqBHHc1P/UM5W22h/.UBouE/a1mUv3srTxBSBhOdFsGEbAdKzZfLO', 'Mohali', 'IN', '2012-12-12', 'Male', NULL, 'None', NULL, NULL, 'bdr98vFpkl1M8aaI8MN5NafDHEoDlnqFUu95fLw7UOBJno6hGzaHVvufPYNBEY1z', '0', '1', NULL, NULL, 'Inactive', 53205170381, 'Silver', NULL, NULL, '2021-08-31 04:19:06', '2021-09-02 03:57:54', NULL),
-(2, '09012021081334612f362ed1887.jpeg', '+91', '9876543210', 'test', 'test', 'test@yopmail.com', '$2y$10$xyFxFFEgjWCyV5SLhVR5weOa1DSQ9DjPMjmCHZhpUdciIojM8knHu', 'Abu Dhabi', 'Afghanistan', '2005-09-01', 'Male', NULL, 'Ios', '12335556', NULL, NULL, '0', '1', NULL, NULL, 'Active', 42673432244, 'Silver', NULL, NULL, '2021-09-01 02:43:35', '2021-09-02 08:08:45', NULL),
-(3, NULL, '+91', '7018292209', 'abc', 'koko', 'k1@yopmail.com', '$2y$10$3hN4oPh3q2zKuvIptUg10O659fL2A4HiiyDHBT.CQi2f4uhtfMRem', 'Mohali', 'IN', '2012-12-12', 'Male', NULL, 'Android', 'temp_token', NULL, NULL, '1', '1', NULL, NULL, 'Active', 95328189482, 'Silver', NULL, NULL, '2021-09-02 01:13:26', '2021-09-02 12:48:35', NULL),
-(4, '0902202109365061309b329dda9.jpg', '+91', '8556025369', 'abc', 'koko', 'phpapi870@gmail.com', '$2y$10$hmjn4.wnOlaQz7pzcYyASezWQ4LoPqlRyXVZI.okE.rIdz7MTunq2', 'Mohali', 'IN', '2012-12-12', 'Male', NULL, 'None', NULL, NULL, NULL, '1', '1', NULL, NULL, 'Active', 26269335002, 'Silver', NULL, NULL, '2021-09-02 04:06:50', '2021-09-02 12:48:35', NULL);
+(1, '08312021094906612dfb120c43b.jpg', '+91', '955656545', 'abc', 'koko', 'phpapi8s70@gmail.com', '$2y$10$jqBHHc1P/UM5W22h/.UBouE/a1mUv3srTxBSBhOdFsGEbAdKzZfLO', 'Mohali', 'IN', '2012-12-12', 'Male', NULL, 'None', NULL, NULL, 'bdr98vFpkl1M8aaI8MN5NafDHEoDlnqFUu95fLw7UOBJno6hGzaHVvufPYNBEY1z', '0', '1', NULL, NULL, 'Active', 53205170381, 'Silver', NULL, NULL, '2021-08-31 04:19:06', '2021-09-03 05:42:59', NULL),
+(2, '09012021081334612f362ed1887.jpeg', '+91', '9876543210', 'test', 'test', 'test@yopmail.com', '$2y$10$xyFxFFEgjWCyV5SLhVR5weOa1DSQ9DjPMjmCHZhpUdciIojM8knHu', 'Abu Dhabi', 'Afghanistan', '2005-09-01', 'Male', NULL, 'Ios', '12335556', NULL, NULL, '0', '1', NULL, NULL, 'Inactive', 42673432244, 'Silver', NULL, NULL, '2021-09-01 02:43:35', '2021-09-03 05:42:30', NULL),
+(3, NULL, '+91', '7018292209', 'abc', 'koko', 'k1@yopmail.com', '$2y$10$3hN4oPh3q2zKuvIptUg10O659fL2A4HiiyDHBT.CQi2f4uhtfMRem', 'Mohali', 'IN', '2012-12-12', 'Male', NULL, 'Android', 'temp_token', NULL, NULL, '1', '1', NULL, NULL, 'Active', 95328189482, 'Silver', NULL, NULL, '2021-09-02 01:13:26', '2021-09-03 05:43:08', NULL),
+(4, '0902202109365061309b329dda9.jpg', '+91', '855602534', 'abc', 'koko', 'phpapi87dd0@gmail.com', '$2y$10$p0YCyoLcjc/iqt.WnLwdweV.57e4NMpdo18YEBpVqyMwP0R7RfWye', 'Mohali', 'IN', '2012-12-12', 'Male', NULL, 'None', NULL, NULL, NULL, '1', '1', NULL, NULL, 'Inactive', 26269335002, 'Silver', NULL, NULL, '2021-09-02 04:06:50', '2021-09-03 03:47:18', NULL),
+(5, NULL, '+91', '855602369', 'abc', 'koko', 'php332api870@gmail.com', '$2y$10$XRcWkeu2tRvd/9MiWnweCur/RoAJSHDMQEJgTFjB6BmSRGWkfKf0W', 'Mohali', 'IN', '2012-12-12', 'Male', NULL, 'None', NULL, NULL, NULL, '0', '1', NULL, NULL, 'Inactive', 68141612180, 'Silver', NULL, NULL, '2021-09-03 03:49:23', '2021-09-03 03:52:57', NULL),
+(6, NULL, '+91', '8556025369', 'abc', 'koko', 'phpapi870@gmail.com', '$2y$10$k12T2K9wpx6HVji1.Y06beLLu.o4ng5HnArE.yUYBTmojhtfPyDEq', 'Mohali', 'IN', '2012-12-12', 'Male', NULL, 'None', NULL, NULL, NULL, '0', '1', NULL, NULL, 'Inactive', 55207763212, 'Silver', NULL, NULL, '2021-09-03 03:59:25', '2021-09-03 04:00:14', NULL);
 
 -- --------------------------------------------------------
 
@@ -634,9 +635,7 @@ CREATE TABLE `venue_users` (
 --
 
 INSERT INTO `venue_users` (`id`, `venu_id`, `username`, `password`, `status`, `device_model`, `mac_address`, `authorized_status`, `date_time`, `access_token`, `created_by`, `updated_by`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 1, 'user@12', '$2y$10$wWosgJB7zK9dp4xTal.s8.PHcnW1O2FJXTmEOMLl6qx5odZHVXMxa', 'Active', 'N/A', 'N/A', 'Authorized', '2021-09-01 12:31:54', '$2y$10$pl0gpjoWrQy9pqfGbnuSlujDl3vvlDcMTuxmhNwOU2bI1uwKV.LOK', 'Admin', 'Admin', '2021-09-01 07:01:54', '2021-09-01 09:26:15', NULL),
-(2, 2, 'user@15', '$2y$10$iEiExdyQ2A/cSyMtlpub6uDn0hrek7XUI4Gw/gg15W9tvD.mqNxnS', 'Active', 'N/A', 'N/A', 'Unauthorized', '2021-09-01 13:12:46', '$2y$10$vb6g2317yjLr8fflXmm1SuVgLKy4Vzncj0I7gy28DFsfYpYQhMPBK', 'Admin', 'Admin', '2021-09-01 07:42:46', '2021-09-01 14:02:47', NULL),
-(3, 1, 'dev', '$2y$10$DUks3ZeSIz7w6Zd8GOEuAuy/YbsjQHOtmz1ecd9uv00EXHKK9y7ky', 'Active', 'N/A', 'N/A', 'Unauthorized', '2021-09-02 11:47:50', '$2y$10$33Et.1MvrsldcVszUSUzkO7s5CEuZew4LXx4LkJAkZhJLc4ZUkWZG', 'Admin', 'Admin', '2021-09-02 06:17:50', '2021-09-02 06:21:15', NULL);
+(1, 1, 'ABB', '$2y$10$z8cuOZV97.pTqC3nrKkjPuJ.MwWntL149o9vm4YDfOEwtya/7AeUq', 'Active', 'N/A', 'N/A', 'Unauthorized', '2021-09-03 10:22:27', '$2y$10$K6SgSsj0laQJsL2684BH5OHuSGh5b5uFfoGmH5CLzLY7lBa5qgex.', 'Admin', 'Admin', '2021-09-03 04:52:27', '2021-09-03 04:53:26', NULL);
 
 -- --------------------------------------------------------
 
@@ -891,7 +890,7 @@ ALTER TABLE `events`
 -- AUTO_INCREMENT for table `login_requests`
 --
 ALTER TABLE `login_requests`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 --
 -- AUTO_INCREMENT for table `migrations`
 --
@@ -921,7 +920,7 @@ ALTER TABLE `offer_settings`
 -- AUTO_INCREMENT for table `otps`
 --
 ALTER TABLE `otps`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT for table `tier_conditions`
 --
@@ -936,12 +935,12 @@ ALTER TABLE `tier_settings`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 --
 -- AUTO_INCREMENT for table `venue_users`
 --
 ALTER TABLE `venue_users`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 --
 -- AUTO_INCREMENT for table `venus`
 --

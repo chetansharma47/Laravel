@@ -59,10 +59,10 @@ Route::get('listen', function() {
 
 
 /* USER APP URL*/
-Route::get('password-reset-success','Api\v1\AuthenticationController@viewMessageResetPassword')->name('passwordReset');
-Route::get('password-reset-invalid','Api\v1\AuthenticationController@viewMessageResetPasswordInvalid')->name('passwordResetInvalid');
-Route::get('confirm-account/{verify_email_token?}','Api\v1\AuthenticationController@confirmAccount')->name('confirmAccount');
-Route::match(['GET','POST'],'reset-password/{reset_password_token?}','Api\v1\AuthenticationController@resetPassword')->name('userResetPassword');
+Route::get('password-reset-success/{user_id?}','Api\v1\AuthenticationController@viewMessageResetPassword')->name('passwordReset');
+Route::get('password-reset-invalid/{user_id?}','Api\v1\AuthenticationController@viewMessageResetPasswordInvalid')->name('passwordResetInvalid');
+Route::get('confirm-account/{verify_email_token?}/{user_id?}','Api\v1\AuthenticationController@confirmAccount')->name('confirmAccount');
+Route::match(['GET','POST'],'reset-password/{reset_password_token?}/{user_id?}','Api\v1\AuthenticationController@resetPassword')->name('userResetPassword');
 
 /*END USER APP URL*/
 

@@ -54,8 +54,15 @@
       <tr>
         <td align="left" valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="0">
           <tr>
+            <?php 
+              if(!empty($user)){
+                $username = $user->first_name . " " . $user->last_name;
+              }else{
+                $username = "User";
+              }
+            ?>
             <td align="left" valign="top" style="font-family: 'Lato', sans-serif;
-     font-weight: 700; font-size: 15px; color:#0D0D0D;">Hello, User</b></td>
+     font-weight: 700; font-size: 15px; color:#0D0D0D;">Hello, {{$username}}</b></td>
           </tr>
           <tr>
             <td align="left" valign="top">&nbsp;</td>

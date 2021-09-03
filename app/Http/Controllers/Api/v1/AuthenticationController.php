@@ -28,7 +28,7 @@ use App\Models\Offer;
 use App\Models\OfferSetting;
 use App\Models\Cashback;
 use App\Models\City;
-require_once $_SERVER['DOCUMENT_ROOT'].'/capital_motion_02_september/vendor/autoload.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
 
 class AuthenticationController extends ResponseController
 {
@@ -157,25 +157,27 @@ class AuthenticationController extends ResponseController
     public function resetPassword(Request $request){
         if($request->isMethod('GET')) {
             $token = $request->reset_password_token;
+            $user_id = $request->user_id;
             $tokenData = DB::table('password_resets')
                         ->whereToken($token)->first();
             if(!$tokenData){
-                return redirect(route('passwordResetInvalid'));
+                return redirect(route('passwordResetInvalid',$user_id));
             }
             if(Carbon::now() > Carbon::parse($tokenData->created_at)->addMinutes(10)){
-                return redirect(route('passwordResetInvalid'));
+                return redirect(route('passwordResetInvalid', $user_id));
             }
             return view('emails.reset-password', compact('token'));
         }
         if($request->isMethod('post')) {
             $token = $request->reset_password_token;
+            $user_id = $request->user_id;
             $tokenData = DB::table('password_resets')
                         ->whereToken($token)->first();
             if(!$tokenData){
-                return redirect(route('passwordResetInvalid'));
+                return redirect(route('passwordResetInvalid', $user_id));
             }
             if(Carbon::now() > Carbon::parse($tokenData->created_at)->addMinutes(10)){
-                return redirect(route('passwordResetInvalid'));
+                return redirect(route('passwordResetInvalid', $user_id));
             }
             $validator = $this->is_validationRuleWeb(Validation::userAppReset($Validation = "", $message = "") , $request);
             if(!empty($validator)){
@@ -187,26 +189,30 @@ class AuthenticationController extends ResponseController
                 Session::flash('danger', "New password looks same as old password, Please try a different password.");
                 return redirect()->back();
             }
-            return redirect(route('passwordReset'));
+            return redirect(route('passwordReset', $user_id));
         }
     }
 
     
    
 
-    public function viewMessageResetPassword(){
+    public function viewMessageResetPassword(Request $request){
+        $user_id = base64_decode($request->user_id);
+        $user = User::whereId($user_id)->first();
         $title = "Reset Your Password";
         $message = "Your password has been succesfully updated.";
         $type = "success";
         $link = "";
-        return view('emails.feedback', compact('title', 'message', 'type'));
+        return view('emails.feedback', compact('title', 'message', 'type','user'));
     }
 
-    public function viewMessageResetPasswordInvalid(){
+    public function viewMessageResetPasswordInvalid(Request $request){
+        $user_id = base64_decode($request->user_id);
+        $user = User::whereId($user_id)->first();
         $title = "Invalid link";
         $message = "Your forgot password link is either expired or invalid.";
         $type = "danger";
-        return view('emails.feedback', compact('title', 'message', 'type'));
+        return view('emails.feedback', compact('title', 'message', 'type','user'));
     }
 
     public function confirmAccount(Request $request){
@@ -217,15 +223,15 @@ class AuthenticationController extends ResponseController
             $user->is_verify = 1;
             $user->update();
             $title = "Email verified";
-            $message = "Your email address has been verified successfully.";
+            $message = "Your email has been verified.";
             $type = "success";
             $link = "";
-            return view('emails.feedback', compact('title', 'message', 'type'));
+            return view('emails.feedback', compact('title', 'message', 'type','user'));
         }else{
             $title = "Invalid link";
             $message = "Your verification link is either expired or invalid.";
             $type = "danger";
-            return view('emails.feedback', compact('title', 'message', 'type'));
+            return view('emails.feedback', compact('title', 'message', 'type','user'));
         }
     }
 

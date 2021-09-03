@@ -178,7 +178,7 @@ class ProfileModel extends Model
         }
         $user_id = $user->id;
         $reset_password_token = str_random(64);
-        $link = url("reset-password/$reset_password_token");
+        $link = url("reset-password/$reset_password_token") . "/" . base64_encode($user_id);
         try{
           \Mail::to($user->email)->send(new UserForgotPassword($user, $link));
 
