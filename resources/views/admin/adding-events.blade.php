@@ -142,8 +142,35 @@
 			width: 0px;
 			scrollbar-width: 0px;
 		}
-		
-
+		@media (max-width: 4000px) {
+			.google-map {
+				margin-top: -25px !important;
+			}
+			.book-now {
+				margin-top: 0 !important
+			}
+		}
+		@media (max-width: 2080px) {
+			.google-map {
+				margin-top: -44px !important;
+			}
+		}
+		@media (max-width: 1242px) { 
+			.google-map {
+			 	margin-top: -75px !important;
+			}
+			.book-now {
+    			margin-top: -38px !important;
+			}
+		}
+		@media (max-width: 1400px) {
+			.google-map {
+			 	margin-top: -56px !important;
+			}
+			.book-now {
+    			margin-top: -28px !important;
+			}
+		}
 	</style>
 	<style>
 		body {
@@ -536,7 +563,7 @@
 							<label>
 								Event Description
 							</label>
-							<textarea class="form-control event_desc" name="event_desc" style="font-size: 14px !important; padding:6px 10px;" maxlength="300" rows="5" placeholder="Event Description" uniq-id="${id}">${(desc)?desc:''}</textarea>
+							<textarea class="form-control event_desc" name="event_desc" style="font-size: 14px !important; padding:6px 10px;" maxlength="1000" rows="5" placeholder="Event Description" uniq-id="${id}">${(desc)?desc:''}</textarea>
 						</div>
 						<div class="col-md-6 venue_inputs">
 							<label>
@@ -633,7 +660,7 @@
 							<input type="date" class="form-control to-date form-control-user" placeholder="To Date" value="${(todate)?todate:''}" min="${fulldate}" name="to-date" uniq-id="${id}"/>
 						</div>
 						<div class="col-md-6 venue_inputs">
-							<div class="" style="margin-top: -64px;">
+							<div class="google-map" style="margin-top: -64px;">
 								<label>
 									Google Map Location Link
 								</label>
@@ -656,7 +683,7 @@
 							${to_time_input}
 						</div>
 						<div class="col-md-6 venue_inputs">
-								<div  style="margin-top: -29px;">
+								<div class="book-now" style="margin-top: -29px;">
 								<label>
 									Book Now Link
 								</label>
@@ -825,11 +852,11 @@ if(file){
 			var size = file.size;
 
 			if(size > 5242880){
-				event.target.value="";
-				$(".event_img[uniq-id="+form_activeid+"]").attr('src','');
-				$(".event_img[uniq-id="+form_activeid+"]").attr('value','');
-				$(".event_imghidden[uniq-id="+form_activeid+"]").val('');
-				$("#img_upload[uniq-id="+form_activeid+"]").attr('src','');
+				// event.target.value="";
+				// $(".event_img[uniq-id="+form_activeid+"]").attr('src','');
+				// $(".event_img[uniq-id="+form_activeid+"]").attr('value','');
+				// $(".event_imghidden[uniq-id="+form_activeid+"]").val('');
+				// $("#img_upload[uniq-id="+form_activeid+"]").attr('src','');
 				$("#alert_text").text("Image should be less than or equal to 5 MB.");
         $("#validationModel").modal("show");
         $("#validationModel").unbind("click");

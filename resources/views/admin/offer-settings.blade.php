@@ -482,13 +482,13 @@
 										<label>
 											Transaction Start Period
 										</label>
-										<input type="date" offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}" ${(offertype=='BirthdayOffer')?'disabled':''}  min="${min_date}" class="form-control form-control-user criteria_txn_start" value="${(offer_id) ? offer_setting.txn_start_period : ''}" style="font-size: 14px !important; border-radius: 10px;" venu-id="${venuid}" uniq-id="${uniqid}">
+										<input type="date" offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}" ${(offertype=='BirthdayOffer')?'disabled':''}   class="form-control form-control-user criteria_txn_start" value="${(offer_id) ? offer_setting.txn_start_period : ''}" style="font-size: 14px !important; border-radius: 10px;" venu-id="${venuid}" uniq-id="${uniqid}">
 									</div>
 									<div class="col-md-3 venue_inputs">
 										<label>
 											Transaction End Period
 										</label>
-										<input type="date" offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}" ${(offertype=='BirthdayOffer')?'disabled':''} min="${min_date}" class="form-control form-control-user criteria_txn_end" value="${(offer_id) ? offer_setting.txn_end_period : ''}" style="font-size: 14px !important; border-radius: 10px;"  venu-id="${venuid}" uniq-id="${uniqid}">
+										<input type="date" offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}" ${(offertype=='BirthdayOffer')?'disabled':''}  class="form-control form-control-user criteria_txn_end" value="${(offer_id) ? offer_setting.txn_end_period : ''}" style="font-size: 14px !important; border-radius: 10px;"  venu-id="${venuid}" uniq-id="${uniqid}">
 									</div>
 								</div>
 								<div class="row mt-1">
@@ -828,11 +828,11 @@ let venu_tab_id = $('.venu-tab-list.active').attr('venu-id');
 					var size = file.size;
 
 					if(size > 5242880){
-						event.target.value="";
-						$(".offer_image[uniq-id="+form_activeid+"]").attr('src','');
-						$(".offer_image[uniq-id="+form_activeid+"]").attr('value','');
-						$(".offer_imagehidden[uniq-id="+form_activeid+"]").val('');
-						$(".img_upload[uniq-id="+form_activeid+"]").attr('src','');
+						// event.target.value="";
+						// $(".offer_image[uniq-id="+form_activeid+"]").attr('src','');
+						// $(".offer_image[uniq-id="+form_activeid+"]").attr('value','');
+						// $(".offer_imagehidden[uniq-id="+form_activeid+"]").val('');
+						// $(".img_upload[uniq-id="+form_activeid+"]").attr('src','');
 						$("#alert_text").text("Image should be less than or equal to 5 MB.");
 		        $("#validationModel").modal("show");
 		        $("#validationModel").unbind("click");
@@ -939,63 +939,75 @@ if(dob_condition=="" && txn_condition_attr == "BirthdayOffer"){
 	$("#validationModel").unbind("click");
 	return false;
 }
-if(gender_condition=="" && txn_condition_attr == "Normal"){
-		$("#alert_text").text("Please select gender.");
-		$("#validationModel").modal("show");
-		$("#validationModel").unbind("click");
-		return false;
-	}
-if(txn_start_condition=="" && txn_condition_attr == "Normal"){
-		$("#alert_text").text("Please select transaction start period date.");
-		$("#validationModel").modal("show");
-		$("#validationModel").unbind("click");
-		return false;
-	}
-if(txn_end_condition=="" && txn_condition_attr == "Normal"){
-		$("#alert_text").text("Please select transaction end period date.");
-		$("#validationModel").modal("show");
-		$("#validationModel").unbind("click");
-		return false;
-	}
+// if(gender_condition=="" && txn_condition_attr == "Normal"){
+// 	$("#alert_text").text("Please select gender.");
+// 	$("#validationModel").modal("show");
+// 	$("#validationModel").unbind("click");
+// 	return false;
+// }
+// if(txn_start_condition=="" && txn_condition_attr == "Normal"){
+// 		$("#alert_text").text("Please select transaction start period date.");
+// 		$("#validationModel").modal("show");
+// 		$("#validationModel").unbind("click");
+// 		return false;
+// }
+// if(txn_end_condition=="" && txn_condition_attr == "Normal"){
+// 		$("#alert_text").text("Please select transaction end period date.");
+// 		$("#validationModel").modal("show");
+// 		$("#validationModel").unbind("click");
+// 		return false;
+// }
+
+if(txn_start_condition != "" && txn_end_condition != "" && txn_condition_attr == "Normal"){
+
 	if(txn_start_condition > txn_end_condition && txn_condition_attr == "Normal"){
 		$("#alert_text").text("Transaction end date should be greater than transaction start date.");
 		$("#validationModel").modal("show");
 		$("#validationModel").unbind("click");
 		return false;
 	}
+}
 if(date_condition=="" && txn_condition_attr == "Normal"){
-		$("#alert_text").text("Please select date.");
-		$("#validationModel").modal("show");
-		$("#validationModel").unbind("click");
-		return false;
-	}
+	$("#alert_text").text("Please select date.");
+	$("#validationModel").modal("show");
+	$("#validationModel").unbind("click");
+	return false;
+}
 
-	if(date_condition!==txn_start_condition && txn_condition_attr == "Normal"){
-		$("#alert_text").text("Date should be same as transaction start date.");
-		$("#validationModel").modal("show");
-		$("#validationModel").unbind("click");
-		return false;
-	}
-if(city_condition=="" && txn_condition_attr == "Normal"){
-	$("#alert_text").text("Please select residence city.");
-	$("#validationModel").modal("show");
-	$("#validationModel").unbind("click");
-	return false;
-}
-if(txn_condition=="" && txn_condition_attr == "Normal"){
-	$("#alert_text").text("Please select transaction amount condition.");
-	$("#validationModel").modal("show");
-	$("#validationModel").unbind("click");
-	return false;
-}
-if(from_price_condition=="" && txn_condition_attr == "Normal"){
-	$("#alert_text").text("Please enter transaction from price.");
-	$("#validationModel").modal("show");
-	$("#validationModel").unbind("click");
-	return false;
-}
+// if(date_condition!==txn_start_condition && txn_condition_attr == "Normal"){
+// 	$("#alert_text").text("Date should be same as transaction start date.");
+// 	$("#validationModel").modal("show");
+// 	$("#validationModel").unbind("click");
+// 	return false;
+// }
+// if(city_condition=="" && txn_condition_attr == "Normal"){
+// 	$("#alert_text").text("Please select residence city.");
+// 	$("#validationModel").modal("show");
+// 	$("#validationModel").unbind("click");
+// 	return false;
+// }
+// if(txn_condition=="" && txn_condition_attr == "Normal"){
+// 	$("#alert_text").text("Please select transaction amount condition.");
+// 	$("#validationModel").modal("show");
+// 	$("#validationModel").unbind("click");
+// 	return false;
+// }
+// if(from_price_condition=="" && txn_condition_attr == "Normal"){
+// 	$("#alert_text").text("Please enter transaction from price.");
+// 	$("#validationModel").modal("show");
+// 	$("#validationModel").unbind("click");
+// 	return false;
+// }
 
 if(txn_condition == 'Between'){
+
+	if(from_price_condition=="" && txn_condition_attr == "Normal"){
+		$("#alert_text").text("Please enter transaction from price.");
+		$("#validationModel").modal("show");
+		$("#validationModel").unbind("click");
+		return false;
+	}
+
 	if(to_price_condition==""){
 		$("#alert_text").text("Please enter transaction to price.");
 		$("#validationModel").modal("show");
@@ -1011,6 +1023,13 @@ if(txn_condition == 'Between'){
 	}
 	if(parseInt(from_price_condition) >= parseInt(to_price_condition) && txn_condition_attr == "Normal"){
 		$("#alert_text").text("Transaction to price should be greater than from price.");
+		$("#validationModel").modal("show");
+		$("#validationModel").unbind("click");
+		return false;
+	}
+}else if(txn_condition == "Greater Than"){
+	if(from_price_condition=="" && txn_condition_attr == "Normal"){
+		$("#alert_text").text("Please enter transaction from price.");
 		$("#validationModel").modal("show");
 		$("#validationModel").unbind("click");
 		return false;

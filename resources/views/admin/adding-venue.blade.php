@@ -526,7 +526,7 @@
 						$("#loaderModel").unbind("click");
 					},
 					success:function(data){
-							setTimeout(function(){
+						setTimeout(function(){
 			         		$("#loaderModel").modal("hide");
 			        		$("#successModel").modal("show");
 			        		$("#success_alert_text").text(data);
@@ -540,8 +540,21 @@
 								$('.venu_list[unique-id='+_prev_venue+']').addClass('tab-active');
 								$('.formdata_show[unique-id='+_prev_venue+']').addClass('tab-active');
 							}
-	        	},500);
-					}
+	        			},500);
+					},error: function(data, textStatus, xhr) {
+			            if(data.status == 422){
+			              setTimeout(function(){
+			              	$("#loaderModel").modal("hide");
+			                  	var result = data.responseJSON;
+			                 	if(result['remove_venue_err'] && result['remove_venue_err'].length > 0){
+			                 		$("#alert_text").text(result['remove_venue_err']);
+									$("#validationModel").modal("show");
+									$("#validationModel").unbind("click");
+			                 	}
+			                  return false;
+			              },500);
+			            } 
+			      	}
 				});
 			}else{
 
@@ -597,7 +610,7 @@ function venuform(uniqueid,vname,vaddr,vdesc,vphone,vmap,vbook,vimage,vmenu,vsta
 							<label>
 								Menu Link
 							</label>
-							<input type="url" class="form-control venu_menu" name="venu_menu" unique-id="${uniqueid}" maxlength="300" placeholder="Menu Link" value="${(vmenu) ? `${vmenu}` : ''}"/>
+							<input type="url" class="form-control venu_menu" name="venu_menu" unique-id="${uniqueid}" maxlength="2000" placeholder="Menu Link" value="${(vmenu) ? `${vmenu}` : ''}"/>
 						</div>
 					</div>
 					<div class="row pr-5 pl-3">
@@ -605,7 +618,7 @@ function venuform(uniqueid,vname,vaddr,vdesc,vphone,vmap,vbook,vimage,vmenu,vsta
 							<label>
 								Venue Description
 							</label>
-							<textarea maxlength="300" name="venu_desc" class="form-control venu_desc" style="font-size: 14px !important; padding:6px 10px;" rows="5" placeholder="Venue Description" unique-id="${uniqueid}" >${(vdesc) ? `${vdesc}` : ''}</textarea>
+							<textarea maxlength="1000" name="venu_desc" class="form-control venu_desc" style="font-size: 14px !important; padding:6px 10px;" rows="5" placeholder="Venue Description" unique-id="${uniqueid}" >${(vdesc) ? `${vdesc}` : ''}</textarea>
 						</div>
 					</div>
 					<div class="row pr-5 pl-3 mt-3">
@@ -613,7 +626,7 @@ function venuform(uniqueid,vname,vaddr,vdesc,vphone,vmap,vbook,vimage,vmenu,vsta
 							<label>
 								Phone Contact
 							</label>
-							<input type="tel" name="venu_phone" value="${(vphone) ? `${vphone}` : ''}" class="form-control venu_phone form-control-user" minlength="8" maxlength="15" placeholder="Phone Contact" unique-id="${uniqueid}" />
+							<input type="tel" name="venu_phone" value="${(vphone) ? `${vphone}` : ''}" class="form-control venu_phone form-control-user" minlength="1" maxlength="30" placeholder="Phone Contact" unique-id="${uniqueid}" />
 						</div>
 					</div>
 					<div class="row pr-5 pl-3 mt-3">
@@ -621,7 +634,7 @@ function venuform(uniqueid,vname,vaddr,vdesc,vphone,vmap,vbook,vimage,vmenu,vsta
 							<label>
 								Google Map Location Link
 							</label>
-							<input type="url" class="form-control venu_map" name="venu_map" unique-id="${uniqueid}" maxlength="200" placeholder="Google map location link" unique-id="${uniqueid}" value="${(vmap) ? `${vmap}` : ''}">
+							<input type="url" class="form-control venu_map" name="venu_map" unique-id="${uniqueid}" maxlength="2000" placeholder="Google map location link" unique-id="${uniqueid}" value="${(vmap) ? `${vmap}` : ''}">
 						</div>
 					</div>
 					<div class="row pr-5 pl-3 mt-3">
@@ -629,7 +642,7 @@ function venuform(uniqueid,vname,vaddr,vdesc,vphone,vmap,vbook,vimage,vmenu,vsta
 							<label>
 								Book Now Link
 							</label>
-							<input type="url" class="form-control venu_tab_book" unique-id="${uniqueid}" maxlength="200" placeholder="Book Now Link" value="${(vbook) ? `${vbook}` : ''}">
+							<input type="url" class="form-control venu_tab_book" unique-id="${uniqueid}" maxlength="2000" placeholder="Book Now Link" value="${(vbook) ? `${vbook}` : ''}">
 						</div>
 						<div class="col-md-6 venue_inputs" name="venu_tab_book">
 							<label>
@@ -677,13 +690,13 @@ $(document).on('change','#img_upload',function(e){
 			var size = file.size;
 			if(size > 5242880){
 				// event.target.value="";
-				$(".venu_img[unique-id="+form_activeid+"]").attr('src','');
-				$(".venu_img[unique-id="+form_activeid+"]").attr('value','');
-				$(".venu_imghidden[unique-id="+form_activeid+"]").val('');
-				$("#img_upload[unique-id="+form_activeid+"]").attr('src','');
+				// $(".venu_img[unique-id="+form_activeid+"]").attr('src','');
+				// $(".venu_img[unique-id="+form_activeid+"]").attr('value','');
+				// $(".venu_imghidden[unique-id="+form_activeid+"]").val('');
+				// $("#img_upload[unique-id="+form_activeid+"]").attr('src','');
 				$("#alert_text").text("Image should be less than or equal to 5 MB.");
-        $("#validationModel").modal("show");
-        $("#validationModel").unbind("click");
+		        $("#validationModel").modal("show");
+		        $("#validationModel").unbind("click");
         
 				return false;
 			}else{
@@ -834,8 +847,8 @@ $(document).on('click','.venuSave',function(){
 		$("#validationModel").unbind("click");
 		return false;
 	}
-	if(vphone.length < 8){
-		$("#alert_text").text("Phone number should be between 8 to 15 digits.");
+	if(vphone.length < 1){
+		$("#alert_text").text("Phone number should be between 1 to 30 digits.");
 		$("#validationModel").modal("show");
 		$("#validationModel").unbind("click");
 		return false;

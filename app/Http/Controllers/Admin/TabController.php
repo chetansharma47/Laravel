@@ -820,10 +820,20 @@ class TabController extends Controller
             $admin = Auth::guard('admin')->user();
             $vlist = Venu::whereAdminId($admin->id)->whereUniqueId($request->elem_id)->whereDeletedAt(null)->first();
             if(!empty($vlist)){
+
+                $count_event = Event::whereVenuId($vlist->id)->whereDeletedAt(null)->count();
+
+                $count_offer = Offer::whereVenuId($vlist->id)->where('offer_type','!=','BirthdayOffer')->whereDeletedAt(null)->count();
+
+                if($count_event > 0 || $count_offer > 0){
+                    return response()->json(['remove_venue_err' => "You can not delete this venue because of some offers and events associated with it."],422);
+                }
+
                 $vlist->deleted_at = Carbon::now();
                 $vlist->update();
 
                 VenueUser::whereIn('venu_id',[$vlist->id])->update(['deleted_at' => Carbon::now()]);
+                LoginRequest::whereIn('venu_id',[$vlist->id])->update(['deleted_at' => Carbon::now()]);
                 return response()->json('Venue deleted successfully.');
             }
         }
@@ -872,7 +882,7 @@ class TabController extends Controller
             $data = $request->all();
 
 
-            $check_event = Event::whereDeletedAt(null)->where('unique_id','!=',$data['uniq'])->whereEventName($data['eventname'])->first();
+            $check_event = Event::whereDeletedAt(null)->where('unique_id','!=',$data['uniq'])->where('venu_id','=', $data['eventvenueid'])->whereEventName($data['eventname'])->first();
 
             if(!empty($check_event)){
                 return response()->json(['event_name_err' => "Event name already exists."],422);

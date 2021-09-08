@@ -316,7 +316,8 @@ class AuthenticationController extends ResponseController
     public function eventListing(Request $request){
         $user = Auth::guard()->user();
         $active_venue_ids = Venu::where('status' , 'Active')->where('deleted_at' , null)->pluck('id');
-        $events = Event::whereDeletedAt(null)->whereStatus('Active')->whereIn('venu_id', $active_venue_ids)->with('venu')->get();
+        $today_days = Carbon::now()->format('l');
+        $events = Event::whereDeletedAt(null)->whereStatus('Active')->whereIn('venu_id', $active_venue_ids)->whereRaw("FIND_IN_SET(?, when_day) > 0", $today_days)->with('venu')->get();
 
         return $this->responseOk('Event Listing', ['event_listing' => $events]);
     }
@@ -330,11 +331,27 @@ class AuthenticationController extends ResponseController
         $this->is_validationRule(Validation::offerList($Validation = "", $message = "") , $request);
         $user = Auth::guard()->user();
         $find_city = City::whereCityName($user->city_of_residence)->first();
-        $pluck_for_in = OfferSetting::whereCityId($find_city->id)->whereGender($user->gender)->pluck('offer_id');
+        $pluck_for_in = OfferSetting::where(function($query) use ($find_city, $user){
+                            $query->whereCityId($find_city->id);
+                            $query->whereGender($user->gender);
+                            $query->whereDate('date','<=',Carbon::now()->toDateString());
+                        })->orWhere(function($query) use ($find_city, $user){
+                            $query->whereCityId(null);
+                            $query->whereGender(null);
+                            $query->whereDate('date','<=',Carbon::now()->toDateString());
+                        })->orWhere(function($query) use ($find_city, $user){
+                            $query->whereCityId($find_city->id);
+                            $query->whereGender(null);
+                            $query->whereDate('date','<=',Carbon::now()->toDateString());
+                        })->orWhere(function($query) use ($find_city, $user){
+                            $query->whereCityId(null);
+                            $query->whereGender($user->gender);
+                            $query->whereDate('date','<=',Carbon::now()->toDateString());
+                        })->pluck('offer_id');
 
         $active_venue_ids = Venu::where('status' , 'Active')->where('deleted_at' , null)->pluck('id');
 
-        $offers = Offer::whereDeletedAt(null)->whereStatus('Active')->whereDate('from_date', '<=', Carbon::now()->toDateString())->whereIn('id',$pluck_for_in)->whereIn('venu_id', $active_venue_ids)->with('offerSetting','venu')->get();
+        $offers = Offer::whereDeletedAt(null)->whereStatus('Active')->whereIn('id',$pluck_for_in)->whereDate('to_date','>=',Carbon::now()->toDateString())->whereIn('venu_id', $active_venue_ids)->with('offerSetting','venu')->get();
 
         return $this->responseOk('Offer Listing', ['offer_listing' => $offers]);
     }
@@ -376,12 +393,14 @@ class AuthenticationController extends ResponseController
 
         $user = Auth::guard()->user();
         $active_venue_ids = Venu::where('status' , 'Active')->where('deleted_at' , null)->pluck('id');
-        $events = Event::where(function($query) use ($user,$today_date, $active_venue_ids){
+        $today_days = Carbon::now()->format('l');
+        $events = Event::where(function($query) use ($user,$today_date, $active_venue_ids, $today_days){
                         $query->whereDeletedAt(null);
                         $query->whereStatus('Active');
                         $query->whereDate('from_date', '<=', $today_date->toDateString());
                         $query->whereDate('to_date','>=', $today_date->toDateString());
                         $query->whereIn('venu_id', $active_venue_ids);
+                        $query->whereRaw("FIND_IN_SET(?, when_day) > 0", $today_days);
                     })->with('venu')->get();
 
         return $this->responseOk('Today Event Listing', ['event_listing' => $events]);
@@ -401,12 +420,14 @@ class AuthenticationController extends ResponseController
 
         $active_venue_ids = Venu::where('status' , 'Active')->where('deleted_at' , null)->pluck('id');
 
-        $events = Event::where(function($query) use ($user,$today_date, $active_venue_ids){
+        $today_days = Carbon::now()->format('l');
+        $events = Event::where(function($query) use ($user,$today_date, $active_venue_ids, $today_days){
                         $query->whereDeletedAt(null);
                         $query->whereStatus('Active');
-                        $query->whereDate('from_date', '<=', $today_date->toDateString());
+                       // $query->whereDate('from_date', '<=', $today_date->toDateString());
                         $query->whereDate('to_date','>=', $today_date->toDateString());
                         $query->whereIn('venu_id', $active_venue_ids);
+                       // $query->whereRaw("FIND_IN_SET(?, when_day) > 0", $today_days);
                     })->with('venu')->get();
 
         $promotion = Cashback::where(function($query) use ($user,$today_date, $active_venue_ids){

@@ -460,7 +460,7 @@ select.form-control.form-group.status_select:focus{
 			}
 
 			if($('#venue_user_password').val().length < 6 ){
-				$("#alert_text").text("Password must be at least 6 characters.");
+				$("#alert_text").text("Password must be at least 6 characters long.");
 				$("#validationModel").modal("show");
 				$("#validationModel").unbind("click");
 			return false;
@@ -646,6 +646,7 @@ select.form-control.form-group.status_select:focus{
 		}
 
 		var	arr = [];
+		let empty_val = "false";
 		$('.td_edit[contenteditable=true]').each(function(){
 			let data_id = $(this).attr('data-id');
 			let keyType = $(this).attr('key_type');
@@ -656,32 +657,31 @@ select.form-control.form-group.status_select:focus{
 			}else{
 				text = $(this).text();
 			}
-
-
-			
 			if(keyType == 'username'){
 
 				if(text == ""){
 					$("#alert_text").text("Please enter username.");
 					$("#validationModel").modal("show");
 					$("#validationModel").unbind("click");
-					return false;
-				}
-
-				if(text.length < 2){
+					empty_val = "true";
+				}else if(text.length < 2){
 					$("#alert_text").text("Username should be atleast 2 characters.");
 					$("#validationModel").modal("show");
 					$("#validationModel").unbind("click");
-					return false;
+					empty_val = "true";
 				}
 
-			}
-			else if(keyType == 'password'){
+			}else if(keyType == 'password'){
 				if(text == ""){
 					$("#alert_text").text("Please enter password.");
 					$("#validationModel").modal("show");
 					$("#validationModel").unbind("click");
-					return false;
+					empty_val = "true";
+				}else if(text.length < 6){
+					$("#alert_text").text("Password must be at least 6 characters long.");
+					$("#validationModel").modal("show");
+					$("#validationModel").unbind("click");
+					empty_val = "true";
 				}
 			}
 
@@ -690,15 +690,19 @@ select.form-control.form-group.status_select:focus{
 			objectData.data_id = data_id;
 			objectData.key_type = keyType;
 			objectData.text = text;
-
 			arr.push(objectData);
+		});
 
-			});
 
-		var objectData = {
-			'_token':'{{ csrf_token() }}',
-			'arr':arr,
+		if(empty_val == "true"){
+			$("#loaderModel").modal("hide");
+			return false;
 		}
+
+			var objectData = {
+				'_token':'{{ csrf_token() }}',
+				'arr':arr,
+			}
 
 			$.ajax({
 				url:'{{ route("admin.editvenuetable") }}',
@@ -706,9 +710,9 @@ select.form-control.form-group.status_select:focus{
 				type:'POST',
 				data:objectData,
 				beforeSend:function(){
-          		$("#loaderModel").modal("show");
-					$("#loaderModel").unbind("click");
-				},
+	          		$("#loaderModel").modal("show");
+						$("#loaderModel").unbind("click");
+					},
 				success:function(data){
 					setTimeout(function(){
 					$("#loaderModel").modal("hide");

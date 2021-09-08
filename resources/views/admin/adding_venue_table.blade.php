@@ -225,7 +225,7 @@
 			                    </a> -->
 					<thead>
 						<tr style="background-color: #193358;    color: #fff;">
-							<th class="text-left" style="min-width: 140px;">Id</th>
+							<th class="text-left" style="min-width: 140px;">Sr.No.</th>
 							<th class="text-left" style="min-width: 140px;">Username</th>
 							<th class="text-left" style="min-width: 140px;">Outlet</th>
 							<th style="min-width: 140px;">Device Model</th>
