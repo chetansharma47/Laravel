@@ -52,7 +52,7 @@
 <body style="background-color: #f9fafb; padding: 0;
     margin: 0;">
     @include('admin.notification')
-  <table width="600" border="0" align="center" cellpadding="0" cellspacing="0" style="margin-top: 48px;">
+  <table width="400" border="0" align="center" cellpadding="0" cellspacing="0" style="margin-top: 48px;">
     <tr>
        <td align="center" style="padding-bottom: 15px;">
          <a href="javascript:void(0);" style="border:0; outline:0; cursor: unset;"><img src="{{url('public/admin/assets/email_img/CM-Logo-2.png')}}" alt="" width="100"/></a>

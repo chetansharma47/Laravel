@@ -328,7 +328,7 @@
 								Download
 							</a>
 						</div>
-						<div>
+						<!-- <div>
 							<a href="javascript:void(0)" class="btn btn-primary btn-user btn-block common_btn" id="blockUser" style="font-size: 18px; width: 154px; margin-right: 15px; text-transform: none; padding: 8px 0;">
 								Block Users
 							</a>
@@ -338,7 +338,7 @@
 							<a href="javascript:void(0)" class="btn btn-primary btn-user btn-block common_btn" id="unblock" style="font-size: 18px; width: 154px; margin-right: 15px; text-transform: none; padding: 8px 0;">
 								Unblock Users
 							</a>
-						</div>
+						</div> -->
 
 						<div>
 							<a href="javascript:void(0);" id="activate_user" class="btn btn-primary btn-user btn-block common_btn" style="font-size: 18px; width: 154px; margin-right: 15px; text-transform: none; padding: 8px 0;">

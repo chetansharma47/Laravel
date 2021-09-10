@@ -981,13 +981,13 @@ class TabController extends Controller
 
     public function activateUsers(Request $request){
         $ids = explode(",", $request->ids);
-        User::whereIn("id", $ids)->update(['is_active' => "Active"]);
+        User::whereIn("id", $ids)->update(['is_active' => "Active",'is_block' => 0]);
         return ['status' => "success","ids" => $ids];
     }
 
     public function deactivateUsers(Request $request){
         $ids = explode(",", $request->ids);
-        User::whereIn("id", $ids)->update(['is_active' => "Inactive"]);
+        User::whereIn("id", $ids)->update(['is_active' => "Inactive", 'is_block' => 1]);
         return ['status' => "success","ids" => $ids];
     }
 
