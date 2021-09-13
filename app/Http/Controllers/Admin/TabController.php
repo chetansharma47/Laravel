@@ -37,6 +37,7 @@ use App\Models\Event;
 use App\Models\Offer;
 use App\Models\OfferSetting;
 use App\Models\City;
+use App\Models\UserAssignOffer;
 use App\Models\LoginRequest;
 use Illuminate\Support\Arr;
 
@@ -969,8 +970,14 @@ class TabController extends Controller
              $admin = Auth::guard('admin')->user();
              $data = $request->all();
              $offer_remove = Offer::whereAdminId($admin->id)->whereUniqueId($request->uniq_id)->first();
-
-            if(!empty($offer_remove)){
+             $user_assign_offer = UserAssignOffer::whereOfferId($offer_remove->id)->get();
+             
+             foreach ($user_assign_offer as $key => $value){
+                $value->deleted_at = Carbon::now();
+                $value->update();
+             }
+             
+             if(!empty($offer_remove)){
                 $offer_remove->deleted_at = Carbon::now();
                 $offer_remove->update();
                 return response()->json('Offer deleted successfully.');

@@ -13,11 +13,12 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
+Route::middleware('auth:api')->get('/user', function (Request $request){
     return $request->user();
 });
     
     
+Route::post('offer-assign-user-cron-job','Controller@OfferAssignUserCronJob')->middleware('auth:api');
   
 Route::group(['namespace' => 'Api\v1','prefix'=>'v1'], function() {
 
@@ -29,7 +30,7 @@ Route::group(['namespace' => 'Api\v1','prefix'=>'v1'], function() {
     Route::post('forgot-password','AuthenticationController@forgotPassword');
     Route::get('application-data','AuthenticationController@applicationData');
     Route::get('city-listing','AuthenticationController@cityListing');
-    
+
     Route::group(['middleware' => ['auth:api','checkBlockDelete']], function(){
 
         Route::get('logout', 'AuthenticationController@logout');
@@ -49,6 +50,7 @@ Route::group(['namespace' => 'Api\v1','prefix'=>'v1'], function() {
         Route::post('promotion-cashbacks','AuthenticationController@promotionCashbackListing');
         Route::get('promotion-cashback-details/{promotion_cashback_id}','AuthenticationController@promotionCashbackDetails');
         Route::post('event-and-promotion','AuthenticationController@eventAndPromotion');
+        
 
     });
 

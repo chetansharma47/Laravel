@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Sep 08, 2021 at 05:23 PM
+-- Generation Time: Sep 13, 2021 at 06:00 PM
 -- Server version: 5.7.35-0ubuntu0.18.04.1
--- PHP Version: 7.2.34-10+ubuntu18.04.1+deb.sury.org+1
+-- PHP Version: 7.2.34-24+ubuntu18.04.1+deb.sury.org+1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -17,7 +17,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `capital_motion_02_september`
+-- Database: `society_10_september`
 --
 
 -- --------------------------------------------------------
@@ -41,7 +41,7 @@ CREATE TABLE `admins` (
 --
 
 INSERT INTO `admins` (`id`, `name`, `email`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'Nadeer', 'phpapi870@gmail.com', '$2y$10$ksxq8opwxiROSIARjFd4j.9339hPksFnslzJmb0PNpZ2qkKpdJU2G', '1DKWGD9CxXrzpH5V6d6e7oDhdwBcYHVOXNrWti58jprfw1hrBS13iX4TfeSjmWI5', NULL, '2021-09-08 04:41:46');
+(1, 'Nadeer', 'adminn@yopmail.com', '$2y$10$MM0//hGlDn4uCg4rTNDiaudMWYEJZcY7wrLLvRu16miH5BtZB7pxa', 'ksl2yL99ZdLMkHE3GmOdeIXNiyu0Pc4FCbk8QF8ycynyyew9zGUgMcrtb1k54rOn', NULL, '2021-09-13 11:00:07');
 
 -- --------------------------------------------------------
 
@@ -228,7 +228,8 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (36, '2021_08_18_114627_create_offers_table', 12),
 (37, '2021_08_18_115055_create_offer_settings_table', 12),
 (38, '2021_08_18_115812_create_cities_table', 12),
-(40, '2021_09_01_063812_create_login_requests_table', 13);
+(40, '2021_09_01_063812_create_login_requests_table', 13),
+(43, '2021_09_10_063651_create_user_assign_offers_table', 14);
 
 -- --------------------------------------------------------
 
@@ -247,6 +248,22 @@ CREATE TABLE `oauth_access_tokens` (
   `updated_at` timestamp NULL DEFAULT NULL,
   `expires_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `oauth_access_tokens`
+--
+
+INSERT INTO `oauth_access_tokens` (`id`, `user_id`, `client_id`, `name`, `scopes`, `revoked`, `created_at`, `updated_at`, `expires_at`) VALUES
+('35014f94d43afff17cd1a7fa9dedc373af642e05428e34de613b3b0440aef89e77b2061dd906fa46', 1, 1, 'andrew', '[]', 1, '2021-09-13 04:59:00', '2021-09-13 04:59:00', '2022-09-13 10:29:00'),
+('3e2163a17203191e6d465446a29ce23047381d1301e5bfe0176221dfb5eba7f1e41571d1e3e9fca9', 1, 1, 'andrew', '[]', 1, '2021-09-10 01:55:31', '2021-09-10 01:55:31', '2022-09-10 07:25:31'),
+('4a0f57ec1c1a0fbb6302fddd1fb34153ea448508392115adca328c397db040eff5d7dbc0ebb4fa02', 2, 1, 'andrew', '[]', 0, '2021-09-13 07:00:04', '2021-09-13 07:00:04', '2022-09-13 12:30:04'),
+('5192c7351b9184ac2890690d84597eaff897771568ccde6987736bbe58b8c834dd8208dde32377c1', 2, 1, 'andrew', '[]', 1, '2021-09-13 05:01:24', '2021-09-13 05:01:24', '2022-09-13 10:31:24'),
+('836b8ca37da57c5b90cad8709683b3c94e297faaa445c024f91088a93beed2f840523caa25f7f884', 1, 1, 'andrew', '[]', 1, '2021-09-10 01:57:16', '2021-09-10 01:57:16', '2022-09-10 07:27:16'),
+('8567fea8165444f3bc0dfc501d176de9ecdbfcc0894850a38b817db6b6b55361b7b9c10007701188', 1, 1, 'andrew', '[]', 0, '2021-09-13 04:59:36', '2021-09-13 04:59:36', '2022-09-13 10:29:36'),
+('8863138fb8067b1941b4f99ced5d1347c3e1e314071844d67143e92f96e501b175f1692cbe03911c', 2, 1, 'andrew', '[]', 1, '2021-09-13 05:12:10', '2021-09-13 05:12:10', '2022-09-13 10:42:10'),
+('b484d0c9b86603409b4e6306821d207027a61b442f298388ed263c8b60156092636b2add13542c5f', 2, 1, 'andrew', '[]', 1, '2021-09-13 05:20:53', '2021-09-13 05:20:53', '2022-09-13 10:50:53'),
+('b8f95d08daf8907dd66bd212e50ee1135c4ffaffdb7b787703ad81c858bbc7bd04a7694c2f410ab9', 2, 1, 'andrew', '[]', 1, '2021-09-13 05:00:55', '2021-09-13 05:00:55', '2022-09-13 10:30:55'),
+('f8a81420b3ff8b39fcf5041f9d14c65358613aa830550a034097fc4214e4e48643a9ef299a99235c', 1, 1, 'andrew', '[]', 1, '2021-09-12 23:13:04', '2021-09-12 23:13:04', '2022-09-13 04:43:04');
 
 -- --------------------------------------------------------
 
@@ -349,6 +366,19 @@ CREATE TABLE `offers` (
   `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Dumping data for table `offers`
+--
+
+INSERT INTO `offers` (`id`, `admin_id`, `venu_id`, `unique_id`, `offer_name`, `offer_desc`, `image`, `name_of_file_show`, `from_date`, `to_date`, `time`, `to_time`, `status`, `offer_type`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(1, 1, 1, 1, 'Birthday Offer', 'Birthday Offer', 'app_icon.png', 'app icon', NULL, NULL, NULL, NULL, 'Active', 'BirthdayOffer', '2021-09-10 07:31:45', '2021-09-10 07:31:45', NULL),
+(2, 1, 1, 2, 'party offer', 'party offer description', '0910202113073097613b0b3a3dd28.jpeg', 'download.jpeg', '2021-09-10', '2021-09-13', '17:25:00', '19:35:00', 'Active', 'Normal', '2021-09-10 07:37:30', '2021-09-13 11:15:26', '2021-09-13 11:15:26'),
+(3, 1, 1, 3, 'party offer 2', 'party offer description', '0910202113105789613b0c099cdaa.jpeg', 'download.jpeg', '2021-09-10', '2021-09-11', '13:10:00', '17:10:00', 'Active', 'Normal', '2021-09-10 07:40:57', '2021-09-10 07:40:57', NULL),
+(4, 1, 1, 4, 'offername moview', 'offername moview', '0910202113134565613b0cb173848.jpeg', 'download.jpeg', '2021-09-10', '2021-09-11', '13:13:00', '17:13:00', 'Active', 'Normal', '2021-09-10 07:43:45', '2021-09-10 07:43:45', NULL),
+(5, 1, 1, 5, 'pool party offer', 'pool party offer', '0910202113141547613b0ccf13a0a.jpeg', 'Cool-Nature-Wallpapaer-for-Download.jpg', '2021-09-10', '2021-09-11', '13:14:00', '17:25:00', 'Active', 'Normal', '2021-09-10 07:44:15', '2021-09-13 04:48:06', NULL),
+(6, 1, 1, 6, 'ddwdwqd', 'wwwwwqwweswqedde', '0913202110242184613ed97d129eb.jpeg', 'Cool-Nature-Wallpapaer-for-Download.jpg', '2021-09-14', '2021-09-16', '05:25:00', '07:35:00', 'Inactive', 'Normal', '2021-09-13 04:54:21', '2021-09-13 04:54:21', NULL),
+(7, 1, 1, 7, 'TEST OFFER', 'TEST OFFER DESC', '0913202116034758613f290b5a634.jpeg', 'download.jpeg', '2021-09-13', '2021-09-16', '16:03:00', '18:30:00', 'Active', 'Normal', '2021-09-13 10:33:47', '2021-09-13 10:33:47', NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -372,6 +402,19 @@ CREATE TABLE `offer_settings` (
   `updated_at` timestamp NULL DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `offer_settings`
+--
+
+INSERT INTO `offer_settings` (`id`, `offer_id`, `city_id`, `dob`, `gender`, `date`, `txn_start_period`, `txn_end_period`, `txn_amount_condition`, `from_price`, `to_price`, `offer_type`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(1, 1, NULL, 'Today', NULL, NULL, NULL, NULL, NULL, 0, 0, 'BirthdayOffer', '2021-09-10 07:31:45', '2021-09-10 07:31:45', NULL),
+(2, 2, 1, 'Today', 'Male', '2021-09-13', NULL, NULL, NULL, NULL, NULL, 'Normal', '2021-09-10 07:37:30', '2021-09-13 04:48:16', NULL),
+(3, 3, 1, 'Today', NULL, '2021-09-11', NULL, NULL, NULL, NULL, NULL, 'Normal', '2021-09-10 07:40:57', '2021-09-10 07:40:57', NULL),
+(4, 4, NULL, 'Today', NULL, '2021-09-10', NULL, NULL, NULL, NULL, NULL, 'Normal', '2021-09-10 07:43:45', '2021-09-10 07:43:45', NULL),
+(5, 5, 1, 'Today', NULL, '2021-09-13', NULL, NULL, NULL, NULL, NULL, 'Normal', '2021-09-10 07:44:15', '2021-09-13 04:48:06', NULL),
+(6, 6, 1, 'Today', 'Male', '2021-09-13', NULL, NULL, NULL, NULL, NULL, 'Normal', '2021-09-13 04:54:21', '2021-09-13 04:54:21', NULL),
+(7, 7, 1, 'Today', 'Male', '2021-09-13', NULL, NULL, NULL, NULL, NULL, 'Normal', '2021-09-13 10:33:47', '2021-09-13 10:33:47', NULL);
 
 -- --------------------------------------------------------
 
@@ -464,7 +507,7 @@ CREATE TABLE `users` (
   `is_verify` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0' COMMENT '0 => Not Verify, 1 => Verify',
   `refresh_token` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `remember_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `is_active` enum('Inactive','Active') COLLATE utf8mb4_unicode_ci DEFAULT 'Inactive',
+  `is_active` enum('Inactive','Active') COLLATE utf8mb4_unicode_ci DEFAULT 'Active',
   `customer_id` bigint(20) DEFAULT NULL,
   `customer_tier` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `wallet_cash` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -473,6 +516,55 @@ CREATE TABLE `users` (
   `updated_at` timestamp NULL DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`id`, `image`, `country_code`, `mobile_number`, `first_name`, `last_name`, `email`, `password`, `city_of_residence`, `nationality`, `dob`, `gender`, `reference_code`, `device_type`, `device_token`, `reset_password_token`, `verify_email_token`, `is_block`, `is_verify`, `refresh_token`, `remember_token`, `is_active`, `customer_id`, `customer_tier`, `wallet_cash`, `reference_by`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(1, NULL, '+91', '955656545', 'abc', 'koko', 'abc323@yopmail.com', '$2y$10$0d9SjIQhO7d8KhshSON6uuGWBmSed0Nx/jrf0xd9OTxirOKvuvtC.', 'Abu Dhabi', 'IN', '2012-12-12', 'Male', NULL, 'Ios', 'jaskfjsajfljal', NULL, NULL, '0', '1', NULL, NULL, 'Active', 16966043203, NULL, NULL, NULL, '2021-09-10 01:55:31', '2021-09-13 04:59:36', NULL),
+(2, NULL, '+91', '955656544', 'abc', 'koko', 'abc3@yopmail.com', '$2y$10$4TS/aAdOdIBL4e4RIZ0kNOMqIEx.bXvlF5ihUROGiWirmpFAdB0rG', 'Abu Dhabi', 'IN', '2012-12-12', 'Male', NULL, 'Ios', '12335556', NULL, NULL, '0', '1', NULL, NULL, 'Active', 69508074461, NULL, NULL, NULL, '2021-09-13 05:00:55', '2021-09-13 05:20:53', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user_assign_offers`
+--
+
+CREATE TABLE `user_assign_offers` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `offer_id` int(10) UNSIGNED NOT NULL,
+  `offer_setting_id` int(10) UNSIGNED NOT NULL,
+  `user_id` int(10) UNSIGNED NOT NULL,
+  `city_id` int(11) DEFAULT NULL,
+  `dob` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT 'Today',
+  `gender` enum('None','Male','Female','Other') COLLATE utf8mb4_unicode_ci DEFAULT 'None',
+  `date` date DEFAULT NULL,
+  `assign_at` date DEFAULT NULL,
+  `txn_start_period` date DEFAULT NULL,
+  `txn_end_period` date DEFAULT NULL,
+  `txn_amount_condition` enum('Between','Greater Than') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `from_price` double DEFAULT '0',
+  `to_price` double DEFAULT '0',
+  `offer_type` enum('Normal','BirthdayOffer') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `user_assign_offers`
+--
+
+INSERT INTO `user_assign_offers` (`id`, `offer_id`, `offer_setting_id`, `user_id`, `city_id`, `dob`, `gender`, `date`, `assign_at`, `txn_start_period`, `txn_end_period`, `txn_amount_condition`, `from_price`, `to_price`, `offer_type`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(1, 1, 1, 1, NULL, 'Today', NULL, NULL, '2021-09-13', NULL, NULL, NULL, 0, 0, 'BirthdayOffer', '2021-09-13 02:57:47', '2021-09-13 02:57:47', NULL),
+(2, 2, 2, 1, 1, 'Today', 'Male', '2021-09-13', '2021-09-13', NULL, NULL, NULL, NULL, NULL, 'Normal', '2021-09-13 02:57:47', '2021-09-13 11:15:26', NULL),
+(3, 5, 5, 1, 1, 'Today', NULL, '2021-09-13', '2021-09-13', NULL, NULL, NULL, NULL, NULL, 'Normal', '2021-09-13 02:57:47', '2021-09-13 02:57:47', NULL),
+(4, 1, 1, 2, NULL, 'Today', NULL, NULL, '2021-09-13', NULL, NULL, NULL, 0, 0, 'BirthdayOffer', '2021-09-13 05:02:45', '2021-09-13 05:02:45', NULL),
+(5, 2, 2, 2, 1, 'Today', 'Male', '2021-09-13', '2021-09-13', NULL, NULL, NULL, NULL, NULL, 'Normal', '2021-09-13 05:02:45', '2021-09-13 11:15:26', NULL),
+(6, 5, 5, 2, 1, 'Today', NULL, '2021-09-13', '2021-09-13', NULL, NULL, NULL, NULL, NULL, 'Normal', '2021-09-13 05:02:45', '2021-09-13 05:02:45', NULL),
+(7, 7, 7, 1, 1, 'Today', 'Male', '2021-09-13', '2021-09-13', NULL, NULL, NULL, NULL, NULL, 'Normal', '2021-09-13 05:12:40', '2021-09-13 05:12:40', NULL),
+(8, 7, 7, 2, 1, 'Today', 'Male', '2021-09-13', '2021-09-13', NULL, NULL, NULL, NULL, NULL, 'Normal', '2021-09-13 05:12:40', '2021-09-13 05:12:40', NULL);
 
 -- --------------------------------------------------------
 
@@ -498,6 +590,14 @@ CREATE TABLE `venue_users` (
   `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Dumping data for table `venue_users`
+--
+
+INSERT INTO `venue_users` (`id`, `venu_id`, `username`, `password`, `status`, `device_model`, `mac_address`, `authorized_status`, `date_time`, `access_token`, `created_by`, `updated_by`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(1, 1, 'abc123', '$2y$10$OiEjYJ6cQuPX0Ir394Sczupy9ae/zjbmGT1EY9MCZuo0CLlbBYRHG', 'Active', 'N/A', 'N/A', 'Unauthorized', '2021-09-13 14:29:43', NULL, 'Admin', 'Admin', '2021-09-13 08:59:43', '2021-09-13 08:59:43', NULL),
+(2, 1, 'abc1234', '$2y$10$ON274ciLqkDrCAL0CTgaPuG.w8W7p3vPPNs8bS932A5heJ1MAK7.2', 'Active', 'N/A', 'N/A', 'Unauthorized', '2021-09-13 14:30:15', NULL, 'Admin', 'Admin', '2021-09-13 09:00:15', '2021-09-13 09:02:17', NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -522,6 +622,13 @@ CREATE TABLE `venus` (
   `updated_at` timestamp NULL DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `venus`
+--
+
+INSERT INTO `venus` (`id`, `admin_id`, `venue_name`, `unique_id`, `address`, `venue_description`, `phone_number`, `google_map_location_link`, `book_now_link`, `image`, `name_of_file_show`, `menu_link`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(1, 1, 'party venu', 1, 'party address', 'part description', '9874563211', 'http://google.com', 'http://google.com', '0910202113014590613b09e1d9d8a.jpeg', 'download.jpeg', 'http://google.com', 'Active', '2021-09-10 07:31:45', '2021-09-10 07:31:45', NULL);
 
 -- --------------------------------------------------------
 
@@ -683,6 +790,15 @@ ALTER TABLE `users`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `user_assign_offers`
+--
+ALTER TABLE `user_assign_offers`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_assign_offers_offer_id_foreign` (`offer_id`),
+  ADD KEY `user_assign_offers_offer_setting_id_foreign` (`offer_setting_id`),
+  ADD KEY `user_assign_offers_user_id_foreign` (`user_id`);
+
+--
 -- Indexes for table `venue_users`
 --
 ALTER TABLE `venue_users`
@@ -746,7 +862,7 @@ ALTER TABLE `login_requests`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
 --
 -- AUTO_INCREMENT for table `oauth_clients`
 --
@@ -761,12 +877,12 @@ ALTER TABLE `oauth_personal_access_clients`
 -- AUTO_INCREMENT for table `offers`
 --
 ALTER TABLE `offers`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 --
 -- AUTO_INCREMENT for table `offer_settings`
 --
 ALTER TABLE `offer_settings`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 --
 -- AUTO_INCREMENT for table `otps`
 --
@@ -786,17 +902,22 @@ ALTER TABLE `tier_settings`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+--
+-- AUTO_INCREMENT for table `user_assign_offers`
+--
+ALTER TABLE `user_assign_offers`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 --
 -- AUTO_INCREMENT for table `venue_users`
 --
 ALTER TABLE `venue_users`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT for table `venus`
 --
 ALTER TABLE `venus`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 --
 -- AUTO_INCREMENT for table `wallet_cashbacks`
 --
@@ -863,6 +984,14 @@ ALTER TABLE `tier_conditions`
 --
 ALTER TABLE `tier_settings`
   ADD CONSTRAINT `tier_settings_admin_id_foreign` FOREIGN KEY (`admin_id`) REFERENCES `admins` (`id`);
+
+--
+-- Constraints for table `user_assign_offers`
+--
+ALTER TABLE `user_assign_offers`
+  ADD CONSTRAINT `user_assign_offers_offer_id_foreign` FOREIGN KEY (`offer_id`) REFERENCES `offers` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `user_assign_offers_offer_setting_id_foreign` FOREIGN KEY (`offer_setting_id`) REFERENCES `offer_settings` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `user_assign_offers_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `venue_users`

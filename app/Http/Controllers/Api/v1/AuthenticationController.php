@@ -28,6 +28,7 @@ use App\Models\Offer;
 use App\Models\OfferSetting;
 use App\Models\Cashback;
 use App\Models\City;
+use App\Models\UserAssignOffer;
 require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
 
 class AuthenticationController extends ResponseController
@@ -330,28 +331,36 @@ class AuthenticationController extends ResponseController
     public function offerListing(Request $request){
         $this->is_validationRule(Validation::offerList($Validation = "", $message = "") , $request);
         $user = Auth::guard()->user();
-        $find_city = City::whereCityName($user->city_of_residence)->first();
-        $pluck_for_in = OfferSetting::where(function($query) use ($find_city, $user){
-                            $query->whereCityId($find_city->id);
-                            $query->whereGender($user->gender);
-                            $query->whereDate('date','<=',Carbon::now()->toDateString());
-                        })->orWhere(function($query) use ($find_city, $user){
-                            $query->whereCityId(null);
-                            $query->whereGender(null);
-                            $query->whereDate('date','<=',Carbon::now()->toDateString());
-                        })->orWhere(function($query) use ($find_city, $user){
-                            $query->whereCityId($find_city->id);
-                            $query->whereGender(null);
-                            $query->whereDate('date','<=',Carbon::now()->toDateString());
-                        })->orWhere(function($query) use ($find_city, $user){
-                            $query->whereCityId(null);
-                            $query->whereGender($user->gender);
-                            $query->whereDate('date','<=',Carbon::now()->toDateString());
-                        })->pluck('offer_id');
+        // $find_city = City::whereCityName($user->city_of_residence)->first();
+        // $pluck_for_in = OfferSetting::where(function($query) use ($find_city, $user){
+        //                     $query->whereCityId($find_city->id);
+        //                     $query->whereGender($user->gender);
+        //                     $query->whereDate('date','<=',Carbon::now()->toDateString());
+        //                 })->orWhere(function($query) use ($find_city, $user){
+        //                     $query->whereCityId(null);
+        //                     $query->whereGender(null);
+        //                     $query->whereDate('date','<=',Carbon::now()->toDateString());
+        //                 })->orWhere(function($query) use ($find_city, $user){
+        //                     $query->whereCityId($find_city->id);
+        //                     $query->whereGender(null);
+        //                     $query->whereDate('date','<=',Carbon::now()->toDateString());
+        //                 })->orWhere(function($query) use ($find_city, $user){
+        //                     $query->whereCityId(null);
+        //                     $query->whereGender($user->gender);
+        //                     $query->whereDate('date','<=',Carbon::now()->toDateString());
+        //                 })->pluck('offer_id');
+
+        // $active_venue_ids = Venu::where('status' , 'Active')->where('deleted_at' , null)->pluck('id');
+
+        // $offers = Offer::whereDeletedAt(null)->whereStatus('Active')->whereIn('id',$pluck_for_in)->whereDate('to_date','>=',Carbon::now()->toDateString())->whereIn('venu_id', $active_venue_ids)->with('offerSetting','venu')->get();
+
+
+        $user_assign_offers = UserAssignOffer::whereUserId($user->id)->pluck('offer_id');
 
         $active_venue_ids = Venu::where('status' , 'Active')->where('deleted_at' , null)->pluck('id');
 
-        $offers = Offer::whereDeletedAt(null)->whereStatus('Active')->whereIn('id',$pluck_for_in)->whereDate('to_date','>=',Carbon::now()->toDateString())->whereIn('venu_id', $active_venue_ids)->with('offerSetting','venu')->get();
+        $offers = Offer::whereDeletedAt(null)->whereStatus('Active')->whereIn('id',$user_assign_offers)->whereDate('to_date','>=',Carbon::now()->toDateString())->whereIn('venu_id', $active_venue_ids)->with('offerSetting','venu')->get();
+        
 
         return $this->responseOk('Offer Listing', ['offer_listing' => $offers]);
     }

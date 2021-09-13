@@ -29,6 +29,7 @@ use App\Models\OfferSetting;
 use App\Models\Cashback;
 use App\Models\City;
 use App\Models\VenueUser;
+use App\Models\UserAssignOffer;
 
 class RestaurantAuthenticationController extends ResponseController
 {
