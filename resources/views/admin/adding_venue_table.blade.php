@@ -355,7 +355,6 @@
 		$(document).ready(function(){
 			$('#basic-datatables').dataTable({
              dom: "Bfrtip",
-             order: [6,'asc'],
             "processing": true,
             "serverSide": true,
             "ajax": {

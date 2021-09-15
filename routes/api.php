@@ -61,7 +61,7 @@ Route::group(['namespace' => 'Api\v1','prefix'=>'v1'], function() {
     Route::get('venue_listing-without-token','RestaurantAuthenticationController@venueListingWithoutToken');
     Route::group(['middleware' => 'checkTokenVenuUser'], function(){
 
-        Route::get('get-profile-venue-user/{id?}','RestaurantAuthenticationController@venuUserProfile');
+        Route::post('get-profile-venue-user','RestaurantAuthenticationController@venuUserProfile');
     });
 
 });

@@ -1646,7 +1646,7 @@ chart.render();
 					$(this).attr("contenteditable","true");
 					if(key_type == "first_name" || key_type == "last_name"){
 
-						$(this).attr("onkeypress", "return (this.innerText.length <= 50)");
+						$(this).attr("onkeypress", "return (this.innerText.length <= 29)");
 					}
 					$(this).attr("edited","true");
 

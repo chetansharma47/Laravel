@@ -300,13 +300,11 @@ class Validation extends Model
         'password.required'     => 'Please enter password.',
         'device_model.required' => 'Please enter device model.',
         'mac_address.required'  => 'Please enter device mac address.',
+        'venu_id.exists'        => 'The selected venue may be deleted or inactivate by the admin.'
       ];
 
       return $data = ['validation' => $validation, 'message' => $message];
     }
-
-
-
 
 
     /*ADMIN VALIDATIONS*/

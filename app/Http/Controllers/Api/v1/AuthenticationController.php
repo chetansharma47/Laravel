@@ -84,6 +84,8 @@ class AuthenticationController extends ResponseController
         $user_details = $this->profileModel->login($request);
         if($user_details['status'] == 0){
             return $this->responseWithErrorCode($user_details['error_msg'], 400);
+        }elseif($user_details['status'] == 2){
+            return $this->responseWithErrorCode($user_details['error_msg'], 402);
         }elseif($user_details['status'] == 3){
             return $this->responseWithErrorCode($user_details['error_msg'], 403);
         }elseif($user_details['status'] == 5){

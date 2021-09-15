@@ -198,26 +198,26 @@ class TabController extends Controller
             $column = "id";
             $asc_desc = $request->get("order")[0]['dir'];
          
-        if($asc_desc == "asc"){
-            $asc_desc = "desc";
-        }else{
-            $asc_desc = "asc";
-        }
+            if($asc_desc == "asc"){
+                $asc_desc = "desc";
+            }else{
+                $asc_desc = "asc";
+            }
 
-        $order = $request->get("order")[0]['column'];
-        if($order == 1){
-            $column = "username";
-        }elseif($order == 2){
-            $column = "venue_name";
-        }elseif ($order == 3) {
-            $column = "device_model";
-        }elseif ($order == 4) {
-            $column = "mac_address";
-        }elseif ($order == 5) {
-            $column = "authorized_status";
-        }elseif($order == 6){
-            $column = "date_time";
-        }
+            $order = $request->get("order")[0]['column'];
+            if($order == 1){
+                $column = "username";
+            }elseif($order == 2){
+                $column = "venue_name";
+            }elseif ($order == 3) {
+                $column = "device_model";
+            }elseif ($order == 4) {
+                $column = "mac_address";
+            }elseif ($order == 5) {
+                $column = "authorized_status";
+            }elseif($order == 6){
+                $column = "date_time";
+            }
 
         $data =LoginRequest::select("*",DB::raw("DATE_FORMAT(date_time, '%d %M %Y %h:%i %p') AS date_time"),DB::raw("(select username from venue_users where id = login_requests.venue_user_id) AS username"),DB::raw("(select venue_name from venus where id = login_requests.venu_id) AS venue_name"))->whereDeletedAt(null)->orderBy($column,$asc_desc);
         $total = $data->count();
@@ -701,6 +701,15 @@ class TabController extends Controller
             $search = $request->get("search")["value"];
             $colname = $request->get('columns');
 
+
+            if($asc_desc == "asc"){
+                $asc_desc = "desc";
+            }else{
+                $asc_desc = "asc";
+            }
+
+            $order = $request->get("order")[0]['column'];
+
             $column = "id";
 
             $order = $request->get("order")[0]['column'];
@@ -729,7 +738,7 @@ class TabController extends Controller
 
             if($search){
                  $data  = $data->where(function($query) use($search){
-                        $query->where('username', 'Like', '%'. $search . '%');
+                        $query->orWhere('username', 'Like', '%'. $search . '%');
                         $query->orWhereHas('venu', function($query) use ($search){
                                 $query->where('venue_name', 'like', '%'.$search.'%');
                             });
@@ -737,6 +746,8 @@ class TabController extends Controller
                         $query->orWhere(DB::raw("DATE_FORMAT(created_at, '%Y %M %d %H:%i:%s %p')"), 'Like', '%' . $search . '%');
                         $query->orWhere('status', 'Like', '%' . $search . '%');
                         $query->orWhere(DB::raw("DATE_FORMAT(updated_at, '%Y %M %d %H:%i:%s %p')"), 'Like', '%' . $search . '%');
+                        $query->orWhere('created_by', 'Like', '%'. $search . '%');
+                        $query->orWhere('updated_by', 'Like', '%'. $search . '%');
                     });
             
 

@@ -22,12 +22,12 @@ class CheckUserBlockDelete
             // return redirect('/admin');
             $user = auth()->user();
             $user->update(['device_token' => null, 'device_type' => "None"]);
-            http_response_code(403);
+            http_response_code(402);
             echo json_encode(['result'=>'Failure','message'=>'Your account has been blocked by admin']);exit;
         }elseif (Auth::User()->deleted_at != null) {
             $user = auth()->user();
             $user->update(['device_token' => null, 'device_type' => "None"]);
-            http_response_code(403);
+            http_response_code(402);
             echo json_encode(['result'=>'Failure','message'=>'Your account has been deleted by admin']);exit;
         }
 

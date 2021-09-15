@@ -307,7 +307,7 @@ select.form-control.form-group.status_select:focus{
 									<th>Sr.No.</th>
 									<th>Username</th>
 									<th>Password</th>
-									<th>Role</th>
+									<th>Venue</th>
 									<th>Status</th>
 									<th>Created On</th>
 									<th>Created By</th>
@@ -467,8 +467,8 @@ select.form-control.form-group.status_select:focus{
 
 			}
 
-			if($('#venue_user_password').val().length > 100 ){
-				$("#alert_text").text("Password may not be greater than 100 characters.");
+			if($('#venue_user_password').val().length > 200 ){
+				$("#alert_text").text("Password may not be greater than 200 characters.");
 				$("#validationModel").modal("show");
 				$("#validationModel").unbind("click");
 			return false;
@@ -537,7 +537,6 @@ select.form-control.form-group.status_select:focus{
 				retrieve: true,
 				paging: true,
 				searching:true,
-				order: [0, 'desc'],
 				ajax:{
 					url:"{{ route('admin.venuetable') }}",
 					type:"POST",
@@ -604,9 +603,19 @@ select.form-control.form-group.status_select:focus{
 			var keyType = $(this).attr('key_type');
 			var content = $(this).text();
 
-			if(keyType == 'username' || keyType == 'password' || keyType == 'status' ){
+			if(keyType == 'username'){
 				$(this).attr('contenteditable',true);
-				$(this).attr("onkeypress", "return (this.innerText.length <= 50)");
+				$(this).attr("onkeypress", "return (this.innerText.length <= 29)");
+			}
+
+			if(keyType == 'password'){
+				$(this).attr('contenteditable',true);
+				$(this).attr("onkeypress", "return (this.innerText.length <= 199)");
+			}
+
+			if(keyType == 'status' ){
+				$(this).attr('contenteditable',true);
+				$(this).attr("onkeypress", "return (this.innerText.length <= 49)");
 			}
 
 			if(keyType=='password'){
@@ -665,7 +674,7 @@ select.form-control.form-group.status_select:focus{
 					$("#validationModel").unbind("click");
 					empty_val = "true";
 				}else if(text.length < 2){
-					$("#alert_text").text("Username should be atleast 2 characters.");
+					$("#alert_text").text("Username should be at least 2 characters long.");
 					$("#validationModel").modal("show");
 					$("#validationModel").unbind("click");
 					empty_val = "true";

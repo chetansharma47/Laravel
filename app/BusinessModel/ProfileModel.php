@@ -14,6 +14,7 @@ use App\Mail\UserVerifyMail;
 use App\Mail\UserForgotPassword;
 use App\Models\TierCondition;
 use App\Models\LoginRequest;
+use App\Models\Venu;
 class ProfileModel extends Model
 {
 
@@ -137,10 +138,10 @@ class ProfileModel extends Model
                 }
 
                 if($user->deleted_at != null){
-                    return ["status" => 3, "data" => null, "error_msg" => "Your account has been deleted by admin."];
+                    return ["status" => 2, "data" => null, "error_msg" => "Your account has been deleted by admin."];
                 }
                 if($user->is_block == 1){
-                    return ["status" => 3, "data" => null, "error_msg" => "Your account has been blocked by admin."];
+                    return ["status" => 2, "data" => null, "error_msg" => "Your account has been blocked by admin."];
                 }
 
                 DB::table("oauth_access_tokens")
@@ -209,6 +210,12 @@ class ProfileModel extends Model
         $token = bcrypt('access_token');
         $user_find = VenueUser::whereUsername($request->username)->first();
 
+        $venue_find = Venu::whereId($request->venu_id)->where('status', '=', 'Active')->whereDeletedAt(null)->first();
+
+        if(empty($venue_find)){
+            return ["status" => 3, "data" => null, "error_msg" => "The selected venue may be deleted or inactivate by the admin."];
+        }
+
         if(!empty($user_find)){
 
             if(Hash::check($request->password, $user_find->password)){
@@ -219,12 +226,16 @@ class ProfileModel extends Model
 
 
                 if($user_find->venu_id != $request->venu_id){
-                    return ["status" => 3, "data" => null, "error_msg" => "Venue is not same for entered username."];
+                    return ["status" => 3, "data" => null, "error_msg" => "The selected venue is not allocated to this user, please select correct venue."];
                 }
 
                 $find_login_request = LoginRequest::whereVenueUserId($user_find->id)->where('mac_address', '=', $request->mac_address)->first();
 
                 if(empty($find_login_request)){
+
+                    if($user_find->status == "Inactive"){
+                        return ["status" => 3, "data" => null, "error_msg" => "Your account has been inactive by admin."];
+                    }
 
                     $user_find->access_token = $token;
                     $user_find->update();
@@ -238,17 +249,17 @@ class ProfileModel extends Model
                     $login_req->date_time = Carbon::now()->toDateString(). " " . Carbon::now()->toTimeString();
                     $login_req->save();
 
-                    return ["status" => 3, "data" => null, "error_msg" => "Your account has been unauthorized by admin."];
+                    return ["status" => 3, "data" => null, "error_msg" => "Your account authorization request is under process, please wait for confirmation."];
                 }else{
 
-                    if($user_find->status == "Inactive"){
-                        return ["status" => 3, "data" => null, "error_msg" => "Your account has been inactive by admin."];
-                    }
 
                     if($find_login_request->authorized_status == "Unauthorized"){
                         return ["status" => 3, "data" => null, "error_msg" => "Your account has been unauthorized by admin."];
                     }
 
+                    if($user_find->status == "Inactive"){
+                        return ["status" => 3, "data" => null, "error_msg" => "Your account has been inactive by admin."];
+                    }
                     $user_find->login_req = $find_login_request;
 
                     return ["status" => 8, "data" => $user_find, "error_msg" => ""];
