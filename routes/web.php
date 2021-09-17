@@ -138,6 +138,21 @@ Route::group(['middleware' => 'TimeZone','namespace' => 'Admin','prefix'=>'/admi
 
         Route::post('total-transaction-amount-for-tier','TabController@totalTransactionAmountForDays')->name('totalTransactionAmountForDays');
         Route::post('total-validate-check-for-tier','TabController@totalValidateCheckForDays')->name('totalValidateCheckForDays');
+
+        Route::get('badges','TabController@badges')->name('badges');
+        Route::get('assign-badges','TabController@assignBadges')->name('assignBadges');
+        Route::post('search-users-assign-badges','TabController@searchAssignBadges')->name('searchAssignBadges');
+        Route::post('badge-assign-list-users','TabController@badgeAssignListUsers')->name('badgeAssignListUsers');
+        Route::post('add-or-update-badge-assign','TabController@addOrUpdateBadgeAssign')->name('addOrUpdateBadgeAssign');
+        Route::post('findBadge','TabController@findBadge')->name('findBadge');
+
+
+
+        Route::post('badges','TabController@AddNewBadge')->name('addNewBadge');
+        Route::post('badges-list','TabController@BadgesList')->name('badgeslist');
+        Route::post('edit-badges','TabController@editBadges')->name('editbadges');
+        Route::post('assign-users-list','TabController@assignUserList')->name('assign_user_list');
+        Route::get('download-assign-badge-users','TabController@downloadBadgeAssignUsers')->name('download_badge_assign_users');
         
     }); 
            

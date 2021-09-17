@@ -12,6 +12,8 @@ use App\Models\Event;
 use App\Models\Offer;
 use App\Models\OfferSetting;
 use App\Models\City;
+use App\Models\Badge;
+use App\Models\AssignBadge;
 
 class VenueBusinessModel extends Model
 {
@@ -265,6 +267,43 @@ class VenueBusinessModel extends Model
 		}
 
 		return ['data' => $offer, 'message' => $message];
+	}
+
+	public function addOrUpdateBadgeAssignInTable($data){
+		$find_user = User::whereCustomerId($data['customer_id'])->first();
+		$find_badge_assign = AssignBadge::whereUserId($find_user->id)->whereDeletedAt(null)->first();
+
+		if(empty($find_badge_assign)){
+
+			$assign_badge = new AssignBadge();
+			$assign_badge->user_id = $find_user->id;
+			$assign_badge->badge_id = $data['badge_id'];
+			$assign_badge->comment = $data['comment'];
+			$assign_badge->status = $data['status'];
+			$assign_badge->when = $data['when'];
+			$assign_badge->from_date = $data['from_date'];
+			$assign_badge->to_date = $data['to_date'];
+			$assign_badge->from_time = $data['from_time'];
+			$assign_badge->to_time = $data['to_time'];
+			$assign_badge->created_by = "Admin";
+			$assign_badge->updated_by = "Admin";
+			$assign_badge->save();
+		}else{
+			$find_badge_assign->badge_id = $data['badge_id'];
+			$find_badge_assign->comment = $data['comment'];
+			$find_badge_assign->status = $data['status'];
+			$find_badge_assign->when = $data['when'];
+			$find_badge_assign->from_date = $data['from_date'];
+			$find_badge_assign->to_date = $data['to_date'];
+			$find_badge_assign->from_time = $data['from_time'];
+			$find_badge_assign->to_time = $data['to_time'];
+			$find_badge_assign->created_by = "Admin";
+			$find_badge_assign->updated_by = "Admin";
+			$find_badge_assign->update();
+		}
+
+		return " success";
+
 	}
 
 }

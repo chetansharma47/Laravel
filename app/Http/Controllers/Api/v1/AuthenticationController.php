@@ -29,7 +29,7 @@ use App\Models\OfferSetting;
 use App\Models\Cashback;
 use App\Models\City;
 use App\Models\UserAssignOffer;
-require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/society_13_september/vendor/autoload.php';
 
 class AuthenticationController extends ResponseController
 {

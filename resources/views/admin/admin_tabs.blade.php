@@ -128,6 +128,20 @@
 							Venue User Management
 						</div>
 					</a>
+
+					<a href="{{route('admin.badges')}}">
+						<div class="grey_btn">
+							Add New Badges
+						</div>
+					</a>
+
+
+					<!-- <a href="{{route('admin.assignBadges')}}">
+						<div class="grey_btn">
+							User Assign Badges
+						</div>
+					</a> -->
+
 					<a href="{{route('admin.notificationSetting')}}">
 						<div class="grey_btn">
 							Notification Management

@@ -1212,10 +1212,10 @@ border-radius: 8px;
     padding: 0 30px;
     margin-bottom: 0;
 }
-.form-control:disabled, .form-control[readonly] {
+/*.form-control:disabled, .form-control[readonly] {
     background: #ffffff!important;
     opacity: 1 !important;
-}
+}*/
 .rest_logo {
     position: relative;
     margin-top: 12px;
