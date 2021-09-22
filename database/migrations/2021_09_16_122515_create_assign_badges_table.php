@@ -21,7 +21,7 @@ class CreateAssignBadgesTable extends Migration
             $table->foreign('badge_id')->references('id')->on('badges')->onDelete('cascade');
             $table->text('comment');
             $table->enum('status',['Active','Inactive']);
-            $table->string('when');
+            $table->string('when_day');
             $table->date('from_date');
             $table->date('to_date');
             $table->time('from_time');

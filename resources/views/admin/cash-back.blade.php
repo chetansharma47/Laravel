@@ -1128,7 +1128,7 @@
 								Status
 							</label>
 							<div class="selectdiv">
-								<select class="form-control form-group cashback_status" unique_id="`+unique_id+`" style="padding: .6rem 1rem; position: relative;" id="exampleFormControlSelect1">
+								<select class="form-control form-group select_option cashback_status" unique_id="`+unique_id+`" style="padding: .6rem 1rem; position: relative;" id="exampleFormControlSelect1">
 									<option value="">Select Status</option>
 									<option value="Active">Active</option>
 									<option value="Inactive">Inactive</option>
@@ -1773,7 +1773,7 @@
 												Status
 											</label>
 											<div class="selectdiv">
-												<select class="form-control form-group cashback_status" unique_id="`+unique_id+`" style="padding: .6rem 1rem; position: relative;" id="exampleFormControlSelect1">
+												<select class="form-control form-group select_option cashback_status" unique_id="`+unique_id+`" style="padding: .6rem 1rem; position: relative;" id="exampleFormControlSelect1">
 													<option value="">Select Status</option>
 													<option value="Active" `+select_active+`>Active</option>
 													<option value="Inactive" `+select_inactive+`>Inactive</option>
@@ -1937,7 +1937,7 @@
 												Status
 											</label>
 											<div class="selectdiv">
-												<select class="form-control form-group cashback_status" unique_id="`+unique_id+`" style="padding: .6rem 1rem; position: relative;" id="exampleFormControlSelect1">
+												<select class="form-control form-group select_option cashback_status" unique_id="`+unique_id+`" style="padding: .6rem 1rem; position: relative;" id="exampleFormControlSelect1">
 													<option value="">Select Status</option>
 													<option value="Active" `+select_active+`>Active</option>
 													<option value="Inactive" `+select_inactive+`>Inactive</option>

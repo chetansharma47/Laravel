@@ -92,12 +92,20 @@ input#from_time,#to_time, #customer_id{
 	background: #EBEBEB!important;
 }
 
+select#exampleFormControlSelect1 {
+    padding-right: 51px!important;
+}
 
-.font-size-small .venue_inputs input, .font-size-small .venue_inputs select {
+/*select#exampleFormControlSelect1{
+	background: #EBEBEB!important;
+}*/
+
+
+/*.font-size-small .venue_inputs input, .font-size-small .venue_inputs select {
     
     font-size: 16px !important;
     
-}
+}*/
 
 		.wrap_all {
 		    display: flex;
@@ -163,6 +171,26 @@ table#basic-datatables {
 			margin-bottom: 0rem;
 		}
 
+		#confirmationModel .modal-title{
+		    text-align: center;
+		    width: 100%;
+		    font-size: 20px;
+		    font-weight: 600;
+		}
+		#confirmationModel .modal-header {
+		    background-color: #5f5f5f;
+		    color: #fff;
+		    justify-content: center;
+		}
+
+		#confirmationModel .modal-body {
+			text-align: center;
+		}
+
+		#confirmationModel .modal-body p {
+			margin-bottom: 0rem;
+		}
+
 		div#loaderImg2 {
 		    position: absolute;
 		    left: 0;
@@ -201,8 +229,12 @@ table#basic-datatables {
 			width: 100%;
 		}
 		div#basic-datatables2_length {
-    display: none;
-}
+		    display: none;
+		}
+
+		select#assign_search {
+		    width: 460px;
+		}
 	</style>
 </head>
 <body>
@@ -220,7 +252,7 @@ table#basic-datatables {
 								<ul class="navbar-nav">
 									<li class="nav-item">
 										<a class="nav-link hover_color" href="{{route('admin.adminTabs')}}" style="padding-right: 0">Admin Portal</a>
-										<a class="nav-link" href="javascript:void(0);" style="padding-left: 0;"> <span style="color: #fff;">></span> Badges</a>
+										<a class="nav-link" href="javascript:void(0);" style="padding-left: 0;"> <span style="color: #fff;">></span>Assign Badges</a>
 									</li>
 								</ul>
 							</div>
@@ -260,19 +292,19 @@ table#basic-datatables {
 
 		<div class="container-fluid font-size-small">
 			<div class="row">
-				<div class="col-md-5">
+				<div class="col-md-4">
 					<div class="venue_inputs mb-3 px-2 pl-3">
 						<label style="font-weight: 400;">
 							Customer ID:
 						</label>
-						<input type="text" class="form-control form-control-user" placeholder="Customer ID" value="" name="customer_id" id="customer_id" style="border-radius: 10px" readonly="true" />
+						<input type="text" class="form-control form-control-user" placeholder="Customer ID" value="" name="customer_id" id="customer_id" style="border-radius: 10px" readonly="true" autocomplete="off" />
 					</div>
 					<div class="venue_inputs mb-3 px-2 pl-3">
 						<label style="font-weight: 400;">
 							Badge Name
 						</label>
-						<select class="form-control form-group" style="position: relative;border-radius: 10px;" id="exampleFormControlSelect1" name="badge_name">
-							<option value="">Select Badge</option>
+						<select class="form-control form-group select_option" style="position: relative;border-radius: 10px; cursor: pointer;" id="exampleFormControlSelect1" name="badge_name">
+							<option value="">Select Badge Name</option>
 							@foreach($badges as $badge)
 							<option value="{{$badge->id}}">{{$badge->badge_name}}</option>
 							@endforeach()
@@ -282,13 +314,13 @@ table#basic-datatables {
 						<label style="font-weight: 400;">
 							Comment 
 						</label>
-						<input type="text" class="form-control form-control-user" placeholder="Comment" value="" maxlength="100" id="comment" name="comment" style="border-radius: 10px"/>
+						<input type="text" class="form-control form-control-user" placeholder="Comment" value="" maxlength="100" id="comment" name="comment" style="border-radius: 10px"autocomplete="off" />
 					</div>
 					<div class="venue_inputs mb-3 px-2 pl-3">
 						<label style="font-weight: 400;">
 							Status
 						</label>
-						<select class="form-control form-group" style="position: relative;border-radius: 10px;" id="exampleFormControlSelect2" name="status">
+						<select class="form-control form-group select_option" style="position: relative;border-radius: 10px; cursor: pointer;" id="exampleFormControlSelect2" name="status">
 							<option value="">Select Status</option>
 							<option value="Active">Active</option>
 							<option value="Inactive">Inactive</option>
@@ -296,23 +328,30 @@ table#basic-datatables {
 					</div>
 					<div class="d-flex justify-content-between mt-4">
 						<div class="mr-4">
-							<a href="javascript:void(0)"; id="add_new_badge_btn" class="btn btn-primary btn-user btn-block common_btn" style="     font-size: 18px; text-transform: none;     width: 154px!important;">
-								Add New Badge
+							<a href="javascript:void(0)"; id="add_new_badge_btn" class="btn btn-primary btn-user btn-block common_btn" style="     font-size: 18px; text-transform: none;     width: 176px!important;">
+								Assign New Badge
 							</a>
 						</div>
 						<div class="mr-4">
-							<a href="javascript:void(0)"; id="update_badge_btn" class="btn btn-primary btn-user btn-block common_btn" style="     font-size: 18px; text-transform: none;     width: 154px!important;">
-								Update  Badge
+							<a href="javascript:void(0)"; id="update_badge_btn" class="btn btn-primary btn-user btn-block common_btn" style="     font-size: 18px; text-transform: none;     width: 215px!important;">
+								Update Assigned Badge
 							</a>
 						</div>
-						<div>
-							<a href="javascript:void(0)"; id="delete_badge_btn" class="btn btn-primary btn-user btn-block common_btn" style="    font-size: 18px; text-transform: none;     width: 154px!important;">
-								Delete Badge
+						<div class="mr-4" style="z-index: 9">
+							<a href="javascript:void(0)"; id="delete_badge_btn" class="btn btn-primary btn-user btn-block common_btn" style="    font-size: 18px; text-transform: none;width: 210px!important;">
+								Delete Assigned Badge
 							</a>
 						</div>
+
+						<div  style="z-index: 9;">
+							<a href="{{route('admin.badges')}}"; class="btn btn-primary btn-user btn-block common_btn" style="    font-size: 18px; text-transform: none;     width: 154px!important; padding-left: 1.2rem!important">
+								Add New Badge
+							</a>
+						</div>
+
 					</div>
 				</div>
-				<div class="col-md-7">
+				<div class="col-md-8">
                 <div class="col-md-10 venue_inputs">
 							<label>
 								When
@@ -430,7 +469,7 @@ table#basic-datatables {
 						<table id="basic-datatables" class="display table table-striped table-hover" >
 							<thead>
 								<tr style="background-color: #193358;    color: #fff;">
-									<th>Sr.No.</th>
+									<th>Sr. No.</th>
 									<th>Customer ID</th>
 									<th>Customer Name</th>
 									<th>Customer Mobile Number</th>
@@ -450,28 +489,46 @@ table#basic-datatables {
 					</div>
 				</div>
 			</div> -->
+			<div class="row" style="position: absolute;width: 80%; top: -4px; z-index: 99">
+				
+						<div class="col-md-3">
+							
+							<div class="venue_inputs mb-3 badges_assign_label" style=" margin-left: 0px;">
+								<label>
+									Badges Assigned for the Selected users
+								</label>
+							</div>
+						</div>
 
-			<div class="venue_inputs mb-3 badges_assign_label" style=" margin-left: 0px;">
-						<label>
-							Badges Assigned for the Selected users
-						</label>
+						<div class="col-md-3">
+							<div class="venue_inputs mb-3 px-2 pl-3" style="position: absolute; top: 62px;">
+							
+								<select class="form-control select-status form-group select_option" id="assign_search" style="position: relative;border-radius: 0px; cursor: pointer;">
+									<option value="">Select Badge Name</option>
+									@foreach($badges as $badge)
+									<option value="{{$badge->id}}">{{$badge->badge_name}}</option>
+									@endforeach()
+								</select>
+							</div>
+						</div>
+
 					</div>
 
 						<table id="basic-datatables2" class="display table table-striped table-hover" >
 							<thead>
 								<tr style="background-color: #193358;    color: #fff;">
-									<th style="min-width: 120px">ID</th>
-									<th style="min-width: 120px">Customer ID</th>
-									<th style="min-width: 120px">badge Name</th>
-									<th style="min-width: 120px">Status</th>
-									<th  style="min-width: 120px">From Date</th>
-									<th  style="min-width: 120px">To Date</th>
-									<th  style="min-width: 120px">From Time</th>
-									<th style="min-width: 120px">To Time</th>
-									<th style="min-width: 120px">Created By</th>
-									<th style="min-width: 140px">Created On</th>
-									<th style="min-width: 120px">Updated By</th>
-									<th style="min-width: 140px">Updated On</th>
+									<th style="min-width: 40px">Sr. No.</th>
+									<th style="min-width: 110px">Customer ID</th>
+									<th style="min-width: 200px">Badge Name</th>
+									<th>Status</th>
+									<th  style="min-width: 130px">From Date</th>
+									<th  style="min-width: 130px">To Date</th>
+									<th  style="min-width: 130px">From Time</th>
+									<th style="min-width: 130px">To Time</th>
+									<th style="min-width: 100px">Created By</th>
+									<th style="min-width: 135px">Created On</th>
+									<th style="min-width: 100px">Updated By</th>
+									<th style="min-width: 135px">Updated On</th>
 								</tr>
 							</thead>
 							
@@ -503,7 +560,7 @@ table#basic-datatables {
 </div>
 
 
-<div class="modal fade" id="successModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+<div class="modal fade" id="SuccessModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -517,6 +574,27 @@ table#basic-datatables {
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary ok" style="background-color: #3ABD6F!important; border: none; border-radius: 50px; color: #fff;"  data-dismiss="modal">Ok</button>
+       <!--  <button type="button" class="btn btn-primary">Save changes</button> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="confirmationModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Alert</h5>
+        <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button> -->
+      </div>
+      <div class="modal-body">
+        <p id="confirmation_alert_text">Info Text</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary confirm_ok" style="background-color: #3ABD6F!important; border: none; border-radius: 50px; color: #fff;"  data-dismiss="modal">Yes</button>
+        <button type="button" class="btn btn-secondary confirm_no" style="background-color: #3ABD6F!important; border: none; border-radius: 50px; color: #fff;"  data-dismiss="modal">No</button>
        <!--  <button type="button" class="btn btn-primary">Save changes</button> -->
       </div>
     </div>
@@ -613,7 +691,7 @@ table#basic-datatables {
 							$('#basic-datatables_info,#basic-datatables_paginate').wrapAll('<div class="wrap_all"></div>'); 
 						}
 
-						if(search_for_table1){
+						if(search_for_table1 != undefined && search_for_table1 && localStorage.getItem("search_show_val") == "true"){
 
 							$(".form-control[type='search'][aria-controls='basic-datatables']").val(search_for_table1);
 						}
@@ -640,8 +718,11 @@ table#basic-datatables {
 
     function tdClick(){
 			$(".td_click").on("dblclick",function(){
-				$(".days").val("");
-				$(".checkbox_click").prop("checked",false);
+				$("#exampleFormControlSelect1").removeAttr("disabled");
+				// $(".days").val("");
+				// $(".checkbox_click").prop("checked",false);
+				$("#created_at").val("");
+				$("#updated_at").val("");
 				let customer_id = $(this).parent().find(".td_click[key_type='customer_id']").text();
 				$("#customer_id").val(customer_id);
 			});
@@ -656,7 +737,7 @@ table#basic-datatables {
     		
 	 		routeForBadgeAssignUser();
 
-	 		$("#exampleFormControlSelect1").on("change",function(){
+	 		$("#assign_search").on("change",function(){
 	 			$("#basic-datatables2").dataTable().fnDestroy();
 	 			setTimeout(function(){
 
@@ -668,7 +749,7 @@ table#basic-datatables {
 
 	    function routeForBadgeAssignUser(){
 	    	$("#basic-datatables2").dataTable().fnDestroy();
-	    	let badge_id = $("#exampleFormControlSelect1").val();
+	    	let badge_id = $("#assign_search").val();
 	        $('#basic-datatables2').dataTable({
 	             dom: "Bfrtip",
 	            "processing": true,
@@ -725,11 +806,14 @@ table#basic-datatables {
 
 	    function tdClick1(){
 			$(".td_click1").on("dblclick",function(){
+				$("#exampleFormControlSelect1").attr("disabled","true");
 				let customer_id = $(this).parent().find(".td_click1[key_type='customer_id']").text();
+				let assign_id = $(this).parent().find(".td_click1[key_type='badge_name']").attr("data-id");
 
 				var data = {
 			        	'_token': "{{csrf_token()}}",
-			        	"customer_id" : customer_id
+			        	"customer_id" : customer_id,
+			        	"assign_id" : assign_id
 			    	};
 
 
@@ -750,8 +834,9 @@ table#basic-datatables {
 				          		$("#badge_name").val(badge.badge_name);
 				          		$("#comment").val(badge.comment);
 				          		$("#exampleFormControlSelect2").val(badge.status);
+				          		$("#exampleFormControlSelect1").val(badge.badge_id);
 
-				          		let day_on = badge.when;
+				          		let day_on = badge.when_day;
 
 								let split_day_on = day_on.split(",");
 							   	split_day_on = split_day_on.filter(function (el) {
@@ -887,13 +972,15 @@ table#basic-datatables {
   				let to_date = $("#to_date").val();
   				let from_time = $("#from_time").val();
   				let to_time = $("#to_time").val();
+  				let check_from_time = $("#from_time").attr("data-time");
+  				let check_to_time = $("#to_time").attr("data-time");
 
   				let check_click_on = $(this).attr("id");
 
   				if(check_click_on == "add_new_badge_btn"){
 
 	  				if(customer_id == ""){
-	  					$("#alert_text").text("Please select user for add new badge.");
+	  					$("#alert_text").text("Please select user to assign new badge.");
 	  					$("#validationModel").modal("show");
 	  					$("#validationModel").unbind("click");
 	  					return false;
@@ -943,8 +1030,8 @@ table#basic-datatables {
 
 					}
 
-					if(from_date < after_date_format){
-						$("#alert_text").text("From date should be greater than or equal to today.");
+					if(to_date < after_date_format){
+						$("#alert_text").text("To date should be greater than or equal to today.");
 						$("#validationModel").modal("show");
 						$("#validationModel").unbind("click");
 						return false;
@@ -973,8 +1060,8 @@ table#basic-datatables {
 
 					}
 
-					if(from_time >= to_time){
-						$("#alert_text").text("From time should be less than from to time.");
+					if(check_from_time >= check_to_time){
+						$("#alert_text").text("To time should be greater than from time.");
 						$("#validationModel").modal("show");
 						$("#validationModel").unbind("click");
 						return false;
@@ -1013,24 +1100,27 @@ table#basic-datatables {
 
 				          		if(res.action_type == "add"){
 
-				          			$("#success_alert_text").text("Badge has been added successfully.");
+				          			$("#success_alert_text").text("Badge has been assigned successfully.");
 				          		}else if (res.action_type == "update"){
-				          			$("#success_alert_text").text("Badge has been updated successfully.");
+				          			$("#success_alert_text").text("Badge assign status has been updated successfully.");
 
 				          		}
 				          		$("#successModel").modal("show");
 				          		$("#successModel").unbind("click");
 				          		$("#customer_id").val("");
 				          		$("#exampleFormControlSelect1").val("");
+				          		$("#exampleFormControlSelect2").val("");
 				          		$("#comment").val("");
 				          		$("#status").val("");
 				          		$(".days").val("");
+				          		$(".checkbox_click").prop("checked",false);
 				          		$("#from_date").val("");
 				          		$("#to_date").val("");
 				          		$("#from_time").val("");
 				          		$("#to_time").val("");
 				          		$("#created_at").val("");
 				          		$("#updated_at").val("");
+				          		localStorage.setItem("search_show_val","true");
 				          		userSearch();
 				          		routeForBadgeAssignUser();
 
@@ -1038,12 +1128,23 @@ table#basic-datatables {
 				          },
 				          error: function(data, textStatus, xhr) {
 				            if(data.status == 422){
-				              var result = data.responseJSON;
-				              alert('Something went worng.');
-				              window.location.href = "";
-				              $("#loaderModel").modal("hide");
-				              return false;
-				            } 
+			                  setTimeout(function(){
+			                  	$("#loaderModel").modal("hide");
+				                  	var result = data.responseJSON;
+				                  	if(result['badge_not_found_err'] && result['badge_not_found_err'].length > 0){
+					                  	$("#alert_text").text(result['badge_not_found_err']);
+										$("#validationModel").modal("show");
+										$("#validationModel").unbind("click");
+				                 	}
+
+				                 	if(result['badge_found_err'] && result['badge_found_err'].length > 0){
+				                 		$("#alert_text").text(result['badge_found_err']);
+										$("#validationModel").modal("show");
+										$("#validationModel").unbind("click");
+				                 	}
+				                  return false;
+			                  },500);
+			                }
 				      	}
 				    });
   				}else if(check_click_on == "update_badge_btn"){
@@ -1099,8 +1200,8 @@ table#basic-datatables {
 
 					}
 
-					if(from_date < after_date_format){
-						$("#alert_text").text("From date should be greater than or equal to today.");
+					if(to_date < after_date_format){
+						$("#alert_text").text("To date should be greater than or equal to today.");
 						$("#validationModel").modal("show");
 						$("#validationModel").unbind("click");
 						return false;
@@ -1129,8 +1230,8 @@ table#basic-datatables {
 
 					}
 
-					if(from_time >= to_time){
-						$("#alert_text").text("From time should be less than from to time.");
+					if(check_from_time >= check_to_time){
+						$("#alert_text").text("To time should be greater than from time.");
 						$("#validationModel").modal("show");
 						$("#validationModel").unbind("click");
 						return false;
@@ -1140,7 +1241,7 @@ table#basic-datatables {
 
 					var data = {
 			        	'_token': "{{csrf_token()}}",
-			        	"action_type" : "add",
+			        	"action_type" : "update",
 			        	"customer_id": customer_id,
 			        	"badge_id": badge_id,
 			        	"comment": comment,
@@ -1169,27 +1270,125 @@ table#basic-datatables {
 
 				          		if(res.action_type == "add"){
 
-				          			$("#success_alert_text").text("Badge has been added successfully.");
+				          			$("#success_alert_text").text("Badge has been assigned successfully.");
 				          		}else if (res.action_type == "update"){
-				          			$("#success_alert_text").text("Badge has been updated successfully.");
+				          			$("#success_alert_text").text("Badge assign status has been updated successfully.");
 
 				          		}
 				          		$("#successModel").modal("show");
 				          		$("#successModel").unbind("click");
 				          		$("#customer_id").val("");
 				          		$("#exampleFormControlSelect1").val("");
+				          		$("#exampleFormControlSelect2").val("");
 				          		$("#comment").val("");
 				          		$("#status").val("");
 				          		$(".days").val("");
+				          		$(".checkbox_click").prop("checked",false);
 				          		$("#from_date").val("");
 				          		$("#to_date").val("");
 				          		$("#from_time").val("");
 				          		$("#to_time").val("");
 				          		$("#created_at").val("");
 				          		$("#updated_at").val("");
+				          		localStorage.setItem("search_show_val","true");
 				          		userSearch();
 				          		routeForBadgeAssignUser();
 
+				          	},500);
+				          },
+				          error: function(data, textStatus, xhr) {
+				          	console.log(data)
+				            if(data.status == 422){
+			                  setTimeout(function(){
+			                  	$("#loaderModel").modal("hide");
+				                  	var result = data.responseJSON;
+				                  	if(result['badge_not_found_err'] && result['badge_not_found_err'].length > 0){
+					                  	$("#alert_text").text(result['badge_not_found_err']);
+										$("#validationModel").modal("show");
+										$("#validationModel").unbind("click");
+				                 	}
+
+				                 	if(result['badge_found_err'] && result['badge_found_err'].length > 0){
+				                 		$("#alert_text").text(result['badge_found_err']);
+										$("#validationModel").modal("show");
+										$("#validationModel").unbind("click");
+				                 	}
+				                  return false;
+			                  },500);
+			                } 
+				      	}
+				    });
+
+  				}else if(check_click_on == "delete_badge_btn"){
+
+  					let customer_id = $("#customer_id").val();
+  					let created_at = $("#created_at").val();
+  					let updated_at = $("#updated_at").val();
+
+
+  					if(customer_id == "" || created_at == "" || updated_at == ""){
+	  					$("#alert_text").text("Please select the user first to delete.");
+	  					$("#validationModel").modal("show");
+	  					$("#validationModel").unbind("click");
+	  					return false;
+	  				}
+
+	  				$("#confirmationModel").modal("show");
+	  				$("#confirmationModel").unbind("click");
+	  				$("#confirmation_alert_text").text("Are you sure, you want to delete this assign badge for selected user?");
+  				}
+  			});
+
+  			$(".ok").on("click",function(){
+  				$("#validationModel").modal("hide");
+  				$("#successModel").modal("hide");
+  			});
+
+  			$(".confirm_no").on("click",function(){
+  				$("#confirmationModel").modal("hide");
+  			});
+
+  			$(".confirm_ok").on("click",function(){
+  				$("#confirmationModel").modal("hide");
+  				let customer_id = $("#customer_id").val();
+
+  					var data = {
+			        	'_token': "{{csrf_token()}}",
+			        	"customer_id" : customer_id
+			    	};
+
+
+					$.ajax({
+				          url:"{{route('admin.deleteAssignBadge')}}",
+				          type:'POST',
+				          data:data,
+				          beforeSend:function(){
+				          	$("#loaderModel").modal("show");
+							$("#loaderModel").unbind("click");
+				          },
+				          success: function(res){
+				          	console.log(res)
+				          	setTimeout(function(){
+				          		$("#loaderModel").modal("hide");
+				          		$("#customer_id").val("");
+				          		$("#badge_name").val("");
+				          		$("#comment").val("");
+				          		$("#exampleFormControlSelect2").val("");
+				          		$(".days").val("")
+				       			$(".checkbox_click").prop("checked",false);
+				       			$("#from_date").val("");
+				       			$("#to_date").val("");
+				       			$("#from_time").val("");
+				       			$("#to_time").val("");
+				       			$("#created_at").val("");
+				       			$("#updated_at").val("");
+
+				       			$("#success_alert_text").text("Assign badge has been deleted successfully.");
+				       			$("#successModel").modal("show");
+				       			$("#successModel").unbind("click");
+				       			localStorage.setItem("search_show_val","true");
+				       			userSearch();
+				       			routeForBadgeAssignUser();
 				          	},500);
 				          },
 				          error: function(data, textStatus, xhr) {
@@ -1202,15 +1401,6 @@ table#basic-datatables {
 				            } 
 				      	}
 				    });
-
-  				}else if(check_click_on == "delete_badge_btn"){
-
-  				}
-  			});
-
-  			$(".ok").on("click",function(){
-  				$("#validationModel").modal("hide");
-  				$("#successModel").modal("hide");
   			});
 
 
@@ -1265,6 +1455,39 @@ table#basic-datatables {
 
   		});
   	</script>
+
+  	<script type="text/javascript">
+    $(document).ready(function(){
+      $(".form-control").on("keyup",function(){
+        var length = $.trim($(this).val()).length;
+        console.log(length)
+        if(length == 0){
+           $(this).val("");
+        }else{
+          $(this).val($(this).val().trimLeft(""));
+        }
+  	});
+
+
+  $(document).on("keyup keydown",".form-control[type='search'][aria-controls='basic-datatables']",function(){
+		localStorage.setItem("search_show_val","false");
+	});
+
+
+ //  	$(document).on("keypress",".form-control",function(e){
+	//  	if($(this).val() == ''){
+	//           if(!/[0-9a-zA-Z-]/.test(String.fromCharCode(e.which))){
+
+	//             return false;
+	//           }
+ //      	}
+
+	// });
+
+
+
+    });
+</script>
 
 
 	

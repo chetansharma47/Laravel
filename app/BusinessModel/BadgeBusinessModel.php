@@ -37,7 +37,7 @@ class BadgeBusinessModel extends Model
         $add_badge->admin_id = $admin->id;
         $add_badge->badge_name = $data['badge_name'];
         $add_badge->image = $data['badge_image_hidden_val'];
-        $add_badge->name_of_file_show = $data['badge_image_val'];
+        $add_badge->name_of_file_show = $data['badge_image_hidden_imgname'];
         $add_badge->status = $data['badge_select'];
         $add_badge->created_by = 'Admin';
         $add_badge->updated_by = 'Admin';

@@ -15,4 +15,22 @@ class Badge extends Model
     	'created_by',
     	'updated_by'
     ];
+
+
+    public function getImageAttribute($value){
+
+        if(!empty($value)){
+
+            $path_img = public_path(). '/storage/badge' . '/' . $value;
+
+            if(file_exists($path_img)){
+                return url('/') . '/' . env('BADGE_STORAGE_VIEW') . '/' . $value;
+            }else{
+
+                return "";
+            } 
+        }else{
+            return $value;
+        }
+    }
 }

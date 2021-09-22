@@ -145,6 +145,7 @@ Route::group(['middleware' => 'TimeZone','namespace' => 'Admin','prefix'=>'/admi
         Route::post('badge-assign-list-users','TabController@badgeAssignListUsers')->name('badgeAssignListUsers');
         Route::post('add-or-update-badge-assign','TabController@addOrUpdateBadgeAssign')->name('addOrUpdateBadgeAssign');
         Route::post('findBadge','TabController@findBadge')->name('findBadge');
+        Route::post('delete-assign-badge','TabController@deleteAssignBadge')->name('deleteAssignBadge');
 
 
 
@@ -152,7 +153,8 @@ Route::group(['middleware' => 'TimeZone','namespace' => 'Admin','prefix'=>'/admi
         Route::post('badges-list','TabController@BadgesList')->name('badgeslist');
         Route::post('edit-badges','TabController@editBadges')->name('editbadges');
         Route::post('assign-users-list','TabController@assignUserList')->name('assign_user_list');
-        Route::get('download-assign-badge-users','TabController@downloadBadgeAssignUsers')->name('download_badge_assign_users');
+        Route::post('delete-badges','TabController@deleteBadge')->name('deleteBadge');
+        Route::get('download-assign-badge-users/{badge_id?}/{search_txt?}','TabController@downloadBadgeAssignUsers')->name('download_badge_assign_users');
         
     }); 
            

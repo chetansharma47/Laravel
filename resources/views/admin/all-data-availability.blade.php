@@ -246,7 +246,7 @@
 							<label>
 								Venue Selection
 							</label>
-							<select class="form-control form-group" style="position: relative;border-radius: 0px;     padding: 9px 28px 9px 12px !important;" id="exampleFormControlSelect1">
+							<select class="form-control form-group select_option" style="position: relative;border-radius: 0px;     padding: 9px 28px 9px 12px !important;" id="exampleFormControlSelect1">
 								<option>Select Venue </option>
 								@foreach($venues as $venue)
 								<option value="{{$venue->id}}">{{$venue->venue_name}}</option>
@@ -257,7 +257,7 @@
 							<label>
 								Gender
 							</label>
-							<select class="form-control form-group" style="position: relative;border-radius: 0px; padding: 9px 28px 9px 12px !important;" id="gender">
+							<select class="form-control form-group select_option" style="position: relative;border-radius: 0px; padding: 9px 28px 9px 12px !important;" id="gender">
 								<option value="">Select Gender</option>
 								<option value="">All</option>
 								<option value="Male">Male</option>
@@ -269,7 +269,7 @@
 							<label>
 								Customer Status
 							</label>
-							<select class="form-control form-group" style="position: relative;border-radius: 0px;    padding: 9px 0px 9px 12px !important;" id="status">
+							<select class="form-control form-group select_option" style="position: relative;border-radius: 0px;    padding: 9px 0px 9px 12px !important;" id="status">
 								<option value="">Select Customer Status</option>
 								<option value="">All</option>
 								<option value="Active">Active</option>
@@ -295,7 +295,7 @@
 								Customer Tier
 							</label>
 
-							<select class="form-control form-group" style="position: relative;border-radius: 0px;     padding: 9px 28px 9px 12px !important;" id="tier">
+							<select class="form-control form-group select_option" style="position: relative;border-radius: 0px;     padding: 9px 28px 9px 12px !important;" id="tier">
 								<option value="">Select Tier</option>
 								@if(isset($tiers[0]))
 									@foreach($tiers[0]['tierConditions'] as $condition)
@@ -515,7 +515,7 @@
 							<label>
 								Venue Name
 							</label>
-							<select class="form-control form-group" style="position: relative;border-radius: 0px; padding: 9px 28px 9px 12px !important;" id="exampleFormControlSelect1">
+							<select class="form-control form-group select_option" style="position: relative;border-radius: 0px; padding: 9px 28px 9px 12px !important;" id="exampleFormControlSelect1">
 								<option>Select Venue</option>
 								<option>Caramel</option>
 								<option>Salt</option>
@@ -525,7 +525,7 @@
 							<label>
 								Transaction Verification
 							</label>
-							<select class="form-control form-group" style="position: relative;border-radius: 0px; padding: 9px 36px 9px 12px !important;" id="exampleFormControlSelect1">
+							<select class="form-control form-group select_option" style="position: relative;border-radius: 0px; padding: 9px 36px 9px 12px !important;" id="exampleFormControlSelect1">
 								<option>Select Transaction Verification</option>
 								<option>Verified</option>
 								<option>Not Verified</option>
@@ -536,7 +536,7 @@
 							<label>
 								Redemption Verification
 							</label>
-							<select class="form-control form-group" style="position: relative;border-radius: 0px; padding: 9px 36px 9px 12px !important;" id="exampleFormControlSelect1">
+							<select class="form-control form-group select_option" style="position: relative;border-radius: 0px; padding: 9px 36px 9px 12px !important;" id="exampleFormControlSelect1">
 								<option>Select Redemption Verification</option>
 								<option>Verified</option>
 								<option>Not Verified</option>
@@ -561,7 +561,7 @@
 							<label>
 								Offer Products
 							</label>
-							<select class="form-control form-group" style="position: relative;border-radius: 0px; padding: 9px 28px 9px 12px !important;" id="exampleFormControlSelect1">
+							<select class="form-control form-group select_option" style="position: relative;border-radius: 0px; padding: 9px 28px 9px 12px !important;" id="exampleFormControlSelect1">
 								<option>Select Offer Products</option><option>Birthday Offer - Free Coffee</option>
 								<option>Birthday Offer - Free Coffee</option>
 								<option>Birthday Offer - Free Coffee</option>
@@ -589,7 +589,7 @@
 							<label>
 								Venue User
 							</label>
-							<select class="form-control form-group" style="position: relative;border-radius: 0px; padding: 9px 28px 9px 12px !important;" id="exampleFormControlSelect1">
+							<select class="form-control form-group select_option" style="position: relative;border-radius: 0px; padding: 9px 28px 9px 12px !important;" id="exampleFormControlSelect1">
 								<option>Select Venue User</option>
 								<option>All</option>
 								<option>Select</option>
@@ -1501,7 +1501,7 @@ chart.render();
 				initComplete: function () {
 					this.api().columns().every( function () {
 						var column = this;
-						var select = $('<select class="form-control"><option value=""></option></select>')
+						var select = $('<select class="form-control select_option"><option value=""></option></select>')
 						.appendTo( $(column.footer()).empty() )
 						.on( 'change', function () {
 							var val = $.fn.dataTable.util.escapeRegex(

@@ -50,6 +50,7 @@ Route::group(['namespace' => 'Api\v1','prefix'=>'v1'], function() {
         Route::post('promotion-cashbacks','AuthenticationController@promotionCashbackListing');
         Route::get('promotion-cashback-details/{promotion_cashback_id}','AuthenticationController@promotionCashbackDetails');
         Route::post('event-and-promotion','AuthenticationController@eventAndPromotion');
+        Route::post('user-assgin-badge-listing','AuthenticationController@userAssignBadgeListing');
         
 
     });

@@ -129,13 +129,6 @@
 						</div>
 					</a>
 
-					<a href="{{route('admin.badges')}}">
-						<div class="grey_btn">
-							Add New Badges
-						</div>
-					</a>
-
-
 					<!-- <a href="{{route('admin.assignBadges')}}">
 						<div class="grey_btn">
 							User Assign Badges
@@ -166,6 +159,11 @@
 					<a href="{{route('admin.generalSettings')}}">
 						<div class="grey_btn">
 							Content Management
+						</div>
+					</a>
+					<a href="{{route('admin.badges')}}">
+						<div class="grey_btn">
+							Badges
 						</div>
 					</a>
 				</div>
@@ -251,7 +249,7 @@
 				initComplete: function () {
 					this.api().columns().every( function () {
 						var column = this;
-						var select = $('<select class="form-control"><option value=""></option></select>')
+						var select = $('<select class="form-control select_option"><option value=""></option></select>')
 						.appendTo( $(column.footer()).empty() )
 						.on( 'change', function () {
 							var val = $.fn.dataTable.util.escapeRegex(

@@ -134,9 +134,9 @@ select.form-control.form-group.status_select:focus{
 		    justify-content: center;
 		}
 
-		#basic-datatables tbody tr td {
+		/*#basic-datatables tbody tr td {
 			line-height: 55px;
-		}
+		}*/
 
 		#validationModel .modal-body {
 			text-align: center;
@@ -256,7 +256,7 @@ select.form-control.form-group.status_select:focus{
 						<label style="font-weight: 400;">
 							Venue
 						</label>
-						<select name="venue_selection" id="venue_selection" class="form-control form-group" style="position: relative;border-radius: 10px; cursor: pointer;">
+						<select name="venue_selection" id="venue_selection" class="form-control form-group select_option" style="position: relative;border-radius: 10px; cursor: pointer;">
 							<option readonly value="">Select Venue</option>
 							@if(count($venulist) > 0)
 								@foreach($venulist as $valu)
@@ -269,7 +269,7 @@ select.form-control.form-group.status_select:focus{
 						<label style="font-weight: 400;">
 							Status
 						</label>
-						<select class="form-control form-group" id="venue_user_status" style="position: relative;border-radius: 10px; cursor: pointer;" name="venue_user_status">
+						<select class="form-control form-group select_option" id="venue_user_status" style="position: relative;border-radius: 10px; cursor: pointer;" name="venue_user_status">
 							<option value="" readonly="">Select Status</option>
 							<option value="Active">Active</option>
 							<option value="Inactive">Inactive</option>
@@ -352,7 +352,7 @@ select.form-control.form-group.status_select:focus{
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">success</h5>
+        <h5 class="modal-title" id="exampleModalLongTitle">Success</h5>
         <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button> -->

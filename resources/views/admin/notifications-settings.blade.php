@@ -425,7 +425,7 @@
 								<label>
 									Gender
 								</label>
-								<select class="form-control form-group" style="padding: .6rem 1rem; position: relative;" id="exampleFormControlSelect1">
+								<select class="form-control form-group select_option" style="padding: .6rem 1rem; position: relative;" id="exampleFormControlSelect1">
 									<option>Select Gender</option>
 									<option> Male </option>
 									<option> Female </option>
@@ -437,7 +437,7 @@
 								<label>
 									City of Residence
 								</label>
-								<select class="form-control form-group" style="padding: .6rem 1rem; position: relative;" id="exampleFormControlSelect1">
+								<select class="form-control form-group select_option" style="padding: .6rem 1rem; position: relative;" id="exampleFormControlSelect1">
 									<option>Select Residence</option>
 									<option> All</option>
 									<option> Dubai </option>
@@ -449,7 +449,7 @@
 								<label>
 									Nationality
 								</label>
-								<select class="form-control form-group" style="padding: .6rem 1rem; position: relative;" id="exampleFormControlSelect1">
+								<select class="form-control form-group select_option" style="padding: .6rem 1rem; position: relative;" id="exampleFormControlSelect1">
 									<option>Select Nationality</option>
 									<option> All</option>
 									<option> Multiple Selection </option>
@@ -476,7 +476,7 @@
 								<label>
 									Transaction Amount Condition
 								</label>
-								<select class="form-control form-group" style="padding: .6rem 1rem; position: relative;font-size: 14px !important; padding-right: 32px !important;     background-size: 12px!important;
+								<select class="form-control form-group select_option" style="padding: .6rem 1rem; position: relative;font-size: 14px !important; padding-right: 32px !important;     background-size: 12px!important;
     background-position: 91% 50%!important;" id="exampleFormControlSelect1">
 									<option>Select Amount</option>
 									<option> Between</option>
@@ -685,7 +685,7 @@
 				initComplete: function () {
 					this.api().columns().every( function () {
 						var column = this;
-						var select = $('<select class="form-control"><option value=""></option></select>')
+						var select = $('<select class="form-control select_option"><option value=""></option></select>')
 						.appendTo( $(column.footer()).empty() )
 						.on( 'change', function () {
 							var val = $.fn.dataTable.util.escapeRegex(

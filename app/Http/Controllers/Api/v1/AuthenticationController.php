@@ -29,7 +29,9 @@ use App\Models\OfferSetting;
 use App\Models\Cashback;
 use App\Models\City;
 use App\Models\UserAssignOffer;
-require_once $_SERVER['DOCUMENT_ROOT'].'/society_13_september/vendor/autoload.php';
+use App\Models\Badge;
+use App\Models\AssignBadge;
+require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
 
 class AuthenticationController extends ResponseController
 {
@@ -453,6 +455,22 @@ class AuthenticationController extends ResponseController
 
         return $this->responseOk('Event And Promotion', ['event_and_promotion' => $collect]);
 
+
+    }
+
+    public function userAssignBadgeListing(Request $request){
+        $this->is_validationRule(Validation::assignBadgeListing($Validation = "", $message = "") , $request);
+
+        $timezone = $request->timezone;
+        date_default_timezone_set($timezone);
+        $user = Auth::guard()->user();
+        $today_days = Carbon::now()->format('l');
+
+        $active_badges = Badge::whereDeletedAt(null)->whereStatus('Active')->pluck('id');
+
+        $user_assign_badge = AssignBadge::whereUserId($user->id)->whereDeletedAt(null)->whereStatus('Active')->whereDate('to_date','>=',Carbon::now()->toDateString())->whereDate('from_date','<=',Carbon::now()->toDateString())->whereRaw("FIND_IN_SET(?, when_day) > 0", $today_days)->whereIn('badge_id', $active_badges)->with('badge')->get();
+
+        return $this->responseOk('Assign Badge Listing', ['assign_badge_listing' => $user_assign_badge]);
 
     }
 

@@ -471,7 +471,7 @@
 										<label>
 											Gender
 										</label>
-										<select offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}" ${(offertype=='BirthdayOffer')?'disabled':''} class="form-control form-group criteria_gender" style="padding: .6rem 1rem; position: relative; font-size: 14px !important; border-radius: 10px;    background-size: 12px!important; background-position: 91% 50%!important; cursor:pointer;" venu-id="${venuid}" uniq-id="${uniqid}">
+										<select offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}" ${(offertype=='BirthdayOffer')?'disabled':''} class="form-control form-group select_option criteria_gender" style="padding: .6rem 1rem; position: relative; font-size: 14px !important; border-radius: 10px;    background-size: 12px!important; background-position: 91% 50%!important; cursor:pointer;" venu-id="${venuid}" uniq-id="${uniqid}">
 											<option value="">Select Gender</option>
 											<option value="Male" ${(gender == 'Male')  ? 'selected' : ''}>Male</option>
 											<option value="Female" ${(gender == 'Female')  ? 'selected' : ''}>Female</option>
@@ -502,7 +502,7 @@
 										<label>
 											City of residence
 										</label>
-										<select offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}" ${(offertype=='BirthdayOffer')?'disabled':''} class="form-control form-group criteria_city" style="padding: .6rem 1rem; position: relative; font-size: 14px !important; border-radius: 10px;background-size: 12px!important; background-position: 91% 50%!important; cursor:pointer;" venu-id="${venuid}" uniq-id="${uniqid}">
+										<select offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}" ${(offertype=='BirthdayOffer')?'disabled':''} class="form-control form-group select_option criteria_city" style="padding: .6rem 1rem; position: relative; font-size: 14px !important; border-radius: 10px;background-size: 12px!important; background-position: 91% 50%!important; cursor:pointer;" venu-id="${venuid}" uniq-id="${uniqid}">
 										<option value="">Select City</option>
 										</select>
 									</div>
@@ -510,7 +510,7 @@
 										<label>
 											Transaction Amount Condition
 										</label>
-										<select offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}" ${(offertype=='BirthdayOffer')?'disabled':''} class="form-control form-group criteria_txn_condition" style="padding: .6rem 1rem; position: relative; font-size: 14px !important; border-radius: 10px;background-size: 12px!important; background-position: 91% 50%!important; cursor:pointer;" venu-id="${venuid}" uniq-id="${uniqid}">
+										<select offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}" ${(offertype=='BirthdayOffer')?'disabled':''} class="form-control form-group select_option criteria_txn_condition" style="padding: .6rem 1rem; position: relative; font-size: 14px !important; border-radius: 10px;background-size: 12px!important; background-position: 91% 50%!important; cursor:pointer;" venu-id="${venuid}" uniq-id="${uniqid}">
 											<option value="">Select Amount</option>
 											<option value="Between" ${(txn_condition=='Between')?'selected':''}>Between</option>
 											<option value="Greater Than" ${(txn_condition=='Greater Than')?'selected':''}>Greater Than</option>
@@ -639,7 +639,7 @@
 								Status
 							</label>
 							<div class="selectdiv">
-								<select class="form-control form-group offer_status" style="padding: .6rem 1rem; position: relative; cursor:pointer;" venu-id="${venuid}" uniq-id="${uniqid}">
+								<select class="form-control form-group select_option offer_status" style="padding: .6rem 1rem; position: relative; cursor:pointer;" venu-id="${venuid}" uniq-id="${uniqid}">
 									<option value="">Select Status</option>
 									<option ${(status=='Active')?'selected':''} value="Active">Active</option>
 									<option ${(status=='Inactive')?'selected':''} value="Inactive">Inactive</option>

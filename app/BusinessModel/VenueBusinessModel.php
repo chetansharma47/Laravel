@@ -271,7 +271,7 @@ class VenueBusinessModel extends Model
 
 	public function addOrUpdateBadgeAssignInTable($data){
 		$find_user = User::whereCustomerId($data['customer_id'])->first();
-		$find_badge_assign = AssignBadge::whereUserId($find_user->id)->whereDeletedAt(null)->first();
+		$find_badge_assign = AssignBadge::whereUserId($find_user->id)->whereBadgeId($data['badge_id'])->whereDeletedAt(null)->first();
 
 		if(empty($find_badge_assign)){
 
@@ -280,7 +280,7 @@ class VenueBusinessModel extends Model
 			$assign_badge->badge_id = $data['badge_id'];
 			$assign_badge->comment = $data['comment'];
 			$assign_badge->status = $data['status'];
-			$assign_badge->when = $data['when'];
+			$assign_badge->when_day = $data['when'];
 			$assign_badge->from_date = $data['from_date'];
 			$assign_badge->to_date = $data['to_date'];
 			$assign_badge->from_time = $data['from_time'];
@@ -292,7 +292,7 @@ class VenueBusinessModel extends Model
 			$find_badge_assign->badge_id = $data['badge_id'];
 			$find_badge_assign->comment = $data['comment'];
 			$find_badge_assign->status = $data['status'];
-			$find_badge_assign->when = $data['when'];
+			$find_badge_assign->when_day = $data['when'];
 			$find_badge_assign->from_date = $data['from_date'];
 			$find_badge_assign->to_date = $data['to_date'];
 			$find_badge_assign->from_time = $data['from_time'];

@@ -1034,12 +1034,15 @@ class TabController extends Controller
     }
 
     public function badges(Request $request){
-        return view('admin.badges');
+
+        $admin = Auth()->guard('admin')->user();
+        $badges = Badge::whereAdminId($admin->id)->whereDeletedAt(null)->orderBy("id","desc")->get();
+        return view('admin.badges',compact('badges'));
     }
 
     public function assignBadges(Request $request){
         $admin = Auth()->guard('admin')->user();
-        $badges = Badge::whereAdminId($admin->id)->whereDeletedAt(null)->get();
+        $badges = Badge::whereAdminId($admin->id)->whereDeletedAt(null)->orderBy("id","desc")->get();
         $current_date = Carbon::now()->toDateString();
         return view('admin.assign_badges',compact('badges','current_date'));
     }
@@ -1067,7 +1070,7 @@ class TabController extends Controller
             $column = "country_code_with_phone_number";
         }
 
-        $have_badges_not_in_user_ids = AssignBadge::whereDeletedAt(null)->pluck('user_id');
+        //$have_badges_not_in_user_ids = AssignBadge::whereDeletedAt(null)->pluck('user_id');
         $data = User::select("id","customer_id",DB::raw('CONCAT(users.first_name, " ", users.last_name) AS customer_name'),DB::raw('CONCAT(users.country_code, " ", users.mobile_number) AS country_code_with_phone_number'))->whereId("kk")->orderBy($column,$asc_desc);
 
         $total = $data->get()->count();
@@ -1082,7 +1085,10 @@ class TabController extends Controller
 
 
         if($search){
-            $data  = User::select("id","customer_id",DB::raw('CONCAT(users.first_name, " ", users.last_name) AS customer_name'),DB::raw('CONCAT(users.country_code, " ", users.mobile_number) AS country_code_with_phone_number'))->whereDeletedAt(null)->whereNotIn('id', $have_badges_not_in_user_ids)->orderBy($column,$asc_desc)->where(function($query) use($search){
+            $data  = User::select("id","customer_id",DB::raw('CONCAT(users.first_name, " ", users.last_name) AS customer_name'),DB::raw('CONCAT(users.country_code, " ", users.mobile_number) AS country_code_with_phone_number'))->whereDeletedAt(null)
+                //->whereNotIn('id', $have_badges_not_in_user_ids)
+                ->orderBy($column,$asc_desc)
+                ->where(function($query) use($search){
                         $query->where('customer_id', 'Like', '%'. $search . '%');
                         $query->orWhere(DB::raw('CONCAT(users.country_code, " ", users.mobile_number)'), 'Like', '%' . $search . '%');
                         $query->orWhere(DB::raw('CONCAT(users.first_name, " ", users.last_name)'), 'Like', '%' . $search . '%');
@@ -1202,12 +1208,17 @@ class TabController extends Controller
 
         if($search){
             $data  = $data->where(function($query) use($search){
-                            $query->orWhereHas('user', function($insideQuery) use ($search){
-                                return $insideQuery->where('customer_id', 'like', '%'.$search.'%');
-                            });
-                            $query->whereHas('badge', function($insideQuery) use ($search){
-                                return $insideQuery->where('badge_name', 'like', '%'.$search.'%');
-                            });
+                            // $query->orWhereHas('user', function($insideQuery) use ($search){
+                            //     return $insideQuery->where('customer_id', 'like', '%'.$search.'%');
+                            // });
+                            // $query->whereHas('badge', function($insideQuery) use ($search){
+                            //     return $insideQuery->where('badge_name', 'like', '%'.$search.'%');
+                            // });
+
+                            $query->orWhere(DB::raw("(select customer_id from users where id = assign_badges.user_id)"), 'Like', '%' . $search . '%');
+                            $query->orWhere(DB::raw("(select badge_name from badges where id = assign_badges.badge_id)"), 'Like', '%' . $search . '%');
+
+                            $query->orWhere('status', 'like', $search.'%');
                             $query->orWhere(DB::raw("DATE_FORMAT(from_date, '%d-%M-%Y')"), 'Like', '%' . $search . '%');
                             $query->orWhere(DB::raw("DATE_FORMAT(to_date, '%d-%M-%Y')"), 'Like', '%' . $search . '%');
                             $query->orWhere(DB::raw("DATE_FORMAT(from_time, '%h:%i %p')"), 'Like', '%' . $search . '%');
@@ -1257,15 +1268,29 @@ class TabController extends Controller
         $data = $request->all();
         $data['from_time'] = date("H:i:s", strtotime($data['from_time']));
         $data['to_time'] = date("H:i:s", strtotime($data['to_time']));
+        $find_user = User::whereCustomerId($data['customer_id'])->first();
+
+        if($data['action_type'] == "add"){
+            $find_assign_badge = AssignBadge::whereUserId($find_user->id)->whereBadgeId($data['badge_id'])->first();
+            if(!empty($find_assign_badge)){
+                return response()->json(['badge_found_err' => "Selected badge already assigned to the selected Customer ID."],422);
+            }
+        }else{
+            //for update case check
+            $find_assign_badge = AssignBadge::whereUserId($find_user->id)->whereBadgeId($data['badge_id'])->first();
+            if(empty($find_assign_badge)){
+                return response()->json(['badge_not_found_err' => "Badge not found for selected Customer ID & Badge Name."],422);
+            }
+        }
         $addOrUpdate = $this->venueBusinessModel()->addOrUpdateBadgeAssignInTable($data);
         return ['status' => 'true','action_type' => $data['action_type']];
     }
 
     public function findBadge(Request $request){
         $customer_id = $request->customer_id;
-
+        $assign_id = $request->assign_id;
         $user_find = User::whereCustomerId($customer_id)->first();
-        $assign_badge_find = AssignBadge::whereUserId($user_find->id)->first();
+        $assign_badge_find = AssignBadge::whereUserId($user_find->id)->whereId($assign_id)->first();
         $bage_find = Badge::whereId($assign_badge_find->badge_id)->first();
         $assign_badge_find->customer_id = $user_find->customer_id;
         $assign_badge_find->badge_name = $bage_find->badge_name;
@@ -1275,11 +1300,17 @@ class TabController extends Controller
 
     }
 
+    public function deleteAssignBadge(Request $request){
+        $user_find = User::whereCustomerId($request->customer_id)->first();
+        $assign_badge_find = AssignBadge::whereIn('user_id',[$user_find->id])->whereDeletedAt(null)->update(['deleted_at' => Carbon::now()]);
+        return "success";
+    }
+
     public function AddNewBadge(Request $request){
         $admin = Auth::guard('admin')->user();
         $data = $request->all();
 
-        $badge_checkname_exists = Badge::whereBadgeName($data['badge_name'])->first();
+        $badge_checkname_exists = Badge::whereBadgeName($data['badge_name'])->whereDeletedAt(null)->first();
 
         if(!empty($badge_checkname_exists)){
             return response()->json(['badge_name_error' => "Badge name already exists."],422);
@@ -1332,9 +1363,9 @@ class TabController extends Controller
         if($search){
              $data = $data->where(function($query) use($search){
                     $query->orWhere('badge_name', 'Like', '%'. $search . '%');
-                    $query->orWhere('status', 'Like', '%' . $search . '%');
-                    $query->orWhere(DB::raw("DATE_FORMAT(created_at, '%Y %M %d %H:%i:%s %p')"), 'Like', '%' . $search . '%');
-                    $query->orWhere(DB::raw("DATE_FORMAT(updated_at, '%Y %M %d %H:%i:%s %p')"), 'Like', '%' . $search . '%');
+                    $query->orWhere('status', 'Like', $search . '%');
+                    $query->orWhere("created_at", 'Like', '%' . $search . '%');
+                    $query->orWhere("updated_at", 'Like', '%' . $search . '%');
                     $query->orWhere('created_by', 'Like', '%'. $search . '%');
                     $query->orWhere('updated_by', 'Like', '%'. $search . '%');
                 });
@@ -1355,6 +1386,10 @@ class TabController extends Controller
         }
 
         foreach($data as $da){
+            $da->selection = '<label class="app_checkboxes" data-id = "'.$da->id.'" key_type="checkbox">
+                <input type="checkbox" class="single_checkbox" data-id = "'.$da->id.'" key_type="checkbox">
+                <span class="checkmark" data-id = "'.$da->id.'" key_type="checkbox"></span>
+            </label>';
             $da->DT_RowIndex = $start_from++;
         }
 
@@ -1388,15 +1423,22 @@ class TabController extends Controller
                 $badge->update([ $val['key_type'] => $val['text'] ]);
             }
 
-            return response()->json(['message' => 'Badges has been updated successfully.']);
+            return response()->json(['message' => 'Badge details has been updated successfully.']);
     }
 
 
     public function assignUserList(Request $request){
 
+        $badge_id = $request->badge_id;
         $asc_desc = $request->get('order')[0]['dir'];
         $column_id = $request->get('order')[0]['column'];
         $search = $request->get("search")["value"];
+        if(!empty($request->get("search")["value"])){
+            $search = $request->get("search")["value"];
+        }else{
+
+            $search = $request->search_for_table2;
+        }
         $colname = $request->get('columns');
 
         if($asc_desc == "asc"){
@@ -1412,49 +1454,52 @@ class TabController extends Controller
         $order = $request->get("order")[0]['column'];
 
         if($order == 1){
-            $column = "full_name";
+            $column = "customer_id";
         }else if($order == 2){
-            $column = "mobile_number";
+            $column = "full_name";
         }else if($order == 3){
-            $column = "badge_name";
+            $column = "mobile_number";
         }else if($order == 4){
-            $column = "status";
+            $column = "badge_name";
         }else if($order == 5){
+            $column = "status";
+        }else if($order == 6){
             $column = "from_date";
-        }else if($order == 6) {
-            $column = "to_date";
         }else if($order == 7) {
-            $column = "from_time";
+            $column = "to_date";
         }else if($order == 8) {
-            $column = "to_time";
+            $column = "from_time";
         }else if($order == 9) {
-            $column = "created_by";
+            $column = "to_time";
         }else if($order == 10) {
-            $column = "created_at";
+            $column = "created_by";
         }else if($order == 11) {
-            $column = "updated_by";
+            $column = "created_at";
         }else if($order == 12) {
+            $column = "updated_by";
+        }else if($order == 13) {
             $column = "updated_at";
         }
 
-       $data = AssignBadge::select('*',DB::raw("(select badge_name from badges where badge_id = badges.id) AS badge_name"),DB::raw("(select mobile_number from users where user_id = users.id) AS mobile_number"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) AS full_name from users where user_id = users.id) AS full_name"),DB::raw("(select created_by from badges where badge_id = badges.id) AS created_by"),DB::raw("(select updated_by from badges where badge_id = badges.id) AS updated_by"))->whereDeletedAt(null)->orderBy($column,$asc_desc);
+       $data = AssignBadge::select('*',DB::raw("(select customer_id from users where id = assign_badges.user_id) AS customer_id"),DB::raw("(select badge_name from badges where id = assign_badges.badge_id) AS badge_name"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where id = assign_badges.user_id) AS mobile_number"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where id = assign_badges.user_id) AS full_name"),DB::raw("DATE_FORMAT(from_date, '%Y-%M-%d') AS from_date"), DB::raw("DATE_FORMAT(to_date, '%Y-%M-%d') AS to_date"),DB::raw("DATE_FORMAT(from_time, '%h:%i %p') AS from_time"),DB::raw("DATE_FORMAT(to_time, '%h:%i %p') AS to_time"))->whereIn('badge_id', [$badge_id])->whereDeletedAt(null)->orderBy($column,$asc_desc);
         $total = $data->count();
         $filter = $total;
 
         if($search){
              $data  = $data->where(function($query) use($search){
-                    $query->orWhere(DB::raw("(select badge_name from badges where badge_id = badges.id)"), 'like', '%'.$search.'%');
-                    $query->orWhere(DB::raw("(select mobile_number from users where user_id = users.id)"), 'like', '%'.$search.'%');
-                    $query->orWhere(DB::raw("(select CONCAT(users.first_name,' ', users.last_name) AS full_name from users where user_id = users.id)"), 'Like', '%' . $search . '%');
+                    $query->orWhere(DB::raw("(select customer_id from users where id = assign_badges.user_id)"), 'like', '%'.$search.'%');
+                    $query->orWhere(DB::raw("(select badge_name from badges where id = assign_badges.id)"), 'like', '%'.$search.'%');
+                    $query->orWhere(DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where id = assign_badges.user_id)"), 'like', '%'.$search.'%');
+                    $query->orWhere(DB::raw("(select CONCAT(users.first_name,' ', users.last_name) AS full_name from users where id = assign_badges.user_id)"), 'Like', '%' . $search . '%');
                     $query->orWhere('status', 'Like', '%' . $search . '%');
-                    $query->orWhere(DB::raw("DATE_FORMAT(from_date, '%Y %M %d')"), 'Like', '%' . $search . '%');
-                    $query->orWhere(DB::raw("DATE_FORMAT(to_date, '%Y %M %d')"), 'Like', '%' . $search . '%');
-                    $query->orWhere(DB::raw("DATE_FORMAT(from_time, '%H:%i:%s')"), 'Like', '%' . $search . '%');
-                    $query->orWhere(DB::raw("DATE_FORMAT(to_time, '%H:%i:%s')"), 'Like', '%' . $search . '%');
-                    $query->orWhere(DB::raw("DATE_FORMAT(created_at, '%Y %M %d %H:%i:%s %p')"), 'Like', '%' . $search . '%');
-                    $query->orWhere(DB::raw("DATE_FORMAT(updated_at, '%Y %M %d %H:%i:%s %p')"), 'Like', '%' . $search . '%');
-                    $query->orWhere(DB::raw("(select created_by from badges where badge_id = badges.id)"), 'like', '%'.$search.'%');
-                    $query->orWhere(DB::raw("(select updated_by from badges where badge_id = badges.id)"), 'like', '%'.$search.'%');
+                    $query->orWhere(DB::raw("DATE_FORMAT(from_date, '%Y-%M-%d')"), 'Like', '%' . $search . '%');
+                    $query->orWhere(DB::raw("DATE_FORMAT(to_date, '%Y-%M-%d')"), 'Like', '%' . $search . '%');
+                    $query->orWhere(DB::raw("DATE_FORMAT(from_time, '%h:%i %p')"), 'Like', '%' . $search . '%');
+                    $query->orWhere(DB::raw("DATE_FORMAT(to_time, '%h:%i %p')"), 'Like', '%' . $search . '%');
+                    $query->orWhere("created_at", 'Like', '%' . $search . '%');
+                    $query->orWhere("updated_at", 'Like', '%' . $search . '%');
+                    $query->orWhere('created_by', 'Like', '%' . $search . '%');
+                    $query->orWhere('updated_by', 'Like', '%' . $search . '%');
                 });
 
             $filter = $data->get()->count();
@@ -1487,9 +1532,35 @@ class TabController extends Controller
         return response()->json($return_data);
     }
 
-    public function downloadBadgeAssignUsers(Request $request){
+    public function downloadBadgeAssignUsers(Request $request, $badge_id){
+        $badge_id = base64_decode($badge_id);
+        $search = $request->search_txt;
 
-        $data = AssignBadge::select('*',DB::raw("(select badge_name from badges where badge_id = badges.id) AS badge_name"),DB::raw("(select mobile_number from users where user_id = users.id) AS mobile_number"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) AS full_name from users where user_id = users.id) AS full_name"),DB::raw("(select created_by from badges where badge_id = badges.id) AS created_by"),DB::raw("(select updated_by from badges where badge_id = badges.id) AS updated_by"))->whereDeletedAt(null)->orderBy('id','desc')->get()->toArray();
+        if(!empty($search)){
+            $data_get = AssignBadge::whereDeletedAt(null)
+                    ->whereBadgeId($badge_id)
+                    ->where(function($query) use($search){
+                        $query->orWhere(DB::raw("(select customer_id from users where id = assign_badges.user_id)"), 'like', '%'.$search.'%');
+                        $query->orWhere(DB::raw("(select badge_name from badges where id = assign_badges.id)"), 'like', '%'.$search.'%');
+                        $query->orWhere(DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where id = assign_badges.user_id)"), 'like', '%'.$search.'%');
+                        $query->orWhere(DB::raw("(select CONCAT(users.first_name,' ', users.last_name) AS full_name from users where id = assign_badges.user_id)"), 'Like', '%' . $search . '%');
+                        $query->orWhere('status', 'Like', '%' . $search . '%');
+                        $query->orWhere(DB::raw("DATE_FORMAT(from_date, '%Y-%M-%d')"), 'Like', '%' . $search . '%');
+                        $query->orWhere(DB::raw("DATE_FORMAT(to_date, '%Y-%M-%d')"), 'Like', '%' . $search . '%');
+                        $query->orWhere(DB::raw("DATE_FORMAT(from_time, '%h:%i %p')"), 'Like', '%' . $search . '%');
+                        $query->orWhere(DB::raw("DATE_FORMAT(to_time, '%h:%i %p')"), 'Like', '%' . $search . '%');
+                        $query->orWhere("created_at", 'Like', '%' . $search . '%');
+                        $query->orWhere("updated_at", 'Like', '%' . $search . '%');
+                        $query->orWhere('created_by', 'Like', '%' . $search . '%');
+                        $query->orWhere('updated_by', 'Like', '%' . $search . '%');
+                    })->pluck("id");
+        }else{
+            $data_get = AssignBadge::whereDeletedAt(null)
+                    ->whereBadgeId($badge_id)->pluck("id");
+        }
+
+        $data = AssignBadge::select(DB::raw("(select customer_id from users where id = assign_badges.user_id) AS 'Customer ID'"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where id = assign_badges.user_id) AS Name"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where id = assign_badges.user_id) AS 'Mobile Number'"),DB::raw("(select badge_name from badges where id = assign_badges.badge_id) AS 'Badge Name'"),"status as Status","from_date as From Date","to_date as To Date","from_time as From Time","to_time as To Time","created_by as Created By","updated_by as Updated By","created_at as Created On","updated_at as Updated On")->whereIn("id", $data_get)->orderBy('id','desc')->get()->toArray();
+
         return $download =  Excel::create('badge_assign_users', function($excel) use ($data){
 
             $excel->sheet('badge_assign_users', function($sheet) use ($data){
@@ -1499,6 +1570,19 @@ class TabController extends Controller
             });
 
         })->download('csv');
+
+    }
+
+    public function deleteBadge(Request $request){
+        $ids = explode(",", $request->ids);
+        Badge::whereIn("id", $ids)->update(['deleted_at' => Carbon::now()]);
+        AssignBadge::whereIn('badge_id',$ids)->update(['deleted_at' => Carbon::now()]);
+        if(count($ids) <= 1){
+            return response()->json(['message' => 'Badge has been deleted successfully.']);
+        }else{
+
+            return response()->json(['message' => 'Badges has been deleted successfully.']);
+        }
 
     }
 }

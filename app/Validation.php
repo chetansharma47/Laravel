@@ -282,6 +282,22 @@ class Validation extends Model
 
     }
 
+    public static function assignBadgeListing($validation = null, $message = null){
+
+
+      $validation = [
+            'timezone'      => 'required'
+
+      ];
+
+      $message = [
+        'timezone.required'       =>  "Please enter timezone."
+      ];
+
+      return $data = ['validation' => $validation, 'message' => $message];
+
+    }
+
     public static function venuUserAppLogin($validation = null, $message = null){
 
 

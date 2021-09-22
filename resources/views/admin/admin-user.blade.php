@@ -166,7 +166,7 @@
 						<label style="font-weight: 400;">
 							Select the Role
 						</label>
-						<select class="form-control form-group" style="position: relative;border-radius: 10px;" id="exampleFormControlSelect1">
+						<select class="form-control form-group select_option" style="position: relative;border-radius: 10px;" id="exampleFormControlSelect1">
 							<option>Select User</option>
 							<option>Admin</option>
 							<option>Admin2</option>
@@ -178,7 +178,7 @@
 						<label style="font-weight: 400;">
 							Status
 						</label>
-						<select class="form-control form-group" style="position: relative;border-radius: 10px;" id="exampleFormControlSelect1">
+						<select class="form-control form-group select_option" style="position: relative;border-radius: 10px;" id="exampleFormControlSelect1">
 							<option>Active</option>
 							<option>Inactive</option>
 						</select>
@@ -550,7 +550,7 @@ chart.render();
 				initComplete: function () {
 					this.api().columns().every( function () {
 						var column = this;
-						var select = $('<select class="form-control"><option value=""></option></select>')
+						var select = $('<select class="form-control select_option"><option value=""></option></select>')
 						.appendTo( $(column.footer()).empty() )
 						.on( 'change', function () {
 							var val = $.fn.dataTable.util.escapeRegex(

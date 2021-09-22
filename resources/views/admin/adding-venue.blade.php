@@ -649,7 +649,7 @@ function venuform(uniqueid,vname,vaddr,vdesc,vphone,vmap,vbook,vimage,vmenu,vsta
 								Status
 							</label>
 							<div class="selectdiv">
-								<select class="form-control venu_status form-group" name="venu_status" unique-id="${uniqueid}"  style="padding: .6rem 1rem; position: relative; cursor:pointer;">
+								<select class="form-control venu_status form-group select_option" name="venu_status" unique-id="${uniqueid}"  style="padding: .6rem 1rem; position: relative; cursor:pointer;">
 									<option value="">Select Status</option>
 									<option ${(vstatus=='Active')?'selected':''} value="Active">Active</option>
 									<option ${(vstatus=='Inactive')?'selected':''} value="Inactive">Inactive</option>

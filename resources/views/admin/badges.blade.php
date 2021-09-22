@@ -22,6 +22,10 @@
 		});
 	</script>
 	<style type="text/css">
+	.badges_assign_label {
+	    position: absolute;
+	    top: 10px;
+	}
 		section.mt-5 .container-fluid {
 		width: 100%;
 		padding-right: 25px;
@@ -146,16 +150,63 @@
 		}
 		.break-all{
 		word-break: break-all;
-		min-width: 211px;
+		/*min-width: 211px;*/
 		width: 100%;
 		}
-		.col_min_width{
+		/*.col_min_width{
 		min-width: 211px;
 		width: 100%;
-		}
+		}*/
 		.date_white_space{
-    white-space: nowrap;
-}
+		    white-space: nowrap;
+		}
+
+		.app_checkboxes .checkmark {
+		    top: -15px!important;
+		}
+		table#basic-datatables {
+		    overflow: auto;
+		    width: 100%!important;
+		    display: inline-block;
+		}
+
+		.wrap_all {
+		    display: flex;
+		    align-items: center;
+		    justify-content: space-between;
+		}
+
+		.wrap_all ul.pagination {
+		    margin-bottom: 0!important;
+		}
+
+		.wrap_all div#basic-datatables_info {
+			padding-top: 0;
+		}
+
+		#confirmationModel .modal-title{
+		    text-align: center;
+		    width: 100%;
+		    font-size: 20px;
+		    font-weight: 600;
+		}
+		#confirmationModel .modal-header {
+		    background-color: #5f5f5f;
+		    color: #fff;
+		    justify-content: center;
+		}
+
+		#confirmationModel .modal-body {
+			text-align: center;
+		}
+
+		#confirmationModel .modal-body p {
+			margin-bottom: 0rem;
+		}
+
+		table#basic-datatables2 {
+		    margin-bottom: 0px!important;
+		}
 	</style>
 
 	<!-- CSS Files -->
@@ -180,6 +231,15 @@
 		}
 		.venue_inputs {
 			width: 100%;
+		}
+
+		input.form-control.form-control-user.badge-image {
+			background: #EBEBEB!important;
+		}
+
+
+		select#assign_search {
+		    width: 460px;
 		}
 	</style>
 </head>
@@ -230,36 +290,40 @@
 				</nav>
 			</div>
 		</div>
+		<input type="hidden" name="selected_checkboxes" id="selected_checkboxes" value="">
 	</header>
 	<section class="mt-3">
+			
 		<div class="container-fluid">
 			<div class="row">
+
 				<div class="col-md-3">
-					<div class="venue_inputs mb-3 px-2 pl-3">
+					<div class="venue_inputs mb-3 px-2 pl-3" >
 						<label style="font-weight: 400;">
 							Badge Name
 						</label>
-						<input type="text" class="form-control badge-name form-control-user" maxlength="30" placeholder="Badge Name" style="border-radius: 10px;"/>
+						<input type="text" class="form-control badge-name form-control-user" maxlength="30" placeholder="Badge Name" style="border-radius: 10px;" autocomplete="off" />
+
 					</div>
-					<div class="venue_inputs mb-3 px-2 pl-3">
+					<div class="venue_inputs mb-3 px-2 pl-3" style="margin-bottom: -5px!important;">
 						<label style="font-weight: 400;">
 							Badge Image
 						</label>
-						<input type="text" readonly="" class="form-control form-control-user badge-image" value="" style="border-radius: 10px; cursor: pointer; opacity: 1!important;"/>
+						<input type="text" readonly="" class="form-control form-control-user badge-image" value="" style="border-radius: 10px; cursor: pointer; opacity: 1!important;" autocomplete="off" />
 
 						<label for="img_upload" style="position: relative; width: 100%;">
-							<img data-toggle="tooltip" data-placement="top" title="Click to upload image" src="{{url('public/upload_icon.png')}}" alt="upload-icon-img" class="upload_icon" style="width:30px; cursor:pointer;">
+							<img data-toggle="tooltip" data-placement="top" title="Click to upload badge image" src="{{url('public/upload_icon.png')}}" alt="upload-icon-img" class="upload_icon" style="width:30px; cursor:pointer;">
 						</label>
 
-						<input type="file" src="" id="img_upload" class="img_upload" hidden />
-						<input type="text" value="" id="hidden_img2" hidden />
+						<input type="file" src="" id="img_upload" class="img_upload" hidden  autocomplete="off" accept="image/*" />
+						<input type="text" value="" id="hidden_img2" hidden  autocomplete="off" />
 					</div>
-					<div class="venue_inputs mb-3 px-2 pl-3">
+					<div class="venue_inputs mb-3 px-2 pl-3" style="margin-bottom: 0px!important;">
 						<label style="font-weight: 400;">
 							Status
 						</label>
-						<select class="form-control select-status form-group" style="position: relative;border-radius: 10px;">
-							<option value="">Select status</option>
+						<select class="form-control select-status form-group select_option" style="position: relative;border-radius: 10px; cursor: pointer;">
+							<option value="">Select Status</option>
 							<option value="Active">Active</option>
 							<option value="Inactive">Inactive</option>
 						</select>
@@ -275,11 +339,17 @@
 								Update
 							</a>
 						</div>
+						<div class="mr-4">
+							<a href="javascript:void(0);" class="btn btn-primary btn-user btn-block delete_btn common_btn" style="font-size: 18px; text-transform: none; padding-left: 0.9rem;">
+								Delete Badge
+							</a>
+						</div>
 						<div>
-							<a href="{{route('admin.assignBadges')}}" class="btn btn-primary btn-user assign_btn btn-block common_btn" style="    font-size: 18px; text-transform: none;">
+							<a href="{{route('admin.assignBadges')}}" class="btn btn-primary btn-user assign_btn btn-block common_btn" style="    font-size: 18px; text-transform: none;padding-left: 1.2rem;">
 								Assign Users
 							</a>
 						</div>
+						
 					</div>
 				</div>
 			</div>
@@ -298,13 +368,17 @@
 						<table id="basic-datatables" class="display table table-striped table-hover" >
 							<thead>
 								<tr style="background-color: #193358;    color: #fff;">
-									<th>Sr.No</th>
-									<th>Badge Name</th>
+									<th style="min-width: 40px;">Sr. No.</th>
+									<th style="min-width: 200px;">Badge Name</th>
 									<th>Status</th>
 									<th style="min-width: 100px;">Created By</th>
 									<th>Created On</th>
 									<th style="min-width: 100px;">Updated By</th>
-									<th style="min-width: 200px;">Updated On</th>
+									<th style="min-width: 135px;">Updated On</th>
+									<th style="min-width: 85px;"><div class="d-flex align-items-center">
+											Selection
+	                                        <input type="checkbox" data-id = "0" class="select_all_checkbox" key_type="checkbox" style="margin-left: 17px; margin-top: 2px; cursor: pointer;">
+										</div></th>
 								</tr>
 							</thead>
 							<tbody>
@@ -315,33 +389,59 @@
 			</div>
 			<div class="row left-side" style="margin-top: 60px;">
 				<div class="col-md-12 mb-4" style="margin-top: -57px;">
+
+					<div class="row" style="position: absolute;width: 80%; top: -4px; z-index: 99">
+				
+						<div class="col-md-3">
+							
+							<div class="venue_inputs mb-3 badges_assign_label" style=" margin-left: 0px;">
+								<label>
+									Badges Assigned for the Selected users
+								</label>
+							</div>
+						</div>
+
+						<div class="col-md-3">
+							<div class="venue_inputs mb-3 px-2 pl-3">
+							
+								<select class="form-control  form-group select_option" id="assign_search" style="position: relative;border-radius: 0px; cursor: pointer;">
+									<option value="">Select Badge Name</option>
+									@foreach($badges as $badge)
+									<option value="{{$badge->id}}" data-id="{{$badge->id}}" class="multiple_delete">{{$badge->badge_name}}</option>
+									@endforeach()
+								</select>
+							</div>
+						</div>
+
+					</div>
+
 					<div class="table-responsive">
 						<table id="basic-datatables2" class="display table table-striped table-hover" >
 							<thead>
 								<tr style="background-color: #193358;    color: #fff;">
-									<th style="min-width: 100px;">Customer ID</th>
-									<th>Name</th>
-									<th style="min-width: 100px;">Mobile Number</th>
-									<th>Badge Name</th>
+									<th style="min-width: 40px;">Sr. No.</th>
+									<th style="min-width: 110px;">Customer ID</th>
+									<th style="min-width: 130px;">Name</th>
+									<th style="min-width: 130px;">Mobile Number</th>
+									<th style="min-width: 200px;">Badge Name</th>
 									<th>Status</th>
-									<th>From Date</th>
-									<th>To Date</th>
-									<th style="min-width: 80px;">From Time</th>
-									<th>To Time</th>
-									<th style="min-width: 80px;">Created By</th>
-									<th>Created On</th>
-									<th style="min-width: 80px;">Updated By</th>
-									<th>Updated On</th>
+									<th style="min-width: 130px;">From Date</th>
+									<th style="min-width: 130px;">To Date</th>
+									<th style="min-width: 130px;">From Time</th>
+									<th style="min-width: 130px;">To Time</th>
+									<th style="min-width: 100px;">Created By</th>
+									<th style="min-width: 135px;">Created On</th>
+									<th style="min-width: 100px;">Updated By</th>
+									<th style="min-width: 135px;">Updated On</th>
 								</tr>
 							</thead>
-							<tbody>
-							</tbody>
+							
 						</table>
 					</div>
 				</div>
 			</div>
 			<div style="margin-bottom: 50px;">
-				<a href="{{route('admin.download_badge_assign_users')}}" class="btn btn-primary btn-user btn-block common_btn" style="font-size: 18px; text-transform: none;">
+				<a href="javascript:void(0);" id="download" class="btn btn-primary btn-user btn-block common_btn" style="font-size: 18px; text-transform: none;">
 					Download
 				</a>
 			</div>
@@ -375,7 +475,7 @@
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">success</h5>
+        <h5 class="modal-title" id="exampleModalLongTitle">Success</h5>
         <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button> -->
@@ -400,6 +500,29 @@
                <img src = "{{url('public/loader.gif')}}">
             </div>
 
+  </div>
+</div>
+
+<!-- confirmation model -->
+
+<div class="modal fade" id="confirmationModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Alert</h5>
+        <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button> -->
+      </div>
+      <div class="modal-body">
+        <p id="confirmation_alert_text">Are you sure, you want to delete this badges?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary confirm_ok" style="background-color: #3ABD6F!important; border: none; border-radius: 50px; color: #fff;"  data-dismiss="modal">Yes</button>
+        <button type="button" class="btn btn-secondary confirm_no" style="background-color: #3ABD6F!important; border: none; border-radius: 50px; color: #fff;"  data-dismiss="modal">No</button>
+       <!--  <button type="button" class="btn btn-primary">Save changes</button> -->
+      </div>
+    </div>
   </div>
 </div>
 <!--   Core JS Files   -->
@@ -448,6 +571,8 @@
 
 	<script>
 		
+		localStorage.clear();
+
 		$('.add_new_btn').click(function(){
 			let badge_name = $('.badge-name').val();
 			let badge_image_hidden_val = $('#img_upload').val();
@@ -456,6 +581,7 @@
 			let badge_image_src = $('.badge-image').attr('src');
 			let badge_select = $('.select-status').val();
 			let hidden_img2 = $("#hidden_img2").val();
+			let badge_image_hidden_imgname = $('#img_upload').attr('data-name');
 
 			if(badge_name == '' ){
 				$("#alert_text").text("Please enter badge name.");
@@ -472,13 +598,13 @@
 			}
 
 			if(badge_image_src == ''){
-				$("#alert_text").text("Please upload image.");
+				$("#alert_text").text("Please upload badge image.");
 				$("#validationModel").modal("show");
 				$("#validationModel").unbind("click");
 				return false;
 			}
 			if(badge_image_hidden_src == ''){
-				$("#alert_text").text("Please upload image.");
+				$("#alert_text").text("Please upload badge image.");
 				$("#validationModel").modal("show");
 				$("#validationModel").unbind("click");
 				return false;
@@ -495,7 +621,7 @@
 				url:'{{ route("admin.addNewBadge") }}',
 				type:'POST',
 				dataType:'JSON',
-				data:{badge_name,badge_image_val,badge_image_hidden_val,badge_image_src,badge_select,hidden_img2,'_token':'{{ csrf_token() }}'},
+				data:{badge_name,badge_image_val,badge_image_hidden_val,badge_image_src,badge_select,hidden_img2,badge_image_hidden_imgname,'_token':'{{ csrf_token() }}'},
 				beforeSend:function(){
          			$("#loaderModel").modal("show");
 					$("#loaderModel").unbind("click");
@@ -514,6 +640,10 @@
 						$('.select-status').val('');
 						$("#hidden_img2").attr('value','');
 			        	$('#basic-datatables').DataTable().ajax.reload();
+			        	$("#selected_checkboxes").val("");
+			        	$(".select_all_checkbox").prop("checked",false);
+			        	$(".single_checkbox").prop("checked",false);
+			        	
 					},500);
 				},error: function(data, textStatus, xhr) {
 		            if(data.status == 422){
@@ -563,7 +693,7 @@
 				if(file.type == "image/jpeg" || file.type == "image/png" || file.type == "image/jpg"){
 					var size = file.size;
 					if(size > 5242880){
-						$("#alert_text").text("Image should be less than or equal to 5 MB.");
+						$("#alert_text").text("Badge image size should be less than or equal to 5 MB.");
 				        $("#validationModel").modal("show");
 				        $("#validationModel").unbind("click");
 						return false;
@@ -574,7 +704,8 @@
 							$(".badge-image").attr('value',slice_name);
 							$("#img_upload").attr('value',file_nameshow);
 							$("#img_upload").attr('src',e.target.result);
-							$("#hidden_img2").val(' ');
+							$("#hidden_img2").val('');
+							$("#img_upload").attr('data-name',file_nameshow);
 						}
 					}
 					reader.readAsDataURL(file);
@@ -612,6 +743,42 @@
 					url:"{{ route('admin.badgeslist') }}",
 					type:"POST",
 					data:{'_token':'{{csrf_token()}}'},
+
+				complete:function(){
+		          	let selected_checkboxes = $("#selected_checkboxes").val();
+
+			        let split_selected_checkboxes = selected_checkboxes.split(",");
+
+			        split_selected_checkboxes = split_selected_checkboxes.filter(function (el) {
+				   		if(el == ""){
+				   			return el != "";
+				   		}else{
+				   			return el != null;
+				   		}
+					});
+
+			        for(let i=0; split_selected_checkboxes.length > i; i++){
+			          	$(".single_checkbox[data-id='"+split_selected_checkboxes[i]+"']").prop("checked", true);
+
+			        }
+
+			        if($(".single_checkbox").length > 0){
+
+						if($(".single_checkbox:not(:checked)").length > 0){
+							$(".select_all_checkbox").prop("checked",false);
+						}else{
+							$(".select_all_checkbox").prop("checked",true);
+						}
+			        }else{
+			        	$(".select_all_checkbox").prop("checked",false);
+			        }
+
+					if($("#basic-datatables_wrapper").find(".wrap_all").length <= 0){
+
+						$('#basic-datatables_info,#basic-datatables_paginate').wrapAll('<div class="wrap_all"></div>'); 
+					} 
+					
+		        }
 				},
 				createdRow: function( row, data, dataIndex ) {
 		        $( row ).find('td:eq(1)').attr('data-id', data['id']).attr('key_type','badge_name').addClass('td_edit').addClass('white_space').addClass('break-all');
@@ -623,6 +790,7 @@
 		        $( row ).find('td:eq(4)').attr('data-id', data['id']).attr('key_type','created_at').addClass('white_space').addClass('date_white_space').addClass('col_min_width');
 		        $( row ).find('td:eq(5)').attr('data-id', data['id']).attr('key_type','updated_by').addClass('td_edit').addClass('white_space');
 		        $( row ).find('td:eq(6)').attr('data-id', data['id']).attr('key_type','updated_at').addClass('white_space');
+		        $( row ).find('td:eq(7)').attr('data-id', data['id']).addClass('white_space');
 		    },
 				columns:[
 					{data: 'DT_RowIndex', name: 'DT_RowIndex'},
@@ -632,6 +800,7 @@
 					{data:'created_at', name:'created_at'},
 					{data:'updated_by', name:'updated_by'},
 					{data:'updated_at', name:'updated_at'},
+					{data: 'selection', name: 'selection', orderable: false, searchable: false},
 				]
 			
 			});
@@ -649,11 +818,11 @@
 				$(this).attr('contenteditable',true);
 				$(this).attr("onkeypress", "return (this.innerText.length <= 29)");
 
-				$(this).on('keydown',function(e){
+				/*$(this).on('keydown',function(e){
 					if(e.which==32){
 						return false;
 					}
-				});
+				});*/
 			}
 
 			if(keyType == 'status' ){
@@ -735,6 +904,9 @@
 		        	$("#success_alert_text").text(data.message);
 		        	$("#successModel").unbind("click");
 		        	$('#basic-datatables').DataTable().ajax.reload();
+		        	$("#selected_checkboxes").val("");
+		        	$(".select_all_checkbox").prop("checked",false);
+		        	$(".single_checkbox").prop("checked",false);
 					},500);
 				},error: function(data, textStatus, xhr) {
 	                if(data.status == 422){
@@ -753,7 +925,66 @@
 			});
 		});
 
+		$('.delete_btn').click(function(){
+			let ids = $("#selected_checkboxes").val();
+			if(ids == "" || ids == null || ids == "undefiend"){
+				$("#alert_text").text("Please select checkbox for delete badge.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}else{
+				$('#confirmationModel').modal("show");
+			}
+		});
+		$(".confirm_ok").on("click",function(){
+    	$("#confirmationModel").modal("hide");
+    	let ids = $("#selected_checkboxes").val();
+    	let __split_ids = ids.split(",");
+		$.ajax({
+			url:"{{route('admin.deleteBadge')}}",
+			type:'POST',
+			dataType:'JSON',
+			data:{ids:ids,'_token':'{{ csrf_token() }}'},
+			beforeSend:function(){
+	          	$("#loaderModel").modal("show");
+				$("#loaderModel").unbind("click");
+	        },
+	        success: function(data){
+          	setTimeout(function(){
+          		$("#loaderModel").modal("hide");
+          		$("#success_alert_text").text(data.message);
+          		$("#successModel").modal("show");
+          		$("#selected_checkboxes").val("");
+          		$(".single_checkbox").prop("checked",false);
+          		$(".select_all_checkbox").prop("checked",false);
+          		$('#basic-datatables').DataTable().ajax.reload();
+
+          		for(let p=0; __split_ids.length > p; p++){
+
+          			$(".multiple_delete[data-id='"+__split_ids[p]+"']").remove();
+          		}
+          		assignUserList();
+          	},500);
+          },
+		});
+    });
+
+	$(".confirm_no").on("click",function(){
+		$("#confirmationModel").modal("hide");
+	});
+
+
+
+		$(document).on("keyup keydown",".form-control[type='search'][aria-controls='basic-datatables2']",function(){
+			localStorage.setItem("search_show_val","false");
+		})
+
 		function assignUserList(){
+			let search_for_table2 = $(".form-control[type='search'][aria-controls='basic-datatables2']").val();
+			//alert(search_for_table2)
+			
+			let badge_id = $("#assign_search").val();
+			$("#basic-datatables2").dataTable().fnDestroy();
 			let table = $("#basic-datatables2").DataTable({
 				processing:true,
 				serverSide:true,
@@ -763,7 +994,16 @@
 				ajax:{
 					url:"{{ route('admin.assign_user_list') }}",
 					type:"POST",
-					data:{'_token':'{{csrf_token()}}'},
+					data:{'_token':'{{csrf_token()}}','badge_id' : badge_id,'search_for_table2' : search_for_table2},
+					complete:function(){
+			         	
+			         	$(".dataTables_length").hide();
+			         	if(search_for_table2 != undefined && search_for_table2 && localStorage.getItem("search_show_val") == "true"){
+
+							$(".form-control[type='search'][aria-controls='basic-datatables2']").val(search_for_table2);
+						}
+
+			        }
 				},
 				createdRow: function( row, data, dataIndex ) {
 		        $( row ).find('td:eq(0)').addClass('white_space');
@@ -778,11 +1018,12 @@
 		        $( row ).find('td:eq(9)').addClass('white_space');
 		        $( row ).find('td:eq(10)').addClass('white_space').addClass('date_white_space').addClass('col_min_width');
 		        $( row ).find('td:eq(11)').addClass('white_space');
-		        $( row ).find('td:eq(12)').addClass('white_space').addClass('date_white_space').addClass('col_min_width');;
+		        $( row ).find('td:eq(12)').addClass('white_space').addClass('date_white_space').addClass('col_min_width');
 		    },
 				columns:[
-					{data:'id',name:'id'},
-				{data:'full_name',name:'full_name'},
+					{data:'DT_RowIndex',name:'DT_RowIndex'},
+					{data:'customer_id',name:'customer_id'},
+					{data:'full_name',name:'full_name'},
 					{data:'mobile_number',name:'mobile_number'},
 					{data:'badge_name',name:'badge_name'},
 					{data:'status',name:'status'},
@@ -799,18 +1040,212 @@
 				
 		}
 
-		assignUserList();
+		setTimeout(function(){
 
-		$('#basic-datatables_filter label input[type="search"]').addClass('input_control_search').attr('maxlength',30);
-		$('#basic-datatables2_filter label input[type="search"]').addClass('input_control_search').attr('maxlength',30);
+			assignUserList();
+		},500);
 
-		$(document).on('keydown','.input_control_search',function(e){
-			if(e.which===32 && e.target.selectionStart===0){
-				return false;
-			}
+		
+
+		// $(document).on('keydown','.input_control_search',function(e){
+		// 	if(e.which===32 && e.target.selectionStart===0){
+		// 		return false;
+		// 	}
+		// });
+
+		$(document).on("keypress",".td_edit[key_type='badge_name']",function(e){
+		 	if($(this).text() == ''){
+		          if(!/[0-9a-zA-Z-]/.test(String.fromCharCode(e.which))){
+
+		            return false;
+		          }
+	      	}
+
 		});
 
+		$("#assign_search").on("change",function(){
+
+ 				setTimeout(function(){
+ 					localStorage.setItem("search_show_val","true");
+					assignUserList();
+				},500);
+ 		});
+
 	</script>
+
+	<script type="text/javascript">
+    $(document).ready(function(){
+      $(".form-control").on("keyup",function(){
+        var length = $.trim($(this).val()).length;
+        console.log(length)
+        if(length == 0){
+           $(this).val("");
+        }else{
+          $(this).val($(this).val().trimLeft(""));
+        }
+      });
+
+
+      	$(document).on("keyup",".td_edit[key_type='badge_name']",function(e){
+		 	var length = $.trim($(this).text()).length;
+	        console.log(length)
+	        if(length == 0){
+	           $(this).text("");
+	        }else{
+	          $(this).val($(this).text().trimLeft(""));
+	        }
+
+		});
+
+
+    });
+
+    $(document).on("click",".select_all_checkbox",function(){
+				if($(this).prop("checked") == true){
+					$(".single_checkbox").prop("checked",true);
+
+					$(".single_checkbox:checked").each(function(){
+					   	let data_id = $(this).data("id").toString();
+					   	let selected_checkboxes = $("#selected_checkboxes").val();
+					   	let split_selected_checkboxes = selected_checkboxes.split(",");
+					   	split_selected_checkboxes = split_selected_checkboxes.filter(function (el) {
+					   		if(el == ""){
+					   			return el != "";
+					   		}else{
+					   			return el != null;
+					   		}
+						});
+					   	
+					   	if(split_selected_checkboxes.indexOf(data_id) == -1){
+					   		if(selected_checkboxes.length > 0){
+					   			$("#selected_checkboxes").val($("#selected_checkboxes").val() + "," + data_id);
+					   		}else{
+					   			$("#selected_checkboxes").val(data_id);
+					   		}
+					   	}
+					});
+
+				}else{
+					$(".single_checkbox").prop("checked",false);
+					$(".single_checkbox:not(:checked)").each(function(){
+					    let data_id = $(this).data("id").toString();
+					   	let selected_checkboxes = $("#selected_checkboxes").val();
+					   	let split_selected_checkboxes = selected_checkboxes.split(",");
+					   	split_selected_checkboxes = split_selected_checkboxes.filter(function (el) {
+					   		if(el == ""){
+					   			return el != "";
+					   		}else{
+					   			return el != null;
+					   		}
+						});
+
+					   	
+					   	if(split_selected_checkboxes.indexOf(data_id) != -1){
+					   		split_selected_checkboxes.splice(split_selected_checkboxes.indexOf(data_id),1);
+
+					   		if(split_selected_checkboxes.length > 0){
+					   			split_selected_checkboxes = split_selected_checkboxes.toString();
+					   			$("#selected_checkboxes").val(split_selected_checkboxes);
+					   		}else{
+					   			$("#selected_checkboxes").val("");
+					   		}
+					   	}
+					});
+				}
+			});
+
+
+    $(document).on("click",".single_checkbox",function(){
+				if($(this).prop("checked") == true){
+
+					let data_id = $(this).data("id").toString();
+				   	let selected_checkboxes = $("#selected_checkboxes").val();
+				   	let split_selected_checkboxes = selected_checkboxes.split(",");
+				   	split_selected_checkboxes = split_selected_checkboxes.filter(function (el) {
+				   		if(el == ""){
+				   			return el != "";
+				   		}else{
+				   			return el != null;
+				   		}
+					});
+				   	
+				   	if(split_selected_checkboxes.indexOf(data_id) == -1){
+				   		if(selected_checkboxes.length > 0){
+				   			$("#selected_checkboxes").val($("#selected_checkboxes").val() + "," + data_id);
+				   		}else{
+				   			$("#selected_checkboxes").val(data_id);
+				   		}
+				   	}
+
+				}else{
+
+					let data_id = $(this).data("id").toString();
+				   	let selected_checkboxes = $("#selected_checkboxes").val();
+				   	let split_selected_checkboxes = selected_checkboxes.split(",");
+				   	split_selected_checkboxes = split_selected_checkboxes.filter(function (el) {
+				   		if(el == ""){
+				   			return el != "";
+				   		}else{
+				   			return el != null;
+				   		}
+					});
+
+				   	
+				   	if(split_selected_checkboxes.indexOf(data_id) != -1){
+				   		split_selected_checkboxes.splice(split_selected_checkboxes.indexOf(data_id),1);
+
+				   		if(split_selected_checkboxes.length > 0){
+				   			split_selected_checkboxes = split_selected_checkboxes.toString();
+				   			$("#selected_checkboxes").val(split_selected_checkboxes);
+				   		}else{
+				   			$("#selected_checkboxes").val("");
+				   		}
+			   		}
+
+				}
+				
+				if($('.single_checkbox:not(":checked")').length <= 0){
+					$(".select_all_checkbox").prop("checked",true);
+				}else{
+					$(".select_all_checkbox").prop("checked",false);
+				}
+
+			});
+
+    	$(document).ready(function(){
+		    var replace_class = $('#basic-datatables_wrapper .row:nth-child(3)').children('.col-md-5');
+		    replace_class.removeClass('col-md-5').addClass('col-md-12');
+	    });
+    
+
+</script>
+
+<script type="text/javascript">
+	$(document).ready(function(){
+		$("#download").on("click",function(){
+			let badge_id = $("#assign_search").val();
+			let search_txt = $(".form-control[type='search'][aria-controls='basic-datatables2']").val();
+			if(badge_id == "" || badge_id == undefined){
+				$("#alert_text").text("Please select badge name first to download the badges assigned for the selected users file.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
+			let base64_encode_badge_id = btoa(badge_id);
+			let url_hit = "{{url('admin/download-assign-badge-users')}}" + "/" + base64_encode_badge_id + "/" + search_txt;
+
+			window.location.href = url_hit;
+			//window.open(url_hit);
+		});
+
+		$(".badge-name").on("paste",function(e){
+			e.preventDefault();
+		});
+		$(document).on("paste",".td_edit",function(e){
+			e.preventDefault();
+		});
+	});
+</script>
 
 </body>
 </html>

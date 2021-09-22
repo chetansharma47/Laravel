@@ -570,7 +570,7 @@
 								Venue Name
 							</label>
 							<div class="selectdiv">
-								<select class="form-control venue_name form-group" uniq-id="${id}" name="venue_name" style="padding: .6rem 1rem; position: relative; cursor:pointer;">
+								<select class="form-control venue_name form-group select_option" uniq-id="${id}" name="venue_name" style="padding: .6rem 1rem; position: relative; cursor:pointer;">
 								<option value="">Select Venue name</option>
 								</select>
 							</div>
@@ -698,7 +698,7 @@
 								Status
 							</label>
 							<div class="selectdiv">
-								<select class="form-control event_status form-group" uniq-id="${id}" style="padding: .6rem 1rem; position: relative; cursor:pointer;">
+								<select class="form-control event_status form-group select_option" uniq-id="${id}" style="padding: .6rem 1rem; position: relative; cursor:pointer;">
 									<option value="">Select Status</option>
 									<option ${(status=='Active')?'selected':''} value="Active">Active</option>
 									<option ${(status=='Inactive')?'selected':''} value="Inactive">Inactive</option>

@@ -13,7 +13,7 @@ class AssignBadge extends Model
     	'badge_id',
     	'comment',
     	'status',
-    	'when',
+    	'when_day',
     	'from_date',
     	'to_date',
     	'from_time',
