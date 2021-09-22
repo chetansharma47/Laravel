@@ -571,7 +571,7 @@
 							${imageurl}
 							<label for="img_upload" data-toggle="tooltip" data-placement="top" title="Click to upload image">
 							<img venu-id="${venuid}" uniq-id="${uniqid}" src="{{url('public/upload_icon.png')}}" alt="upload-icon-img" class="upload_icon" style="width:30px; cursor:pointer;">
-							<input type="file" id="img_upload" class="img_upload" src="" venu-id="${venuid}" uniq-id="${uniqid}" hidden value="">
+							<input type="file" id="img_upload" class="img_upload" src="" venu-id="${venuid}" uniq-id="${uniqid}" hidden value="" accept="image/*">
 							<input type="text" class="offer_imagehidden" venu-id="${venuid}" uniq-id="${uniqid}" hidden value="${(imagename)?imagename:''}">
 							<input type="text" class="offer_imagehidden2" venu-id="${venuid}" uniq-id="${uniqid}" hidden value="${(imagename)?imagename:''}">
 							</label>
@@ -1254,7 +1254,7 @@ function alloffers(){
 	  	var datacity = data.cityall;
 	  	let last_offer = data.last_offer;
 
-	  	if(last_offer != "" || last_offer != undefined){
+	  	if(last_offer != "" && last_offer != undefined){
 
   			$('#uniqid').attr('uniq-id',last_offer.unique_id);
 	  	}

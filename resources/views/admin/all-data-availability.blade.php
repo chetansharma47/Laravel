@@ -2147,9 +2147,12 @@ chart.render();
 
     $(document).ready(function(){
 	    $(document).on('paste',".form-control",function (event) {
-		  	if (event.originalEvent.clipboardData.getData('Text').match(/[^\d]/)) {
-		    	event.preventDefault();
-		  	}
+	    	if($(this).attr("aria-controls") != "basic-datatables"){
+	    		
+			  	if (event.originalEvent.clipboardData.getData('Text').match(/[^\d]/)) {
+			    	event.preventDefault();
+			  	}
+	    	}
 		});
 
 		$(document).on('paste', '.td_click',function (event) {

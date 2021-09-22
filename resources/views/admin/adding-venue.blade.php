@@ -411,7 +411,7 @@
 					let list_length = list.length;
 					let last_venue = data.last_venue;
 
-					if(last_venue != "" || last_venue != undefined){
+					if(last_venue != "" && last_venue != undefined){
 
 						$('.uniqid_db').html('<span uniq-id="'+last_venue.unique_id+'"class="last_db_id"></span>');
 					}
@@ -596,7 +596,7 @@ function venuform(uniqueid,vname,vaddr,vdesc,vphone,vmap,vbook,vimage,vmenu,vsta
 							</label>
 							${imageurl}
 							<label for="img_upload" data-toggle="tooltip" data-placement="top" title="Click to upload image"><img unique-id="${uniqueid}"  src="{{url('public/upload_icon.png')}}" alt="upload-icon-img" class="upload_icon" style="width:30px; cursor:pointer;"></label>
-							<input type="file" unique-id="${uniqueid}" src="" id="img_upload" class="img_upload" hidden />
+							<input type="file" unique-id="${uniqueid}" src="" id="img_upload" class="img_upload" hidden accept="image/*" />
 						</div>
 					</div>
 					<div class="row pr-5 pl-3  mt-3">

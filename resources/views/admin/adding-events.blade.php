@@ -415,7 +415,8 @@
 					  	let list = data.list;
 					  	let last_event = data.last_event;
 					  	
-					  	if(last_event != "" || last_event != undefined){
+					  	
+					  	if(last_event != "" && last_event != undefined && last_event != null){
 
 					  		$('#uniq_id_db').html(`<span id="unique" uniq-id="${last_event.unique_id}"></span>`);
 					  	}
@@ -555,7 +556,7 @@
 							<label for="img_upload" data-toggle="tooltip" data-placement="top" title="Click to upload image">
 							<img uniq-id="${id}" src="{{url('public/upload_icon.png')}}" alt="upload-icon-img" class="upload_icon" style="width:30px; cursor:pointer;">
 							</label>
-							<input type="file" uniq-id="${id}" src="" id="img_upload" class="img_upload" hidden />
+							<input type="file" uniq-id="${id}" src="" id="img_upload" class="img_upload" hidden accept="image/*" />
 						</div>
 					</div>
 					<div class="row pr-5 pl-3  mt-3">
