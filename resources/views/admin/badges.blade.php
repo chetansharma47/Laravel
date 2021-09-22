@@ -933,6 +933,15 @@
 				$("#validationModel").unbind("click");
 				return false;
 			}else{
+
+				let split_ids = ids.split(",");
+				if(split_ids.length > 1){
+
+					$("#confirmation_alert_text").text("Are you sure, you want to delete this badges?");
+				}else{
+					$("#confirmation_alert_text").text("Are you sure, you want to delete this badge?");
+				}
+				
 				$('#confirmationModel').modal("show");
 			}
 		});
