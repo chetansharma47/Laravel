@@ -1150,7 +1150,7 @@ table#basic-datatables {
   				}else if(check_click_on == "update_badge_btn"){
 
   					if(customer_id == ""){
-	  					$("#alert_text").text("Please select user for add new badge.");
+	  					$("#alert_text").text("Please select user for update assigned badge.");
 	  					$("#validationModel").modal("show");
 	  					$("#validationModel").unbind("click");
 	  					return false;
