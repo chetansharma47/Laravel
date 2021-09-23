@@ -18,7 +18,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request){
 });
     
     
-Route::post('offer-assign-user-cron-job','Controller@OfferAssignUserCronJob')->middleware('auth:api');
+Route::get('offer-assign-user-cron-job','Controller@OfferAssignUserCronJob');
   
 Route::group(['namespace' => 'Api\v1','prefix'=>'v1'], function() {
 
