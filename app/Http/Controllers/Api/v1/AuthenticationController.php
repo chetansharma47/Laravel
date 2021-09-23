@@ -363,7 +363,22 @@ class AuthenticationController extends ResponseController
 
         $active_venue_ids = Venu::where('status' , 'Active')->where('deleted_at' , null)->pluck('id');
 
-        $offers = Offer::whereDeletedAt(null)->whereStatus('Active')->whereIn('id',$user_assign_offers)->whereDate('to_date','>=',Carbon::now()->toDateString())->whereIn('venu_id', $active_venue_ids)->with('offerSetting','venu')->get();
+        $offers = Offer::where(function($query) use ($user_assign_offers, $active_venue_ids){
+                        $query->whereDeletedAt(null);
+                        $query->whereStatus('Active');
+                        $query->whereIn('id',$user_assign_offers);
+                        $query->whereDate('to_date','>=',Carbon::now()->toDateString());
+                        $query->whereIn('venu_id', $active_venue_ids);
+
+                    })->orWhere(function($query) use ($user_assign_offers, $active_venue_ids){
+                        $query->whereDeletedAt(null);
+                        $query->whereStatus('Active');
+                        $query->whereIn('id',$user_assign_offers);
+                        $query->where('offer_type','=','BirthdayOffer');
+                        $query->whereIn('venu_id', $active_venue_ids);
+                    })
+                    ->with('offerSetting','venu')
+                    ->get();
         
 
         return $this->responseOk('Offer Listing', ['offer_listing' => $offers]);
