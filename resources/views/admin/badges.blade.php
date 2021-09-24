@@ -296,7 +296,7 @@
 			
 		<div class="container-fluid">
 			<div class="row">
-
+				<input type="hidden" name="badge_id" id="badge_id" value="">
 				<div class="col-md-3">
 					<div class="venue_inputs mb-3 px-2 pl-3" >
 						<label style="font-weight: 400;">
@@ -375,10 +375,10 @@
 									<th>Created On</th>
 									<th style="min-width: 100px;">Updated By</th>
 									<th style="min-width: 135px;">Updated On</th>
-									<th style="min-width: 85px;"><div class="d-flex align-items-center">
+									<!-- <th style="min-width: 85px;"><div class="d-flex align-items-center">
 											Selection
 	                                        <input type="checkbox" data-id = "0" class="select_all_checkbox" key_type="checkbox" style="margin-left: 17px; margin-top: 2px; cursor: pointer;">
-										</div></th>
+										</div></th> -->
 								</tr>
 							</thead>
 							<tbody>
@@ -572,8 +572,18 @@
 	<script>
 		
 		localStorage.clear();
+		$("#badge_id").val("");
 
 		$('.add_new_btn').click(function(){
+			if($(this).text() == "Cancel"){
+				$(".badge-name").val("");
+			  	$(".badge-image").attr("value","").attr("src", "");
+			  	$("#img_upload").attr("src", "");
+			  	$(".select-status").val("");
+			  	$(this).text("Add New");
+			  	$("#badge_id").val("");
+			  	return false;
+			}
 			let badge_name = $('.badge-name').val();
 			let badge_image_hidden_val = $('#img_upload').val();
 			let badge_image_hidden_src = $('#img_upload').attr('src');
@@ -627,6 +637,7 @@
 					$("#loaderModel").unbind("click");
 				},
 				success:function(data){
+					console.log(data)
 					setTimeout(function(){
 						$("#loaderModel").modal("hide");
 				        $("#successModel").modal("show");
@@ -643,6 +654,8 @@
 			        	$("#selected_checkboxes").val("");
 			        	$(".select_all_checkbox").prop("checked",false);
 			        	$(".single_checkbox").prop("checked",false);
+			        	$("#badge_id").val("");
+			        	$("#add_new_btn").text("Add New");
 			        	
 					},500);
 				},error: function(data, textStatus, xhr) {
@@ -745,7 +758,7 @@
 					data:{'_token':'{{csrf_token()}}'},
 
 				complete:function(){
-		          	let selected_checkboxes = $("#selected_checkboxes").val();
+		          	/*let selected_checkboxes = $("#selected_checkboxes").val();
 
 			        let split_selected_checkboxes = selected_checkboxes.split(",");
 
@@ -771,7 +784,7 @@
 						}
 			        }else{
 			        	$(".select_all_checkbox").prop("checked",false);
-			        }
+			        }*/
 
 					if($("#basic-datatables_wrapper").find(".wrap_all").length <= 0){
 
@@ -781,6 +794,7 @@
 		        }
 				},
 				createdRow: function( row, data, dataIndex ) {
+				$( row ).find('td:eq(0)').attr('data-id', data['id']).attr('key_type','serial_number').addClass('td_edit');
 		        $( row ).find('td:eq(1)').attr('data-id', data['id']).attr('key_type','badge_name').addClass('td_edit').addClass('white_space').addClass('break-all');
 		        $( row ).find('td:eq(2)').attr('data-id', data['id']).attr('key_type','status').html(`<select class="form-control form-group status-select-table" style="cursor:pointer; width:max-content;">
 						<option value="Active" ${(data.status == "Active") ? 'selected' : ''}>Active</option>
@@ -790,7 +804,7 @@
 		        $( row ).find('td:eq(4)').attr('data-id', data['id']).attr('key_type','created_at').addClass('white_space').addClass('date_white_space').addClass('col_min_width');
 		        $( row ).find('td:eq(5)').attr('data-id', data['id']).attr('key_type','updated_by').addClass('td_edit').addClass('white_space');
 		        $( row ).find('td:eq(6)').attr('data-id', data['id']).attr('key_type','updated_at').addClass('white_space');
-		        $( row ).find('td:eq(7)').attr('data-id', data['id']).addClass('white_space');
+		        /*$( row ).find('td:eq(7)').attr('data-id', data['id']).addClass('white_space');*/
 		    },
 				columns:[
 					{data: 'DT_RowIndex', name: 'DT_RowIndex'},
@@ -800,7 +814,7 @@
 					{data:'created_at', name:'created_at'},
 					{data:'updated_by', name:'updated_by'},
 					{data:'updated_at', name:'updated_at'},
-					{data: 'selection', name: 'selection', orderable: false, searchable: false},
+					/*{data: 'selection', name: 'selection', orderable: false, searchable: false},*/
 				]
 			
 			});
@@ -810,86 +824,15 @@
 		badgeslist();
 
 		$(document).on('dblclick','.td_edit',function(){
-			var dataId = $(this).attr('data-id');
-			var keyType = $(this).attr('key_type');
-			var content = $(this).text();
-
-			if(keyType == 'badge_name'){
-				$(this).attr('contenteditable',true);
-				$(this).attr("onkeypress", "return (this.innerText.length <= 29)");
-
-				/*$(this).on('keydown',function(e){
-					if(e.which==32){
-						return false;
-					}
-				});*/
-			}
-
-			if(keyType == 'status' ){
-				$(this).attr('contenteditable',true);
-				$(this).attr("onkeypress", "return (this.innerText.length <= 49)");
-			}
-		});
-
-		$(document).on("change",".status-select-table",function(){
-			$(this).parent().addClass("td_edit").attr("contenteditable","true");
-		});
-
-		$('.update_btn').click(function(){
-			if($('.td_edit[contenteditable=true]').length <= 0){
-				$("#alert_text").text("Please edit at least one value.");
-				$("#validationModel").modal("show");
-				$("#validationModel").unbind("click");
-				return false;
-			}
-			var	arr = [];
-			let empty_val = "false";
-			$('.td_edit[contenteditable=true]').each(function(){
-				let data_id = $(this).attr('data-id');
-				let keyType = $(this).attr('key_type');
-				let text;
-
-				if(keyType == "status"){
-					text = $(this).children(".status-select-table").val();
-				}else{
-					text = $(this).text();
-				}
-
-				if(keyType == 'badge_name'){
-					if(text == ""){
-						$("#alert_text").text("Please enter badge name.");
-						$("#validationModel").modal("show");
-						$("#validationModel").unbind("click");
-						empty_val = "true";
-					}else if(text.length < 2){
-						$("#alert_text").text("Badge name should be at least 2 characters long.");
-						$("#validationModel").modal("show");
-						$("#validationModel").unbind("click");
-						empty_val = "true";
-					}
-
-				}
-
-				var objectData = {}
-
-				objectData.data_id = data_id;
-				objectData.key_type = keyType;
-				objectData.text = text;
-				arr.push(objectData);
-			});
-
-			if(empty_val == "true"){
-				$("#loaderModel").modal("hide");
-				return false;
-			}
+			let badge_id = $(this).attr('data-id');
 
 			var objectData = {
 				'_token':'{{ csrf_token() }}',
-				'arr':arr,
+				'badge_id':badge_id,
 			}
 
 			$.ajax({
-				url:'{{ route("admin.editbadges") }}',
+				url:'{{ route("admin.findBadgeById") }}',
 				dataType:'JSON',
 				type:'POST',
 				data:objectData,
@@ -898,23 +841,196 @@
 						$("#loaderModel").unbind("click");
 					},
 				success:function(data){
+					console.log(data)
 					setTimeout(function(){
-					$("#loaderModel").modal("hide");
-				  	$("#successModel").modal("show");
-		        	$("#success_alert_text").text(data.message);
-		        	$("#successModel").unbind("click");
-		        	$('#basic-datatables').DataTable().ajax.reload();
-		        	$("#selected_checkboxes").val("");
-		        	$(".select_all_checkbox").prop("checked",false);
-		        	$(".single_checkbox").prop("checked",false);
+
+						var fileName = data.name_of_file_show;
+						let slice_name = "";
+						if(fileName != "" && fileName.length > 20){
+							slice_name = fileName.slice(0,20)+'...';
+						}else{
+							slice_name = fileName;
+						}
+
+						$("#loaderModel").modal("hide");
+					  	$(".badge-name").val(data.badge_name);
+					  	$(".badge-image").attr("value",slice_name).attr("src", data.image);
+					  	$("#img_upload").attr("src", data.image);
+					  	$(".select-status").val(data.status);
+					  	$(".add_new_btn").text("Cancel");
+					  	$("#badge_id").val(badge_id);
+					},500);
+				},error: function(data, textStatus, xhr) {
+					alert("Something went wrong.");
+					window.location.href = "";
+	                if(data.status == 422){
+
+	                } 
+	              }
+			});
+			// var dataId = $(this).attr('data-id');
+			// var keyType = $(this).attr('key_type');
+			// var content = $(this).text();
+
+			// if(keyType == 'badge_name'){
+			// 	$(this).attr('contenteditable',true);
+			// 	$(this).attr("onkeypress", "return (this.innerText.length <= 29)");
+
+			// 	/*$(this).on('keydown',function(e){
+			// 		if(e.which==32){
+			// 			return false;
+			// 		}
+			// 	});*/
+			// }
+
+			// if(keyType == 'status' ){
+			// 	$(this).attr('contenteditable',true);
+			// 	$(this).attr("onkeypress", "return (this.innerText.length <= 49)");
+			// }
+		});
+
+		$(document).on("change",".status-select-table",function(){
+			$(this).parent().addClass("td_edit").attr("contenteditable","true");
+		});
+
+		$('.update_btn').click(function(){
+			// if($('.td_edit[contenteditable=true]').length <= 0){
+			// 	$("#alert_text").text("Please edit at least one value.");
+			// 	$("#validationModel").modal("show");
+			// 	$("#validationModel").unbind("click");
+			// 	return false;
+			// }
+			// var	arr = [];
+			// let empty_val = "false";
+			// $('.td_edit[contenteditable=true]').each(function(){
+			// 	let data_id = $(this).attr('data-id');
+			// 	let keyType = $(this).attr('key_type');
+			// 	let text;
+
+			// 	if(keyType == "status"){
+			// 		text = $(this).children(".status-select-table").val();
+			// 	}else{
+			// 		text = $(this).text();
+			// 	}
+
+			// 	if(keyType == 'badge_name'){
+			// 		if(text == ""){
+			// 			$("#alert_text").text("Please enter badge name.");
+			// 			$("#validationModel").modal("show");
+			// 			$("#validationModel").unbind("click");
+			// 			empty_val = "true";
+			// 		}else if(text.length < 2){
+			// 			$("#alert_text").text("Badge name should be at least 2 characters long.");
+			// 			$("#validationModel").modal("show");
+			// 			$("#validationModel").unbind("click");
+			// 			empty_val = "true";
+			// 		}
+
+			// 	}
+
+			// 	var objectData = {}
+
+			// 	objectData.data_id = data_id;
+			// 	objectData.key_type = keyType;
+			// 	objectData.text = text;
+			// 	arr.push(objectData);
+			// });
+
+			// if(empty_val == "true"){
+			// 	$("#loaderModel").modal("hide");
+			// 	return false;
+			// }
+
+			let badge_id = $("#badge_id").val();
+			if(badge_id == ""){
+				$("#alert_text").text("Please select badge for update badge.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
+
+
+			let badge_name = $('.badge-name').val();
+			let badge_image_hidden_val = $('#img_upload').val();
+			let badge_image_hidden_src = $('#img_upload').attr('src');
+			let badge_image_val = $('.badge-image').val();
+			let badge_image_src = $('.badge-image').attr('src');
+			let badge_select = $('.select-status').val();
+			let hidden_img2 = $("#hidden_img2").val();
+			let badge_image_hidden_imgname = $('#img_upload').attr('data-name');
+
+			if(badge_name == '' ){
+				$("#alert_text").text("Please enter badge name.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
+
+			if(badge_name.length < 2 ){
+				$("#alert_text").text("Badge name should be at least 2 characters long.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
+
+			if(badge_image_src == ''){
+				$("#alert_text").text("Please upload badge image.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
+			if(badge_image_hidden_src == ''){
+				$("#alert_text").text("Please upload badge image.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
+
+			if(badge_select == ''){
+				$("#alert_text").text("Please select badge status.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
+
+			
+
+			$.ajax({
+				url:'{{ route("admin.editbadges") }}',
+				dataType:'JSON',
+				type:'POST',
+				data:{badge_name,badge_image_val,badge_image_hidden_val,badge_image_src,badge_select,hidden_img2,badge_image_hidden_imgname,badge_id,'_token':'{{ csrf_token() }}'},
+				beforeSend:function(){
+	          		$("#loaderModel").modal("show");
+						$("#loaderModel").unbind("click");
+					},
+				success:function(data){
+					setTimeout(function(){
+						$("#loaderModel").modal("hide");
+				        $("#successModel").modal("show");
+			        	$("#success_alert_text").text(data.message);
+			        	$("#successModel").unbind("click");
+			        	$('#img_upload').attr('value','');
+						$('#img_upload').attr('src','');
+						$('.badge-image').attr('value','');
+						$('.badge-image').attr('src','');
+						$('.badge-name').val('');
+						$('.select-status').val('');
+						$("#hidden_img2").attr('value','');
+			        	$('#basic-datatables').DataTable().ajax.reload();
+			        	$("#selected_checkboxes").val("");
+			        	$(".select_all_checkbox").prop("checked",false);
+			        	$(".single_checkbox").prop("checked",false);
+			        	$("#badge_id").val("");
+			        	$("#add_new_btn").text("Add New");
 					},500);
 				},error: function(data, textStatus, xhr) {
 	                if(data.status == 422){
 	                  setTimeout(function(){
 	                  	$("#loaderModel").modal("hide");
 		                  	var result = data.responseJSON;
-		                  	if(result['Badge_name_error'] && result['Badge_name_error'].length > 0){
-			                  	$("#alert_text").text(result['Badge_name_error']);
+		                  	if(result['badge_name_error'] && result['badge_name_error'].length > 0){
+			                  	$("#alert_text").text(result['badge_name_error']);
 								$("#validationModel").modal("show");
 								$("#validationModel").unbind("click");
 		                 	}
@@ -926,57 +1042,123 @@
 		});
 
 		$('.delete_btn').click(function(){
-			let ids = $("#selected_checkboxes").val();
-			if(ids == "" || ids == null || ids == "undefiend"){
-				$("#alert_text").text("Please select checkbox for delete badge.");
+
+
+			let badge_id = $("#badge_id").val();
+			if(badge_id == ""){
+				$("#alert_text").text("Please select badge for update badge.");
 				$("#validationModel").modal("show");
 				$("#validationModel").unbind("click");
 				return false;
-			}else{
-
-				let split_ids = ids.split(",");
-				if(split_ids.length > 1){
-
-					$("#confirmation_alert_text").text("Are you sure, you want to delete this badges?");
-				}else{
-					$("#confirmation_alert_text").text("Are you sure, you want to delete this badge?");
-				}
-				
-				$('#confirmationModel').modal("show");
 			}
+
+
+			let badge_name = $('.badge-name').val();
+			let badge_image_hidden_val = $('#img_upload').val();
+			let badge_image_hidden_src = $('#img_upload').attr('src');
+			let badge_image_val = $('.badge-image').val();
+			let badge_image_src = $('.badge-image').attr('src');
+			let badge_select = $('.select-status').val();
+			let hidden_img2 = $("#hidden_img2").val();
+			let badge_image_hidden_imgname = $('#img_upload').attr('data-name');
+
+			if(badge_name == '' ){
+				$("#alert_text").text("Please enter badge name.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
+
+			if(badge_name.length < 2 ){
+				$("#alert_text").text("Badge name should be at least 2 characters long.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
+
+			if(badge_image_src == ''){
+				$("#alert_text").text("Please upload badge image.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
+			if(badge_image_hidden_src == ''){
+				$("#alert_text").text("Please upload badge image.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
+
+			if(badge_select == ''){
+				$("#alert_text").text("Please select badge status.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
+
+			$("#confirmation_alert_text").text("Are you sure, you want to delete this badge?");
+			$('#confirmationModel').modal("show");
+			// let ids = $("#selected_checkboxes").val();
+			// if(ids == "" || ids == null || ids == "undefiend"){
+			// 	$("#alert_text").text("Please select checkbox for delete badge.");
+			// 	$("#validationModel").modal("show");
+			// 	$("#validationModel").unbind("click");
+			// 	return false;
+			// }else{
+
+			// 	let split_ids = ids.split(",");
+			// 	if(split_ids.length > 1){
+
+			// 		$("#confirmation_alert_text").text("Are you sure, you want to delete this badges?");
+			// 	}else{
+			// 		$("#confirmation_alert_text").text("Are you sure, you want to delete this badge?");
+			// 	}
+				
+			// 	$('#confirmationModel').modal("show");
+			// }
 		});
 		$(".confirm_ok").on("click",function(){
-    	$("#confirmationModel").modal("hide");
-    	let ids = $("#selected_checkboxes").val();
-    	let __split_ids = ids.split(",");
-		$.ajax({
-			url:"{{route('admin.deleteBadge')}}",
-			type:'POST',
-			dataType:'JSON',
-			data:{ids:ids,'_token':'{{ csrf_token() }}'},
-			beforeSend:function(){
-	          	$("#loaderModel").modal("show");
-				$("#loaderModel").unbind("click");
-	        },
-	        success: function(data){
-          	setTimeout(function(){
-          		$("#loaderModel").modal("hide");
-          		$("#success_alert_text").text(data.message);
-          		$("#successModel").modal("show");
-          		$("#selected_checkboxes").val("");
-          		$(".single_checkbox").prop("checked",false);
-          		$(".select_all_checkbox").prop("checked",false);
-          		$('#basic-datatables').DataTable().ajax.reload();
+	    	$("#confirmationModel").modal("hide");
+	    	let ids = $("#badge_id").val();
+	    	//let __split_ids = ids.split(",");
+			$.ajax({
+				url:"{{route('admin.deleteBadge')}}",
+				type:'POST',
+				dataType:'JSON',
+				data:{ids:ids,'_token':'{{ csrf_token() }}'},
+				beforeSend:function(){
+		          	$("#loaderModel").modal("show");
+					$("#loaderModel").unbind("click");
+		        },
+		        success: function(data){
+	          	setTimeout(function(){
+	          			$("#loaderModel").modal("hide");
+				        $("#successModel").modal("show");
+			        	$("#success_alert_text").text(data.message);
+			        	$("#successModel").unbind("click");
+			        	$('#img_upload').attr('value','');
+						$('#img_upload').attr('src','');
+						$('.badge-image').attr('value','');
+						$('.badge-image').attr('src','');
+						$('.badge-name').val('');
+						$('.select-status').val('');
+						$("#hidden_img2").attr('value','');
+			        	$('#basic-datatables').DataTable().ajax.reload();
+			        	$("#selected_checkboxes").val("");
+			        	$(".select_all_checkbox").prop("checked",false);
+			        	$(".single_checkbox").prop("checked",false);
+			        	$("#badge_id").val("");
+			        	$("#add_new_btn").text("Add New");
 
-          		for(let p=0; __split_ids.length > p; p++){
+	          		// for(let p=0; __split_ids.length > p; p++){
 
-          			$(".multiple_delete[data-id='"+__split_ids[p]+"']").remove();
-          		}
-          		assignUserList();
-          	},500);
-          },
-		});
-    });
+	          		// 	$(".multiple_delete[data-id='"+__split_ids[p]+"']").remove();
+	          		// }
+	          		assignUserList();
+	          	},500);
+	          },
+			});
+    	});
 
 	$(".confirm_no").on("click",function(){
 		$("#confirmationModel").modal("hide");

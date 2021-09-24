@@ -500,7 +500,7 @@ table#basic-datatables {
 							</div>
 						</div>
 
-						<div class="col-md-3">
+						<!-- <div class="col-md-3">
 							<div class="venue_inputs mb-3 px-2 pl-3" style="position: absolute; top: 62px;">
 							
 								<select class="form-control select-status form-group select_option" id="assign_search" style="position: relative;border-radius: 0px; cursor: pointer;">
@@ -510,7 +510,7 @@ table#basic-datatables {
 									@endforeach()
 								</select>
 							</div>
-						</div>
+						</div> -->
 
 					</div>
 
@@ -725,6 +725,7 @@ table#basic-datatables {
 				$("#updated_at").val("");
 				let customer_id = $(this).parent().find(".td_click[key_type='customer_id']").text();
 				$("#customer_id").val(customer_id);
+				routeForBadgeAssignUser();
 			});
 			
 		}
@@ -749,7 +750,7 @@ table#basic-datatables {
 
 	    function routeForBadgeAssignUser(){
 	    	$("#basic-datatables2").dataTable().fnDestroy();
-	    	let badge_id = $("#assign_search").val();
+	    	let customer_id = $("#customer_id").val();
 	        $('#basic-datatables2').dataTable({
 	             dom: "Bfrtip",
 	            "processing": true,
@@ -759,7 +760,7 @@ table#basic-datatables {
 	                "type": "POST",
 	                "data" : {
 	                	'_token': "{{csrf_token()}}",
-	                	'badge_id' : badge_id
+	                	'customer_id' : customer_id
 	                },
 	                complete:function(){
 			          tdClick1();
@@ -1107,19 +1108,107 @@ table#basic-datatables {
 				          		}
 				          		$("#successModel").modal("show");
 				          		$("#successModel").unbind("click");
-				          		$("#customer_id").val("");
-				          		$("#exampleFormControlSelect1").val("");
-				          		$("#exampleFormControlSelect2").val("");
-				          		$("#comment").val("");
-				          		$("#status").val("");
-				          		$(".days").val("");
-				          		$(".checkbox_click").prop("checked",false);
-				          		$("#from_date").val("");
-				          		$("#to_date").val("");
-				          		$("#from_time").val("");
-				          		$("#to_time").val("");
-				          		$("#created_at").val("");
-				          		$("#updated_at").val("");
+				          		let badge = res.assigned_badge;
+				          		$("#customer_id").val(badge.user.customer_id);
+				          		$("#badge_name").val(badge.badge_name);
+				          		$("#comment").val(badge.comment);
+				          		$("#exampleFormControlSelect2").val(badge.status);
+				          		$("#exampleFormControlSelect1").val(badge.badge_id);
+
+				          		let day_on = badge.when_day;
+
+								let split_day_on = day_on.split(",");
+							   	split_day_on = split_day_on.filter(function (el) {
+							   		if(el == ""){
+							   			return el != "";
+							   		}else{
+							   			return el != null;
+							   		}
+								});
+
+				          		let mo_select;
+								let tu_select;
+								let we_select;
+								let th_select;
+								let fr_select;
+								let sa_select;
+								let su_select;
+
+								if(split_day_on.indexOf("Monday") != -1){
+									$(".checkbox_click[data-id='Monday']").prop("checked",true);
+
+									if($(".days").val() == ""){
+										$(".days").val("Monday");
+									}else{
+										$(".days").val($(".days").val() + ",Monday");
+									}
+								}
+
+								if(split_day_on.indexOf("Tuesday") != -1){
+									$(".checkbox_click[data-id='Tuesday']").prop("checked",true);
+
+									if($(".days").val() == ""){
+										$(".days").val("Tuesday");
+									}else{
+										$(".days").val($(".days").val() + ",Tuesday");
+									}
+								}
+
+								if(split_day_on.indexOf("Wednesday") != -1){
+									$(".checkbox_click[data-id='Wednesday']").prop("checked",true);
+									if($(".days").val() == ""){
+										$(".days").val("Wednesday");
+									}else{
+										$(".days").val($(".days").val() + ",Wednesday");
+									}
+								}
+
+								if(split_day_on.indexOf("Thursday") != -1){
+									$(".checkbox_click[data-id='Thursday']").prop("checked",true);
+
+									if($(".days").val() == ""){
+										$(".days").val("Thursday");
+									}else{
+										$(".days").val($(".days").val() + ",Thursday");
+									}
+								}
+
+								if(split_day_on.indexOf("Friday") != -1){
+									$(".checkbox_click[data-id='Friday']").prop("checked",true);
+
+									if($(".days").val() == ""){
+										$(".days").val("Friday");
+									}else{
+										$(".days").val($(".days").val() + ",Friday");
+									}
+								}
+
+								if(split_day_on.indexOf("Saturday") != -1){
+									$(".checkbox_click[data-id='Saturday']").prop("checked",true);
+
+									if($(".days").val() == ""){
+										$(".days").val("Saturday");
+									}else{
+										$(".days").val($(".days").val() + ",Saturday");
+									}
+								}
+
+								if(split_day_on.indexOf("Sunday") != -1){
+									$(".checkbox_click[data-id='Sunday']").prop("checked",true);
+
+									if($(".days").val() == ""){
+										$(".days").val("Sunday");
+									}else{
+										$(".days").val($(".days").val() + ",Sunday");
+									}
+								}
+
+								$("#from_date").val(badge.from_date);
+								$("#to_date").val(badge.to_date);
+								$("#from_time").val(badge.from_time);
+								$("#to_time").val(badge.to_time);
+								$("#created_at").val(badge.created_at);
+								$("#updated_at").val(badge.updated_at);
 				          		localStorage.setItem("search_show_val","true");
 				          		userSearch();
 				          		routeForBadgeAssignUser();
@@ -1277,19 +1366,107 @@ table#basic-datatables {
 				          		}
 				          		$("#successModel").modal("show");
 				          		$("#successModel").unbind("click");
-				          		$("#customer_id").val("");
-				          		$("#exampleFormControlSelect1").val("");
-				          		$("#exampleFormControlSelect2").val("");
-				          		$("#comment").val("");
-				          		$("#status").val("");
-				          		$(".days").val("");
-				          		$(".checkbox_click").prop("checked",false);
-				          		$("#from_date").val("");
-				          		$("#to_date").val("");
-				          		$("#from_time").val("");
-				          		$("#to_time").val("");
-				          		$("#created_at").val("");
-				          		$("#updated_at").val("");
+				          		let badge = res.assigned_badge;
+				          		$("#customer_id").val(badge.user.customer_id);
+				          		$("#badge_name").val(badge.badge_name);
+				          		$("#comment").val(badge.comment);
+				          		$("#exampleFormControlSelect2").val(badge.status);
+				          		$("#exampleFormControlSelect1").val(badge.badge_id);
+
+				          		let day_on = badge.when_day;
+
+								let split_day_on = day_on.split(",");
+							   	split_day_on = split_day_on.filter(function (el) {
+							   		if(el == ""){
+							   			return el != "";
+							   		}else{
+							   			return el != null;
+							   		}
+								});
+
+				          		let mo_select;
+								let tu_select;
+								let we_select;
+								let th_select;
+								let fr_select;
+								let sa_select;
+								let su_select;
+
+								if(split_day_on.indexOf("Monday") != -1){
+									$(".checkbox_click[data-id='Monday']").prop("checked",true);
+
+									if($(".days").val() == ""){
+										$(".days").val("Monday");
+									}else{
+										$(".days").val($(".days").val() + ",Monday");
+									}
+								}
+
+								if(split_day_on.indexOf("Tuesday") != -1){
+									$(".checkbox_click[data-id='Tuesday']").prop("checked",true);
+
+									if($(".days").val() == ""){
+										$(".days").val("Tuesday");
+									}else{
+										$(".days").val($(".days").val() + ",Tuesday");
+									}
+								}
+
+								if(split_day_on.indexOf("Wednesday") != -1){
+									$(".checkbox_click[data-id='Wednesday']").prop("checked",true);
+									if($(".days").val() == ""){
+										$(".days").val("Wednesday");
+									}else{
+										$(".days").val($(".days").val() + ",Wednesday");
+									}
+								}
+
+								if(split_day_on.indexOf("Thursday") != -1){
+									$(".checkbox_click[data-id='Thursday']").prop("checked",true);
+
+									if($(".days").val() == ""){
+										$(".days").val("Thursday");
+									}else{
+										$(".days").val($(".days").val() + ",Thursday");
+									}
+								}
+
+								if(split_day_on.indexOf("Friday") != -1){
+									$(".checkbox_click[data-id='Friday']").prop("checked",true);
+
+									if($(".days").val() == ""){
+										$(".days").val("Friday");
+									}else{
+										$(".days").val($(".days").val() + ",Friday");
+									}
+								}
+
+								if(split_day_on.indexOf("Saturday") != -1){
+									$(".checkbox_click[data-id='Saturday']").prop("checked",true);
+
+									if($(".days").val() == ""){
+										$(".days").val("Saturday");
+									}else{
+										$(".days").val($(".days").val() + ",Saturday");
+									}
+								}
+
+								if(split_day_on.indexOf("Sunday") != -1){
+									$(".checkbox_click[data-id='Sunday']").prop("checked",true);
+
+									if($(".days").val() == ""){
+										$(".days").val("Sunday");
+									}else{
+										$(".days").val($(".days").val() + ",Sunday");
+									}
+								}
+
+								$("#from_date").val(badge.from_date);
+								$("#to_date").val(badge.to_date);
+								$("#from_time").val(badge.from_time);
+								$("#to_time").val(badge.to_time);
+								$("#created_at").val(badge.created_at);
+								$("#updated_at").val(badge.updated_at);
 				          		localStorage.setItem("search_show_val","true");
 				          		userSearch();
 				          		routeForBadgeAssignUser();
@@ -1351,10 +1528,12 @@ table#basic-datatables {
   			$(".confirm_ok").on("click",function(){
   				$("#confirmationModel").modal("hide");
   				let customer_id = $("#customer_id").val();
+  				let badge_id = $("#exampleFormControlSelect1").val();
 
   					var data = {
 			        	'_token': "{{csrf_token()}}",
-			        	"customer_id" : customer_id
+			        	"customer_id" : customer_id,
+			        	"badge_id" : badge_id
 			    	};
 
 
@@ -1370,18 +1549,107 @@ table#basic-datatables {
 				          	console.log(res)
 				          	setTimeout(function(){
 				          		$("#loaderModel").modal("hide");
-				          		$("#customer_id").val("");
-				          		$("#badge_name").val("");
-				          		$("#comment").val("");
-				          		$("#exampleFormControlSelect2").val("");
-				          		$(".days").val("")
-				       			$(".checkbox_click").prop("checked",false);
-				       			$("#from_date").val("");
-				       			$("#to_date").val("");
-				       			$("#from_time").val("");
-				       			$("#to_time").val("");
-				       			$("#created_at").val("");
-				       			$("#updated_at").val("");
+				          		let badge = res;
+				          		$("#customer_id").val(badge.user.customer_id);
+				          		$("#badge_name").val(badge.badge_name);
+				          		$("#comment").val(badge.comment);
+				          		$("#exampleFormControlSelect2").val(badge.status);
+				          		$("#exampleFormControlSelect1").val(badge.badge_id);
+
+				          		let day_on = badge.when_day;
+
+								let split_day_on = day_on.split(",");
+							   	split_day_on = split_day_on.filter(function (el) {
+							   		if(el == ""){
+							   			return el != "";
+							   		}else{
+							   			return el != null;
+							   		}
+								});
+
+				          		let mo_select;
+								let tu_select;
+								let we_select;
+								let th_select;
+								let fr_select;
+								let sa_select;
+								let su_select;
+
+								if(split_day_on.indexOf("Monday") != -1){
+									$(".checkbox_click[data-id='Monday']").prop("checked",true);
+
+									if($(".days").val() == ""){
+										$(".days").val("Monday");
+									}else{
+										$(".days").val($(".days").val() + ",Monday");
+									}
+								}
+
+								if(split_day_on.indexOf("Tuesday") != -1){
+									$(".checkbox_click[data-id='Tuesday']").prop("checked",true);
+
+									if($(".days").val() == ""){
+										$(".days").val("Tuesday");
+									}else{
+										$(".days").val($(".days").val() + ",Tuesday");
+									}
+								}
+
+								if(split_day_on.indexOf("Wednesday") != -1){
+									$(".checkbox_click[data-id='Wednesday']").prop("checked",true);
+									if($(".days").val() == ""){
+										$(".days").val("Wednesday");
+									}else{
+										$(".days").val($(".days").val() + ",Wednesday");
+									}
+								}
+
+								if(split_day_on.indexOf("Thursday") != -1){
+									$(".checkbox_click[data-id='Thursday']").prop("checked",true);
+
+									if($(".days").val() == ""){
+										$(".days").val("Thursday");
+									}else{
+										$(".days").val($(".days").val() + ",Thursday");
+									}
+								}
+
+								if(split_day_on.indexOf("Friday") != -1){
+									$(".checkbox_click[data-id='Friday']").prop("checked",true);
+
+									if($(".days").val() == ""){
+										$(".days").val("Friday");
+									}else{
+										$(".days").val($(".days").val() + ",Friday");
+									}
+								}
+
+								if(split_day_on.indexOf("Saturday") != -1){
+									$(".checkbox_click[data-id='Saturday']").prop("checked",true);
+
+									if($(".days").val() == ""){
+										$(".days").val("Saturday");
+									}else{
+										$(".days").val($(".days").val() + ",Saturday");
+									}
+								}
+
+								if(split_day_on.indexOf("Sunday") != -1){
+									$(".checkbox_click[data-id='Sunday']").prop("checked",true);
+
+									if($(".days").val() == ""){
+										$(".days").val("Sunday");
+									}else{
+										$(".days").val($(".days").val() + ",Sunday");
+									}
+								}
+
+								$("#from_date").val(badge.from_date);
+								$("#to_date").val(badge.to_date);
+								$("#from_time").val(badge.from_time);
+								$("#to_time").val(badge.to_time);
+								$("#created_at").val(badge.created_at);
+								$("#updated_at").val(badge.updated_at);
 
 				       			$("#success_alert_text").text("Assign badge has been deleted successfully.");
 				       			$("#successModel").modal("show");
@@ -1393,11 +1661,17 @@ table#basic-datatables {
 				          },
 				          error: function(data, textStatus, xhr) {
 				            if(data.status == 422){
-				              var result = data.responseJSON;
-				              alert('Something went worng.');
-				              window.location.href = "";
-				              $("#loaderModel").modal("hide");
-				              return false;
+				              setTimeout(function(){
+				              	$("#loaderModel").modal("hide");
+				                  	var result = data.responseJSON;
+				                  	if(result['badge_not_found_err'] && result['badge_not_found_err'].length > 0){
+					                  	$("#alert_text").text(result['badge_not_found_err']);
+										$("#validationModel").modal("show");
+										$("#validationModel").unbind("click");
+				                 	}
+
+				                  return false;
+				              },500)
 				            } 
 				      	}
 				    });

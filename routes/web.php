@@ -145,6 +145,7 @@ Route::group(['middleware' => 'TimeZone','namespace' => 'Admin','prefix'=>'/admi
         Route::post('badge-assign-list-users','TabController@badgeAssignListUsers')->name('badgeAssignListUsers');
         Route::post('add-or-update-badge-assign','TabController@addOrUpdateBadgeAssign')->name('addOrUpdateBadgeAssign');
         Route::post('findBadge','TabController@findBadge')->name('findBadge');
+        Route::post('find-badge-by-id','TabController@findBadgeById')->name('findBadgeById');
         Route::post('delete-assign-badge','TabController@deleteAssignBadge')->name('deleteAssignBadge');
 
 

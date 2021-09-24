@@ -42,6 +42,7 @@ use App\Models\UserAssignOffer;
 use App\Models\LoginRequest;
 use App\Models\Badge;
 use App\Models\AssignBadge;
+use App\Models\AssignUserVenue;
 use Illuminate\Support\Arr;
 
 class TabController extends Controller
@@ -627,6 +628,9 @@ class TabController extends Controller
 
     public function venueUser(Request $request){
         if($request->isMethod('GET')){
+
+
+            //return $data = VenueUser::select('*',DB::raw("GROUP_CONCAT(venue_users.id) as docname"))->whereDeletedAt(null)->get();
             $admin = Auth::guard('admin')->user();
             $venulist = Venu::whereAdminId($admin->id)->whereDeletedAt(null)->get();
             return view('admin.venue-user',compact('venulist'));
@@ -700,6 +704,104 @@ class TabController extends Controller
         }
     }
 
+    // public function venueTableRecords(Request $request){
+
+    //     if($request->isMethod('POST')){
+    //         $admin_id = Auth::guard('admin')->user()->id;
+    //         $asc_desc = $request->get('order')[0]['dir'];
+    //         $column_id = $request->get('order')[0]['column'];
+    //         $search = $request->get("search")["value"];
+    //         $colname = $request->get('columns');
+
+
+    //         if($asc_desc == "asc"){
+    //             $asc_desc = "desc";
+    //         }else{
+    //             $asc_desc = "asc";
+    //         }
+
+    //         $order = $request->get("order")[0]['column'];
+
+    //         $column = "id";
+
+    //         $order = $request->get("order")[0]['column'];
+
+    //         if($order == 1){
+    //             $column = "username";
+    //         }else if($order == 2){
+    //             $column = "password";
+    //         }else if($order == 3){
+    //             $column = "venue_name";
+    //         }else if($order == 4){
+    //             $column = "status";
+    //         }else if($order == 5){
+    //             $column = "created_at";
+    //         }else if($order == 6){
+    //             $column = "created_by";
+    //         }else if($order == 7){
+    //             $column = "updated_at";
+    //         }else if($order == 8) {
+    //             $column = "updated_by";
+    //         }
+
+    //         $pluck_venueuser_in_ids = VenueUser::whereDeletedAt(null)->pluck('id');
+
+    //         $data = AssignUserVenue::select('*',DB::raw("(select venue_name from venus where id = assign_user_venues.venu_id) AS venue_name"),DB::raw("(select username from venue_users where id = assign_user_venues.venue_user_id) AS username"),DB::raw("(select password from venue_users where id = assign_user_venues.venue_user_id) AS password"),DB::raw("(select status from venue_users where id = assign_user_venues.venue_user_id) AS status"),DB::raw("(select created_at from venue_users where id = assign_user_venues.venue_user_id) AS created_at"),DB::raw("(select updated_at from venue_users where id = assign_user_venues.venue_user_id) AS updated_at"),DB::raw("(select created_by from venue_users where id = assign_user_venues.venue_user_id) AS created_by"),DB::raw("(select updated_by from venue_users where id = assign_user_venues.venue_user_id) AS updated_by"))->whereDeletedAt(null)->orderBy($column,$asc_desc);
+    //         $total = $data->count();
+    //         $filter = $total;
+
+    //         if($search){
+    //              $data  = $data->where(function($query) use($search){
+    //                     $query->orWhere(DB::raw("(select username from venue_users where id = assign_user_venues.venue_user_id)"), 'Like', '%'. $search . '%');
+    //                     $query->orWhere(DB::raw("(select venue_name from venus where id = assign_user_venues.venu_id)"), 'Like', '%'. $search . '%');
+                       
+    //                     $query->orWhere(DB::raw("(select status from venue_users where id = assign_user_venues.venue_user_id)"), 'Like', '%' . $search . '%');
+    //                    /* $query->orWhere(DB::raw("DATE_FORMAT((select created_at from venue_users where id = assign_user_venues.venue_user_id),'%Y %M %d %H:%i:%s %p')"), 'Like', '%' . $search . '%');
+    //                     $query->orWhere(DB::raw("DATE_FORMAT((select updated_at from venue_users where id = assign_user_venues.venue_user_id),'%Y %M %d %H:%i:%s %p')"), 'Like', '%' . $search . '%');*/
+
+    //                      $query->orWhere(DB::raw("(select created_at from venue_users where id = assign_user_venues.venue_user_id)"), 'Like', '%' . $search . '%');
+    //                     $query->orWhere(DB::raw("(select updated_at from venue_users where id = assign_user_venues.venue_user_id)"), 'Like', '%' . $search . '%');
+                        
+    //                     $query->orWhere(DB::raw("(select created_by from venue_users where id = assign_user_venues.venue_user_id)"), 'Like', '%'. $search . '%');
+    //                     $query->orWhere(DB::raw("(select updated_by from venue_users where id = assign_user_venues.venue_user_id)"), 'Like', '%'. $search . '%');
+    //                 });
+            
+
+
+    //             $filter = $data->get()->count();
+    //         }
+
+    //         $data = $data->offset($request->start);
+    //         $data = $data->take($request->length);
+    //         $data = $data->get();
+
+    //         $start_from = $request->start;
+    //         if($start_from == 0){
+    //             $start_from  = 1;
+    //         }
+    //         if($start_from % 10 == 0){
+    //             $start_from = $start_from + 1;
+    //         }
+
+    //         foreach($data as $da){
+    //             $da->password = "******";
+    //             $da->DT_RowIndex = $start_from++;
+    //         }
+
+    //         $return_data = [
+    //                 "data" => $data,
+    //                 "draw" => (int)$request->draw,
+    //                 "recordsTotal" => $total,
+    //                 "recordsFiltered" => $filter,
+    //                 "input" => $request->all(),
+    //         ];
+
+    //         return response()->json($return_data);
+
+    //     }
+    // }
+
+
     public function venueTableRecords(Request $request){
 
         if($request->isMethod('POST')){
@@ -747,13 +849,14 @@ class TabController extends Controller
             if($search){
                  $data  = $data->where(function($query) use($search){
                         $query->orWhere('username', 'Like', '%'. $search . '%');
-                        $query->orWhereHas('venu', function($query) use ($search){
-                                $query->where('venue_name', 'like', '%'.$search.'%');
-                            });
+                        $query->orWhere(DB::raw("(select venue_name from venus where id = venue_users.venu_id)"), 'Like', '%'. $search . '%');
+                        // $query->orWhereHas('venu', function($query) use ($search){
+                        //         $query->where('venue_name', 'like', '%'.$search.'%');
+                        //     });
                         $query->orWhere('status', 'Like', '%' . $search . '%');
-                        $query->orWhere(DB::raw("DATE_FORMAT(created_at, '%Y %M %d %H:%i:%s %p')"), 'Like', '%' . $search . '%');
-                        $query->orWhere('status', 'Like', '%' . $search . '%');
-                        $query->orWhere(DB::raw("DATE_FORMAT(updated_at, '%Y %M %d %H:%i:%s %p')"), 'Like', '%' . $search . '%');
+                        $query->orWhere("created_at", 'Like', '%' . $search . '%');
+                       // $query->orWhere('status', 'Like', '%' . $search . '%');
+                        $query->orWhere("updated_at", 'Like', '%' . $search . '%');
                         $query->orWhere('created_by', 'Like', '%'. $search . '%');
                         $query->orWhere('updated_by', 'Like', '%'. $search . '%');
                     });
@@ -1156,7 +1259,13 @@ class TabController extends Controller
     public function badgeAssignListUsers(Request $request){
 
         $admin = Auth()->guard('admin')->user();
-        $badge_id = $request->badge_id;
+        $customer_id = $request->customer_id;
+        $find_user = User::whereCustomerId($customer_id)->first();
+        $badge_ids = [];
+        if(!empty($find_user)){
+
+            $badge_ids = AssignBadge::whereUserId($find_user->id)->pluck('badge_id');
+        }
         $column = "id";
         $asc_desc = $request->get("order")[0]['dir'];
      
@@ -1193,7 +1302,7 @@ class TabController extends Controller
             $column = "updated_at";
         }
 
-        $data = AssignBadge::select("id",DB::raw("(select customer_id from users where id = assign_badges.user_id) AS customer_id"),DB::raw("(select badge_name from badges where id = assign_badges.badge_id) AS badge_name"),"status",DB::raw("DATE_FORMAT(from_date, '%d-%M-%Y') AS from_date"),DB::raw("DATE_FORMAT(to_date, '%d-%M-%Y') AS to_date"),DB::raw("DATE_FORMAT(from_time, '%h:%i %p') AS from_time"), DB::raw("DATE_FORMAT(to_time, '%h:%i %p') AS to_time"),"created_by","updated_by","created_at","updated_at")->whereBadgeId($badge_id)->whereDeletedAt(null)->orderBy($column,$asc_desc);
+        $data = AssignBadge::select("id",DB::raw("(select customer_id from users where id = assign_badges.user_id) AS customer_id"),DB::raw("(select badge_name from badges where id = assign_badges.badge_id) AS badge_name"),"status",DB::raw("DATE_FORMAT(from_date, '%d-%M-%Y') AS from_date"),DB::raw("DATE_FORMAT(to_date, '%d-%M-%Y') AS to_date"),DB::raw("DATE_FORMAT(from_time, '%h:%i %p') AS from_time"), DB::raw("DATE_FORMAT(to_time, '%h:%i %p') AS to_time"),"created_by","updated_by","created_at","updated_at")->whereIn('badge_id',$badge_ids)->whereDeletedAt(null)->orderBy($column,$asc_desc);
 
         $total = $data->get()->count();
 
@@ -1271,7 +1380,7 @@ class TabController extends Controller
         $find_user = User::whereCustomerId($data['customer_id'])->first();
 
         if($data['action_type'] == "add"){
-            $find_assign_badge = AssignBadge::whereUserId($find_user->id)->whereBadgeId($data['badge_id'])->first();
+            $find_assign_badge = AssignBadge::whereUserId($find_user->id)->whereBadgeId($data['badge_id'])->whereDeletedAt(null)->first();
             if(!empty($find_assign_badge)){
                 return response()->json(['badge_found_err' => "Selected badge already assigned to the selected Customer ID."],422);
             }
@@ -1283,7 +1392,9 @@ class TabController extends Controller
             }
         }
         $addOrUpdate = $this->venueBusinessModel()->addOrUpdateBadgeAssignInTable($data);
-        return ['status' => 'true','action_type' => $data['action_type']];
+        $addOrUpdate->from_time = Carbon::parse(Carbon::now()->toDateString()." ".$addOrUpdate->from_time)->format('g:i A');
+        $addOrUpdate->to_time = Carbon::parse(Carbon::now()->toDateString(). " " . $addOrUpdate->to_time)->format("g:i A");
+        return ['status' => 'true','action_type' => $data['action_type'],'assigned_badge' => $addOrUpdate];
     }
 
     public function findBadge(Request $request){
@@ -1294,16 +1405,25 @@ class TabController extends Controller
         $bage_find = Badge::whereId($assign_badge_find->badge_id)->first();
         $assign_badge_find->customer_id = $user_find->customer_id;
         $assign_badge_find->badge_name = $bage_find->badge_name;
-        $assign_badge_find->from_time = date("G:i", strtotime($assign_badge_find->from_time));
-        $assign_badge_find->to_time = date("G:i", strtotime($assign_badge_find->to_time));
+        $assign_badge_find->from_time = Carbon::parse(Carbon::now()->toDateString()." ".$assign_badge_find->from_time)->format('g:i A');
+        $assign_badge_find->to_time = Carbon::parse(Carbon::now()->toDateString(). " " . $assign_badge_find->to_time)->format("g:i A");
         return ['data' => $assign_badge_find,'status' => "true"];
 
     }
 
     public function deleteAssignBadge(Request $request){
         $user_find = User::whereCustomerId($request->customer_id)->first();
-        $assign_badge_find = AssignBadge::whereIn('user_id',[$user_find->id])->whereDeletedAt(null)->update(['deleted_at' => Carbon::now()]);
-        return "success";
+        $badge_id = $request->badge_id;
+
+        $find_assign_badge = AssignBadge::whereUserId($user_find->id)->whereBadgeId($badge_id)->whereDeletedAt(null)->with('user','badge')->first();
+        if(empty($find_assign_badge)){
+            return response()->json(['badge_not_found_err' => "Badge not found for selected Customer ID & Badge Name."],422);
+        }
+
+        $find_assign_badge->deleted_at = Carbon::now();
+        $find_assign_badge->update();
+        return $find_assign_badge;
+        //return "success";
     }
 
     public function AddNewBadge(Request $request){
@@ -1405,25 +1525,21 @@ class TabController extends Controller
     }
 
     public function editBadges(Request $request){
-        $all_badges_edit = $request->arr;
+        
+        $admin = Auth::guard('admin')->user();
+        $data = $request->all();
 
-            foreach ($all_badges_edit as $value) {
+        $badge_checkname_exists = Badge::whereBadgeName($data['badge_name'])->where('id','!=', $data['badge_id'])->whereDeletedAt(null)->first();
 
-                if($value['key_type'] == "badge_name"){
+        if(!empty($badge_checkname_exists)){
+            return response()->json(['badge_name_error' => "Badge name already exists."],422);
+        }
 
-                    $badge_name_duplicate = Badge::where('id','!=', $value['data_id'])->where('badge_name','=', $value['text'])->first();
-                    if($badge_name_duplicate){
-                        return response()->json(['Badge_name_error' => "Badge name already exists."], 422);
-                    }
-                }
-            }
-            /*for edit badges loop*/
-            foreach($all_badges_edit as $val){
-                $badge = Badge::find($val['data_id']);
-                $badge->update([ $val['key_type'] => $val['text'] ]);
-            }
+        $update_badge = $this->badgeBusinessModel()->updateBadge($data,$admin);
 
-            return response()->json(['message' => 'Badge details has been updated successfully.']);
+        if($update_badge){
+            return response()->json($update_badge);
+        }
     }
 
 
@@ -1584,6 +1700,12 @@ class TabController extends Controller
             return response()->json(['message' => 'Badges has been deleted successfully.']);
         }
 
+    }
+
+    public function findBadgeById(Request $request){
+        $badge_id = $request->badge_id;
+        $badge = Badge::find($badge_id);
+        return $badge;
     }
 }
 

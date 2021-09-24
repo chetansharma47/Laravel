@@ -288,6 +288,7 @@ class VenueBusinessModel extends Model
 			$assign_badge->created_by = "Admin";
 			$assign_badge->updated_by = "Admin";
 			$assign_badge->save();
+			$assign_badge_find = AssignBadge::whereId($assign_badge->id)->with('user','badge')->first();
 		}else{
 			$find_badge_assign->badge_id = $data['badge_id'];
 			$find_badge_assign->comment = $data['comment'];
@@ -300,9 +301,9 @@ class VenueBusinessModel extends Model
 			$find_badge_assign->created_by = "Admin";
 			$find_badge_assign->updated_by = "Admin";
 			$find_badge_assign->update();
+			$assign_badge_find = AssignBadge::whereId($find_badge_assign->id)->with('user','badge')->first();
 		}
-
-		return " success";
+		return $assign_badge_find;
 
 	}
 

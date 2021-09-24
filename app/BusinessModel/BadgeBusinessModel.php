@@ -49,6 +49,32 @@ class BadgeBusinessModel extends Model
          return ['data' => $add_badge, 'message' => $message];
 	}
 
+    public function updateBadge($data,$admin){
+        if(empty($data['hidden_img2']) && isset($data['badge_image_hidden_imgname'])){
+            if($data['badge_image_src']){
+                $data['badge_image_hidden_val'] = $this->UploadBase64Data($data['badge_image_src'],$data['badge_image_hidden_val']);
+            }
+        }
+
+        $find_badge = Badge::find($data['badge_id']);
+        $find_badge->badge_name = $data['badge_name'];
+
+        if(isset($data['badge_image_hidden_imgname'])){
+
+            $find_badge->image = $data['badge_image_hidden_val'];
+            $find_badge->name_of_file_show = $data['badge_image_hidden_imgname'];
+        }
+        $find_badge->status = $data['badge_select'];
+        $find_badge->created_by = 'Admin';
+        $find_badge->updated_by = 'Admin';
+        $find_badge->update();
+
+        if($find_badge){
+            $message = 'Badge details has been updated successfully.';
+        }
+        return ['data' => $find_badge, 'message' => $message];
+    }
+
 
 }
 
