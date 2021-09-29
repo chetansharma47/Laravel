@@ -629,8 +629,11 @@ class TabController extends Controller
     public function venueUser(Request $request){
         if($request->isMethod('GET')){
 
+            //DB::raw("(select venue_name from venus where id = assign_user_venues.venu_id) AS venue_name")
 
-            //return $data = VenueUser::select('*',DB::raw("GROUP_CONCAT(venue_users.id) as docname"))->whereDeletedAt(null)->get();
+           // return $data = VenueUser::select('*',DB::raw("(select venue_name from venus where id = venue_users.venu_id) AS venue_name"))->whereDeletedAt(null)->with('assignUserVenues')->get();
+
+            // return $data = VenueUser::select('*',DB::raw("GROUP_CONCAT((select venu_id from assign_user_venues where id = assign_user_venues.venue_user_id) SEPARATOR ',')"))->whereDeletedAt(null)->get();
             $admin = Auth::guard('admin')->user();
             $venulist = Venu::whereAdminId($admin->id)->whereDeletedAt(null)->get();
             return view('admin.venue-user',compact('venulist'));
@@ -680,21 +683,31 @@ class TabController extends Controller
 
             $hashpassword = Hash::make($request->v_password);
 
-            $venuecreate = new VenueUser;
+            $venuecreate = new VenueUser();
             $venuecreate->username = $request->v_user;
             $venuecreate->password = $hashpassword;
-            $venuecreate->venu_id = $request->v_name;
+            //$venuecreate->venu_id = $request->v_name;
             $venuecreate->status = $request->v_status;
             $venuecreate->date_time = Carbon::now();
             $venuecreate->created_by = "Admin";
             $venuecreate->updated_by = "Admin";
             $venuecreate->save();
 
+            $venue_ids = explode(",", $request->v_name);
+
+            foreach ($venue_ids as $venue_id) {
+                $assign_user_venue = new AssignUserVenue();
+                $assign_user_venue->venue_user_id = $venuecreate->id;
+                $assign_user_venue->venu_id = $venue_id;
+                $assign_user_venue->save();
+            }
+
+
             if($venuecreate){
                 return response()->json(['message' => 'Venue user added successfully.']);
             }
 
-                return response()->json(['username_err' => 'Something went wrong.'],422);
+            return response()->json(['username_err' => 'Something went wrong.'],422);
         }
 
         if($request->isMethod('GET')){
@@ -829,7 +842,7 @@ class TabController extends Controller
             }else if($order == 2){
                 $column = "password";
             }else if($order == 3){
-                $column = "venue_name";
+                $column = "id";
             }else if($order == 4){
                 $column = "status";
             }else if($order == 5){
@@ -842,17 +855,19 @@ class TabController extends Controller
                 $column = "updated_by";
             }
 
-            $data = VenueUser::select('*',DB::raw("(select venue_name from venus where id = venue_users.venu_id) AS venue_name"))->whereDeletedAt(null)->orderBy($column,$asc_desc);
+            $data = $data = VenueUser::whereDeletedAt(null)->with('assignUserVenues')->orderBy($column,$asc_desc);
             $total = $data->count();
             $filter = $total;
 
             if($search){
                  $data  = $data->where(function($query) use($search){
                         $query->orWhere('username', 'Like', '%'. $search . '%');
-                        $query->orWhere(DB::raw("(select venue_name from venus where id = venue_users.venu_id)"), 'Like', '%'. $search . '%');
-                        // $query->orWhereHas('venu', function($query) use ($search){
-                        //         $query->where('venue_name', 'like', '%'.$search.'%');
-                        //     });
+                        //$query->orWhere(DB::raw("(select venue_name from venus where id = venue_users.venu_id)"), 'Like', '%'. $search . '%');
+                        $query->orWhereHas('assignUserVenues', function($insideQuery) use ($search){
+                            $insideQuery->whereHas('venu', function($insideQuery2) use ($search){
+                                return $insideQuery2->where('venue_name', 'like', '%'.$search.'%');
+                            });
+                        });
                         $query->orWhere('status', 'Like', '%' . $search . '%');
                         $query->orWhere("created_at", 'Like', '%' . $search . '%');
                        // $query->orWhere('status', 'Like', '%' . $search . '%');
@@ -881,6 +896,9 @@ class TabController extends Controller
             foreach($data as $da){
                 $da->password = "******";
                 $da->DT_RowIndex = $start_from++;
+                $pluck_venu_ids = Arr::pluck($da->assignUserVenues, 'venu_id');
+                $pluck_venue_name = Venu::whereIn('id', $pluck_venu_ids)->pluck('venue_name')->toArray();
+                $da->venue_name = implode(", ", $pluck_venue_name);
             }
 
             $return_data = [

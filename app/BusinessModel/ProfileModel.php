@@ -15,6 +15,7 @@ use App\Mail\UserForgotPassword;
 use App\Models\TierCondition;
 use App\Models\LoginRequest;
 use App\Models\Venu;
+use App\Models\AssignUserVenue;
 class ProfileModel extends Model
 {
 
@@ -224,12 +225,12 @@ class ProfileModel extends Model
                     return ["status" => 3, "data" => null, "error_msg" => "Your account has been deleted by admin."];
                 }
 
-
-                if($user_find->venu_id != $request->venu_id){
+                $find_assign_user_venue = AssignUserVenue::whereVenuId($request->venu_id)->whereVenueUserId($user_find->id)->first();
+                if(empty($find_assign_user_venue)){
                     return ["status" => 3, "data" => null, "error_msg" => "The selected venue is not allocated to this user, please select correct venue."];
                 }
 
-                $find_login_request = LoginRequest::whereVenueUserId($user_find->id)->where('mac_address', '=', $request->mac_address)->first();
+                $find_login_request = LoginRequest::whereVenueUserId($user_find->id)->where('mac_address', '=', $request->mac_address)->whereVenuId($request->venu_id)->first();
 
                 if(empty($find_login_request)){
 
@@ -242,7 +243,7 @@ class ProfileModel extends Model
 
                     $login_req = new LoginRequest();
                     $login_req->venue_user_id = $user_find->id;
-                    $login_req->venu_id = $user_find->venu_id;
+                    $login_req->venu_id = $request->venu_id;
                     $login_req->device_model  = $request->device_model;
                     $login_req->mac_address   = $request->mac_address;
                     $login_req->authorized_status = "Unauthorized";

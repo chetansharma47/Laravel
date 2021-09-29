@@ -236,6 +236,7 @@ select.form-control.form-group.status_select:focus{
 		</div>
 	</header>
 	<section class="mt-3">
+		<input type="hidden" id="venue_selection">
 		<div class="container-fluid">
 			<div class="row">
 				<div class="col-md-3">
@@ -256,15 +257,34 @@ select.form-control.form-group.status_select:focus{
 						<label style="font-weight: 400;">
 							Venue
 						</label>
-						<select name="venue_selection" id="venue_selection" class="form-control form-group select_option" style="position: relative;border-radius: 10px; cursor: pointer;">
+						<!-- <select name="venue_selection" id="venue_selection" class="form-control form-group select_option" style="position: relative;border-radius: 10px; cursor: pointer;">
 							<option readonly value="">Select Venue</option>
 							@if(count($venulist) > 0)
 								@foreach($venulist as $valu)
 									<option value="{{ $valu->id }}">{{ $valu->venue_name }}</option>
 								@endforeach
 							@endif
-						</select>
+						</select> -->
+
+
+						<div class="checkboxesbg">
+								<div class="d-flex flex-wrap">
+									@if(count($venulist) > 0)
+										@foreach($venulist as $valu)
+											<div class="mr-2">
+												<label class="tick_box"><span class="date">{{$valu->venue_name}}</span>
+													<input type="checkbox" class="venue_select" data-id="{{$valu->id}}">
+													<span class="checkmark"></span>
+												</label>
+											</div>
+										@endforeach()
+									@endif
+								
+								</div>
+							</div>
 					</div>
+
+
 					<div class="venue_inputs mb-3 px-2 pl-3">
 						<label style="font-weight: 400;">
 							Status
@@ -426,7 +446,8 @@ select.form-control.form-group.status_select:focus{
 	<script>
 		
 		// Validate venue user form & save, display record
-
+		$("#venue_selection").val("");
+		$(".venue_select").prop("checked",false);
 		$('#venue_add_new').on("click",function(){
 			$(".invalid_cls").remove();
 			var vuser = $('#venue_username').val();
@@ -463,7 +484,7 @@ select.form-control.form-group.status_select:focus{
 				$("#alert_text").text("Password must be at least 6 characters long.");
 				$("#validationModel").modal("show");
 				$("#validationModel").unbind("click");
-			return false;
+				return false;
 
 			}
 
@@ -471,7 +492,7 @@ select.form-control.form-group.status_select:focus{
 				$("#alert_text").text("Password may not be greater than 200 characters.");
 				$("#validationModel").modal("show");
 				$("#validationModel").unbind("click");
-			return false;
+				return false;
 
 			}
 
@@ -479,7 +500,7 @@ select.form-control.form-group.status_select:focus{
 				$("#alert_text").text("Please select venue.");
 				$("#validationModel").modal("show");
 				$("#validationModel").unbind("click");
-			return false;
+				return false;
 
 			}
 
@@ -487,7 +508,7 @@ select.form-control.form-group.status_select:focus{
 				$("#alert_text").text("Please select status.");
 				$("#validationModel").modal("show");
 				$("#validationModel").unbind("click");
-			return false;
+				return false;
 
 			}
 
@@ -497,33 +518,34 @@ select.form-control.form-group.status_select:focus{
 				dataType:'JSON',
 				data:{v_user:vuser,v_password:vuser_password,v_name:vselection,v_status:vstatus,'_token':vtoken},
 				beforeSend:function(){
-          $("#loaderModel").modal("show");
+          			$("#loaderModel").modal("show");
 					$("#loaderModel").unbind("click");
 				},
 				success:function(data){
 					setTimeout(function(){
 						$("#loaderModel").modal("hide");
-		        $("#successModel").modal("show");
-	        	$("#success_alert_text").text(data.message);
-	        	$("#successModel").unbind("click");
-	        	$('#venue_username').val('');
+				        $("#successModel").modal("show");
+			        	$("#success_alert_text").text(data.message);
+			        	$("#successModel").unbind("click");
+			        	$('#venue_username').val('');
 						$('#venue_user_password').val('');
 						$("#venue_selection").val('');
 						$("#venue_user_status").val('');
 						$('#basic-datatables').DataTable().ajax.reload();
+						$(".venue_select").prop("checked",false);
 					},500);
 				},error: function(data, textStatus, xhr) {
-          if(data.status == 422){
-            setTimeout(function(){
-            		$("#loaderModel").modal("hide");
-                var result = data.responseJSON;
-               	if(result['username_err'] && result['username_err'].length > 0){
-               		$("#alert_text").text(result['username_err']);
-									$("#validationModel").modal("show");
-									$("#validationModel").unbind("click");
-               	}
-                return false;
-            },500);
+		          if(data.status == 422){
+		            setTimeout(function(){
+	            		$("#loaderModel").modal("hide");
+		                var result = data.responseJSON;
+		               	if(result['username_err'] && result['username_err'].length > 0){
+		               		$("#alert_text").text(result['username_err']);
+							$("#validationModel").modal("show");
+							$("#validationModel").unbind("click");
+		               	}
+		                return false;
+		            },500);
           } 
       	}
 			});
@@ -561,7 +583,7 @@ select.form-control.form-group.status_select:focus{
 					{data: 'DT_RowIndex', name: 'DT_RowIndex'},
 					{data:'username',name:'username'},
 					{data:'password',name:'password'},
-					{data:'venue_name', name:'venue_name'},
+					{data:'venue_name', name:'venue_name', orderable: false},
 					{data:'status', name:'status'},
 					{data:'created_at', name:'created_at'},
 					{data:'created_by', name:'created_by'},
@@ -748,6 +770,47 @@ select.form-control.form-group.status_select:focus{
 
 		});
 
+	</script>
+
+	<script type="text/javascript">
+		$(".venue_select").on("click",function(){
+			let venue_id = $(this).data("id").toString();
+			let venue_selection = $("#venue_selection").val();
+			let __split_venue_selection = venue_selection.split(",");
+
+			__split_venue_selection = __split_venue_selection.filter(function (el) {
+		   		if(el == ""){
+		   			return el != "";
+		   		}else{
+		   			return el != null;
+		   		}
+			});
+			if($(this).prop("checked") == true){
+
+				if(__split_venue_selection.indexOf(venue_id) == -1){
+			   		if(__split_venue_selection.length > 0){
+			   			$("#venue_selection").val(venue_selection + "," + venue_id);
+			   		}else{
+			   			$("#venue_selection").val(venue_id);
+			   		}
+			   	}
+
+			}else{
+				
+				//remove id
+
+				if(__split_venue_selection.indexOf(venue_id) != -1){
+			   		__split_venue_selection.splice(__split_venue_selection.indexOf(venue_id),1);
+
+			   		if(__split_venue_selection.length > 0){
+			   			__split_venue_selection = __split_venue_selection.toString();
+			   			$("#venue_selection").val(__split_venue_selection);
+			   		}else{
+			   			$("#venue_selection").val("");
+			   		}
+			   	}
+			}
+		})
 	</script>
 </body>
 </html>
