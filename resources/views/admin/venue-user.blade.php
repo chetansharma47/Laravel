@@ -185,9 +185,9 @@ select.form-control.form-group.status_select:focus{
     white-space: nowrap;
 }
 
-.checkboxesbg {
+/*.checkboxesbg {
     padding: 40px 4px;
-}
+}*/
 	</style>
 </head>
 <body>
@@ -272,10 +272,10 @@ select.form-control.form-group.status_select:focus{
 
 
 						<div class="checkboxesbg">
-								<div class="d-flex flex-wrap">
+								<div class="d-flex flex-wrap" style="height: 200px; overflow: auto;">
 									@if(count($venulist) > 0)
 										@foreach($venulist as $valu)
-											<div class="mr-2">
+											<div class="mr-2" style="width: 100%;">
 												<label class="tick_box"><span class="date">{{$valu->venue_name}}</span>
 													<input type="checkbox" class="venue_select" data-id="{{$valu->id}}">
 													<span class="checkmark"></span>
