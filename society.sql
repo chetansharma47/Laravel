@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Sep 29, 2021 at 03:38 PM
+-- Generation Time: Sep 29, 2021 at 03:55 PM
 -- Server version: 5.7.35-0ubuntu0.18.04.1
 -- PHP Version: 7.2.34-10+ubuntu18.04.1+deb.sury.org+1
 
@@ -116,22 +116,6 @@ CREATE TABLE `assign_badges` (
   `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `assign_badges`
---
-
-INSERT INTO `assign_badges` (`id`, `user_id`, `badge_id`, `comment`, `status`, `when_day`, `from_date`, `to_date`, `from_time`, `to_time`, `created_at`, `updated_at`, `created_by`, `updated_by`, `deleted_at`) VALUES
-(1, 2, 1, 'gjjf board and from the object library drag a textView to your view. Now in the text view if the tex', 'Active', 'Tuesday,Wednesday,Thursday,Friday,Saturday,Monday,Sunday', '2021-09-22', '2021-10-01', '15:03:00', '18:03:00', '2021-09-22 09:33:18', '2021-09-22 09:33:18', 'Admin', 'Admin', NULL),
-(2, 1, 1, 'board and from the obje', 'Active', 'Wednesday', '2021-09-22', '2021-10-08', '15:06:00', '16:06:00', '2021-09-22 09:36:34', '2021-09-24 09:12:01', 'Admin', 'Admin', '2021-09-24 09:12:01'),
-(3, 1, 2, 'board and from the object library drag a textView to your view. Now in the text view if the text is', 'Active', 'Tuesday,Wednesday', '2021-09-22', '2021-09-30', '15:07:00', '18:07:00', '2021-09-22 09:37:51', '2021-09-24 06:34:19', 'Admin', 'Admin', '2021-09-24 06:34:19'),
-(4, 2, 2, 'board and from the object library drag a textView to your view. Now', 'Active', 'Tuesday', '2021-09-22', '2021-09-22', '17:25:00', '18:06:00', '2021-09-22 09:42:06', '2021-09-24 06:34:19', 'Admin', 'Admin', '2021-09-24 06:34:19'),
-(5, 1, 5, 'board and from the obje', 'Active', 'Wednesday,Wednesday', '2021-09-22', '2021-10-08', '15:06:00', '16:06:00', '2021-09-24 09:11:05', '2021-09-24 09:12:01', 'Admin', 'Admin', '2021-09-24 09:12:01'),
-(6, 1, 5, 'sfsdgsdg', 'Active', 'Monday,Sunday', '2021-09-24', '2021-09-25', '14:46:00', '18:46:00', '2021-09-24 09:17:33', '2021-09-24 09:35:03', 'Admin', 'Admin', '2021-09-24 09:35:03'),
-(7, 1, 1, 'sfsdgsdg', 'Active', 'Monday,Sunday', '2021-09-24', '2021-09-25', '14:46:00', '18:46:00', '2021-09-24 09:25:09', '2021-09-24 09:35:35', 'Admin', 'Admin', '2021-09-24 09:35:35'),
-(8, 1, 6, 'fsa', 'Active', 'Monday,Sunday', '2021-09-24', '2021-09-25', '14:56:00', '17:56:00', '2021-09-24 09:27:06', '2021-09-24 09:27:06', 'Admin', 'Admin', NULL),
-(9, 1, 7, 'fsa', 'Active', 'Monday,Sunday', '2021-09-24', '2021-09-25', '14:56:00', '17:56:00', '2021-09-24 09:28:50', '2021-09-24 09:28:50', 'Admin', 'Admin', NULL),
-(10, 1, 8, 'sdgsdg', 'Active', 'Tuesday,Monday', '2021-09-24', '2021-09-25', '15:00:00', '17:00:00', '2021-09-24 09:30:15', '2021-09-24 09:30:39', 'Admin', 'Admin', '2021-09-24 09:30:39');
-
 -- --------------------------------------------------------
 
 --
@@ -146,18 +130,6 @@ CREATE TABLE `assign_user_venues` (
   `updated_at` timestamp NULL DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `assign_user_venues`
---
-
-INSERT INTO `assign_user_venues` (`id`, `venu_id`, `venue_user_id`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 1, 2, NULL, NULL, NULL),
-(2, 2, 2, NULL, NULL, NULL),
-(3, 1, 3, '2021-09-29 10:06:14', '2021-09-29 10:06:14', NULL),
-(4, 2, 3, '2021-09-29 10:06:14', '2021-09-29 10:06:14', NULL),
-(5, 1, 4, '2021-09-29 10:07:53', '2021-09-29 10:07:53', NULL),
-(6, 2, 4, '2021-09-29 10:07:53', '2021-09-29 10:07:53', NULL);
 
 -- --------------------------------------------------------
 
@@ -178,21 +150,6 @@ CREATE TABLE `badges` (
   `updated_at` timestamp NULL DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `badges`
---
-
-INSERT INTO `badges` (`id`, `admin_id`, `badge_name`, `image`, `name_of_file_show`, `status`, `created_by`, `updated_by`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 1, 'badge1', '0922202115022183614af825f357f.jpeg', 'download (4).jpeg', 'Active', 'Admin', 'Admin', '2021-09-22 09:32:21', '2021-09-22 09:34:58', NULL),
-(2, 1, 'bad', '0922202115071835614af94e0c62f.jpeg', 'download (3).jpeg', 'Active', 'Admin', 'Admin', '2021-09-22 09:37:18', '2021-09-24 06:34:19', '2021-09-24 06:34:19'),
-(3, 1, 'qweqwe', '0924202111520734614d6e8f0e6c0.png', 'upload_icon.png', 'Active', 'Admin', 'Admin', '2021-09-24 06:03:56', '2021-09-24 06:33:35', '2021-09-24 06:33:35'),
-(4, 1, 'as', '0924202111352046614d6aa0298ea.png', 'upload_icon.png', 'Active', 'Admin', 'Admin', '2021-09-24 06:05:20', '2021-09-24 06:33:06', '2021-09-24 06:33:06'),
-(5, 1, 'asd', '0924202113030798614d7f33b3475.jpeg', 'world.topo.200407.3x5400x2700.jpg', 'Active', 'Admin', 'Admin', '2021-09-24 07:33:07', '2021-09-24 07:33:07', NULL),
-(6, 1, '111', '0924202114555266614d99a07300f.jpeg', 'world.topo.200407.3x5400x2700.jpg', 'Active', 'Admin', 'Admin', '2021-09-24 09:25:52', '2021-09-24 09:25:52', NULL),
-(7, 1, '22', '0924202114561527614d99b76695e.jpeg', 'world.topo.200407.3x5400x2700.jpg', 'Active', 'Admin', 'Admin', '2021-09-24 09:26:15', '2021-09-24 09:26:15', NULL),
-(8, 1, '333', '0924202114582181614d9a354a485.png', 'upload_icon.png', 'Active', 'Admin', 'Admin', '2021-09-24 09:28:21', '2021-09-24 09:28:21', NULL),
-(9, 1, '444', '0924202114594665614d9a8a6c36d.jpeg', 'world.topo.200407.3x5400x2700.jpg', 'Active', 'Admin', 'Admin', '2021-09-24 09:29:46', '2021-09-24 09:29:46', NULL);
 
 -- --------------------------------------------------------
 
@@ -273,14 +230,6 @@ CREATE TABLE `events` (
   `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `events`
---
-
-INSERT INTO `events` (`id`, `admin_id`, `venu_id`, `unique_id`, `event_name`, `event_description`, `when_day`, `from_date`, `to_date`, `event_time`, `to_time`, `status`, `image`, `name_of_file_show`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 1, 1, 1, 'asfasf', 'asfasfa', 'Monday,Friday', '2021-09-22', '2021-09-23', '17:40:00', '18:40:00', 'Active', '0922202117404942614b1d495d971.jpeg', 'world.topo.200407.3x5400x2700.jpg', '2021-09-22 12:10:49', '2021-09-22 12:10:49', NULL),
-(2, 1, 1, 3, 'afasf', 'asfasf', 'Monday,Friday', '2021-09-22', '2021-09-24', '17:41:00', '18:41:00', 'Active', '0922202117414075614b1d7c5ab55.jpeg', 'world.topo.200407.3x5400x2700.jpg', '2021-09-22 12:11:40', '2021-09-22 12:11:40', NULL);
-
 -- --------------------------------------------------------
 
 --
@@ -299,14 +248,6 @@ CREATE TABLE `login_requests` (
   `updated_at` timestamp NULL DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `login_requests`
---
-
-INSERT INTO `login_requests` (`id`, `venue_user_id`, `venu_id`, `device_model`, `mac_address`, `authorized_status`, `date_time`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 2, 1, 'Nokia', '11:00:11:11:11:00', 'Authorized', '2021-09-24 17:14:49', '2021-09-24 11:44:49', '2021-09-24 11:47:17', NULL),
-(2, 2, 2, 'Nokia', '11:00:11:11:11:00', 'Authorized', '2021-09-24 17:17:01', '2021-09-24 11:47:01', '2021-09-24 11:47:17', NULL);
 
 -- --------------------------------------------------------
 
@@ -369,20 +310,6 @@ CREATE TABLE `oauth_access_tokens` (
   `updated_at` timestamp NULL DEFAULT NULL,
   `expires_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `oauth_access_tokens`
---
-
-INSERT INTO `oauth_access_tokens` (`id`, `user_id`, `client_id`, `name`, `scopes`, `revoked`, `created_at`, `updated_at`, `expires_at`) VALUES
-('0237d786ef7829f502ba30750a99d25185ad8e625859522ee231199854cec4463cc98efe8c1f3313', 1, 1, 'andrew', '[]', 1, '2021-09-22 03:55:45', '2021-09-22 03:55:45', '2022-09-22 09:25:45'),
-('17ecd792287fe858d9111fc2d591b2ea12410b2f6398fd11c88dbe4055c1c51990d4d5a76fbb239c', 1, 1, 'andrew', '[]', 1, '2021-09-22 09:34:30', '2021-09-22 09:34:30', '2022-09-22 15:04:30'),
-('180d2532862a7e81984a083f9fb3835968bedc489cfdb5079bf6dc05b69ff3ccc2b80f3272dbe5ee', 2, 1, 'andrew', '[]', 1, '2021-09-22 03:57:47', '2021-09-22 03:57:47', '2022-09-22 09:27:47'),
-('51233c241e262a6ce5476fac8ecdddd30c3514d51a7c85bbe6891e481c165cd359eccaa104050471', 2, 1, 'andrew', '[]', 1, '2021-09-22 03:58:10', '2021-09-22 03:58:10', '2022-09-22 09:28:10'),
-('5a542e614040373301f46a9c3f32ce47ef4ce957ecff44c041fc3429f19fe4eb8b263bd9813c8db2', 2, 1, 'andrew', '[]', 0, '2021-09-22 05:39:23', '2021-09-22 05:39:23', '2022-09-22 11:09:23'),
-('b6d481ce7d654b62c1a4f5e9bc925846f385adfa4174bd96ae9b04b874508143f1a61219347633f4', 1, 1, 'andrew', '[]', 1, '2021-09-22 03:56:06', '2021-09-22 03:56:06', '2022-09-22 09:26:06'),
-('b91f1c36973e0c557ae0bda56ee18601cc7addc33a0a0b96c53842ff2960b80abc62f5fd71b3165b', 1, 1, 'andrew', '[]', 0, '2021-09-23 02:23:35', '2021-09-23 02:23:35', '2022-09-23 07:53:35'),
-('c55e849fd2c48c343b03987c8e512dea14661eef6a0ded86db0d8851d84aa20338c2c46214a8a035', 1, 1, 'andrew', '[]', 1, '2021-09-23 02:15:15', '2021-09-23 02:15:15', '2022-09-23 07:45:15');
 
 -- --------------------------------------------------------
 
@@ -485,14 +412,6 @@ CREATE TABLE `offers` (
   `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `offers`
---
-
-INSERT INTO `offers` (`id`, `admin_id`, `venu_id`, `unique_id`, `offer_name`, `offer_desc`, `image`, `name_of_file_show`, `from_date`, `to_date`, `time`, `to_time`, `status`, `offer_type`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 1, 1, 1, 'Birthday Offer', 'Birthday Offer', 'app_icon.png', 'app icon', NULL, NULL, NULL, NULL, 'Active', 'BirthdayOffer', '2021-09-22 09:31:15', '2021-09-22 09:31:15', NULL),
-(2, 1, 2, 2, 'Birthday Offer', 'Birthday Offer', 'app_icon.png', 'app icon', NULL, NULL, NULL, NULL, 'Active', 'BirthdayOffer', '2021-09-24 11:46:21', '2021-09-24 11:46:21', NULL);
-
 -- --------------------------------------------------------
 
 --
@@ -516,14 +435,6 @@ CREATE TABLE `offer_settings` (
   `updated_at` timestamp NULL DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `offer_settings`
---
-
-INSERT INTO `offer_settings` (`id`, `offer_id`, `city_id`, `dob`, `gender`, `date`, `txn_start_period`, `txn_end_period`, `txn_amount_condition`, `from_price`, `to_price`, `offer_type`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 1, NULL, 'Today', NULL, NULL, NULL, NULL, NULL, 0, 0, 'BirthdayOffer', '2021-09-22 09:31:15', '2021-09-22 09:31:15', NULL),
-(2, 2, NULL, 'Today', NULL, NULL, NULL, NULL, NULL, 0, 0, 'BirthdayOffer', '2021-09-24 11:46:21', '2021-09-24 11:46:21', NULL);
 
 -- --------------------------------------------------------
 
@@ -626,14 +537,6 @@ CREATE TABLE `users` (
   `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `users`
---
-
-INSERT INTO `users` (`id`, `image`, `country_code`, `mobile_number`, `first_name`, `last_name`, `email`, `password`, `city_of_residence`, `nationality`, `dob`, `gender`, `reference_code`, `device_type`, `device_token`, `reset_password_token`, `verify_email_token`, `is_block`, `is_verify`, `refresh_token`, `remember_token`, `is_active`, `customer_id`, `customer_tier`, `wallet_cash`, `reference_by`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, '09222021092545614af699d29fa.jpeg', '+91', '9876061473', 'sakk', 'ah', 's2@yopmail.com', '$2y$10$Bmik3KesZaEPG7Ow8JqtB.yL9z1Mg1AAL0pXbIGYYEBZRTaOJ5I4G', 'Abu Dhabi', 'Afghanistan', '2005-09-22', 'Male', NULL, 'Ios', 'jaskfjsajfljal', NULL, 'R8ERJTMuMHoiMMMZTF0vK5ruh30xH8nLOhJjU8ifkzdYxxWEKaYrvW7Pc1dJYlou', '0', '1', NULL, NULL, 'Active', 99914492145, NULL, NULL, NULL, '2021-09-22 03:55:45', '2021-09-22 09:34:30', NULL),
-(2, '09222021092747614af713afe30.jpeg', '+91', '8699047413', 'Dev', 'Amar', 'amar@yopmail.com', '$2y$10$D9D2KfCQKhM6ukw3cXMXz.adT.tzkwWIlpHp5Lxhn9xs38nUdC5lm', 'Abu Dhabi', 'Afghanistan', '2005-09-22', 'Male', NULL, 'Ios', '12335556', NULL, NULL, '0', '1', NULL, NULL, 'Active', 81746178105, NULL, NULL, NULL, '2021-09-22 03:57:47', '2021-09-22 03:58:09', NULL);
-
 -- --------------------------------------------------------
 
 --
@@ -661,14 +564,6 @@ CREATE TABLE `user_assign_offers` (
   `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `user_assign_offers`
---
-
-INSERT INTO `user_assign_offers` (`id`, `offer_id`, `offer_setting_id`, `user_id`, `city_id`, `dob`, `gender`, `date`, `assign_at`, `txn_start_period`, `txn_end_period`, `txn_amount_condition`, `from_price`, `to_price`, `offer_type`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(3, 1, 1, 1, NULL, 'Today', NULL, NULL, '2021-09-23', NULL, NULL, NULL, 0, 0, 'BirthdayOffer', '2021-09-23 02:19:48', '2021-09-23 02:19:48', NULL),
-(4, 1, 1, 2, NULL, 'Today', NULL, NULL, '2021-09-23', NULL, NULL, NULL, 0, 0, 'BirthdayOffer', '2021-09-23 02:19:49', '2021-09-23 02:19:49', NULL);
-
 -- --------------------------------------------------------
 
 --
@@ -692,15 +587,6 @@ CREATE TABLE `venue_users` (
   `updated_at` timestamp NULL DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `venue_users`
---
-
-INSERT INTO `venue_users` (`id`, `venu_id`, `username`, `password`, `status`, `device_model`, `mac_address`, `authorized_status`, `date_time`, `access_token`, `created_by`, `updated_by`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(2, 1, 'asd', '$2y$10$TQ/PdGBbLS9y175zEPRncuWbChU2090ejSeS4JZ7GjWysnCN13OL2', 'Active', 'N/A', 'N/A', 'Unauthorized', '2021-09-23 15:59:26', '$2y$10$.4fx4uau4qmo.Hshx1/KJe.s2lAirT2QvCr1Bc4FT2KgDoO/n3bge', 'Admin', 'Admin', '2021-09-23 10:29:26', '2021-09-24 11:47:01', NULL),
-(3, NULL, 'qqqqqqqq', '$2y$10$URURhfcc2Gfp2coq7LrMlOpxp23HNGYNPoJEV63xZ3wbM8EouU0mS', 'Active', 'N/A', 'N/A', 'Unauthorized', '2021-09-29 15:36:14', NULL, 'Admin', 'Admin', '2021-09-29 10:06:14', '2021-09-29 10:06:14', NULL),
-(4, NULL, 'aaaaaa', '$2y$10$8157GGXIp63EsSS53OEq5.cYlFJEgzFQtocJvB.3Fj15pBNI0w9hu', 'Active', 'N/A', 'N/A', 'Unauthorized', '2021-09-29 15:37:53', NULL, 'Admin', 'Admin', '2021-09-29 10:07:53', '2021-09-29 10:07:53', NULL);
 
 -- --------------------------------------------------------
 
@@ -726,14 +612,6 @@ CREATE TABLE `venus` (
   `updated_at` timestamp NULL DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `venus`
---
-
-INSERT INTO `venus` (`id`, `admin_id`, `venue_name`, `unique_id`, `address`, `venue_description`, `phone_number`, `google_map_location_link`, `book_now_link`, `image`, `name_of_file_show`, `menu_link`, `status`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 1, 'fdefef ew fwefewf ew fwe ffwe', 1, 'first venu first venu first ve address', 'first venu first venu first ve desc', '454566156', 'http://192.168.3.121/society_20_september/admin/adding-venue', 'http://192.168.3.121/society_20_september/admin/adding-venue', '0922202115011545614af7e3a8e80.jpeg', 'download (1).jpeg', 'http://192.168.3.121/society_20_september/admin/adding-venue', 'Active', '2021-09-22 09:31:15', '2021-09-22 11:13:58', NULL),
-(2, 1, 'New Venue', 2, 'Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum', 'Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum', '1234567895', 'https://www.google.com', 'https://www.google.com', '0924202117162150614dba8d5794d.jpeg', 'world.topo.200407.3x5400x2700.jpg', 'https://www.google.com', 'Active', '2021-09-24 11:46:21', '2021-09-24 11:46:21', NULL);
 
 -- --------------------------------------------------------
 
@@ -970,17 +848,17 @@ ALTER TABLE `application_images`
 -- AUTO_INCREMENT for table `assign_badges`
 --
 ALTER TABLE `assign_badges`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `assign_user_venues`
 --
 ALTER TABLE `assign_user_venues`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `badges`
 --
 ALTER TABLE `badges`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `cashbacks`
 --
@@ -995,12 +873,12 @@ ALTER TABLE `cities`
 -- AUTO_INCREMENT for table `events`
 --
 ALTER TABLE `events`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `login_requests`
 --
 ALTER TABLE `login_requests`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `migrations`
 --
@@ -1020,17 +898,17 @@ ALTER TABLE `oauth_personal_access_clients`
 -- AUTO_INCREMENT for table `offers`
 --
 ALTER TABLE `offers`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `offer_settings`
 --
 ALTER TABLE `offer_settings`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `otps`
 --
 ALTER TABLE `otps`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `tier_conditions`
 --
@@ -1045,22 +923,22 @@ ALTER TABLE `tier_settings`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `user_assign_offers`
 --
 ALTER TABLE `user_assign_offers`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `venue_users`
 --
 ALTER TABLE `venue_users`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `venus`
 --
 ALTER TABLE `venus`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `wallet_cashbacks`
 --

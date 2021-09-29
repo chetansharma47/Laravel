@@ -184,6 +184,10 @@ select.form-control.form-group.status_select:focus{
 	.date_white_space{
     white-space: nowrap;
 }
+
+.checkboxesbg {
+    padding: 40px 4px;
+}
 	</style>
 </head>
 <body>
