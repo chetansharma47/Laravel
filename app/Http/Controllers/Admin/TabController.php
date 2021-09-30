@@ -1280,9 +1280,11 @@ class TabController extends Controller
         $customer_id = $request->customer_id;
         $find_user = User::whereCustomerId($customer_id)->first();
         $badge_ids = [];
+        $user_id = [];
         if(!empty($find_user)){
 
             $badge_ids = AssignBadge::whereUserId($find_user->id)->pluck('badge_id');
+            $user_id[] = $find_user->id; 
         }
         $column = "id";
         $asc_desc = $request->get("order")[0]['dir'];
@@ -1320,7 +1322,7 @@ class TabController extends Controller
             $column = "updated_at";
         }
 
-        $data = AssignBadge::select("id",DB::raw("(select customer_id from users where id = assign_badges.user_id) AS customer_id"),DB::raw("(select badge_name from badges where id = assign_badges.badge_id) AS badge_name"),"status",DB::raw("DATE_FORMAT(from_date, '%d-%M-%Y') AS from_date"),DB::raw("DATE_FORMAT(to_date, '%d-%M-%Y') AS to_date"),DB::raw("DATE_FORMAT(from_time, '%h:%i %p') AS from_time"), DB::raw("DATE_FORMAT(to_time, '%h:%i %p') AS to_time"),"created_by","updated_by","created_at","updated_at")->whereIn('badge_id',$badge_ids)->whereDeletedAt(null)->orderBy($column,$asc_desc);
+        $data = AssignBadge::select("id",DB::raw("(select customer_id from users where id = assign_badges.user_id) AS customer_id"),DB::raw("(select badge_name from badges where id = assign_badges.badge_id) AS badge_name"),"status",DB::raw("DATE_FORMAT(from_date, '%d-%M-%Y') AS from_date"),DB::raw("DATE_FORMAT(to_date, '%d-%M-%Y') AS to_date"),DB::raw("DATE_FORMAT(from_time, '%h:%i %p') AS from_time"), DB::raw("DATE_FORMAT(to_time, '%h:%i %p') AS to_time"),"created_by","updated_by","created_at","updated_at")->whereIn('badge_id',$badge_ids)->whereIn('user_id', $user_id)->whereDeletedAt(null)->orderBy($column,$asc_desc);
 
         $total = $data->get()->count();
 
