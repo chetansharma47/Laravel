@@ -41,7 +41,7 @@ class TabBusiness extends Model
             
         }
 
-        User::whereDeletedAt(null)->whereCustomerTier(null)->update(['customer_tier' => $tier_condition->tier_name]);
+        User::whereDeletedAt(null)->whereCustomerTier(null)->update(['customer_tier' => $tier_condition->tier_name,'tier_update_date' => Carbon::now()->toDateString()]);
     	return ['status' => 'success','update' => $update,'tier_name' => $data['tier_name']];
     }
 

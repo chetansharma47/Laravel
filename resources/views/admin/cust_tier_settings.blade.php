@@ -600,6 +600,13 @@
 	               	let append_condition;
 
 	               	for(let i=0; i < tier_conditions.length; i++){
+
+	               		let __disabled = "";
+	               		let first_tier_unique_id = "{{$first_tier_unique_id}}";
+
+	               		if(parseInt(tier_conditions[i]['unique_id_by_tier']) == parseInt(first_tier_unique_id)){
+	               			__disabled = "disabled";
+	               		}
 	               		if(i == 0){
 		               		$("#tier_name_append").append(`<li class="active tier_name_c" data-id="`+tier_conditions[i]['unique_id_by_tier']+`">
 									<input type="text" class="input_tier_name" title="Click to enter name" maxlength="30" value="`+tier_conditions[i]['tier_name']+`" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" placeholder="Enter Tier Name">`);
@@ -619,7 +626,7 @@
 									<label>
 										From Amount($)
 									</label>
-									<input type="text" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" class="form-control form-control-user from_amount" maxlength="11" placeholder="From Amount" value="`+tier_conditions[i]['from_amount']+`" />
+									<input type="text" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" class="form-control form-control-user from_amount" maxlength="11" placeholder="From Amount" value="`+tier_conditions[i]['from_amount']+`" `+__disabled+`/>
 
 									<label class="error from_amount_err" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" style="display: none;">Please enter valid color code.</label>
 								</div>
@@ -675,7 +682,7 @@
 									<label>
 										From Amount($)
 									</label>
-									<input type="text" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" class="form-control form-control-user from_amount" maxlength="11" placeholder="From Amount" value="`+tier_conditions[i]['from_amount']+`" />
+									<input type="text" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" class="form-control form-control-user from_amount" maxlength="11" placeholder="From Amount" value="`+tier_conditions[i]['from_amount']+`" `+__disabled+`/>
 
 									<label class="error from_amount_err" data-id="`+tier_conditions[i]['unique_id_by_tier']+`" style="display: none;">Please enter valid color code.</label>
 								</div>
@@ -835,10 +842,32 @@
 					return false;
 				}
 
+				
+				let first_tier_unique_id = "{{$first_tier_unique_id}}";
+				
 				if(tier_name == ""){
+
+					if(first_tier_unique_id != ""){
+						if(parseInt(active_id) == parseInt(first_tier_unique_id)){
+							$("#alert_text").text("You can not delete this tier.");
+							$("#validationModel").modal("show");
+							$("#validationModel").unbind("click");
+							return false;
+						}
+					}
 
 					$("#confirmation_alert_text").text("Are you sure you, want to delete this tier?");
 				}else{
+
+					if(first_tier_unique_id != ""){
+						if(parseInt(active_id) == parseInt(first_tier_unique_id)){
+							$("#alert_text").text("You can not delete this tier ("+tier_name+").");
+							$("#validationModel").modal("show");
+							$("#validationModel").unbind("click");
+							return false;
+						}
+					}
+
 					$("#confirmation_alert_text").text("Are you sure you, want to delete this tier ("+tier_name+")?");
 				}
 
@@ -874,6 +903,7 @@
 	              type:'POST',
 	              data:data,
 	              success: function(res){
+	              	console.log(res)
 	              	setTimeout(function(){
 
 

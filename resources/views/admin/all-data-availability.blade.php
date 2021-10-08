@@ -41,6 +41,10 @@
 		.dataTables_length {
 			display: none;
 		}
+		#basic-datatables2_length,
+		.dataTables2_length {
+			display: none;
+		}
 		.page-item.active .page-link {
 			background-color: #193358;
     		border-color: #193358;
@@ -52,6 +56,9 @@
 			width: 100%;
 		}
 		#basic-datatables_length {
+			display: none;
+		}
+		#basic-datatables2_length {
 			display: none;
 		}
 		.page-item.active .page-link {
@@ -69,13 +76,27 @@
     			border-radius: 0px !important;
     			margin-bottom: 14px;
     			padding: 3px 10px !important;
-    border: 0 !important;
-    background: #EBEBEB !important;
-    font-family: 'Signika', sans-serif;
-    font-weight: 700;
-    font-size: 20px !important;
-    color: #676767 !important;
-    background-color: #EBEBEB !important;
+			    border: 0 !important;
+			    background: #EBEBEB !important;
+			    font-family: 'Signika', sans-serif;
+			    font-weight: 700;
+			    font-size: 20px !important;
+			    color: #676767 !important;
+			    background-color: #EBEBEB !important;
+		}
+
+		div.dataTables2_wrapper div.dataTables2_filter input {
+			    font-size: 14px !important;
+    			border-radius: 0px !important;
+    			margin-bottom: 14px;
+    			padding: 3px 10px !important;
+			    border: 0 !important;
+			    background: #EBEBEB !important;
+			    font-family: 'Signika', sans-serif;
+			    font-weight: 700;
+			    font-size: 20px !important;
+			    color: #676767 !important;
+			    background-color: #EBEBEB !important;
 		}
 
 
@@ -419,7 +440,7 @@
 							<label style="font-size: 18px !important; font-weight: 400; margin-right: 12px;">
 								Selected Customer Wallet Transactions (Selection from above)
 							</label>
-							<a href="" class="btn btn-primary btn-user btn-block common_btn" style="     font-size: 18px; width: 154px; margin-right: 15px; text-transform: none; padding: 8px 0;">
+							<a href="{{route('admin.downloadWalletTransactions')}}" target="_blank" class="btn btn-primary btn-user btn-block common_btn" style="     font-size: 18px; width: 154px; margin-right: 15px; text-transform: none; padding: 8px 0; z-index: 99;">
 									Download
 							</a>
 						</div>
@@ -432,6 +453,7 @@
 						<table id="basic-datatables2" class="display table table-striped table-hover" style="padding: 0">
 							<thead>
 								<tr style="background-color: #193358;    color: #fff;">
+									<th>Sr. No.</th>
 									<th>Customer ID</th>
 									<th>Customer Mobile No.</th>
 									<th>Description</th>
@@ -1541,8 +1563,47 @@ chart.render();
 	</script>
 	<script >
 		$(document).ready(function() {
-			$('#basic-datatables2').DataTable({
-			});
+			$('#basic-datatables2').dataTable({
+             dom: "Bfrtip",
+            "processing": true,
+            "serverSide": true,
+            "ajax": {
+                "url": "{{url('admin/wallet-transactions')}}",
+                "type": "POST",
+                "data" : {
+                	'_token': "{{csrf_token()}}",
+                	'first_time' : 'true'
+                },
+                complete:function(){
+
+					if($("#basic-datatables2_wrapper").find(".wrap_all").length <= 0){
+
+						$('#basic-datatables2_info,#basic-datatables2_paginate').wrapAll('<div class="wrap_all"></div>'); 
+					}
+
+		        }
+
+            },
+            createdRow: function( row, data, dataIndex ) {
+
+		        $( row ).find('td:eq(1)').attr('data-id', data['id']).attr('key_type','customer_id');
+		        $( row ).find('td:eq(2)').attr('data-id', data['id']).attr('key_type','mobile_number');
+		        $( row ).find('td:eq(3)').attr('data-id', data['id']).attr('key_type','description');
+		        $( row ).find('td:eq(4)').attr('data-id', data['id']).attr('key_type','cashback_earned');
+		        $( row ).find('td:eq(5)').attr('data-id', data['id']).attr('key_type','wallet_cash');
+		        $( row ).find('td:eq(6)').attr('data-id', data['id']).attr('key_type','date_and_time');
+		    },
+            "columns": [
+             	{data: 'DT_RowIndex', name: 'DT_RowIndex'},
+                {data: 'customer_id', name: 'customer_id'},
+	            {data: 'mobile_number', name: 'mobile_number'},
+	            {data: 'description', name: 'description'},
+	            {data: 'cashback_earned', name: 'cashback_earned'},
+	            {data: 'wallet_cash', name: 'wallet_cash'},
+	            {data: 'date_and_time', name: 'date_and_time'}
+            ]
+ 
+        });
 
 			$('#multi-filter-select').DataTable( {
 				"pageLength": 5,

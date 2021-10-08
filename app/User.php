@@ -42,6 +42,10 @@ class User extends Authenticatable
         'customer_tier',
         'reference_by',
         'remember_token',
+        'bar_code',
+        'self_reference_code',
+        'qr_code',
+        'tier_update_date'
     ];
 
     /**
@@ -83,13 +87,48 @@ class User extends Authenticatable
     }
 
 
+    public function getBarCodeAttribute($value){
+
+        if(!empty($value)){
+
+            $path_img = public_path(). '/storage/bar_code' . '/' . $value;
+
+            if(file_exists($path_img)){
+                return url('/') . '/' . env('BAR_CODE_STORAGE_VIEW') . '/' . $value;
+            }else{
+
+                return "";
+            } 
+        }else{
+            return $value;
+        }
+    }
+
+    public function getQrCodeAttribute($value){
+
+        if(!empty($value)){
+
+            $path_img = public_path(). '/storage/qr_code' . '/' . $value;
+
+            if(file_exists($path_img)){
+                return url('/') . '/' . env('QR_CODE_STORAGE_VIEW') . '/' . $value;
+            }else{
+
+                return "";
+            } 
+        }else{
+            return $value;
+        }
+    }
+
+
     public function getWalletCashAttribute($value){
 
         if(!empty($value)){
 
            return $value;
         }else{
-            return "N/A";
+            return 0;
         }
     }
 

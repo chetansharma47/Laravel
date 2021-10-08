@@ -14,7 +14,9 @@ class LoginRequest extends Model
     	'device_model',
     	'mac_address',
     	'authorized_status',
-    	'date_time'
+    	'date_time',
+        'device_type',
+        'device_token'
     ];
 
     public function venu(){

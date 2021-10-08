@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use App\Models\VenueUser;
 use App\Models\LoginRequest;
+use App\Models\Venu;
 
 class checkTokenVenuUser
 {
@@ -33,12 +34,27 @@ class checkTokenVenuUser
             return response()->json(['result' => 'Failure', 'message' => "Please enter device mac address."], 406);
         }
 
+        if(empty($request->venue_login_id)){
+            return response()->json(['result' => 'Failure', 'message' => "Please enter venue login id."], 406);
+        }
+
         $login_request = LoginRequest::whereVenueUserId($user_find->id)->where('mac_address', '=', $request->mac_address)->first();
 
         if($user_find->status == "Inactive"){
             return response()->json(['result' => 'Failure', 'message' => "Your account has been inactive by admin."],403);
         }
+
+        $venue_find = Venu::whereId($request->venue_login_id)->whereDeletedAt(null)->where('status','=','Active')->first();
+
+        if(empty($venue_find)){
+            return response()->json(['result' => 'Failure', 'message' => "Venue has been deactivated or deleted by admin."],403); 
+        }
+
         if($login_request){
+
+            if(empty($login_request->device_type) || empty($login_request->device_token)){
+                return response()->json(['message' => 'Unauthorize'], 401);
+            }
 
             if($login_request->authorized_status == "Unauthorized"){
 

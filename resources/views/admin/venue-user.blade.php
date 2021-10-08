@@ -185,6 +185,10 @@ select.form-control.form-group.status_select:focus{
     white-space: nowrap;
 }
 
+.checkboxesbg {
+    border-radius: 10px;
+}
+
 /*.checkboxesbg {
     padding: 40px 4px;
 }*/

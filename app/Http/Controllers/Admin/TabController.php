@@ -33,6 +33,7 @@ use Excel;
 use App\Models\Venu;
 use App\Models\VenueUser;
 use App\Models\WalletCashback;
+use App\Models\WalletTransaction;
 use App\Models\Cashback;
 use App\Models\Event;
 use App\Models\Offer;
@@ -70,6 +71,7 @@ class TabController extends Controller
     	if($request->isMethod('GET')){
             $admin = Auth()->guard('admin')->user();
             $tier_settings = TierSetting::whereAdminId($admin->id)->whereDeletedAt(null)->first();
+            $first_tier_unique_id = "";
             if(!empty($tier_settings)){
 
                 $last_tier_cond = TierCondition::whereTierSettingId($tier_settings->id)->orderBy("id","desc")->first();
@@ -79,10 +81,12 @@ class TabController extends Controller
                 }else{
                     $last_tier_cond_unique_id = 0;
                 }
+                $first_tier = TierCondition::whereDeletedAt(null)->first();
+                $first_tier_unique_id = $first_tier->unique_id_by_tier;
             }else{
                 $last_tier_cond_unique_id = 0;
             }
-    		return view('admin.cust_tier_settings',compact('last_tier_cond_unique_id','tier_settings'));
+    		return view('admin.cust_tier_settings',compact('last_tier_cond_unique_id','tier_settings','first_tier_unique_id'));
     	}
     }
 
@@ -105,11 +109,71 @@ class TabController extends Controller
                 $tier_cond_find->deleted_at = Carbon::now();
                 $tier_cond_find->update();
 
+
+                
+
+                $transaction_amount_check_last_days = 30;
+                $customer_tier_validity_check = 30;
+                $tier_setting = TierSetting::first();
+                if(!empty($tier_setting)){
+                    $transaction_amount_check_last_days = $tier_setting->transaction_amount_check_last_days;
+                    $customer_tier_validity_check = $tier_setting->customer_tier_validity_check;
+                }
+                $last_30_days_transaction_amount = Carbon::now()->subDays($transaction_amount_check_last_days);
+
+                $last_validity_check_days = Carbon::now()->subDays($customer_tier_validity_check);
                 $first_tier_cond = TierCondition::whereTierSettingId($tier_find->id)->whereDeletedAt(null)->first();
 
                 if(!empty($first_tier_cond)){
 
-                    User::whereIn('customer_tier',array($tier_cond_find->tier_name))->update(['customer_tier' => $first_tier_cond->tier_name]);
+                    $users_get_accroding_to_tier = User::whereIn('customer_tier',array($tier_cond_find->tier_name))->get();
+                    foreach ($users_get_accroding_to_tier as $user_find) {
+
+                        $total_amount_transaction = WalletTransaction::where(function($query) use ($transaction_amount_check_last_days,$customer_tier_validity_check, $user_find, $last_30_days_transaction_amount, $last_validity_check_days){
+                                $query->whereUserId($user_find->id);
+                                $query->whereDate('created_at','<=',Carbon::now()->toDateString());
+                                $query->whereDate('created_at','>=',$last_30_days_transaction_amount->toDateString());
+                            })->sum('total_bill_amount');
+
+                        $amount_between_tier_find = TierCondition::whereDeletedAt(null)->where('from_amount', '<=', $total_amount_transaction)->where('to_amount', '>=', $total_amount_transaction)->first();
+
+                        if(empty($amount_between_tier_find)){
+
+                            //preveious tier found according to total amount transaction
+                            $amount_between_tier_find = TierCondition::whereDeletedAt(null)->where('to_amount','<=', $total_amount_transaction)->orderBy('to_amount','desc')->first();
+
+
+                            
+                            if(!empty($amount_between_tier_find)){
+
+                                $user_find->customer_tier = $amount_between_tier_find->tier_name;
+                                $user_find->tier_update_date = Carbon::now()->toDateString();
+                                $user_find->update();
+                            }
+                            
+
+                            if(empty($amount_between_tier_find)){
+
+                                //next tier found according to transaction amount total
+                                $amount_between_tier_find = TierCondition::whereDeletedAt(null)->where('to_amount','>=', $total_amount_transaction)->orderBy('to_amount','asc')->first();
+
+                                if(!empty($amount_between_tier_find)){
+
+                                    $user_find->customer_tier = $amount_between_tier_find->tier_name;
+                                    $user_find->tier_update_date = Carbon::now()->toDateString();
+                                    $user_find->update();
+                                }
+                            }
+
+
+                        }else{
+                            $user_find->customer_tier = $amount_between_tier_find->tier_name;
+                            $user_find->tier_update_date = Carbon::now()->toDateString();
+                            $user_find->update();
+                        }
+                    }
+
+                    // User::whereIn('customer_tier',array($tier_cond_find->tier_name))->update(['customer_tier' => $first_tier_cond->tier_name]);
                 }else{
                     User::whereIn('customer_tier',array($tier_cond_find->tier_name))->update(['customer_tier' => null]);
                 }
@@ -534,6 +598,8 @@ class TabController extends Controller
                         $user_select->customer_tier = "N/A";
                     } 
                 }
+                
+                $user_select->wallet_cash = round($user_select->wallet_cash,2);
             }
 
 
@@ -550,6 +616,95 @@ class TabController extends Controller
 
     }
 
+    public function walletTransactions(Request $request){
+
+        $admin = Auth()->guard('admin')->user();
+        $column = "id";
+        $asc_desc = $request->get("order")[0]['dir'];
+         
+        if($asc_desc == "asc"){
+            $asc_desc = "desc";
+        }else{
+            $asc_desc = "asc";
+        }
+
+        $order = $request->get("order")[0]['column'];
+        if($order == 0){
+            $column = "id";
+        }elseif($order == 1){
+            $column = "customer_id";
+        }elseif($order == 2){
+            $column = "mobile_number";
+        }elseif ($order == 3) {
+            $column = "description";
+        }elseif ($order == 4) {
+            $column = "cashback_earned";
+        }elseif ($order == 5) {
+            $column = "wallet_cash";
+        }else {
+            $column = "date_and_time";
+        }
+
+
+        $data = WalletTransaction::select("id","description","cashback_earned",DB::raw("DATE_FORMAT(date_and_time, '%d-%M-%Y %H:%i %p') AS date_and_time"),DB::raw("(select customer_id from users where id = wallet_transactions.user_id) AS customer_id"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where id = wallet_transactions.user_id) AS mobile_number"),DB::raw("(select wallet_cash from users where id = wallet_transactions.user_id) AS wallet_cash"))->orderBy($column,$asc_desc);
+
+            
+        $total = $data->get()->count();
+
+        if(!empty($request->get("search")["value"])){
+            $search = $request->get("search")["value"];
+        }else{
+
+            $search = $request->search_txt;
+        }
+        $filter = $total;
+
+        if($search){
+            $data  = $data->where(function($query) use($search){
+                        $query->orWhere(DB::raw("(select customer_id from users where id = wallet_transactions.user_id)"), 'Like', '%'. $search . '%');
+                        $query->orWhere(DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where id = wallet_transactions.user_id)"), 'Like', '%' . $search . '%');
+                        $query->orWhere('description', 'Like', '%' . $search . '%');
+                        $query->orWhere('cashback_earned', 'Like', '%' . $search . '%');
+                        $query->orWhere(DB::raw("(select wallet_cash from users where id = wallet_transactions.user_id)"), 'Like', '%' . $search . '%');
+                        $query->orWhere(DB::raw("DATE_FORMAT(date_and_time, '%d-%M-%Y %H:%i %p')"), 'Like', '%' . $search . '%');
+                    });
+
+            $filter = $data->get()->count();
+                            
+        }
+
+        $data = $data->offset($request->start);
+        $data = $data->take($request->length);
+        $data = $data->get();
+
+
+        $start_from = $request->start;
+        if($start_from == 0){
+            $start_from  = 1;
+        }
+        if($start_from % 10 == 0){
+            $start_from = $start_from + 1;
+        }
+
+
+        foreach ($data as $k => $user_select) {
+                
+            $user_select->DT_RowIndex = $start_from++;
+
+            $user_select->wallet_cash = round($user_select->wallet_cash,2);
+        }
+
+
+        $return_data = [
+                "data" => $data,
+                "draw" => (int)$request->draw,
+                "recordsTotal" => $total,
+                "recordsFiltered" => $filter,
+                "input" => $request->all()
+        ];
+        return response()->json($return_data);
+    }
+
     public function downloadUsers(Request $request){
         $users = User::whereDeletedAt(null)->select('customer_id as Customer Id', 'mobile_number as Mobile Number','first_name as First Name','last_name as Last Name','email as Email Id','nationality as Nationality','dob as DOB', 'gender as Gender','is_active as Status',DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d') AS Join_On"),'customer_tier as Customer Tier','wallet_cash as Wallet Cash','reference_code as Customer Referral Code','reference_by as Referral By')->orderBy("id","desc")->get()->toArray();
 
@@ -563,6 +718,19 @@ class TabController extends Controller
 
         })->download('csv');
 
+    }
+
+    public function downloadWalletTransactions(Request $request){
+        $wallet_transactions = WalletTransaction::select(DB::raw("(select customer_id from users where id = wallet_transactions.user_id) AS 'Customer ID'"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where id = wallet_transactions.user_id) AS 'Mobile Number'"),"description AS Description","cashback_earned AS Cashback Earned",DB::raw("(select wallet_cash from users where id = wallet_transactions.user_id) AS 'Wallet Cash'"),DB::raw("DATE_FORMAT(date_and_time, '%d-%M-%Y %H:%i %p') AS 'Date Added'"))->get()->toArray();
+        return $download =  Excel::create('export-wallet-transactions', function($excel) use ($wallet_transactions){
+
+            $excel->sheet('export-wallet-transactions', function($sheet) use ($wallet_transactions){
+
+                $sheet->fromArray($wallet_transactions);
+
+            });
+
+        })->download('csv');
     }
 
     public function updateUserData(Request $request){

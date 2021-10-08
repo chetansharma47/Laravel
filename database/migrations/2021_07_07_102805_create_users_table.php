@@ -27,6 +27,7 @@ class CreateUsersTable extends Migration
             $table->string('nationality')->nullable();
             $table->string('dob')->nullable();
             $table->enum('gender',['Male','Female','Other'])->nullable();
+            $table->string('self_reference_code')->nullable();
             $table->string('reference_code')->nullable();
             $table->enum('device_type',['None','Ios','Android'])->default('None');
             $table->text('device_token')->nullable();
@@ -39,6 +40,9 @@ class CreateUsersTable extends Migration
             $table->string('wallet_cash')->nullable();
             $table->string('customer_tier')->nullable();
             $table->string('reference_by')->nullable();
+            $table->string('bar_code')->nullable();
+            $table->string('qr_code')->nullable();
+            $table->date('tier_update_date')->nullable();
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

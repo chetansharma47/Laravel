@@ -312,7 +312,7 @@
 							<div class="venue_inputs mr-4">
 								<div class="d-flex">
 									<input type="text" class="form-control form-control-user double1 refere_friend" placeholder="" value="{{$wallet_cashback->refer_friend}}" style="font-size: 14px !important; border-radius: 0px; width: 106px" data-id="{{$wallet_cashback->id}}"/>
-									<input type="text" class="form-control form-control-user refer_friend_text" placeholder="AED" maxlength="3" value="{{$wallet_cashback->refer_friend_text}}" style="font-size: 14px !important; border-radius: 0px; width: 60px" data-id="{{$wallet_cashback->id}}" disabled="true" />
+									<input type="text" class="form-control form-control-user refer_friend_text" placeholder="AED" maxlength="3" value="AED" style="font-size: 14px !important; border-radius: 0px; width: 60px" data-id="{{$wallet_cashback->id}}" disabled="true" />
 								</div>
 							</div>
 							<div>

@@ -24,7 +24,7 @@ class Validation extends Model
             'nationality'       => 'required|max:50',
             'dob'               => 'required|date_format:Y-m-d',
             'gender'            => 'required|in:Male,Female,Other',
-            'reference_code'    => 'sometimes|nullable|max:20',
+            'reference_code'    => 'sometimes|nullable|max:12',
 
     	];
 
@@ -49,7 +49,7 @@ class Validation extends Model
               'dob.date_format'             =>  "DOB should be Y-m-d format only.",
               'gender.required'             =>  "Please enter gender.",
               'gender.in'                   =>  "Gender should be male,female,other only.",
-              'reference_code.max'          =>  "Reference code should be less than 20 characters."
+              'reference_code.max'          =>  "Referral code should be less than or equal to 12 characters."
     	];
 
     	return $data = ['validation' => $validation, 'message' => $message];
@@ -151,7 +151,7 @@ class Validation extends Model
             'nationality'       => 'sometimes|nullable|max:50',
             'dob'               => 'sometimes|nullable|date_format:Y-m-d',
             'gender'            => 'sometimes|nullable|in:Male,Female,Other',
-            'reference_code'    => 'sometimes|nullable|max:20',
+            'reference_code'    => 'sometimes|nullable|max:12',
 
       ];
 
@@ -167,7 +167,7 @@ class Validation extends Model
               'nationality.max'             =>  "Nationality should be less than 50 characters.",
               'dob.date_format'             =>  "DOB should be Y-m-d format only.",
               'gender.in'                   =>  "Gender should be male,female,other only.",
-              'reference_code.max'          =>  "Reference code should be less than 20 characters."
+              'reference_code.max'          =>  "Referral code should be less than or equal to 12 characters."
       ];
 
       return $data = ['validation' => $validation, 'message' => $message];
@@ -298,6 +298,92 @@ class Validation extends Model
 
     }
 
+    public static function getUserDataValidation($validation = null, $message = null){
+
+
+      $validation = [
+            'timezone'      => 'required'
+
+      ];
+
+      $message = [
+        'timezone.required'       =>  "Please enter timezone."
+      ];
+
+      return $data = ['validation' => $validation, 'message' => $message];
+
+    }
+
+    public static function getSearchUserDataValidation($validation = null, $message = null){
+
+
+      $validation = [
+            'search_txt'      => 'required'
+      ];
+
+      $message = [
+        'search_txt.required'           =>  "Please enter Customer ID or Mobile Number."
+      ];
+
+      return $data = ['validation' => $validation, 'message' => $message];
+
+    }
+
+    public static function PayAmount($validation = null, $message = null){
+      $validation = [
+            'timezone'      => 'required',
+            'user_id'       => 'required',
+            'description'   => 'sometimes||nullable|max:500',
+            'invoice_number' => 'required|max:50',
+            'redeemed_amount'  => 'sometimes|nullable|numeric',
+            'total_bill_amount'    => 'required|numeric|min:0.5'
+      ];
+
+      $message = [
+        'timezone.required'       =>  "Please enter timezone.",
+        'user_id.required'        =>  "Please enter user id.",
+        'description.sometimes'   =>  "Please enter description id.",
+        'redeemed_amount.required'  =>  "Please enter redeemed amount.",
+        'total_bill_amount.required'    =>  "Please enter total bill amount."
+      ];
+
+      return $data = ['validation' => $validation, 'message' => $message];
+    }
+
+    public static function offerRedeemed($validation = null, $message = null){
+      $validation = [
+            'timezone'      => 'required',
+            'user_id'       => 'required|exists:users,id',
+            'offer_id'       => 'required|exists:offers,id'
+      ];
+
+      $message = [
+        'user_id.required'        => "Please enter user id.",
+        'timezone.required'       =>  "Please enter timezone.",
+        'offer_id.required'        =>  "Please enter offer id."
+      ];
+
+      return $data = ['validation' => $validation, 'message' => $message];
+    }
+
+    public static function sendOtpIpadValidation($validation = null, $message = null){
+
+
+      $validation = [
+            'timezone'      => 'required',
+            'user_id'       => 'required|exists:users,id',
+            'redeemed_amount' => 'required|numeric'
+
+      ];
+
+      $message = [
+        'timezone.required'       =>  "Please enter timezone."
+      ];
+
+      return $data = ['validation' => $validation, 'message' => $message];
+
+    }
+
     public static function venuUserAppLogin($validation = null, $message = null){
 
 
@@ -307,7 +393,9 @@ class Validation extends Model
           'device_model'  => 'required',
           'mac_address'   => 'required',
           'venu_id'       => 'required|exists:venus,id,deleted_at,NULL',
-          'timezone'      => 'required'
+          'timezone'      => 'required',
+          'device_type'   => 'required|in:Ipad',  //I=>IOS, A=>Android
+          'device_token'  => 'required',
          
       ];
       
@@ -316,7 +404,10 @@ class Validation extends Model
         'password.required'     => 'Please enter password.',
         'device_model.required' => 'Please enter device model.',
         'mac_address.required'  => 'Please enter device mac address.',
-        'venu_id.exists'        => 'The selected venue may be deleted or inactivate by the admin.'
+        'venu_id.exists'        => 'The selected venue may be deleted or inactivate by the admin.',
+        'device_type.required'  => 'Please enter device type.',
+        'device_type.in'        => 'Device type should be Ipad only.',
+        'device_token'          => 'Please enter device token.'
       ];
 
       return $data = ['validation' => $validation, 'message' => $message];

@@ -35,6 +35,7 @@ class CreateUserAssignOffersTable extends Migration
             $table->double('from_price')->nullable()->default(0);
             $table->double('to_price')->nullable()->default(0);
             $table->enum('offer_type',['Normal','BirthdayOffer']);
+            $table->integer('offer_redeem')->default(0);
             $table->timestamps();
             $table->softDeletes();
         });

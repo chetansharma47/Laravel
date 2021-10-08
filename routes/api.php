@@ -17,7 +17,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request){
     return $request->user();
 });
     
-    
+Route::get('transfer-to-wallet','Controller@transferToWallet');   
 Route::get('offer-assign-user-cron-job','Controller@OfferAssignUserCronJob');
   
 Route::group(['namespace' => 'Api\v1','prefix'=>'v1'], function() {
@@ -63,6 +63,13 @@ Route::group(['namespace' => 'Api\v1','prefix'=>'v1'], function() {
     Route::group(['middleware' => 'checkTokenVenuUser'], function(){
 
         Route::post('get-profile-venue-user','RestaurantAuthenticationController@venuUserProfile');
+        Route::post('get-user-data/{user_id}','RestaurantAuthenticationController@getUserData');
+        Route::post('send-otp-ipad','RestaurantAuthenticationController@sendOtpIpad');
+        Route::post('verify-otp-ipad','RestaurantAuthenticationController@verifyOtpIpad');
+        Route::post('venue-user-logout','RestaurantAuthenticationController@venueUserlogout');
+        Route::post('search-user-data','RestaurantAuthenticationController@searchUserData');
+        Route::post('pay-amount','RestaurantAuthenticationController@payAmount');
+        Route::post('redeem-offer','RestaurantAuthenticationController@redeemOffer');
     });
 
 });

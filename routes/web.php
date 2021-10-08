@@ -102,6 +102,8 @@ Route::group(['middleware' => 'TimeZone','namespace' => 'Admin','prefix'=>'/admi
         Route::match(['GET','POST'],'adding-venue-table','TabController@addingVenueTable')->name('addingVenueTable');
         Route::match(['GET','POST'],'cash-back','TabController@cashBack')->name('cashBack');
         Route::match(['GET','POST'],'all-data-availability','TabController@allDataAvailability')->name('allDataAvailability');
+        Route::post('wallet-transactions','TabController@walletTransactions')->name('walletTransactions');
+        Route::get('download-wallet-transactions','TabController@downloadWalletTransactions')->name('downloadWalletTransactions');
         Route::match(['GET','POST'],'adding-venue','TabController@addingVenue')->name('addingVenue');
         Route::match(['GET','POST'],'adding-events','TabController@addingEvents')->name('addingEvents');
         Route::match(['GET','POST'],'offer-settings','TabController@offerSettings')->name('offerSettings');

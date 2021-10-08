@@ -31,7 +31,7 @@ use App\Models\City;
 use App\Models\UserAssignOffer;
 use App\Models\Badge;
 use App\Models\AssignBadge;
-require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/society_06_october/vendor/autoload.php';
 
 class AuthenticationController extends ResponseController
 {
@@ -67,7 +67,7 @@ class AuthenticationController extends ResponseController
 
         $data = $request->all();
         if($data['reference_code']){
-            $user_find = User::whereCustomerId($data['reference_code'])->first();
+            $user_find = User::whereSelfReferenceCode($data['reference_code'])->first();
             if(empty($user_find)){
                 return $this->responseWithErrorCode("Please enter valid referral code.",406);
             }
@@ -359,7 +359,7 @@ class AuthenticationController extends ResponseController
         // $offers = Offer::whereDeletedAt(null)->whereStatus('Active')->whereIn('id',$pluck_for_in)->whereDate('to_date','>=',Carbon::now()->toDateString())->whereIn('venu_id', $active_venue_ids)->with('offerSetting','venu')->get();
 
 
-        $user_assign_offers = UserAssignOffer::whereUserId($user->id)->pluck('offer_id');
+        $user_assign_offers = UserAssignOffer::whereUserId($user->id)->whereOfferRedeem(0)->pluck('offer_id');
 
         $active_venue_ids = Venu::where('status' , 'Active')->where('deleted_at' , null)->pluck('id');
 
@@ -395,14 +395,17 @@ class AuthenticationController extends ResponseController
 
         $user = Auth::guard()->user();
         $today_date = Carbon::now();
+        $today_days = Carbon::now()->format('l');
 
         $active_venue_ids = Venu::where('status' , 'Active')->where('deleted_at' , null)->pluck('id');
 
-        $cashbacks = Cashback::where(function($query) use ($user,$today_date){
+        $cashbacks = Cashback::where(function($query) use ($user,$today_date,$active_venue_ids,$today_days){
                         $query->whereDeletedAt(null);
                         $query->whereDate('from_date', '<=', $today_date->toDateString());
                         $query->whereDate('to_date','>=', $today_date->toDateString());
                         $query->whereIn('venu_id', $active_venue_ids);
+                        $query->whereRaw("FIND_IN_SET(?, day_on) > 0", $today_days);
+                        $query->where("status","=","Active");
                     })->with('venu')->get();        
         return $this->responseOk('Cashback Listing', ['cashback_listing' => $cashbacks]);
     }
@@ -458,12 +461,13 @@ class AuthenticationController extends ResponseController
                        // $query->whereRaw("FIND_IN_SET(?, when_day) > 0", $today_days);
                     })->with('venu')->get();
 
-        $promotion = Cashback::where(function($query) use ($user,$today_date, $active_venue_ids){
+        $promotion = Cashback::where(function($query) use ($user,$today_date, $active_venue_ids, $today_days){
                         $query->whereDeletedAt(null);
                         $query->whereStatus('Active');
                         $query->whereDate('from_date', '<=', $today_date->toDateString());
                         $query->whereDate('to_date','>=', $today_date->toDateString());
                         $query->whereIn('venu_id', $active_venue_ids);
+                        $query->whereRaw("FIND_IN_SET(?, day_on) > 0", $today_days);
                     })->with('venu')->get();
 
         $collect = collect($events)->merge($promotion);

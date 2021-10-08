@@ -16,6 +16,9 @@ use App\Models\TierCondition;
 use App\Models\LoginRequest;
 use App\Models\Venu;
 use App\Models\AssignUserVenue;
+use App\Models\WalletCashback;
+use Picqer;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 class ProfileModel extends Model
 {
 
@@ -88,13 +91,27 @@ class ProfileModel extends Model
         $data = $request->all();
         $data['customer_id'] = mt_rand(10000000000,99999999999);
 
+        $bonus = 0;
+        $refer_amount = 0;
+        $data['self_reference_code'] = str_random(4).mt_rand(1000,9999).str_random(4);
         if($data['reference_code']){
-            $user_find = User::whereCustomerId($data['reference_code'])->first();
+            $user_find = User::whereSelfReferenceCode($data['reference_code'])->first();
             $data['reference_by'] = $user_find->first_name . " " . $user_find->last_name;
+            $find_wallet_cashback = WalletCashback::whereDeletedAt(null)->first();
+            if(!empty($find_wallet_cashback)){
+                $bonus = $find_wallet_cashback->bonus;
+                $refer_amount = $find_wallet_cashback->refer_friend;
+            }
+
+            $user_find->wallet_cash = $user_find->wallet_cash + $refer_amount;
+            $user_find->update();
+
+            $data['wallet_cash'] = $bonus;
         }
-        $tier_first = TierCondition::whereDeletedAt(null)->first();
+        $tier_first = TierCondition::whereDeletedAt(null)->orderBy('to_amount','asc')->first();
         if(!empty($tier_first)){
             $data['customer_tier'] = $tier_first->tier_name;
+            $data['tier_update_date'] = Carbon::now()->toDateString();
         }
         $token = str_random(64);
         try{
@@ -113,6 +130,30 @@ class ProfileModel extends Model
         $data['password'] = Hash::make($request->password);
         $data['verify_email_token'] = $token;
         $save_user = self::createUser($data);
+
+
+        $generator = new Picqer\Barcode\BarcodeGeneratorPNG();
+        $imageName = date('mdYHis') . rand(10,100) . uniqid().'.png';
+        $destinationPath = storage_path('app/public/bar_code').'/'.$imageName;
+
+        file_put_contents($destinationPath, $generator->getBarcode((string)$save_user->id.",cp", $generator::TYPE_CODE_128));
+
+
+        //QR CODE
+
+        $imageName1 = date('mdYHis') . rand(10,100) . uniqid().'.png';
+        $img_store = storage_path() . '/'. env('QR_CODE_STORAGE') . '/' . $imageName1;
+        $qr_code = \QrCode::format('png')
+                    ->size(500)->errorCorrection('H')
+                    ->backgroundColor(199,199,199)
+                    ->generate($save_user->self_reference_code, $img_store);
+        //
+
+        $save_user->bar_code = $imageName;
+        $save_user->qr_code = $imageName1;
+
+        $save_user->update();
+
         $save_user->access_token = $save_user->createToken('andrew')->accessToken;
         $user_get = $save_user;            
         return ["status" => 8, "data" => $user_get, "error_msg" => ""];
@@ -261,6 +302,10 @@ class ProfileModel extends Model
                     if($user_find->status == "Inactive"){
                         return ["status" => 3, "data" => null, "error_msg" => "Your account has been inactive by admin."];
                     }
+                    $find_login_request->device_type = $request->device_type;
+                    $find_login_request->device_token = $request->device_token;
+                    $find_login_request->update();
+                    $find_login_request->venue_name = $venue_find->venue_name;
                     $user_find->login_req = $find_login_request;
 
                     return ["status" => 8, "data" => $user_find, "error_msg" => ""];

@@ -30,6 +30,14 @@ use App\Models\Cashback;
 use App\Models\City;
 use App\Models\VenueUser;
 use App\Models\UserAssignOffer;
+use App\Models\TierCondition;
+use App\Models\Badge;
+use App\Models\AssignBadge;
+use App\Models\LoginRequest;
+use App\Models\WalletTransaction;
+use App\Models\TierSetting;
+use App\Models\AssignUserVenue;
+require_once $_SERVER['DOCUMENT_ROOT'].'/society_06_october/vendor/autoload.php';
 
 class RestaurantAuthenticationController extends ResponseController
 {
@@ -41,6 +49,7 @@ class RestaurantAuthenticationController extends ResponseController
     }
 
     public function venuUserLogin(Request $request){
+
         $this->is_validationRule(Validation::venuUserAppLogin($Validation = "", $message = "") , $request);
         date_default_timezone_set($request->timezone);
         $user_details = $this->profileModel->venueUserCustomLogin($request);
@@ -72,5 +81,325 @@ class RestaurantAuthenticationController extends ResponseController
     public function venueListingWithoutToken(Request $request){
         $venue = Venu::select('id','venue_name')->whereDeletedAt(null)->where('status', '=', 'Active')->get();
         return $this->responseOk('Venue Listing',['venue_listing' => $venue]);
+    }
+
+    public function getUserData(Request $request){
+
+        $token = $_SERVER['HTTP_TOKEN'];
+        $login_user = VenueUser::whereAccessToken($token)->first();
+        $venue_login_id = $request->venue_login_id; 
+
+        $this->is_validationRule(Validation::getUserDataValidation($Validation = "", $message = "") , $request);
+        $timezone = $request->timezone;
+        $user = User::whereId($request->user_id)->first();
+        $tier = TierCondition::whereTierName($user->customer_tier)->orderBy('id','desc')->first();
+        $user->tier = $tier;
+
+        $assign_user_venues = AssignUserVenue::whereVenueUserId($login_user->id)->pluck('venu_id');
+
+        $user_assign_offers = UserAssignOffer::whereUserId($user->id)->whereOfferRedeem(0)->pluck('offer_id');
+
+        $active_venue_ids = Venu::where('status' , 'Active')->where('deleted_at' , null)->whereIn("id", $assign_user_venues)->whereId($venue_login_id)->pluck('id');
+
+        $offers = Offer::where(function($query) use ($user_assign_offers, $active_venue_ids){
+                $query->whereDeletedAt(null);
+                $query->whereStatus('Active');
+                $query->whereIn('id',$user_assign_offers);
+                $query->whereDate('to_date','>=',Carbon::now()->toDateString());
+                $query->whereIn('venu_id', $active_venue_ids);
+
+            })->orWhere(function($query) use ($user_assign_offers, $active_venue_ids){
+                $query->whereDeletedAt(null);
+                $query->whereStatus('Active');
+                $query->whereIn('id',$user_assign_offers);
+                $query->where('offer_type','=','BirthdayOffer');
+                $query->whereIn('venu_id', $active_venue_ids);
+            })
+            ->with('offerSetting','venu')
+            ->get();
+
+        $user->offers = $offers;
+
+
+        date_default_timezone_set($timezone);
+        $today_days = Carbon::now()->format('l');
+
+        $active_badges = Badge::whereDeletedAt(null)->whereStatus('Active')->pluck('id');
+
+        $user_assign_badge = AssignBadge::whereUserId($user->id)->whereDeletedAt(null)->whereStatus('Active')->whereDate('to_date','>=',Carbon::now()->toDateString())->whereDate('from_date','<=',Carbon::now()->toDateString())->whereRaw("FIND_IN_SET(?, when_day) > 0", $today_days)->whereIn('badge_id', $active_badges)->with('badge')->get();
+        $user->badges = $user_assign_badge;
+        $now_time = Carbon::now();
+        $time_after_10mins = Carbon::now()->addMinutes(10);
+        $user->valid_time = $now_time->diffInSeconds($time_after_10mins);   //10 min = 600 secs 
+        return $this->responseOk("User Data",['user_data' => $user]);
+    }
+
+    public function searchUserData(Request $request){
+        $this->is_validationRule(Validation::getSearchUserDataValidation($Validation = "", $message = "") , $request);
+
+        $token = $_SERVER['HTTP_TOKEN'];
+        $login_user = VenueUser::whereAccessToken($token)->first();
+
+        $user = User::whereCustomerId($request->search_txt)
+                ->orWhere(function($query) use ($request){
+                    $query->where(DB::raw("CONCAT(users.country_code,users.mobile_number)"),'=',"+".$request->search_txt);
+                })->first();
+
+        if(!empty($user)){
+
+            return $this->responseOk("Search User Data",['search_user_data' => $user]);
+        }else{
+            return $this->responseWithErrorCode("Customer not found.",400);
+        }
+
+    }
+
+    public function sendOtpIpad(Request $request){
+
+        $this->is_validationRule(Validation::sendOtpIpadValidation($Validation = "", $message = "") , $request);
+
+        $user = User::whereId($request->user_id)->first();
+        if(empty($user->wallet_cash)){
+
+            $user_wallet_cash = 0;
+        }else{
+            $user_wallet_cash = $user->wallet_cash;
+        }
+        $redeemed_amount = $request->redeemed_amount;
+        if($user_wallet_cash < $redeemed_amount){
+            return $this->responseWithErrorCode("Redeem amount should be less than or equal to wallet amount.",406);
+        }
+
+
+        if($user->deleted_at != null){
+            return $this->responseWithErrorCode("User has been deleted by admin.",404);
+        }else if($user->is_active == "Inactive"){
+            return $this->responseWithErrorCode("User has been inactivated by admin.",404);
+        }
+
+        \SMSGlobal\Credentials::set(env('SMS_GLOBAL_API'),env('SMS_GLOBAL_SECERET'));
+
+        $sms = new \SMSGlobal\Resource\Sms();
+
+        $otp = mt_rand(1000,9999);
+
+        $message = "Your OTP for Society App is ".$otp;
+
+        try {
+            $response = $sms->sendToOne($user->country_code.$user->mobile_number, $message,'CM-Society');
+        } catch (\Exception $e) {
+            return $this->responseWithErrorCode("Please enter valid phone number.",400);
+        }
+
+        $data['otp'] = $otp;
+        Otp::whereMobileNumber($user->mobile_number)->whereCountryCode($user->country_code)->delete();
+        $otp_save = new Otp();
+        $otp_save->country_code = $user->country_code;
+        $otp_save->mobile_number = $user->mobile_number;
+        $otp_save->otp = $otp;
+        $otp_save->save();
+        return $this->responseOk("OTP has been sent successfully to selected user.", ["otp_data" => $otp_save]);
+    }
+
+    public function verifyOtpIpad(Request $request){
+        $this->is_validationRule(Validation::verifyOTP($Validation = "", $message = "") , $request);
+
+        $greater_Time = Carbon::now()->toDateString();
+
+        $find_otp = Otp::whereOtp($request->otp)->whereMobileNumber($request->mobile_number)->whereCountryCode($request->country_code)->orderBy("id","desc")->first();
+
+        if(empty($find_otp)){
+            return $this->responseWithErrorCode("Please enter valid OTP.",406);
+        }
+
+        $user_find = User::whereCountryCode($request->country_code)->whereMobileNumber($request->mobile_number)->first();
+        if($user_find->deleted_at != null){
+            return $this->responseWithErrorCode("User has been deleted by admin.",404);
+        }else if($user_find->is_active == "Inactive"){
+            return $this->responseWithErrorCode("User has been inactivated by admin.",404);
+        }
+        $time_after_10mins = Carbon::parse($find_otp->created_at)->addMinutes(10);
+
+        if(Carbon::now()->toDateString() == $time_after_10mins->toDateString()){
+
+            if(Carbon::now()->toTimeString() > $time_after_10mins->toTimeString() ){
+                 return $this->responseWithErrorCode("OTP has been expired or invalid.",406);
+            }
+        }else{
+            return $this->responseWithErrorCode("OTP has been expired or invalid.",406);
+        }
+
+        $find_otp->delete();
+        return $this->responseOk("OTP has been verified successfully.");
+        
+    }
+
+    public function venueUserlogout(Request $request){
+
+        $token = $_SERVER['HTTP_TOKEN'];
+        $login_user = VenueUser::whereAccessToken($token)->first();
+
+
+        $login_request = LoginRequest::whereVenueUserId($login_user->id)->where('mac_address', '=', $request->mac_address)->first();
+
+        $login_request->device_type = null;
+        $login_request->device_token = null;
+        $login_request->update();
+        return $this->responseOk("User has been logout successfully.");
+    }
+
+    public function payAmount(Request $request){
+
+        $token = $_SERVER['HTTP_TOKEN'];
+        $login_user = VenueUser::whereAccessToken($token)->first();
+
+        $this->is_validationRule(Validation::PayAmount($Validation = "", $message = "") , $request);
+        $data = $request->all();
+        $active_venue_ids = Venu::where('status' , 'Active')->where('deleted_at' , null)->pluck('id');
+        date_default_timezone_set($data['timezone']);
+
+        $user_find = User::whereId($data['user_id'])->first();
+        $tier_find = TierCondition::whereTierName($user_find->customer_tier)->whereDeletedAt(null)->first();
+        if(empty($tier_find)){
+            $tier_find = TierCondition::whereDeletedAt(null)->first();
+        }
+
+        if(empty($tier_find)){
+            return $this->responseWithErrorCode("No tier add from admin.",400);
+        }
+
+        if(isset($data['redeemed_amount'])){
+
+            if($user_find->wallet_cash < $data['redeemed_amount']){
+                return $this->responseWithErrorCode("Redeem amount should be less than or equal to wallet amount.",406);
+            }
+        }else{
+            $data['redeemed_amount'] = 0;
+        }
+
+        if($user_find->deleted_at != null){
+            return $this->responseWithErrorCode("User has been deleted by admin.",404);
+        }else if($user_find->is_active == "Inactive"){
+            return $this->responseWithErrorCode("User has been inactivated by admin.",404);
+        }
+
+        $transaction_amount_check_last_days = 30;
+        $customer_tier_validity_check = 30;
+        $tier_setting = TierSetting::first();
+        if(!empty($tier_setting)){
+            $transaction_amount_check_last_days = $tier_setting->transaction_amount_check_last_days;
+            $customer_tier_validity_check = $tier_setting->customer_tier_validity_check;
+        }
+
+        $last_30_days_transaction_amount = Carbon::now()->subDays($transaction_amount_check_last_days);
+
+        $last_validity_check_days = Carbon::now()->subDays($customer_tier_validity_check);
+
+        $total_amount_transaction = WalletTransaction::where(function($query) use ($transaction_amount_check_last_days,$customer_tier_validity_check, $user_find, $last_30_days_transaction_amount, $last_validity_check_days){
+                                        $query->whereUserId($user_find->id);
+                                        $query->whereDate('created_at','<=',Carbon::now()->toDateString());
+                                        $query->whereDate('created_at','>=',$last_30_days_transaction_amount->toDateString());
+                                    })->sum('total_bill_amount');
+
+        $total_amount_transaction = $total_amount_transaction + $data['total_bill_amount'];
+
+        $amount_between_tier_find = TierCondition::whereDeletedAt(null)->where('from_amount', '<=', $total_amount_transaction)->where('to_amount', '>=', $total_amount_transaction)->first();
+        if(empty($amount_between_tier_find)){
+
+            //preveious tier found according to total amount transaction
+            $amount_between_tier_find = TierCondition::whereDeletedAt(null)->where('to_amount','<=', $total_amount_transaction)->orderBy('to_amount','desc')->first();
+
+            if(!empty($amount_between_tier_find)){
+                
+                $last_tier_update_date = Carbon::parse($user_find->tier_update_date);
+                $diffrence_in_days_for_tier = $last_tier_update_date->diffInDays(Carbon::now());
+
+                if($diffrence_in_days_for_tier >= $customer_tier_validity_check){
+                    $user_find->customer_tier = $amount_between_tier_find->tier_name;
+                    $user_find->tier_update_date = Carbon::now()->toDateString();
+                    $user_find->update();
+                }
+            }
+
+            if(empty($amount_between_tier_find)){
+
+                //next tier found according to transaction amount total
+                $amount_between_tier_find = TierCondition::whereDeletedAt(null)->where('to_amount','>=', $total_amount_transaction)->orderBy('to_amount','desc')->first();
+
+                if(empty($amount_between_tier_find)){
+
+                    return $this->responseWithErrorCode("No tier add from admin.",400);
+                }
+
+                $user_find->customer_tier = $amount_between_tier_find->tier_name;
+                $user_find->tier_update_date = Carbon::now()->toDateString();
+                $user_find->update();
+            }
+
+
+        }else{
+            $user_find->customer_tier = $amount_between_tier_find->tier_name;
+            $user_find->tier_update_date = Carbon::now()->toDateString();
+            $user_find->update();
+        }
+
+
+        $data['description'] = "Cash Back Earnings";
+
+        $data['venue_user_id'] = $login_user->id;
+
+        $data['date_and_time'] = Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString();
+        $today_date = Carbon::now();
+        $today_days = Carbon::now()->format('l');
+        $find_promotion_cashback = Cashback::where(function($query) use ($user_find,$today_date,$active_venue_ids,$today_days){
+                        $query->whereDeletedAt(null);
+                        $query->whereDate('from_date', '<=', $today_date->toDateString());
+                        $query->whereDate('to_date','>=', $today_date->toDateString());
+                        $query->whereTime('from_time', '<=', $today_date->toTimeString());
+                        $query->whereTime('to_time','>=', $today_date->toTimeString());
+                        $query->whereIn('venu_id', $active_venue_ids);
+                        $query->whereRaw("FIND_IN_SET(?, day_on) > 0", $today_days);
+                        $query->where("status","=","Active");
+                    })->first();
+        if(!empty($find_promotion_cashback)){
+
+            $data['cashback_percentage'] = $find_promotion_cashback->cashback_percentage;
+        }else{
+            $data['cashback_percentage'] = $tier_find->percentage;
+        }
+        $data['cashback_earned'] = ($data['total_bill_amount'] / 100) * $data['cashback_percentage'];
+
+        if(empty($data['redeemed_amount'])){
+
+            $data['pay_bill_amount'] = $data['total_bill_amount'];
+        }else{
+
+            $data['pay_bill_amount'] = $data['total_bill_amount'] - $data['redeemed_amount'];
+        }
+
+        $wallet_transaction = new WalletTransaction();
+        $wallet_transaction->fill($data);
+        $wallet_transaction->save();
+
+        $user_find->wallet_cash = $user_find->wallet_cash - $data['redeemed_amount'];
+        $user_find->update();
+
+        if(isset($data['verify_offer_ids']) && !empty($data['verify_offer_ids'])){
+            $offer_ids = explode(",", $data['verify_offer_ids']);
+
+            foreach ($offer_ids as $offer_id) {
+                UserAssignOffer::whereUserId($user_find->id)->whereOfferId($offer_id)->update(['offer_redeem' => 1]);
+            }
+        }
+        return $this->responseOk("Payment has been successfully processed.");
+
+    }
+
+    public function redeemOffer(Request $request){
+        $this->is_validationRule(Validation::offerRedeemed($Validation = "", $message = "") , $request);
+        $offer_id = $request->offer_id;
+        $user_id = $request->user_id;
+        $updateAssignOffer = UserAssignOffer::whereUserId($user_id)->whereOfferId($offer_id)->update(['offer_redeem' => 1]);
+        return $this->responseOk("Offer has been redeemed successfully.");
     }
 }

@@ -23,6 +23,8 @@ class CreateLoginRequestsTable extends Migration
             $table->string('mac_address')->nullable()->default('N/A');
             $table->enum('authorized_status',['Unauthorized','Authorized'])->default('Unauthorized');
             $table->dateTime('date_time')->nullable();
+            $table->string('device_type')->nullable();
+            $table->string('device_token')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
