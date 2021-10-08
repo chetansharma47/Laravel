@@ -118,7 +118,7 @@ class Controller extends BaseController
                                     $query->whereDate('created_at','>=',$offer->offerSetting->txn_end_period);
                                 })->sum('total_bill_amount');
 
-                            if($offer->offerSetting->txn_amount_condition == "Greater"){
+                            if($offer->offerSetting->txn_amount_condition == "Greater Than"){
 
                                 if($total_amount_transaction < $offer->offerSetting->from_price){
                                     $is_save = 0;
