@@ -31,7 +31,7 @@ use App\Models\City;
 use App\Models\UserAssignOffer;
 use App\Models\Badge;
 use App\Models\AssignBadge;
-require_once $_SERVER['DOCUMENT_ROOT'].'/society_06_october/vendor/autoload.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
 
 class AuthenticationController extends ResponseController
 {

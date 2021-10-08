@@ -94,20 +94,20 @@ class ProfileModel extends Model
         $bonus = 0;
         $refer_amount = 0;
         $data['self_reference_code'] = str_random(4).mt_rand(1000,9999).str_random(4);
+        $find_wallet_cashback = WalletCashback::whereDeletedAt(null)->first();
+        if(!empty($find_wallet_cashback)){
+            $bonus = $find_wallet_cashback->bonus;
+            $refer_amount = $find_wallet_cashback->refer_friend;
+        }
         if($data['reference_code']){
             $user_find = User::whereSelfReferenceCode($data['reference_code'])->first();
             $data['reference_by'] = $user_find->first_name . " " . $user_find->last_name;
-            $find_wallet_cashback = WalletCashback::whereDeletedAt(null)->first();
-            if(!empty($find_wallet_cashback)){
-                $bonus = $find_wallet_cashback->bonus;
-                $refer_amount = $find_wallet_cashback->refer_friend;
-            }
 
             $user_find->wallet_cash = $user_find->wallet_cash + $refer_amount;
             $user_find->update();
 
-            $data['wallet_cash'] = $bonus;
         }
+        $data['wallet_cash'] = $bonus;
         $tier_first = TierCondition::whereDeletedAt(null)->orderBy('to_amount','asc')->first();
         if(!empty($tier_first)){
             $data['customer_tier'] = $tier_first->tier_name;

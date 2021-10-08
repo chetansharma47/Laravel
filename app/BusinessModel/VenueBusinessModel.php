@@ -247,7 +247,7 @@ class VenueBusinessModel extends Model
 			$offersetting->txn_amount_condition = $data['txn_condition'];
 			$offersetting->from_price = $data['from_price_condition'];
 			$offersetting->to_price = $data['to_price_condition'];
-			$offersetting->offer_type = 'Normal';
+			$offersetting->offer_type = $offer->offer_type;
 			$offersetting->save();
 
 		}else{
@@ -261,7 +261,7 @@ class VenueBusinessModel extends Model
 			$offersetting->txn_amount_condition = $data['txn_condition'];
 			$offersetting->from_price = $data['from_price_condition'];
 			$offersetting->to_price = $data['to_price_condition'];
-			$offersetting->offer_type = 'Normal';
+			$offersetting->offer_type = $offer->offer_type;
 			$offersetting->update();
 
 		}

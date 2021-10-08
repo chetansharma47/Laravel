@@ -37,7 +37,7 @@ use App\Models\LoginRequest;
 use App\Models\WalletTransaction;
 use App\Models\TierSetting;
 use App\Models\AssignUserVenue;
-require_once $_SERVER['DOCUMENT_ROOT'].'/society_06_october/vendor/autoload.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
 
 class RestaurantAuthenticationController extends ResponseController
 {
