@@ -21,7 +21,8 @@ class Offer extends Model
     	'time',
     	'to_time',
     	'status',
-    	'offer_type',
+        'offer_type',
+    	'pos_product_id',
     ];
 
     public function venu(){

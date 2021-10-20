@@ -52,9 +52,9 @@ class checkTokenVenuUser
 
         if($login_request){
 
-            if(empty($login_request->device_type) || empty($login_request->device_token)){
-                return response()->json(['message' => 'Unauthorize'], 401);
-            }
+            // if(empty($login_request->device_type) || empty($login_request->device_token)){
+            //     return response()->json(['message' => 'Unauthorize'], 401);
+            // }
 
             if($login_request->authorized_status == "Unauthorized"){
 

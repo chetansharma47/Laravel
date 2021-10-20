@@ -189,7 +189,7 @@
 
 	</style>
 </head>
-<body>
+<body class="my_body">
 
 	<?php 
 		$current_date = Carbon\Carbon::now()->toDateString();

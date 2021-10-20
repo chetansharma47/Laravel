@@ -51,12 +51,13 @@ Route::group(['namespace' => 'Api\v1','prefix'=>'v1'], function() {
         Route::get('promotion-cashback-details/{promotion_cashback_id}','AuthenticationController@promotionCashbackDetails');
         Route::post('event-and-promotion','AuthenticationController@eventAndPromotion');
         Route::post('user-assgin-badge-listing','AuthenticationController@userAssignBadgeListing');
+        Route::get('user-notification-history','AuthenticationController@userNotificationHistory');
         
 
     });
 
 
-
+/*Venue*/
 
     Route::post('venueuser-login','RestaurantAuthenticationController@venuUserLogin');
     Route::get('venue_listing-without-token','RestaurantAuthenticationController@venueListingWithoutToken');
@@ -71,5 +72,15 @@ Route::group(['namespace' => 'Api\v1','prefix'=>'v1'], function() {
         Route::post('pay-amount','RestaurantAuthenticationController@payAmount');
         Route::post('redeem-offer','RestaurantAuthenticationController@redeemOffer');
     });
+
+
+    /*POS*/
+
+
+    Route::group(['middleware' => 'venuePosCheck'], function(){
+
+        Route::post('scan-pos','RestaurantAuthenticationController@scanPos');
+    });
+    
 
 });

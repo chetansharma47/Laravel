@@ -44,9 +44,14 @@ use App\Models\LoginRequest;
 use App\Models\Badge;
 use App\Models\AssignBadge;
 use App\Models\AssignUserVenue;
+use App\Models\AdminNotification;
+use App\Models\AdminCriteriaNotification;
+use App\Models\Country;
 use Illuminate\Support\Arr;
+use App\Jobs\EventNotificationJob;
+require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
 
-class TabController extends Controller
+class TabController extends ResponseController
 {
 
     public function tabBusiness(){
@@ -782,6 +787,7 @@ class TabController extends Controller
 
     public function addingEvents(Request $request){
         if($request->isMethod('GET')){
+
             return view('admin.adding-events');
         }
     }
@@ -810,7 +816,9 @@ class TabController extends Controller
 
     public function notificationSetting(Request $request){
         if($request->isMethod('GET')){
-            return view('admin.notifications-settings');
+            $city = City::get();
+            $country = Country::orderBy("name","asc")->get();
+            return view('admin.notifications-settings',compact('city','country'));
         }
     }
 
@@ -1158,6 +1166,18 @@ class TabController extends Controller
             if(!empty($check_venue)){
                 return response()->json(['venue_name_err' => "Venue name already exists."],422);
             }
+
+            $pos_venue_id = $request->pos_venue_id;
+
+            $check_pos_id = Venu::whereDeletedAt(null)->where('unique_id','!=',$data['uniq'])->wherePosVenueId($pos_venue_id)->first();
+
+            if(!empty($check_pos_id)){
+                return response()->json(['venue_name_err' => "Venue POS ID already exists."],422);
+            }
+
+            if(!empty($check_venue)){
+                return response()->json(['venue_name_err' => "Venue name already exists."],422);
+            }
             $saveVenu = $this->venueBusinessModel()->VenueCreate($data,$admin);
             return response()->json($saveVenu);
         }
@@ -1198,7 +1218,85 @@ class TabController extends Controller
             }
 
             $saveEvent = $this->venueBusinessModel()->eventCreate($data,$admin);
-            if($saveEvent){
+            if($saveEvent['data']){
+
+                $admin_event_notification = AdminNotification::where("uniq_id","=",5)->first();
+
+                $find_event = Event::whereId($saveEvent['data']['id'])->first();
+
+                if(!empty($admin_event_notification)){
+
+
+                    $today_day = Carbon::now()->format("l");
+                    $array_event_days = explode(",", $saveEvent['data']['when_day']);
+                    if($saveEvent['message'] == "Event added successfully."){
+                        if($saveEvent['data']['from_date'] <= Carbon::now()->toDateString() && $saveEvent['data']['to_date'] >= Carbon::now()->toDateString() && $saveEvent['data']['status'] == "Active" && in_array($today_day, $array_event_days)){
+
+                            $users = User::whereDeletedAt(null)->where('is_block','=',0)->get();
+
+                            foreach ($users as $user_find) {
+
+
+                                //Push Notification
+
+                                if($admin_event_notification->push_type == 1){
+
+                                    if($user_find->device_type == 'Android'){
+                                        if($user_find->device_token && strlen($user_find->device_token) > 20){
+                                           $android_notify =  $this->send_android_notification_new($user_find->device_token, $admin_event_notification->message,"Event Create Notification", $noti_type = 5, $event_id = $find_event->id);
+
+                                            $criteria_data = [
+                                                'user_id'   => $user_find->id,
+                                                'message'   => $admin_event_notification->message,
+                                                'noti_type' => 5,
+                                                'event_id'  => $find_event->id
+                                            ];
+                                            AdminCriteriaNotification::create($criteria_data);
+                                       
+                                       }
+                                    }
+
+                                    if($user_find->device_type == 'Ios' && strlen($user_find->device_token) > 20){
+                                        if($user_find->device_token){
+                                            $ios_notify =  $this->iphoneNotification($user_find->device_token, $admin_event_notification->message,"Event Create Notification", $noti_type = 5, $event_id = $find_event->id);
+
+                                            $criteria_data = [
+                                                'user_id'   => $user_find->id,
+                                                'message'   => $admin_event_notification->message,
+                                                'noti_type' => 5,
+                                                'event_id'  => $find_event->id
+                                            ];
+                                            AdminCriteriaNotification::create($criteria_data);
+                                        
+                                       }
+                                    }
+
+                                }
+
+                                if($admin_event_notification->sms_type == 1){
+                                    \SMSGlobal\Credentials::set(env('SMS_GLOBAL_API'),env('SMS_GLOBAL_SECERET'));
+                                    $sms = new \SMSGlobal\Resource\Sms();
+                                    $message = $admin_event_notification->message;
+                                    try {
+                                        $response = $sms->sendToOne($user_find->country_code.$user_find->mobile_number, $message,'CM-Society');
+                                    } catch (\Exception $e) {
+                                        continue;
+                                    }
+                                }
+
+
+
+                                $notificationJob = (new EventNotificationJob($admin_event_notification, $user_find, $find_event))->delay(Carbon::now()->addSeconds(3));
+                                dispatch($notificationJob);
+                            }
+                            
+                        }
+                    }
+
+
+                    
+                }
+
                 return response()->json($saveEvent);
             }
             return response()->json(['message' => 404]);
@@ -1252,6 +1350,12 @@ class TabController extends Controller
 
                 if(!empty($check_offer)){
                     return response()->json(['offer_name_err' => "Offer name already exists."],422);
+                }
+
+                $check_pos_id = Offer::whereDeletedAt(null)->whereOfferType('Normal')->where('unique_id','!=',$data['uniq_id'])->where('pos_product_id',$data['pos_product_id'])->first();
+
+                if(!empty($check_pos_id)){
+                    return response()->json(['offer_name_err' => "Offer POS Product ID already exists."],422);
                 }
 
             $saveOffer = $this->venueBusinessModel()->offersCreate($data,$admin);
@@ -1894,6 +1998,460 @@ class TabController extends Controller
         $badge_id = $request->badge_id;
         $badge = Badge::find($badge_id);
         return $badge;
+    }
+
+    public function SaveNotificationMessage(Request $request){
+
+        $message_type = $request->type_message;
+        
+        if(in_array('push', $message_type)){
+            $push_type = 1;
+        }else{
+            $push_type = 0;
+        }
+        if(in_array('sms', $message_type)){
+            $sms_type = 1;
+        }else{
+            $sms_type = 0;
+        }
+        if(in_array('email', $message_type)){
+            $email_type = 1;
+        }else{
+            $email_type = 0;
+        }
+
+        $uniq_id = $request->uniq_id;
+        if($uniq_id == 1){
+            $notification_type = 'Transaction';
+        }else if($uniq_id == 2){
+            $notification_type = 'Cashback';
+        }else if($uniq_id == 3){
+            $notification_type = 'Welcome Bonus';
+        }else if($uniq_id == 4){
+            $notification_type = 'Referral Bonus';
+        }else if($uniq_id == 5){
+            $notification_type = 'Event';
+        }else if($uniq_id == 6){
+            $notification_type = 'Specific Customer';
+        }
+
+
+        $check_notification = AdminNotification::whereUniqId($uniq_id)->first();
+
+        if(empty($check_notification)){
+            $check_notification = new AdminNotification();
+            $check_notification->uniq_id = $request->uniq_id;
+            $check_notification->message = $request->message;
+            $check_notification->push_type = $push_type;
+            $check_notification->sms_type = $sms_type;
+            $check_notification->email_type = $email_type;
+            $check_notification->notification_type = $notification_type;
+            $check_notification->save();
+
+            if($check_notification){
+               return response()->json(['message' => $notification_type.' notification message added successfully.']);
+            }
+
+        }else{
+            $check_notification->message = $request->message;
+            $check_notification->push_type = $push_type;
+            $check_notification->sms_type = $sms_type;
+            $check_notification->email_type = $email_type;
+            $check_notification->notification_type = $notification_type;
+            $check_notification->update();
+
+            if($check_notification){
+               return response()->json(['message' => $notification_type.' notification message updated successfully.']);
+            }
+        }
+
+    }
+
+
+    public function SaveNotificationMessageEmail(Request $request){
+        $request->uniq_id = 7;
+        $imageName = '';
+        $extension = '';
+        $file_original_name = '';
+        if(empty($request->img_upload2)){
+
+            if($request->hasfile('img_upload')){
+                $file_original_name = $request->file('img_upload')->getClientOriginalName();
+                $extension = $request->file('img_upload')->getClientOriginalExtension();
+                $file = $request->file('img_upload');
+                $destinationPath = storage_path(). DIRECTORY_SEPARATOR . env('ATTACHMENT_MAIL_STORAGE');
+                $imageName = date('mdYHis') . rand(10,100) . uniqid(). '.' . $extension;
+                $file->move($destinationPath, $imageName);
+            }
+
+        }else{
+            $imageName = null;
+            $extension = null;
+        }
+
+        // $imgoriginalname = $request->attachment_hidden;
+        // if(empty($attachment_hidden_value2)){
+        //     if(!empty($request->attachment_hidden) && !empty($request->attachment_hidden_src)){
+        //         $extension = pathinfo($imgoriginalname)['extension'];
+        //         if($extension == 'png' || $extension == "jpg" || $extension == "jpeg"){
+        //             $image1 = str_replace('data:image/png;base64,', '', $request->attachment_hidden_src);
+        //             $destinationPath = storage_path(). DIRECTORY_SEPARATOR . env('ATTACHMENT_MAIL_STORAGE');
+        //             $imageName = date('mdYHis') . rand(10,100) . uniqid().'.'.$extension;
+        //         }else if($extension=='.docx'){
+        //             $image1 = str_replace('data:application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,', '', $request->attachment_hidden_src);
+        //             $destinationPath = storage_path(). DIRECTORY_SEPARATOR . env('ATTACHMENT_MAIL_STORAGE');
+        //             $imageName = date('mdYHis') . rand(10,100) . uniqid().'.docx';
+        //         }else if($extension=='xlsx'){
+        //             $image1 = str_replace('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,', '', $request->attachment_hidden_src);
+        //             $destinationPath = storage_path(). DIRECTORY_SEPARATOR . env('ATTACHMENT_MAIL_STORAGE');
+        //             $imageName = date('mdYHis') . rand(10,100) . uniqid().'.xlsx';
+        //         }else if($extension=='pdf'){
+        //             $image1 = str_replace('data:application/pdf;base64,', '', $request->attachment_hidden_src);
+        //             $destinationPath = storage_path(). DIRECTORY_SEPARATOR . env('ATTACHMENT_MAIL_STORAGE');
+        //             $imageName = date('mdYHis') . rand(10,100) . uniqid().'.pdf';
+        //         }else if($extension=='csv'){
+        //             $image1 = str_replace('data:text/csv;base64,', '', $request->attachment_hidden_src);
+        //             $destinationPath = storage_path(). DIRECTORY_SEPARATOR . env('ATTACHMENT_MAIL_STORAGE');
+        //             $imageName = date('mdYHis') . rand(10,100) . uniqid().'.'.$extension;
+        //         }
+                
+        //         file_put_contents($destinationPath. '/' . $imageName, base64_decode($image1));
+        //     }else{
+        //         $imageName = null;
+        //         $extension = null;
+        //     }
+        // }
+
+        $check_notification_email = AdminNotification::whereUniqId($request->uniq_id)->first();
+
+        if(empty($check_notification_email)){
+            $check_notification_email = new AdminNotification();
+            $check_notification_email->uniq_id = $request->uniq_id;
+            $check_notification_email->title = $request->title;
+            $check_notification_email->message = $request->welcome_message;
+            $check_notification_email->image = $imageName ? $imageName : null;
+            $check_notification_email->image_type = $extension ? $extension : null;
+            $check_notification_email->name_of_file_show = $file_original_name ? $file_original_name : null;
+            $check_notification_email->push_type = 0;
+            $check_notification_email->sms_type = 0;
+            $check_notification_email->email_type = 1;
+            $check_notification_email->notification_type = 'Welcome Email';
+            $check_notification_email->save();
+
+            if($check_notification_email){
+               return response()->json(['message' => 'Welcome email notification message added successfully.']);
+            }
+
+        }else{
+            $check_notification_email->title = $request->title ? $request->title : $check_notification_email->title;
+            $check_notification_email->message = $request->welcome_message;
+
+            if(!empty($imageName)){
+
+                $check_notification_email->image = $imageName ? $imageName : null;
+                $check_notification_email->image_type = $extension ? $extension : null;
+                $check_notification_email->name_of_file_show = $file_original_name ? $file_original_name : null;
+            }
+            $check_notification_email->update();
+
+            if($check_notification_email){
+               return response()->json(['message' =>'Welcome email notification message updated successfully.']);
+            }
+        }
+        
+    }
+
+
+
+   public function SaveCriteriaMessage(Request $request){
+
+
+
+        ($request->msg_type == "Push") ? $push_type = 1 : $push_type = 0;  
+        ($request->msg_type == "Sms") ? $sms_type = 1 : $sms_type = 0;  
+
+        if($request->gender == "All"){
+
+            $users_notify = User::whereCityOfResidence($request->city_name)->whereNationality($request->nationality)->where('is_block','=',0)->get();
+        }else{
+            $users_notify = User::whereCityOfResidence($request->city_name)->whereGender($request->gender)->whereNationality($request->nationality)->where('is_block','=',0)->get();
+        }
+
+        $data = [
+            'city_id' => $request->city_id,
+            'city_name' => $request->city_name,
+            'message' => $request->specific_criteria_message,
+            'push_type' => $push_type,
+            'sms_type' => $sms_type,
+            'gender' => $request->gender,
+            'nationality' => $request->nationality,
+            'txn_start_period' => $request->txn_start_date,
+            'txn_end_period' => $request->txn_end_date,
+            'txn_amount_condition' => $request->txn_amount_condition,
+            'from_price' => $request->txn_from_price,
+            'to_price' => $request->txn_to_price,
+            'noti_type' => 7
+        ];
+
+        $message_success = '';
+
+        if(!empty($users_notify)){
+            if($request->msg_type == "Push"){
+                
+                foreach ($users_notify as $user){
+                    $is_send = 1;
+                    if(!empty($request->txn_start_date) && !empty($request->txn_end_date) && !empty($request->txn_amount_condition) && !empty($request->txn_from_price)){
+                        $is_send = 0;
+                        $wallet_transactions = WalletTransaction::whereUserId($user->id)->whereDate('created_at','>=',$request->txn_start_date)->whereDate('created_at','<=',$request->txn_end_date)->first();
+                        
+                        if(!empty($wallet_transactions)){
+                            if($request->txn_amount_condition == 'Greater Than'){
+                        
+                                if($wallet_transactions->pay_bill_amount >= $request->txn_from_price){
+                                    $is_send = 1;
+                                }
+                            }else if($request->txn_amount_condition == 'Between'){
+
+                                if(!empty($request->txn_to_price)){
+
+                                    if($request->txn_from_price <= $wallet_transactions->pay_bill_amount && $request->txn_to_price >= $wallet_transactions->pay_bill_amount){
+                                            $is_send = 1;
+                                        }
+                                }
+                            }
+                        }
+                    }
+
+                    if($is_send == 1){
+                        if($user->device_type == 'Android'){
+                           if($user->device_token && strlen($user->device_token) > 20){
+                           $android_notify =  $this->send_android_notification_new($user->device_token, $request->specific_criteria_message, $notmessage = "Admin Send notification message", $noti_type = 7);
+                           if($android_notify){
+                              (!empty($wallet_transactions->user_id)) ? $data['user_id'] = $wallet_transactions->user_id : $data['user_id'] = $user->id;
+                              $save_notification =  AdminCriteriaNotification::create($data);
+                            }
+                           }
+                        }
+
+                        if($user->device_type == 'Ios' && strlen($user->device_token) > 20){
+                            if($user->device_token){
+                           $ios_notify =  $this->iphoneNotification($user->device_token, $request->specific_criteria_message, $notmessage = "Admin Send notification message", $noti_type = 7);
+                            if($ios_notify){
+                               (!empty($wallet_transactions->user_id)) ? $data['user_id'] = $wallet_transactions->user_id : $data['user_id'] = $user->id;
+                                $save_notification = AdminCriteriaNotification::create($data);
+                             }
+                           }
+                        }
+                    }
+                }
+
+                return response()->json(['message' => $request->msg_type.' notification send successfully.']);
+                
+            }
+
+            if($request->msg_type == "Sms"){
+                 foreach ($users_notify as $user){
+                    $is_send = 1;
+                    if(!empty($request->txn_start_date) && !empty($request->txn_end_date) && !empty($request->txn_amount_condition) && !empty($request->txn_from_price)){
+                        $is_send = 0;
+                        $wallet_transactions = WalletTransaction::whereUserId($user->id)->whereDate('created_at','>=',$request->txn_start_date)->whereDate('created_at','<=',$request->txn_end_date)->first();
+                        
+                        if(!empty($wallet_transactions)){
+                            if($request->txn_amount_condition == 'Greater Than'){
+                        
+                                if($wallet_transactions->pay_bill_amount >= $request->txn_from_price){
+                                    $is_send = 1;
+                                }
+                            }else if($request->txn_amount_condition == 'Between'){
+
+                                if(!empty($request->txn_to_price)){
+
+                                    if($request->txn_from_price <= $wallet_transactions->pay_bill_amount && $request->txn_to_price >= $wallet_transactions->pay_bill_amount){
+                                            $is_send = 1;
+                                        }
+                                }
+                            }
+                        }
+                    }
+
+                    if($is_send == 1){
+
+                        \SMSGlobal\Credentials::set(env('SMS_GLOBAL_API'),env('SMS_GLOBAL_SECERET'));
+
+                        $sms = new \SMSGlobal\Resource\Sms();
+
+                        $message = $request->specific_criteria_message;
+
+                        try {
+                            $response = $sms->sendToOne($user->country_code.$user->mobile_number, $message,'CM-Society');
+                        } catch (\Exception $e) {
+                            continue;
+                        }
+                        (!empty($wallet_transactions->user_id)) ? $data['user_id'] = $wallet_transactions->user_id : $data['user_id'] = $user->id;
+                        $save_notification = AdminCriteriaNotification::create($data);
+                    }
+                }
+                
+                
+
+                return response()->json(['message' => $request->msg_type.' notification send successfully.']);
+                
+            }
+        }else{
+            return response()->json(['message' => $request->msg_type.' notification criteria not match with any user.']);
+        }
+
+    }
+
+
+    public function getAdminNotifications(Request $request){
+        $admin_notifications = AdminNotification::orderBy('uniq_id','asc')->get();
+        return response()->json($admin_notifications);
+    }
+
+    public function notificationHistory(Request $request){
+        // $badge_id = $request->badge_id;
+        $asc_desc = $request->get('order')[0]['dir'];
+        $column_id = $request->get('order')[0]['column'];
+        $search = $request->get("search")["value"];
+        if(!empty($request->get("search")["value"])){
+            $search = $request->get("search")["value"];
+        }
+        $colname = $request->get('columns');
+
+        if($asc_desc == "asc"){
+            $asc_desc = "desc";
+        }else{
+            $asc_desc = "asc";
+        }
+
+        $order = $request->get("order")[0]['column'];
+
+        $column = "id";
+
+        $order = $request->get("order")[0]['column'];
+
+        if($order == 1){
+            $column = "message";
+        }else if($order == 2){
+            $column = "created_at";
+        }else if($order == 3){
+            $column = "sent_by";
+        }else if($order == 4){
+            $column = "gender";
+        }
+
+       $data = AdminCriteriaNotification::select("*",DB::raw('CONCAT(admin_criteria_notifications.gender,", ",admin_criteria_notifications.city_name,", ",admin_criteria_notifications.nationality,", ",case admin_criteria_notifications.push_type when "1" then "Push notification" else "Push sms" end) AS criteria'))->whereDeletedAt(null)->whereNotiType(7)->orderBy($column,$asc_desc);
+
+        $total = $data->count();
+        $filter = $total;
+
+        if($search){
+             $data  = $data->where(function($query) use($search){
+                    $query->orWhere("message", 'Like', '%' . $search . '%');
+                    $query->orWhere("sent_by", 'Like', '%' . $search . '%');
+                    $query->orWhere("created_at", 'Like', '%' . $search . '%');
+                    $query->orWhere(DB::raw('CONCAT(admin_criteria_notifications.gender,", ",admin_criteria_notifications.city_name,", ",admin_criteria_notifications.nationality,", ",case admin_criteria_notifications.push_type when "1" then "Push notification" else "Push sms" end)'), 'Like', '%' . $search . '%');
+                });
+
+            $filter = $data->get()->count();
+        }
+
+        $data = $data->offset($request->start);
+        $data = $data->take($request->length);
+        $data = $data->get();
+
+        $return_data = [
+            "data" => $data,
+            "draw" => (int)$request->draw,
+            "recordsTotal" => $total,
+            "recordsFiltered" => $filter,
+            "input" => $request->all(),
+        ];
+
+        return response()->json($return_data);
+    }
+
+    public function AnalyticsDashboard(Request $request){
+
+        $customer_registrations_trends = User::selectRaw("COUNT(*) y, DATE_FORMAT(created_at, '%Y-%m-%e') x")
+            ->whereDate('created_at','>=',$request->from_date)
+            ->whereDate('created_at','<=',$request->to_date)
+            ->groupBy('x')
+            ->get();
+
+        $customer_dirshams_wallet_cash_trends = User::selectRaw("SUM(wallet_cash) y, DATE_FORMAT(created_at, '%Y-%m-%e') x")->whereDate('created_at','>=',$request->from_date)
+            ->whereDate('created_at','<=',$request->to_date)
+            ->groupBy('x')
+            ->get();
+
+        $totalsales_amount_trends = WalletTransaction::selectRaw("SUM(pay_bill_amount) y, DATE_FORMAT(created_at, '%Y-%m-%e') x")->whereDate('created_at','>=',$request->from_date)
+            ->whereDate('created_at','<=',$request->to_date)
+            ->groupBy('x')
+            ->get();
+
+        $redeemed_amount_trends = WalletTransaction::selectRaw("SUM(redeemed_amount) y, DATE_FORMAT(created_at, '%Y-%m-%e') x")->whereDate('created_at','>=',$request->from_date)
+            ->whereDate('created_at','<=',$request->to_date)
+            ->groupBy('x')
+            ->get();
+
+        $users = User::whereDate('created_at','>=',$request->from_date)
+            ->whereDate('created_at','<=',$request->to_date);
+        $get_all_customers = $users->pluck('id');
+        $customer_dirhams_wallet = $users->sum('wallet_cash');
+
+
+        $customer_registrations = $users->count();
+        $customer_referal = $users->whereNotNull('reference_by')->count();
+
+        $user_ids_from_wallet_transactions = WalletTransaction::whereDate('created_at','>=',$request->from_date)
+                ->whereDate('created_at','<=',$request->to_date)->pluck('user_id');
+
+        $referral_first_transaction_done = User::whereIn("id", $user_ids_from_wallet_transactions)->where('refer_amount_used', '=', 1)->count();
+
+        $total_sales = WalletTransaction::whereDate('created_at','>=',$request->from_date)
+                ->whereDate('created_at','<=',$request->to_date)->sum('pay_bill_amount');
+        $cashback_earned = WalletTransaction::whereDate('created_at','>=',$request->from_date)
+                ->whereDate('created_at','<=',$request->to_date)->sum('cashback_earned');
+        $redeemed_amount = WalletTransaction::whereDate('created_at','>=',$request->from_date)
+                ->whereDate('created_at','<=',$request->to_date)->sum('redeemed_amount');
+
+        $repeat_customers = WalletTransaction::select(DB::raw('COUNT(user_id) count'))->whereDate('created_at','>=',$request->from_date)->whereDate('created_at','<=',$request->to_date)->groupBy('user_id')->havingRaw('COUNT(user_id) > 1')->count();
+
+        $wallet_transactions_offers = WalletTransaction::whereDeletedAt(null)
+                                    ->whereDate('created_at','>=',$request->from_date)
+                                    ->whereDate('created_at','<=',$request->to_date)
+                                    ->pluck('offer_product_ids')->toArray();
+
+        $implode_wallet_transactions_offers = implode(",", $wallet_transactions_offers);
+        $explode_wallet_transactions_offers = explode(",", $implode_wallet_transactions_offers);
+
+        $offers_for_bar_graph = Offer::select("id","offer_name as label")->whereIn("id", $explode_wallet_transactions_offers)->get();
+
+        foreach ($offers_for_bar_graph as $offer) {
+            $offer->y = WalletTransaction::whereRaw("FIND_IN_SET(?, offer_product_ids) > 0", [$offer->id])->whereDeletedAt(null)->count();
+            unset($offer->id);
+        }
+
+        $data = [
+            'customer_registrations' => $customer_registrations,
+            'customer_registrations_trends' => $customer_registrations_trends,
+            'customer_referal' => $customer_referal,
+            'total_sales' => $total_sales,
+            'cashback_earned' => $cashback_earned,
+            'redeemed_amount' => $redeemed_amount,
+            'referral_first_transaction_done' => $referral_first_transaction_done,
+            'totalsales_amount_trends' => $totalsales_amount_trends,
+            'redeemed_amount_trends' => $redeemed_amount_trends,
+            'repeat_customers' => $repeat_customers,
+            'customer_dirhams_wallet' => $customer_dirhams_wallet,
+            'customer_dirshams_wallet_cash_trends' => $customer_dirshams_wallet_cash_trends,
+            'offers_for_bar_graph' => $offers_for_bar_graph
+        ];
+
+
+        return response()->json($data);
+
     }
 }
 

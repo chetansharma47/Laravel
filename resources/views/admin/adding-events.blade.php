@@ -178,7 +178,7 @@
 		}
 	</style>
 </head>
-<body>
+<body class="my_body">
 <!-- <div id="uniq_id_db"><span id="unique" uniq-id="1"></span></div> -->
 <div id="uniq_id_db"></div>
 	<header class="curve-bg">
@@ -501,7 +501,7 @@
 
     	//for convert 24 hour time to 12 hours
     	if(event_time){
-	    	let hr = event_time.split(':')[0];
+	    	/*let hr = event_time.split(':')[0];
 	    	let min = event_time.split(':')[1];
 	    	let sec = event_time.split(':')[2];
 	    	let get_date  = new Date();
@@ -513,14 +513,25 @@
 	    	let am_pm = hr_12.slice(-2);
 	    	let new_hr = newtime[0];
 	    	let new_min = newtime[1];
-	    	let new_time_12 = new_hr + ':' + new_min + ' ' + am_pm.toUpperCase();
-	    	var time_input = `<input type="text" class="form-control event_time form-control-user" value="${new_time_12}" readonly style="cursor:pointer;" data-time="${(event_time) ? event_time : ''}" uniq-id="${id}"/>`
+	    	let new_time_12 = new_hr + ':' + new_min + ' ' + am_pm.toUpperCase();*/
+
+	    	let __hr_24_time = event_time;
+	    	var __date = new Date('2021-01-01'+' '+event_time);
+	        var __hours = __date.getHours() > 12 ? __date.getHours() - 12 : __date.getHours();
+	        var __am_pm = date.getHours() >= 12 ? "PM" : "AM";
+	        __hours = __hours < 10 ? "0" + __hours : __hours;
+	        var __minutes = __date.getMinutes() < 10 ? "0" + __date.getMinutes() : __date.getMinutes();
+	        var __seconds = __date.getSeconds() < 10 ? "0" + __date.getSeconds() : __date.getSeconds();
+	        __time = __hours + ":" + __minutes + " " + __am_pm;
+	        let new_time_12 = __time;
+
+	    	var time_input = `<input type="text" class="form-control event_time form-control-user" value="${new_time_12}" readonly style="cursor:pointer;" data-time="${(event_time) ? __hr_24_time : ''}" uniq-id="${id}"/>`
 	    }else{
 	    	var time_input = `<input type="text" class="form-control event_time form-control-user" value="" readonly style="cursor:pointer;" uniq-id="${id}"/>`
 	    }
 
 	    if(to_time){
-	    	let to_hr = to_time.split(':')[0];
+	    	/*let to_hr = to_time.split(':')[0];
 	    	let to_min = to_time.split(':')[1];
 	    	let to_sec = to_time.split(':')[2];
 	    	let to_get_date  = new Date();
@@ -532,8 +543,19 @@
 	    	let to_am_pm = to_hr_12.slice(-2);
 	    	let to_new_hr = to_newtime[0];
 	    	let to_new_min = to_newtime[1];
-	    	let to_new_time_12 = to_new_hr + ':' + to_new_min + ' ' + to_am_pm.toUpperCase();
-	    	var to_time_input = `<input type="text" class="form-control to_time form-control-user" value="${to_new_time_12}" readonly style="cursor:pointer;" data-time="${(to_time) ? to_time : ''}" uniq-id="${id}"/>`
+	    	let to_new_time_12 = to_new_hr + ':' + to_new_min + ' ' + to_am_pm.toUpperCase();*/
+
+	    	let hr_24_time = to_time;
+	    	var date = new Date('2021-01-01'+' '+to_time);
+	        var hours = date.getHours() > 12 ? date.getHours() - 12 : date.getHours();
+	        var am_pm = date.getHours() >= 12 ? "PM" : "AM";
+	        hours = hours < 10 ? "0" + hours : hours;
+	        var minutes = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
+	        var seconds = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
+	        time = hours + ":" + minutes + " " + am_pm;
+	        let to_new_time_12 = time;
+
+	    	var to_time_input = `<input type="text" class="form-control to_time form-control-user" value="${to_new_time_12}" readonly style="cursor:pointer;" data-time="${(to_time) ? hr_24_time : ''}" uniq-id="${id}"/>`
 	    }else{
 	    	var to_time_input = `<input type="text" class="form-control to_time form-control-user" value="" readonly style="cursor:pointer;" uniq-id="${id}"/>`
 	    }
@@ -1163,4 +1185,17 @@ if(file){
 		// });
 
 	</script>
+
+<script type="text/javascript">
+	$.ajax({
+	    type: 'GET', //THIS NEEDS TO BE GET
+	    url: "{{url('queue-work')}}",
+	    dataType: 'json',
+	    success: function (data) {
+	       // console.log(data);
+	    },error:function(){ 
+	         
+	    }
+	});
+</script>
 </body>

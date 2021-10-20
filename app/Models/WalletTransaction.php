@@ -9,6 +9,7 @@ class WalletTransaction extends Model
     protected $fillable = [
     	'user_id',
     	'venue_user_id',
+        'venu_id',
     	'description',
     	'date_and_time',
     	'cashback_earned',
@@ -17,7 +18,8 @@ class WalletTransaction extends Model
     	'total_bill_amount',
     	'pay_bill_amount',
     	'is_cross_verify',
-        'invoice_number'
+        'invoice_number',
+        'offer_product_ids'
     ]; 
 
     

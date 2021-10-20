@@ -158,6 +158,18 @@ Route::group(['middleware' => 'TimeZone','namespace' => 'Admin','prefix'=>'/admi
         Route::post('assign-users-list','TabController@assignUserList')->name('assign_user_list');
         Route::post('delete-badges','TabController@deleteBadge')->name('deleteBadge');
         Route::get('download-assign-badge-users/{badge_id?}/{search_txt?}','TabController@downloadBadgeAssignUsers')->name('download_badge_assign_users');
+
+        /* Notification management */
+
+        Route::post('save-notification-message','TabController@SaveNotificationMessage')->name('save_notification_message');
+        Route::post('save-notification-message-email','TabController@SaveNotificationMessageEmail')->name('save_notification_message_email');
+        Route::post('save-criteria-message','TabController@SaveCriteriaMessage')->name('saveCriteriaMessage');
+        Route::get('get-admins-notifications','TabController@getAdminNotifications')->name('getAdminNotification');
+        Route::post('notifications-history','TabController@notificationHistory')->name('notification_history');
+
+        /*Analytics dashboard*/
+        
+        Route::post('analytics-dashboard','TabController@AnalyticsDashboard')->name('analyticsDashboard');
         
     }); 
            

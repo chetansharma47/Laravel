@@ -194,7 +194,7 @@ select.form-control.form-group.status_select:focus{
 }*/
 	</style>
 </head>
-<body>
+<body class="my_body">
 	<header class="curve-bg">
 		<div class="container-fluid">
 			<div class="curve-bg1">
@@ -276,7 +276,7 @@ select.form-control.form-group.status_select:focus{
 
 
 						<div class="checkboxesbg">
-								<div class="d-flex flex-wrap" style="height: 200px; overflow: auto;">
+								<div class="d-flex flex-wrap" style="max-height: 200px; overflow: auto;">
 									@if(count($venulist) > 0)
 										@foreach($venulist as $valu)
 											<div class="mr-2" style="width: 100%;">

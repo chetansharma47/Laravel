@@ -155,9 +155,10 @@
 			width: 0px;
 			scrollbar-width: 0px;
 		}
+
 	</style>
 </head>
-<body>
+<body class="my_body">
 	<div id="uniq_id_db"></div>
 	<header class="curve-bg">
 		<div class="container-fluid">
@@ -399,7 +400,7 @@
 		}
 		
 		// offer form 
-		function offerform(uniqid,venuid,offer_name,offer_desc,imagename,from_date,to_date,offer_setting,txn_condition,status,time,to_time,slice_name,dataid,venudata,offer_id,datacity,offertype,gender,setting_from_price,setting_to_price){
+		function offerform(uniqid,venuid,offer_name,offer_desc,imagename,from_date,to_date,offer_setting,txn_condition,status,time,to_time,slice_name,dataid,venudata,offer_id,datacity,offertype,gender,setting_from_price,setting_to_price,pos_product_id){
 
 			if(imagename){
 				var imageurl = `<input type="text" readonly class="form-control form-control-user offer_image" style="cursor:pointer;" value="${(imagename)?slice_name:''}" src="${imagename}" venu-id="${venuid}" uniq-id="${uniqid}">`
@@ -412,27 +413,24 @@
     	var min_date = date.toISOString().slice(0,10);
     	//for convert 24 hour time to 12 hours
     	if(to_time){
-	    	let to_hr = to_time.split(':')[0];
-	    	let to_min = to_time.split(':')[1];
-	    	let to_sec = to_time.split(':')[2];
-	    	let to_get_date  = new Date();
-	    	to_get_date.setHours(to_hr);
-	    	to_get_date.setMinutes(to_min);
-	    	to_get_date.setSeconds(to_sec);
-	    	let to_hr_12 = to_get_date.toLocaleTimeString();
-	    	let to_newtime = to_hr_12.split(':');
-	    	let am_pm = to_hr_12.slice(-2);
-	    	let to_new_hr = to_newtime[0];
-	    	let to_new_min = to_newtime[1];
-	    	let to_new_time_12 = to_new_hr + ':' + to_new_min + ' ' + am_pm.toUpperCase();
-	    	var to_time_input = `<input type="text" offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}" ${(offertype=='BirthdayOffer')?'disabled':''} class="form-control form-control-user offer_to_time" ${(offertype=='Normal')?'style="cursor:pointer;"':''} readonly data-time="${(to_time)?to_time:''}" value="${to_new_time_12}" venu-id="${venuid}" uniq-id="${uniqid}">`
+    		let __hr_24_time = to_time;
+	    	var __date = new Date('2021-01-01'+' '+to_time);
+	        var __hours = __date.getHours() > 12 ? __date.getHours() - 12 : __date.getHours();
+	        var __am_pm = date.getHours() >= 12 ? "PM" : "AM";
+	        __hours = __hours < 10 ? "0" + __hours : __hours;
+	        var __minutes = __date.getMinutes() < 10 ? "0" + __date.getMinutes() : __date.getMinutes();
+	        var __seconds = __date.getSeconds() < 10 ? "0" + __date.getSeconds() : __date.getSeconds();
+	        __time = __hours + ":" + __minutes + " " + __am_pm;
+	        let to_new_time_12 = __time;
+
+	    	var to_time_input = `<input type="text" offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}" ${(offertype=='BirthdayOffer')?'disabled':''} class="form-control form-control-user offer_to_time" ${(offertype=='Normal')?'style="cursor:pointer;"':''} readonly data-time="${(to_time)?__hr_24_time:''}" value="${to_new_time_12}" venu-id="${venuid}" uniq-id="${uniqid}">`
 	    }else{
 	    	var to_time_input = `<input type="text" offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}" ${(offertype=='BirthdayOffer')?'disabled':''} class="form-control form-control-user offer_to_time" ${(offertype=='Normal')?'style="cursor:pointer;"':''} readonly data-time="" value="" venu-id="${venuid}" uniq-id="${uniqid}">`
 	    }
 
 
     	if(time){
-	    	let hr = time.split(':')[0];
+	    	/*let hr = time.split(':')[0];
 	    	let min = time.split(':')[1];
 	    	let sec = time.split(':')[2];
 	    	let get_date  = new Date();
@@ -444,8 +442,24 @@
 	    	let am_pm = hr_12.slice(-2);
 	    	let new_hr = newtime[0];
 	    	let new_min = newtime[1];
-	    	let new_time_12 = new_hr + ':' + new_min + ' ' + am_pm.toUpperCase();
-	    	var time_input = `<input type="text" offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}" ${(offertype=='BirthdayOffer')?'disabled':''} class="form-control form-control-user offer_time" ${(offertype=='Normal')?'style="cursor:pointer;"':''}   readonly data-time="${(time)?time:''}" value="${new_time_12}" venu-id="${venuid}" uniq-id="${uniqid}">`
+	    	let new_time_12 = new_hr + ':' + new_min + ' ' + am_pm.toUpperCase();*/
+
+
+
+
+	    	let hr_24_time = time;
+	    	var date = new Date('2021-01-01'+' '+time);
+	        var hours = date.getHours() > 12 ? date.getHours() - 12 : date.getHours();
+	        var am_pm = date.getHours() >= 12 ? "PM" : "AM";
+	        hours = hours < 10 ? "0" + hours : hours;
+	        var minutes = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
+	        var seconds = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
+	        time = hours + ":" + minutes + " " + am_pm;
+	        let new_time_12 = time;
+
+
+	    	console.log("new_time_12", new_time_12);
+	    	var time_input = `<input type="text" offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}" ${(offertype=='BirthdayOffer')?'disabled':''} class="form-control form-control-user offer_time" ${(offertype=='Normal')?'style="cursor:pointer;"':''}   readonly data-time="${(time)?hr_24_time:''}" value="${new_time_12}" venu-id="${venuid}" uniq-id="${uniqid}">`
 
 	    }else{
 	    	var time_input = `<input type="text" offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}" ${(offertype=='BirthdayOffer')?'disabled':''} class="form-control form-control-user offer_time" ${(offertype=='Normal')?'style="cursor:pointer;"':''} readonly data-time="${(time)?time:''}" value="" venu-id="${venuid}" uniq-id="${uniqid}">`
@@ -647,6 +661,16 @@
 								</select>
 							</div>
 						</div>
+
+
+						<div class="col-md-6 venue_inputs">
+							<label>
+								POS Product ID
+							</label>
+							<input type="text" class="form-control form-control-user pos_product_id" maxlength="11" placeholder="Pos Product ID" value="${(pos_product_id)? pos_product_id:''}" venu-id="${venuid}" uniq-id="${uniqid}">
+						</div>
+
+
 					</div>
 					<div class="row pr-5 pl-3 mt-3">
 						<div class="col-md-6 venue_inputs">
@@ -915,6 +939,7 @@ $(document).on('click','.common_btn',function(){
 	let from_price_condition = $('.criteria_from_price[uniq-id='+uniq_id+']').val();
 	let to_price_condition = $('.criteria_to_price[uniq-id='+uniq_id+']').val();
 	let offer_name = $('.offer_name[uniq-id='+uniq_id+']').val();
+	let pos_product_id = $('.pos_product_id[uniq-id='+uniq_id+']').val();
 	let offer_desc = $('.offer_desc[uniq-id='+uniq_id+']').val();
 	let offer_img_src = $('.offer_image[uniq-id='+uniq_id+']').attr('src');
 	let offer_img_value = $('.offer_image[uniq-id='+uniq_id+']').val();
@@ -1147,6 +1172,7 @@ let offersdata = {
 	uniq_id:uniq_id,
 	venu_id:venu_id,
 	offer_img_hidden2,offer_img_hidden2,
+	pos_product_id,pos_product_id,
 	"_token":"{{ csrf_token() }}",
 }
 
@@ -1273,7 +1299,7 @@ function alloffers(){
 	  		if(dataoffer[i].deleted_at==null){
 	  			$('.menu-lisitng ul.listitem').append(`<li id="venu-${dataoffer[i].venu_id}" class="offers_list" uniq-id="${dataoffer[i].unique_id}" venu-id="${dataoffer[i].venu_id}" data-id="${dataoffer[i].id}" data-tab="uniq-${dataoffer[i].unique_id}"><input type="text" offertype="${(dataoffer[i].offer_type=='BirthdayOffer')?dataoffer[i].offer_type:'Normal'}"  class="input_tier_name" maxlength="30" uniq-id="${dataoffer[i].unique_id}" venu-id="${dataoffer[i].venu_id}" value="${dataoffer[i].offer_name}"></li>`);
 
-	  			$('.formdata').append(offerform(dataoffer[i].unique_id,dataoffer[i].venu_id,dataoffer[i].offer_name,dataoffer[i].offer_desc,dataoffer[i].image,dataoffer[i].from_date,dataoffer[i].to_date,dataoffer[i].offer_setting,dataoffer[i].offer_setting.txn_amount_condition,dataoffer[i].status,dataoffer[i].time,dataoffer[i].to_time,slice_name,dataoffer[i].id,dataoffer[i].venu,dataoffer[i].offer_setting.id,dataoffer[i].offer_setting.city,dataoffer[i].offer_type,dataoffer[i].offer_setting.gender,dataoffer[i].offer_setting.from_price,dataoffer[i].offer_setting.to_price));
+	  			$('.formdata').append(offerform(dataoffer[i].unique_id,dataoffer[i].venu_id,dataoffer[i].offer_name,dataoffer[i].offer_desc,dataoffer[i].image,dataoffer[i].from_date,dataoffer[i].to_date,dataoffer[i].offer_setting,dataoffer[i].offer_setting.txn_amount_condition,dataoffer[i].status,dataoffer[i].time,dataoffer[i].to_time,slice_name,dataoffer[i].id,dataoffer[i].venu,dataoffer[i].offer_setting.id,dataoffer[i].offer_setting.city,dataoffer[i].offer_type,dataoffer[i].offer_setting.gender,dataoffer[i].offer_setting.from_price,dataoffer[i].offer_setting.to_price,dataoffer[i].pos_product_id));
 
 	  			for(var j=0; j<datacity.length; j++){
 						$('.criteria_city[uniq-id='+dataoffer[i].unique_id+']').append(`<option value="${(datacity[j].id)?datacity[j].id:''}" ${(dataoffer[i].offer_setting.city_id==datacity[j].id)?'selected':''}>${datacity[j].city_name}</option>`);
@@ -1306,6 +1332,16 @@ function alloffers(){
 
 alloffers();
 
+$(document).on('input','.pos_product_id',function(event){
+	return process(this);
+});
+
+function process(input){
+  let value = input.value;
+  let numbers = value.replace(/[^0-9]/g, "");
+  input.value = numbers;
+}
+
 
 $(document).on('input','.criteria_txn_condition',function(){
 	var value = $(this).val();
@@ -1320,7 +1356,7 @@ $(document).on('input','.criteria_txn_condition',function(){
 
 // for restrict first time blank space
 	
-$(document).on('keydown','.offer_desc, .offer_name, .input_tier_name',function(e){
+$(document).on('keydown','.offer_desc, .offer_name, .input_tier_name, .pos_product_id',function(e){
 	if(e.which===32 && e.target.selectionStart===0){
 		return false;
 	}
@@ -1328,3 +1364,4 @@ $(document).on('keydown','.offer_desc, .offer_name, .input_tier_name',function(e
 
 	</script>
 </body>
+</html>

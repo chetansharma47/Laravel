@@ -63,6 +63,7 @@ class VenueBusinessModel extends Model
 			$venue->name_of_file_show = $data['vimg_val'];
 			$venue->menu_link= $data['vmenu'];
 			$venue->status= $data['vstatus'];
+			$venue->pos_venue_id= $data['pos_venue_id'];
 			$venue->save();
 
 			$offer_data = Offer::whereAdminId($admin->id)->orderBy('unique_id','desc')->first();
@@ -110,6 +111,7 @@ class VenueBusinessModel extends Model
 			}
 			$venue->menu_link= $data['vmenu'];
 			$venue->status= $data['vstatus'];
+			$venue->pos_venue_id= $data['pos_venue_id'];
 			$venue->update();
 
 			if($venue){
@@ -204,6 +206,7 @@ class VenueBusinessModel extends Model
 			$offer->status = $data['offer_status'];
 			$offer->offer_type = 'Normal';
 			$offer->name_of_file_show = $data['offer_img_hidden_value'];
+			$offer->pos_product_id = $data['pos_product_id'];
 			$offer->save();
 
 			if($offer){
@@ -225,6 +228,7 @@ class VenueBusinessModel extends Model
 			$offer->to_date = $data['offer_to_date'];
 			$offer->time = $data['offer_time_data'];
 			$offer->status = $data['offer_status'];
+			$offer->pos_product_id = $data['pos_product_id'];
 			$offer->update();
 
 			if($offer){

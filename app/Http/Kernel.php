@@ -65,6 +65,7 @@ class Kernel extends HttpKernel
         'TimeZone' => \App\Http\Middleware\TimeZone::class,
         'checkTokenVenuUser' => \App\Http\Middleware\checkTokenVenuUser::class,
         'checkBlockDelete' =>  \App\Http\Middleware\CheckUserBlockDelete::class,
+        'venuePosCheck' =>  \App\Http\Middleware\VenuePosCheck::class,
     ];
 
     /**

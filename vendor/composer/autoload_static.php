@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit1cfca9516de5d8e94ec86438c62b1aac
+class ComposerStaticInit0874ee14f8137684ec03d2b955e5065d
 {
     public static $files = array (
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
@@ -622,10 +622,21 @@ class ComposerStaticInit1cfca9516de5d8e94ec86438c62b1aac
         'App\\Http\\Middleware\\TrustProxies' => __DIR__ . '/../..' . '/app/Http/Middleware/TrustProxies.php',
         'App\\Http\\Middleware\\VerifyCsrfToken' => __DIR__ . '/../..' . '/app/Http/Middleware/VerifyCsrfToken.php',
         'App\\Http\\Middleware\\checkTokenVenuUser' => __DIR__ . '/../..' . '/app/Http/Middleware/checkTokenVenuUser.php',
+        'App\\Jobs\\EventNotificationJob' => __DIR__ . '/../..' . '/app/Jobs/EventNotificationJob.php',
+        'App\\Jobs\\OfferNotificationJob' => __DIR__ . '/../..' . '/app/Jobs/OfferNotificationJob.php',
+        'App\\Mail\\BonusEmail' => __DIR__ . '/../..' . '/app/Mail/BonusEmail.php',
+        'App\\Mail\\CashbackEmail' => __DIR__ . '/../..' . '/app/Mail/CashbackEmail.php',
         'App\\Mail\\ForgotAdminPassword' => __DIR__ . '/../..' . '/app/Mail/ForgotAdminPassword.php',
+        'App\\Mail\\NewEventCreateMail' => __DIR__ . '/../..' . '/app/Mail/NewEventCreateMail.php',
+        'App\\Mail\\OfferAssignMail' => __DIR__ . '/../..' . '/app/Mail/OfferAssignMail.php',
+        'App\\Mail\\ReferralEmail' => __DIR__ . '/../..' . '/app/Mail/ReferralEmail.php',
+        'App\\Mail\\SignupMail' => __DIR__ . '/../..' . '/app/Mail/SignupMail.php',
+        'App\\Mail\\TransactionEmail' => __DIR__ . '/../..' . '/app/Mail/TransactionEmail.php',
         'App\\Mail\\UserForgotPassword' => __DIR__ . '/../..' . '/app/Mail/UserForgotPassword.php',
         'App\\Mail\\UserVerifyMail' => __DIR__ . '/../..' . '/app/Mail/UserVerifyMail.php',
         'App\\Models\\Admin' => __DIR__ . '/../..' . '/app/Models/Admin.php',
+        'App\\Models\\AdminCriteriaNotification' => __DIR__ . '/../..' . '/app/Models/AdminCriteriaNotification.php',
+        'App\\Models\\AdminNotification' => __DIR__ . '/../..' . '/app/Models/AdminNotification.php',
         'App\\Models\\ApplicationData' => __DIR__ . '/../..' . '/app/Models/ApplicationData.php',
         'App\\Models\\ApplicationImage' => __DIR__ . '/../..' . '/app/Models/ApplicationImage.php',
         'App\\Models\\AssignBadge' => __DIR__ . '/../..' . '/app/Models/AssignBadge.php',
@@ -633,6 +644,7 @@ class ComposerStaticInit1cfca9516de5d8e94ec86438c62b1aac
         'App\\Models\\Badge' => __DIR__ . '/../..' . '/app/Models/Badge.php',
         'App\\Models\\Cashback' => __DIR__ . '/../..' . '/app/Models/Cashback.php',
         'App\\Models\\City' => __DIR__ . '/../..' . '/app/Models/City.php',
+        'App\\Models\\Country' => __DIR__ . '/../..' . '/app/Models/Country.php',
         'App\\Models\\Event' => __DIR__ . '/../..' . '/app/Models/Event.php',
         'App\\Models\\LoginRequest' => __DIR__ . '/../..' . '/app/Models/LoginRequest.php',
         'App\\Models\\Offer' => __DIR__ . '/../..' . '/app/Models/Offer.php',
@@ -849,6 +861,7 @@ class ComposerStaticInit1cfca9516de5d8e94ec86438c62b1aac
         'Egulias\\EmailValidator\\Result\\Reason\\DomainTooLong' => __DIR__ . '/..' . '/egulias/email-validator/src/Result/Reason/DomainTooLong.php',
         'Egulias\\EmailValidator\\Result\\Reason\\DotAtEnd' => __DIR__ . '/..' . '/egulias/email-validator/src/Result/Reason/DotAtEnd.php',
         'Egulias\\EmailValidator\\Result\\Reason\\DotAtStart' => __DIR__ . '/..' . '/egulias/email-validator/src/Result/Reason/DotAtStart.php',
+        'Egulias\\EmailValidator\\Result\\Reason\\EmptyReason' => __DIR__ . '/..' . '/egulias/email-validator/src/Result/Reason/EmptyReason.php',
         'Egulias\\EmailValidator\\Result\\Reason\\ExceptionFound' => __DIR__ . '/..' . '/egulias/email-validator/src/Result/Reason/ExceptionFound.php',
         'Egulias\\EmailValidator\\Result\\Reason\\ExpectingATEXT' => __DIR__ . '/..' . '/egulias/email-validator/src/Result/Reason/ExpectingATEXT.php',
         'Egulias\\EmailValidator\\Result\\Reason\\ExpectingCTEXT' => __DIR__ . '/..' . '/egulias/email-validator/src/Result/Reason/ExpectingCTEXT.php',
@@ -5314,11 +5327,11 @@ class ComposerStaticInit1cfca9516de5d8e94ec86438c62b1aac
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit1cfca9516de5d8e94ec86438c62b1aac::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit1cfca9516de5d8e94ec86438c62b1aac::$prefixDirsPsr4;
-            $loader->fallbackDirsPsr4 = ComposerStaticInit1cfca9516de5d8e94ec86438c62b1aac::$fallbackDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit1cfca9516de5d8e94ec86438c62b1aac::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInit1cfca9516de5d8e94ec86438c62b1aac::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit0874ee14f8137684ec03d2b955e5065d::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit0874ee14f8137684ec03d2b955e5065d::$prefixDirsPsr4;
+            $loader->fallbackDirsPsr4 = ComposerStaticInit0874ee14f8137684ec03d2b955e5065d::$fallbackDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit0874ee14f8137684ec03d2b955e5065d::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit0874ee14f8137684ec03d2b955e5065d::$classMap;
 
         }, null, ClassLoader::class);
     }

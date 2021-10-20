@@ -45,7 +45,9 @@ class User extends Authenticatable
         'bar_code',
         'self_reference_code',
         'qr_code',
-        'tier_update_date'
+        'tier_update_date',
+        'refer_amount',
+        'refer_amount_used'
     ];
 
     /**

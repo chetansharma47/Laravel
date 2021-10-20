@@ -23,7 +23,8 @@ class Venu extends Model
     	'image',
         'name_of_file_show',
     	'menu_link',
-    	'status'
+        'status',
+    	'pos_venue_id'
     ];
 
     public function getImageAttribute($value){

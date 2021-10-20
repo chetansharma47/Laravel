@@ -43,6 +43,8 @@ class CreateUsersTable extends Migration
             $table->string('bar_code')->nullable();
             $table->string('qr_code')->nullable();
             $table->date('tier_update_date')->nullable();
+            $table->double('refer_amount')->nullable()->default(0);
+            $table->integer('refer_amount_used')->default(0);
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

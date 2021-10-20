@@ -42,9 +42,68 @@
 		.canvasjs-chart-credit {
 			display: none;
 		}
+		#validationModel .modal-header {
+		    background-color: #5f5f5f;
+		    color: #fff;
+		    justify-content: center;
+		}
+
+		#validationModel .modal-body {
+			text-align: center;
+		}
+
+		#validationModel .modal-body p {
+			margin-bottom: 0rem;
+		}
+		#successModel .modal-title{
+		    text-align: center;
+		    width: 100%;
+		    font-size: 20px;
+		    font-weight: 600;
+		}
+		#successModel .modal-header {
+		    background-color: #5f5f5f;
+		    color: #fff;
+		    justify-content: center;
+		}
+
+		#successModel .modal-body {
+			text-align: center;
+		}
+
+		#successModel .modal-body p {
+			margin-bottom: 0rem;
+		}
+
+		#confirmationmodel .modal-title{
+		    text-align: center;
+		    width: 100%;
+		    font-size: 20px;
+		    font-weight: 600;
+		}
+		#confirmationmodel .modal-header {
+		    background-color: #5f5f5f;
+		    color: #fff;
+		    justify-content: center;
+		}
+
+		#confirmationmodel .modal-body {
+			text-align: center;
+		}
+
+		#confirmationmodel .modal-body p {
+			margin-bottom: 0rem;
+		}
+		div#loaderImg2 {
+		    position: absolute;
+		    left: 0;
+		    right: 0;
+		    text-align: center;
+		    margin-top: 250px;
+		}
 	</style>
 </head>
-<body>
+<body class="my_body">
 	<header class="curve-bg">
 		<div class="container-fluid">
 			<div class="curve-bg1">
@@ -98,7 +157,7 @@
 			<div class="row">
 				<div class="col-md-4">
 					<div class="venue_inputs mb-5">
-						<input type="text" class="form-control form-control-user" placeholder="Search.." value="Analytics" style="border-radius: 10px;padding: 12px 22px !important;"/>
+						<input type="text" class="form-control form-control-user" readonly placeholder="Search.." value="Analytics" style="border-radius: 10px; cursor: default; padding: 12px 22px !important;"/>
 					</div>
 				</div>
 			</div>
@@ -107,95 +166,95 @@
 					<label>
 						Joining Date - From
 					</label>
-					<input type="date" class="form-control form-control-user" placeholder="From Date" value="" style="border-radius: 0px" />
+					<input type="date" class="form-control form-control-user joining_from_date" placeholder="From Date" value="" style="border-radius: 0px" />
 				</div>
 				<div class="col-md-2 venue_inputs">
 					<label>
 						Joining Date - To
 					</label>
-					<input type="date" class="form-control form-control-user" placeholder="To Date" value=""  style="border-radius: 0px"/>
+					<input type="date" class="form-control form-control-user joining_to_date" placeholder="To Date" value=""  style="border-radius: 0px"/>
 				</div>
 				<div class="col-md-2 pt-3">
-					<a href="" class="btn btn-primary btn-user btn-block common_btn" style="    padding: 8px 0px !important; margin-top: 11px; text-transform: none">
+					<a href="javascript:void(0);" class="btn btn-primary btn-user btn-block common_btn" style="    padding: 8px 0px !important; margin-top: 11px; text-transform: none">
 	                    Search
 	                </a>
 				</div>
 			</div>
 			<div class="d-flex mt-3 mb-3 flex-wrap">
-				<div class="boxes">
+				<div class="boxes customer_registrations">
 					<p>Customer Registrations</p>
-					<h3>82.6K</h3>
+					<h3>0</h3>
 				</div>
-				<div class="boxes" style="background-color: #FFB8C9;">
+				<div class="boxes customer_dirham_earned" style="background-color: #FFB8C9;">
 					<p>Customer Dirhams</p>
-					<h3>100,000</h3>
+					<h3>0</h3>
 				</div>
-				<div class="boxes" style="background-color: #FFB8C9;">
+				<div class="boxes repeat_customers" style="background-color: #FFB8C9;">
 					<p>Repeat Customer (More than once)</p>
-					<h3>7.6K</h3>
+					<h3>0</h3>
 				</div>
 				<div class="boxes" style="background-color: #FF3C6A;">
 					<p>Fraud Check (Max Transaction for 1 customer in the selected date period)</p>
-					<h3>10</h3>
+					<h3>0</h3>
 				</div>
-				<div class="boxes">
+				<div class="boxes total_sales">
 					<p>Sales</p>
-					<h3>1,000,000</h3>
+					<h3>0</h3>
 				</div>
-				<div class="boxes">
+				<div class="boxes cashback_earned">
 					<p>Cash Back Earned</p>
-					<h3>5000</h3>
+					<h3>0</h3>
 				</div>
-				<div class="boxes">
+				<div class="boxes cashback_redeem">
 					<p>Cash Back Redeemed</p>
-					<h3>2000</h3>
+					<h3>0</h3>
 				</div>
-				<div class="boxes">
+				<div class="boxes user_referrals">
 					<p>Referrals</p>
-					<h3>20</h3>
+					<h3>0</h3>
 				</div>
-				<div class="boxes">
+				<div class="boxes referral_first_transaction_done">
 					<p>Referrals with 1st Transaction Done</p>
-					<h3>5</h3>
+					<h3>0</h3>
 				</div>
 			</div>
 		</div>
 		<div class="container">
-			<div class="d-flex justify-content-between graph_text">
-				<h3>Trends</h3>
+			<div class="d-flex justify-content-between graph_text graph_text_registration">
+				<h3></h3>
 				<h3 class="text-center">
 					Registrations
-					<span class="value">32.6k</span>
+					<span class="value">0</span>
 				</h3>
 			</div>	
 			<div class="row mb-4">
 				<div id="chartContainer" style="height: 300px; width: 70%; margin: auto;"></div>
 			</div>
-			<div class="d-flex justify-content-between graph_text">
-				<h3>Trends</h3>
+			<div class="d-flex justify-content-between graph_text graph_text_total_sales">
+				<h3></h3>
 				<h3 class="text-center">
 					Sales
-					<span class="value">82.6k</span>
+					<span class="value">0</span>
 				</h3>
 			</div>	
 			<div class="row mb-4">
 				<div id="chartContainer1" style="height: 300px; width: 70%; margin: auto;"></div>
 			</div>
-			<div class="d-flex justify-content-between graph_text">
-				<h3>Trends</h3>
+			<div class="d-flex justify-content-between graph_text graph_text_dirham_earn">
+				<h3></h3>
 				<h3 class="text-center">
 					Dirhams Earnings
-					<span class="value">82.6k</span>
+					<span class="value">0</span>
 				</h3>
 			</div>	
 			<div class="row mb-4">
 				<div id="chartContainer2" style="height: 300px; width: 70%; margin: auto;"></div>
 			</div>
-			<div class="d-flex justify-content-between graph_text">
-				<h3>Trends</h3>
+			<div class="d-flex justify-content-between graph_text graph_text_dirham_redeemed">
+				<h3></h3>
 				<h3 class="text-center">
 					Dirhams Redeemed
-					<span class="value">82.6k</span>
+					<span class="value">0</span>
 				</h3>
 			</div>	
 			<div class="row mb-4">
@@ -206,6 +265,61 @@
 			</div>
 		</div>
 	</section>
+
+		<!-- loader modal -->
+
+<div id="loaderModel" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <div class="loaderImg2" id="loaderImg2">
+               <img src = "{{url('public/loader.gif')}}">
+            </div>
+
+  </div>
+</div>
+
+<!-- validation model -->
+
+<div class="modal fade" id="validationModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Alert</h5>
+        <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button> -->
+      </div>
+      <div class="modal-body">
+        <p id="alert_text">info</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary ok" style="background-color: #3ABD6F!important; border: none; border-radius: 50px; color: #fff;"  data-dismiss="modal">Ok</button>
+       <!--  <button type="button" class="btn btn-primary">Save changes</button> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- success modal show -->
+<div class="modal fade" id="successModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Success</h5>
+        <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button> -->
+      </div>
+      <div class="modal-body">
+        <p id="success_alert_text">Info Text</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary ok" style="background-color: #3ABD6F!important; border: none; border-radius: 50px; color: #fff;"  data-dismiss="modal">Ok</button>
+       <!--  <button type="button" class="btn btn-primary">Save changes</button> -->
+      </div>
+    </div>
+  </div>
+</div>
 <!--   Core JS Files   -->
 	<script src="{{url('public/admin/assets/js/core/jquery.3.2.1.min.js')}}"></script>
 	<script src="{{url('public/admin/assets/js/core/popper.min.js')}}"></script>
@@ -246,261 +360,252 @@
 
 	<!-- Atlantis DEMO methods, don't include it in your project! -->
 	<script src="{{url('public/admin/assets/js/setting-demo.js')}}"></script>
-	<script src="{{url('public/admin/assets/js/demo.js')}}"></script>
+	<!-- <script src="{{url('public/admin/assets/js/demo.js')}}"></script> -->
 	<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 	<script>
-window.onload = function () {
+	window.onload = function () {
 
-var chart = new CanvasJS.Chart("chartContainer", {
-	animationEnabled: true,
-	title:{
-		text: ""
-	},
-	axisX:{
-		valueFormatString: "DD MMM",
-		crosshair: {
-			enabled: true,
-			snapToDataPoint: true
-		}
-	},
-	axisY: {
-		title: "",
-		valueFormatString: "2k",
-		crosshair: {
-			enabled: true,
-			snapToDataPoint: true,
-			labelFormatter: function(e) {
-				return "$" + CanvasJS.formatNumber(e.value, "2k");
-			}
-		}
-	},
-	data: [{
-		type: "area",
-		xValueFormatString: "DD MMM",
-		yValueFormatString: "2k",
-		dataPoints: [
-			{ x: new Date(2016, 07, 01), y: 76.727997 },
-			{ x: new Date(2016, 07, 02), y: 75.459999 },
-			{ x: new Date(2016, 07, 03), y: 76.011002 },
-			{ x: new Date(2016, 07, 04), y: 75.751999 }
-		]
-	}]
-});
-chart.render();
+	$('.common_btn').trigger('click');
 
+	}
+	function registeredusers(response){
+		for (var i = 0; i < response.length; i++){
+			response[i]["x"] = new Date(response[i]["x"]);
+		}
+		var chart = new CanvasJS.Chart("chartContainer", {
+		animationEnabled: true,
+		exportEnabled: true,
+		theme: "light2", // "light1", "light2", "dark1", "dark2"
+		title:{
+			text: ""
+		},
+		axisY: {
+			title: "Number of User Registrations",
+			titleFontColor: "#4F81BC",
+			includeZero: true,
+			crosshair:{
+			 enabled: false,
+			 snapToDataPoint: true,
+	     }
+		},
+		data: [{        
+			type: "area",  
+			showInLegend: true, 
+			legendMarkerColor: "grey",
+			legendText: "Date Interval",
+			dataPoints: response
+		}]
+	});
+	chart.render();
+	}
 
-var chart = new CanvasJS.Chart("chartContainer1", {
-	animationEnabled: true,
-	title:{
-		text: ""
-	},
-	axisX:{
-		valueFormatString: "DD MMM",
-		crosshair: {
-			enabled: true,
-			snapToDataPoint: true
+	function totalsales(response){
+		for (var i = 0; i < response.length; i++){
+			response[i]["x"] = new Date(response[i]["x"]);
 		}
-	},
-	axisY: {
-		title: "",
-		valueFormatString: "2k",
-		crosshair: {
-			enabled: true,
-			snapToDataPoint: true,
-			labelFormatter: function(e) {
-				return "$" + CanvasJS.formatNumber(e.value, "2k");
-			}
-		}
-	},
-	data: [{
-		type: "area",
-		xValueFormatString: "DD MMM",
-		yValueFormatString: "2k",
-		dataPoints: [
-			{ x: new Date(2016, 07, 01), y: 76.727997 },
-			{ x: new Date(2016, 07, 02), y: 75.459999 },
-			{ x: new Date(2016, 07, 03), y: 76.011002 },
-			{ x: new Date(2016, 07, 04), y: 75.751999 }
-		]
-	}]
-});
-chart.render();
+		var chart = new CanvasJS.Chart("chartContainer1", {
+		animationEnabled: true,
+		exportEnabled: true,
+		theme: "light2", // "light1", "light2", "dark1", "dark2"
+		title:{
+			text: ""
+		},
+		axisY: {
+			title: "Total Number of Sales",
+			titleFontColor: "#4F81BC",
+			includeZero: true,
+			crosshair:{
+			 enabled: false,
+			 snapToDataPoint: true,
+	     }
+		},
+		data: [{        
+			type: "area",  
+			showInLegend: true, 
+			legendMarkerColor: "grey",
+			legendText: "Date Interval",
+			dataPoints: response
+		}]
+	});
+	chart.render();
+	}
 
-var chart = new CanvasJS.Chart("chartContainer2", {
-	animationEnabled: true,
-	title:{
-		text: ""
-	},
-	axisX:{
-		valueFormatString: "DD MMM",
-		crosshair: {
-			enabled: true,
-			snapToDataPoint: true
+	function customer_dirshams_wallet_cash(response){
+		for (var i = 0; i < response.length; i++){
+			response[i]["x"] = new Date(response[i]["x"]);
 		}
-	},
-	axisY: {
-		title: "",
-		valueFormatString: "2k",
-		crosshair: {
-			enabled: true,
-			snapToDataPoint: true,
-			labelFormatter: function(e) {
-				return "$" + CanvasJS.formatNumber(e.value, "2k");
-			}
-		}
-	},
-	data: [{
-		type: "area",
-		xValueFormatString: "DD MMM",
-		yValueFormatString: "2k",
-		dataPoints: [
-			{ x: new Date(2016, 07, 01), y: 76.727997 },
-			{ x: new Date(2016, 07, 02), y: 75.459999 },
-			{ x: new Date(2016, 07, 03), y: 76.011002 },
-			{ x: new Date(2016, 07, 04), y: 75.751999 }
-		]
-	}]
-});
-chart.render();
+		var chart = new CanvasJS.Chart("chartContainer2", {
+		animationEnabled: true,
+		exportEnabled: true,
+		theme: "light2", // "light1", "light2", "dark1", "dark2"
+		title:{
+			text: ""
+		},
+		axisY: {
+			title: "Total Number of Customer Dirhams",
+			titleFontColor: "#4F81BC",
+			includeZero: true,
+			crosshair:{
+			 enabled: false,
+			 snapToDataPoint: true,
+	     }
+		},
+		data: [{        
+			type: "area",  
+			showInLegend: true, 
+			legendMarkerColor: "grey",
+			legendText: "Date Interval",
+			dataPoints: response
+		}]
+	});
+	chart.render();
+	}
 
-var chart = new CanvasJS.Chart("chartContainer3", {
-	animationEnabled: true,
-	title:{
-		text: ""
-	},
-	axisX:{
-		valueFormatString: "DD MMM",
-		crosshair: {
-			enabled: true,
-			snapToDataPoint: true
+	function redeemed_amount_trends(response){
+		for (var i = 0; i < response.length; i++){
+			response[i]["x"] = new Date(response[i]["x"]);
 		}
-	},
-	axisY: {
-		title: "",
-		valueFormatString: "2k",
-		crosshair: {
-			enabled: true,
-			snapToDataPoint: true,
-			labelFormatter: function(e) {
-				return "$" + CanvasJS.formatNumber(e.value, "2k");
-			}
-		}
-	},
-	data: [{
-		type: "area",
-		xValueFormatString: "DD MMM",
-		yValueFormatString: "2k",
-		dataPoints: [
-			{ x: new Date(2016, 07, 01), y: 76.727997 },
-			{ x: new Date(2016, 07, 02), y: 75.459999 },
-			{ x: new Date(2016, 07, 03), y: 76.011002 },
-			{ x: new Date(2016, 07, 04), y: 75.751999 }
-		]
-	}]
-});
-chart.render();
+		var chart = new CanvasJS.Chart("chartContainer3", {
+		animationEnabled: true,
+		exportEnabled: true,
+		theme: "light2", // "light1", "light2", "dark1", "dark2"
+		title:{
+			text: ""
+		},
+		axisY: {
+			title: "Total Dirhams Earned",
+			titleFontColor: "#4F81BC",
+			includeZero: true,
+			crosshair:{
+			 enabled: false,
+			 snapToDataPoint: true,
+	     }
+		},
+		data: [{        
+			type: "area",  
+			showInLegend: true, 
+			legendMarkerColor: "grey",
+			legendText: "Date Interval",
+			dataPoints: response
+		}]
+	});
+	chart.render();
+	}
 
-var chart = new CanvasJS.Chart("chartContainer4", {
-	animationEnabled: true,
-	theme: "light2", // "light1", "light2", "dark1", "dark2"
-	title:{
-		text: "Products Offer Redemption"
-	},
-	axisY: {
-		title: ""
-	},
-	data: [{        
-		type: "column",  
-		showInLegend: true, 
-		legendMarkerColor: "grey",
-		legendText: "",
-		dataPoints: [      
-			{ y: 6,  label: "Special Treat" },
-			{ y: 4, label: "Birthday Coffee" },
-			{ y: 2,  label: "Free Pizza" },
-			{ y: 0,  label: "Free Coffee" }
-		]
-	}]
-});
-chart.render();
+	function offers_for_bar_graph(response){
+		var chart = new CanvasJS.Chart("chartContainer4", {
+		animationEnabled: true,
+		theme: "light2", // "light1", "light2", "dark1", "dark2"
+		title:{
+			text: "Products Offer Redemption"
+		},
+		axisY: {
+			title: "Total No. of Times Offer Redeem",
+			titleFontColor: "#4F81BC",
+			includeZero: true,
+		},
+		data: [{        
+			type: "column",  
+			showInLegend: true, 
+			showInLegend: true, 
+			legendMarkerColor: "grey",
+			legendText: "Offer Interval",
+			dataPoints: response
+		}]
+	});
+	chart.render();
 
 }
 
-</script>
-	<script>
-		$('#lineChart').sparkline([102,109,120,99,110,105,115], {
-			type: 'line',
-			height: '70',
-			width: '100%',
-			lineWidth: '2',
-			lineColor: 'rgba(255, 255, 255, .5)',
-			fillColor: 'rgba(255, 255, 255, .15)'
-		});
-
-		$('#lineChart2').sparkline([99,125,122,105,110,124,115], {
-			type: 'line',
-			height: '70',
-			width: '100%',
-			lineWidth: '2',
-			lineColor: 'rgba(255, 255, 255, .5)',
-			fillColor: 'rgba(255, 255, 255, .15)'
-		});
-
-		$('#lineChart3').sparkline([105,103,123,100,95,105,115], {
-			type: 'line',
-			height: '70',
-			width: '100%',
-			lineWidth: '2',
-			lineColor: 'rgba(255, 255, 255, .5)',
-			fillColor: 'rgba(255, 255, 255, .15)'
-		});
-	</script>	
+	</script>
 	<script >
-		$(document).ready(function() {
-			$('#basic-datatables').DataTable({
-			});
 
-			$('#multi-filter-select').DataTable( {
-				"pageLength": 5,
-				initComplete: function () {
-					this.api().columns().every( function () {
-						var column = this;
-						var select = $('<select class="form-control select_option"><option value=""></option></select>')
-						.appendTo( $(column.footer()).empty() )
-						.on( 'change', function () {
-							var val = $.fn.dataTable.util.escapeRegex(
-								$(this).val()
-								);
+		var date = new Date();
+    	var min_date = date.toISOString().slice(0,10);
+		$('.joining_from_date , .joining_to_date').attr('max',min_date);
 
-							column
-							.search( val ? '^'+val+'$' : '', true, false )
-							.draw();
-						} );
+		var todayDate_today = new Date().toISOString().split('T')[0];
+		var currentDate = new Date();
+		var before7Daysdate= new Date(currentDate.setDate(currentDate.getDate() - 7)).toISOString().split('T')[0];
 
-						column.data().unique().sort().each( function ( d, j ) {
-							select.append( '<option value="'+d+'">'+d+'</option>' )
-						} );
-					} );
+		$('.joining_from_date').attr('value',before7Daysdate);
+		$('.joining_to_date').attr('value',todayDate_today);
+
+
+		$('.common_btn').click(function(){
+			var from_date = $('.joining_from_date').val();
+			var to_date = $('.joining_to_date').val();
+
+			if(from_date > to_date){
+				$("#alert_text").text("Joining to date should be greater than joining from date.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
+
+			$.ajax({
+				url:"{{ route('admin.analyticsDashboard') }}",
+				type:"POST",
+				dataType:'JSON',
+				data:{from_date,to_date,'_token':'{{ csrf_token() }}'},
+				beforeSend:function(){
+		      		$("#loaderModel").modal("show");
+					$("#loaderModel").unbind("click");
+				},
+				success:function(data){
+					setTimeout(function(){
+					  	$("#loaderModel").modal("hide");
+
+				  		var users_registrations = thousand_format(data.customer_registrations);
+				  		$('.customer_registrations h3').text(users_registrations);
+				  		$('.graph_text_registration h3 span.value').text(users_registrations);
+				  		registeredusers(data.customer_registrations_trends);
+
+				  		var users_referral = thousand_format(data.customer_referal);
+				  		$('.user_referrals h3').text(users_referral);
+
+				  		$('.customer_dirham_earned h3').text(data.customer_dirhams_wallet.toLocaleString());
+				  		$('.graph_text_dirham_earn h3 span.value').text(data.customer_dirhams_wallet);
+				  		customer_dirshams_wallet_cash(data.customer_dirshams_wallet_cash_trends);
+
+				  		$('.total_sales h3').text(data.total_sales.toLocaleString());
+				  		$('.graph_text_total_sales h3 span.value').text(data.total_sales.toLocaleString());
+				  		totalsales(data.totalsales_amount_trends);
+
+				  		$('.cashback_redeem h3').text(data.redeemed_amount.toLocaleString());
+				  		$('.graph_text_dirham_redeemed h3 span.value').text(data.redeemed_amount);
+				  		redeemed_amount_trends(data.redeemed_amount_trends);
+
+				  		$('.cashback_earned h3').text(data.cashback_earned.toLocaleString());
+
+				  		var referral_first_transaction_done = thousand_format(data.referral_first_transaction_done);
+				  		$('.referral_first_transaction_done h3').text(referral_first_transaction_done);
+
+				  		var repeat_customers = thousand_format(data.repeat_customers);
+				  		$('.repeat_customers h3').text(repeat_customers);
+
+				  		offers_for_bar_graph(data.offers_for_bar_graph);
+				  		
+
+					},500);
 				}
 			});
+		});
 
-			// Add Row
-			$('#add-row').DataTable({
-				"pageLength": 5,
-			});
+		function thousand_format(num){
+			if(num >= 1100 ){
+	  			return Math.abs(num/1000).toFixed(1)+'k';
+	  		}else if(num > 999){
+	  			return Math.round(num/1000)+'k';
+	  		}else{
+	  			return num;
+	  		}
+		}
 
-			var action = '<td> <div class="form-button-action"> <button type="button" data-toggle="tooltip" title="" class="btn btn-link btn-primary btn-lg" data-original-title="Edit Task"> <i class="fa fa-edit"></i> </button> <button type="button" data-toggle="tooltip" title="" class="btn btn-link btn-danger" data-original-title="Remove"> <i class="fa fa-times"></i> </button> </div> </td>';
 
-			$('#addRowButton').click(function() {
-				$('#add-row').dataTable().fnAddData([
-					$("#addName").val(),
-					$("#addPosition").val(),
-					$("#addOffice").val(),
-					action
-					]);
-				$('#addRowModal').modal('hide');
-
-			});
+		$(".ok").on("click",function(){
+			$("#validationModel").modal("hide");
+			$("#successModel").modal("hide");
 		});
 	</script>
 </body>

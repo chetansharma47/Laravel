@@ -19,6 +19,8 @@ use App\Models\AssignUserVenue;
 use App\Models\WalletCashback;
 use Picqer;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use App\Mail\SignupMail;
+use App\Models\AdminNotification;
 class ProfileModel extends Model
 {
 
@@ -102,9 +104,7 @@ class ProfileModel extends Model
         if($data['reference_code']){
             $user_find = User::whereSelfReferenceCode($data['reference_code'])->first();
             $data['reference_by'] = $user_find->first_name . " " . $user_find->last_name;
-
-            $user_find->wallet_cash = $user_find->wallet_cash + $refer_amount;
-            $user_find->update();
+            $data['refer_amount'] = $refer_amount;
 
         }
         $data['wallet_cash'] = $bonus;
@@ -153,6 +153,23 @@ class ProfileModel extends Model
         $save_user->qr_code = $imageName1;
 
         $save_user->update();
+
+        $admin_signup_notification_email = AdminNotification::where("uniq_id","=",7)->first();
+        if(!empty($admin_signup_notification_email)){
+
+            if(!empty($admin_signup_notification_email->title) && !empty($admin_signup_notification_email->message) && !empty($admin_signup_notification_email->image)){
+               
+                $prefix = "attachment_mail/";
+                $index = strpos($admin_signup_notification_email->image, $prefix) + strlen($prefix);
+                $file_name = substr($admin_signup_notification_email->image, $index);
+                try{
+                    \Mail::to($save_user->email)->send(new SignupMail($admin_signup_notification_email, $save_user, $file_name));
+                }catch(\Exception $ex){
+                    //return $ex->getMessage();
+                }
+            }
+        }
+
 
         $save_user->access_token = $save_user->createToken('andrew')->accessToken;
         $user_get = $save_user;            
@@ -291,7 +308,7 @@ class ProfileModel extends Model
                     $login_req->date_time = Carbon::now()->toDateString(). " " . Carbon::now()->toTimeString();
                     $login_req->save();
 
-                    return ["status" => 3, "data" => null, "error_msg" => "Your account authorization request is under process, please wait for confirmation."];
+                    return ["status" => 4, "data" => null, "error_msg" => "Your account authorization request is under process, please wait for confirmation."];
                 }else{
 
 

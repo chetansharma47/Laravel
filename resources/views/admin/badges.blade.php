@@ -243,7 +243,7 @@
 		}
 	</style>
 </head>
-<body>
+<body class="my_body">
 	<header class="curve-bg">
 		<div class="container-fluid">
 			<div class="curve-bg1">

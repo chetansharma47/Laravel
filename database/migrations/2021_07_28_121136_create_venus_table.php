@@ -28,6 +28,7 @@ class CreateVenusTable extends Migration
             $table->string('name_of_file_show')->nullable();
             $table->text('menu_link');
             $table->enum('status',['None','Active','Inactive']);
+            $table->integer('pos_venue_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

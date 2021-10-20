@@ -30,6 +30,7 @@ class CreateOffersTable extends Migration
             $table->time('to_time')->nullable();
             $table->enum('status',['None','Active','Inactive']);
             $table->enum('offer_type',['Normal','BirthdayOffer']);
+            $table->integer('pos_product_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

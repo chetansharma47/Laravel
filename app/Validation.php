@@ -25,6 +25,7 @@ class Validation extends Model
             'dob'               => 'required|date_format:Y-m-d',
             'gender'            => 'required|in:Male,Female,Other',
             'reference_code'    => 'sometimes|nullable|max:12',
+            'timezone'          => 'required'
 
     	];
 
@@ -459,6 +460,27 @@ class Validation extends Model
       }
 
     /*END OF ADMIN VALIDATION*/
+
+
+    /*POS LOGIN Validation APP*/
+
+    public static function scanPosValidate($validation = null, $message = null){
+
+
+      $validation = [
+          'venue_pos_id' => 'required|exists:venus,pos_venue_id',
+          'user_id'  => 'required|exists:users,id',
+          'timezone'  => 'required'
+         
+      ];
+      
+      $message = [
+        'venue_pos_id.required' => 'Please enter venue POS ID.',
+        'user_id.required'     => 'Please enter user ID.'
+      ];
+
+      return $data = ['validation' => $validation, 'message' => $message];
+    }
       
 
 }

@@ -170,7 +170,7 @@
 		}
 	</style>
 </head>
-<body>
+<body class="my_body">
 	<div class="uniqid_db"></div>
 	<header class="curve-bg">
 		<div class="container-fluid">
@@ -437,7 +437,7 @@
 						if(list[i].deleted_at==null){
 						$('.menu-lisitng ul.listitem').append(`<li class="venu_list" unique-id="${list[i].unique_id}" data-id="${list[i].id}" data-tab="uniq-${list[i].unique_id}"><input type="text" class="input_tier_name" maxlength="30" unique-id="${list[i].unique_id}" value="${list[i].venue_name}" placeholder="Enter Venue Name"></li>`);
 
-						$('.venuregister_append').append(venuform(list[i].unique_id,list[i].venue_name,list[i].address,list[i].venue_description,list[i].phone_number,list[i].google_map_location_link,list[i].book_now_link,slice,list[i].menu_link,list[i].status,list[i].id,list[i].image));
+						$('.venuregister_append').append(venuform(list[i].unique_id,list[i].venue_name,list[i].address,list[i].venue_description,list[i].phone_number,list[i].google_map_location_link,list[i].book_now_link,slice,list[i].menu_link,list[i].status,list[i].id,list[i].image, list[i].pos_venue_id));
 					}
 				}
 				$('.menu-lisitng ul.listitem li').first().addClass('tab-active');
@@ -574,7 +574,7 @@
 			}
 		}
 
-function venuform(uniqueid,vname,vaddr,vdesc,vphone,vmap,vbook,vimage,vmenu,vstatus,dataId,imagename){
+function venuform(uniqueid,vname,vaddr,vdesc,vphone,vmap,vbook,vimage,vmenu,vstatus,dataId,imagename,posvenueid){
 	if(imagename){
 		var imageurl = `<input name="venu_img" readonly type="text" class="form-control venu_img form-control-user" src="${imagename}" value="${(vimage) ? `${vimage}`: ''	}" unique-id="${uniqueid}" style="cursor:pointer;" />`
 	}else{
@@ -620,6 +620,14 @@ function venuform(uniqueid,vname,vaddr,vdesc,vphone,vmap,vbook,vimage,vmenu,vsta
 							</label>
 							<textarea maxlength="1000" name="venu_desc" class="form-control venu_desc" style="font-size: 14px !important; padding:6px 10px;" rows="5" placeholder="Venue Description" unique-id="${uniqueid}" >${(vdesc) ? `${vdesc}` : ''}</textarea>
 						</div>
+
+						<div class="col-md-6 venue_inputs">
+							<label>
+								POS Venue ID
+							</label>
+							<input type="text" class="form-control pos_venue_id" name="pos_venue_id" unique-id="${uniqueid}" maxlength="11" placeholder="Pos Venue ID" value="${(posvenueid) ? `${posvenueid}` : ''}"/>
+						</div>
+
 					</div>
 					<div class="row pr-5 pl-3 mt-3">
 						<div class="col-md-6 venue_inputs">
@@ -760,6 +768,7 @@ $(document).on('click','.venuSave',function(){
 	let hidevimg = $('#img_upload[unique-id='+uniq+']').attr('src');
 	let vaddr = $('.venu_addr[unique-id='+uniq+']').val();
 	let vmenu = $('.venu_menu[unique-id='+uniq+']').val();
+	let posvenueid = $('.pos_venue_id[unique-id='+uniq+']').val();
 	let vdesc = $('.venu_desc[unique-id='+uniq+']').val();
 	let vphone = $('.venu_phone[unique-id='+uniq+']').val();
 	let vmap = $('.venu_map[unique-id='+uniq+']').val();
@@ -899,7 +908,7 @@ $(document).on('click','.venuSave',function(){
 	$.ajax({
 		url:'{{ route("admin.venusave") }}',
 		dataType:'JSON',
-		data:{uniq:uniq,vname:vname,vimg:vimg,vaddr:vaddr,vimg_val:vimg_val,vmenu:vmenu,vdesc:vdesc,vphone:vphone,vmap:vmap,vbook:vbook,vstatus:vstatus,dataId:dataId,hidden_img2:hidden_img2,'_token':'{{ csrf_token() }}'},
+		data:{uniq:uniq,vname:vname,vimg:vimg,vaddr:vaddr,vimg_val:vimg_val,vmenu:vmenu,pos_venue_id:posvenueid,vdesc:vdesc,vphone:vphone,vmap:vmap,vbook:vbook,vstatus:vstatus,dataId:dataId,hidden_img2:hidden_img2,'_token':'{{ csrf_token() }}'},
 		type:'POST',
 		beforeSend:function(){
       $("#loaderModel").modal("show");
@@ -933,11 +942,22 @@ $(document).on('click','.venuSave',function(){
 
 	// for restrict first time blank space
 	
-		$(document).on('keydown','.venu_name, .venu_desc, .venu_addr, .venu_phone, .venu_menu, .venu_map, .venu_tab_book, .input_tier_name',function(e){
+		$(document).on('keydown','.venu_name, .venu_desc, .venu_addr, .venu_phone, .venu_menu, .venu_map, .venu_tab_book, .input_tier_name, .pos_venue_id',function(e){
 			if(e.which===32 && e.target.selectionStart===0){
 				return false;
 			}
 		});
+
+
+$(document).on('input','.pos_venue_id',function(event){
+	return process(this);
+});
+
+function process(input){
+  let value = input.value;
+  let numbers = value.replace(/[^0-9]/g, "");
+  input.value = numbers;
+}
 
 </script>
 		
