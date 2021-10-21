@@ -516,9 +516,9 @@
 	    	let new_time_12 = new_hr + ':' + new_min + ' ' + am_pm.toUpperCase();*/
 
 	    	let __hr_24_time = event_time;
-	    	var __date = new Date('2021-01-01'+' '+event_time);
+	    	var __date = new Date('2021-01-01'+' '+__hr_24_time);
 	        var __hours = __date.getHours() > 12 ? __date.getHours() - 12 : __date.getHours();
-	        var __am_pm = date.getHours() >= 12 ? "PM" : "AM";
+	        var __am_pm = __date.getHours() >= 12 ? "PM" : "AM";
 	        __hours = __hours < 10 ? "0" + __hours : __hours;
 	        var __minutes = __date.getMinutes() < 10 ? "0" + __date.getMinutes() : __date.getMinutes();
 	        var __seconds = __date.getSeconds() < 10 ? "0" + __date.getSeconds() : __date.getSeconds();
@@ -546,7 +546,7 @@
 	    	let to_new_time_12 = to_new_hr + ':' + to_new_min + ' ' + to_am_pm.toUpperCase();*/
 
 	    	let hr_24_time = to_time;
-	    	var date = new Date('2021-01-01'+' '+to_time);
+	    	var date = new Date('2021-01-01'+' '+hr_24_time);
 	        var hours = date.getHours() > 12 ? date.getHours() - 12 : date.getHours();
 	        var am_pm = date.getHours() >= 12 ? "PM" : "AM";
 	        hours = hours < 10 ? "0" + hours : hours;

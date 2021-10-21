@@ -414,9 +414,9 @@
     	//for convert 24 hour time to 12 hours
     	if(to_time){
     		let __hr_24_time = to_time;
-	    	var __date = new Date('2021-01-01'+' '+to_time);
+	    	var __date = new Date('2021-01-01'+' '+__hr_24_time);
 	        var __hours = __date.getHours() > 12 ? __date.getHours() - 12 : __date.getHours();
-	        var __am_pm = date.getHours() >= 12 ? "PM" : "AM";
+	        var __am_pm = __date.getHours() >= 12 ? "PM" : "AM";
 	        __hours = __hours < 10 ? "0" + __hours : __hours;
 	        var __minutes = __date.getMinutes() < 10 ? "0" + __date.getMinutes() : __date.getMinutes();
 	        var __seconds = __date.getSeconds() < 10 ? "0" + __date.getSeconds() : __date.getSeconds();
@@ -448,7 +448,7 @@
 
 
 	    	let hr_24_time = time;
-	    	var date = new Date('2021-01-01'+' '+time);
+	    	var date = new Date('2021-01-01'+' '+hr_24_time);
 	        var hours = date.getHours() > 12 ? date.getHours() - 12 : date.getHours();
 	        var am_pm = date.getHours() >= 12 ? "PM" : "AM";
 	        hours = hours < 10 ? "0" + hours : hours;

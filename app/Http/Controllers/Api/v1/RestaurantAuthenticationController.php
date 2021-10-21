@@ -42,6 +42,7 @@ use App\Models\AdminCriteriaNotification;
 use App\Models\Country;
 use App\Mail\ReferralEmail;
 use App\Mail\TransactionEmail;
+use App\Mail\CashbackEmail;
 use App\Models\LoginPose;
 require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
 
@@ -176,13 +177,19 @@ class RestaurantAuthenticationController extends ResponseController
         }
         $redeemed_amount = $request->redeemed_amount;
 
-        if($redeemed_amount <= 0){
-            return $this->responseWithErrorCode("Redeem amount should be greater than 0.",406);
+        if($request->redeem_type != "offer"){
+            if($redeemed_amount == ""){
+                return $this->responseWithErrorCode("Please enter redeemed amount.",406);
+            }
+            if($redeemed_amount <= 0){
+                return $this->responseWithErrorCode("Redeem amount should be greater than 0.",406);
+            }
+
+            if($user_wallet_cash < $redeemed_amount){
+                return $this->responseWithErrorCode("Redeem amount should be less than or equal to wallet amount.",406);
+            }
         }
 
-        if($user_wallet_cash < $redeemed_amount){
-            return $this->responseWithErrorCode("Redeem amount should be less than or equal to wallet amount.",406);
-        }
 
 
         if($user->deleted_at != null){
@@ -280,7 +287,7 @@ class RestaurantAuthenticationController extends ResponseController
         $active_venue_ids = Venu::where('status' , 'Active')->where('deleted_at' , null)->pluck('id');
         date_default_timezone_set($data['timezone']);
 
-        $user_find = User::whereId($data['user_id'])->where('is_block','=',0)->where('is_active','=','Active')->first();
+        $user_find = User::whereId($data['user_id'])->first();
         $tier_find = TierCondition::whereTierName($user_find->customer_tier)->whereDeletedAt(null)->first();
         if(empty($tier_find)){
             $tier_find = TierCondition::whereDeletedAt(null)->first();
@@ -567,7 +574,12 @@ class RestaurantAuthenticationController extends ResponseController
         $this->is_validationRule(Validation::scanPosValidate($Validation = "", $message = "") , $request);
 
         $timezone = $request->timezone;
-        $user = User::whereId($request->user_id)->first();
+        $user = User::whereId($request->user_id)->orWhere('customer_id', '=', $request->user_id)->first();
+
+        if(empty($user)){
+            return $this->responseWithErrorCode("Please enter valid user id or customer id.",406);
+        }
+
         $tier = TierCondition::whereTierName($user->customer_tier)->orderBy('id','desc')->first();
         $user->tier = $tier;
 
@@ -606,5 +618,365 @@ class RestaurantAuthenticationController extends ResponseController
         $time_after_10mins = Carbon::now()->addMinutes(10);
         $user->valid_time = $now_time->diffInSeconds($time_after_10mins);   //10 min = 600 secs 
         return $this->responseOk("User Data",['user_data' => $user]);
+    }
+
+    public function posPayBill(Request $request){
+
+        $find_pos = LoginPose::wherePassword($request->password)->first();
+
+        if(empty($find_pos)){
+            return $this->responseWithErrorCode("Please enter valid password.",406);
+        }
+
+        $this->is_validationRule(Validation::posPayBillValidate($Validation = "", $message = "") , $request);
+
+        $timezone = $request->timezone;
+        $user_find = User::whereId($request->user_id)->orWhere('customer_id', '=', $request->user_id)->first();
+
+        if(empty($user_find)){
+            return $this->responseWithErrorCode("Please enter valid user id or customer id.",406);
+        }
+
+        
+
+
+        $venue_find = Venu::wherePosVenueId($request->venue_pos_id)->first();
+
+        $data = $request->all();
+        $active_venue_ids = Venu::where('status' , 'Active')->where('deleted_at' , null)->pluck('id');
+        date_default_timezone_set($data['timezone']);
+
+        
+        $tier_find = TierCondition::whereTierName($user_find->customer_tier)->whereDeletedAt(null)->first();
+        if(empty($tier_find)){
+            $tier_find = TierCondition::whereDeletedAt(null)->first();
+        }
+
+        if(empty($tier_find)){
+            return $this->responseWithErrorCode("No tier add from admin.",400);
+        }
+
+
+        if(isset($data['redeemed_amount'])){
+
+            if($user_find->wallet_cash < $data['redeemed_amount']){
+                return $this->responseWithErrorCode("Redeem amount should be less than or equal to wallet amount.",406);
+            }
+        }else{
+            $data['redeemed_amount'] = 0;
+        }
+        // return $data['redeemed_amount'];
+
+        if($user_find->deleted_at != null){
+            return $this->responseWithErrorCode("User has been deleted by admin.",404);
+        }else if($user_find->is_active == "Inactive"){
+            return $this->responseWithErrorCode("User has been inactivated by admin.",404);
+        }else if($user_find->is_block == 1){
+            return $this->responseWithErrorCode("User has been blocked by admin.",404);
+        }
+
+        $transaction_amount_check_last_days = 30;
+        $customer_tier_validity_check = 30;
+        $tier_setting = TierSetting::first();
+        if(!empty($tier_setting)){
+            $transaction_amount_check_last_days = $tier_setting->transaction_amount_check_last_days;
+            $customer_tier_validity_check = $tier_setting->customer_tier_validity_check;
+        }
+
+        $last_30_days_transaction_amount = Carbon::now()->subDays($transaction_amount_check_last_days);
+
+        $last_validity_check_days = Carbon::now()->subDays($customer_tier_validity_check);
+
+        $total_amount_transaction = WalletTransaction::where(function($query) use ($transaction_amount_check_last_days,$customer_tier_validity_check, $user_find, $last_30_days_transaction_amount, $last_validity_check_days){
+                                        $query->whereUserId($user_find->id);
+                                        $query->whereDate('created_at','<=',Carbon::now()->toDateString());
+                                        $query->whereDate('created_at','>=',$last_30_days_transaction_amount->toDateString());
+                                    })->sum('total_bill_amount');
+
+        $total_amount_transaction = $total_amount_transaction + $data['total_bill_amount'];
+
+        $amount_between_tier_find = TierCondition::whereDeletedAt(null)->where('from_amount', '<=', $total_amount_transaction)->where('to_amount', '>=', $total_amount_transaction)->first();
+        if(empty($amount_between_tier_find)){
+
+            //preveious tier found according to total amount transaction
+            $amount_between_tier_find = TierCondition::whereDeletedAt(null)->where('to_amount','<=', $total_amount_transaction)->orderBy('to_amount','desc')->first();
+
+            if(!empty($amount_between_tier_find)){
+                
+                $last_tier_update_date = Carbon::parse($user_find->tier_update_date);
+                $diffrence_in_days_for_tier = $last_tier_update_date->diffInDays(Carbon::now());
+
+                if($diffrence_in_days_for_tier >= $customer_tier_validity_check){
+                    $user_find->customer_tier = $amount_between_tier_find->tier_name;
+                    $user_find->tier_update_date = Carbon::now()->toDateString();
+                    $user_find->update();
+                }
+            }
+
+            if(empty($amount_between_tier_find)){
+
+                //next tier found according to transaction amount total
+                $amount_between_tier_find = TierCondition::whereDeletedAt(null)->where('to_amount','>=', $total_amount_transaction)->orderBy('to_amount','desc')->first();
+
+                if(empty($amount_between_tier_find)){
+
+                    return $this->responseWithErrorCode("No tier add from admin.",400);
+                }
+
+                $user_find->customer_tier = $amount_between_tier_find->tier_name;
+                $user_find->tier_update_date = Carbon::now()->toDateString();
+                $user_find->update();
+            }
+
+
+        }else{
+            $user_find->customer_tier = $amount_between_tier_find->tier_name;
+            $user_find->tier_update_date = Carbon::now()->toDateString();
+            $user_find->update();
+        }
+
+
+        $data['description'] = "Cash Back Earnings";
+
+        $data['date_and_time'] = Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString();
+        $today_date = Carbon::now();
+        $today_days = Carbon::now()->format('l');
+        $find_promotion_cashback = Cashback::where(function($query) use ($user_find,$today_date,$active_venue_ids,$today_days){
+                        $query->whereDeletedAt(null);
+                        $query->whereDate('from_date', '<=', $today_date->toDateString());
+                        $query->whereDate('to_date','>=', $today_date->toDateString());
+                        $query->whereTime('from_time', '<=', $today_date->toTimeString());
+                        $query->whereTime('to_time','>=', $today_date->toTimeString());
+                        $query->whereIn('venu_id', $active_venue_ids);
+                        $query->whereRaw("FIND_IN_SET(?, day_on) > 0", $today_days);
+                        $query->where("status","=","Active");
+                    })->first();
+        if(!empty($find_promotion_cashback)){
+
+            $data['cashback_percentage'] = $find_promotion_cashback->cashback_percentage;
+        }else{
+            $data['cashback_percentage'] = $tier_find->percentage;
+        }
+        $data['cashback_earned'] = ($data['total_bill_amount'] / 100) * $data['cashback_percentage'];
+
+        if(empty($data['redeemed_amount'])){
+
+            $data['pay_bill_amount'] = $data['total_bill_amount'];
+        }else{
+
+            $data['pay_bill_amount'] = $data['total_bill_amount'] - $data['redeemed_amount'];
+        }
+
+        $data['venu_id'] = $venue_find->id;
+        $data['offer_product_ids'] = $data['verify_offer_ids'];
+
+        $wallet_transaction = new WalletTransaction();
+        $wallet_transaction->fill($data);
+        $wallet_transaction->save();
+
+        $user_find->wallet_cash = $user_find->wallet_cash - $data['redeemed_amount'] + $data['cashback_earned'];
+        $user_find->update();
+
+        if(isset($data['verify_offer_ids']) && !empty($data['verify_offer_ids'])){
+            $offer_ids = explode(",", $data['verify_offer_ids']);
+
+            foreach ($offer_ids as $offer_id) {
+                UserAssignOffer::whereUserId($user_find->id)->whereOfferId($offer_id)->update(['offer_redeem' => 1]);
+            }
+        }
+
+        $admin_transaction_notification = AdminNotification::where("uniq_id","=",1)->first();
+        $admin_refer_notification = AdminNotification::where("uniq_id","=",4)->first();
+        $admin_cashback_notification = AdminNotification::where("uniq_id","=",2)->first();
+
+        if(!empty($admin_transaction_notification)){
+            if($admin_transaction_notification->push_type == 1){
+
+                if($user_find->device_type == 'Android'){
+                    if($user_find->device_token && strlen($user_find->device_token) > 20){
+                       $android_notify =  $this->send_android_notification_new($user_find->device_token, $admin_transaction_notification->message, $notmessage = "Transaction Notification", $noti_type = 1);
+
+                       $criteria_data = [
+                            'user_id'   => $user_find->id,
+                            'message'   => $admin_transaction_notification->message,
+                            'noti_type' => 1
+                       ];
+                       AdminCriteriaNotification::create($criteria_data);
+                   
+                   }
+                }
+
+                if($user_find->device_type == 'Ios' && strlen($user_find->device_token) > 20){
+                    if($user_find->device_token){
+                        $ios_notify =  $this->iphoneNotification($user_find->device_token, $admin_transaction_notification->message, $notmessage = "Transaction Notification", $noti_type = 1);
+
+                        $criteria_data = [
+                            'user_id'   => $user_find->id,
+                            'message'   => $admin_transaction_notification->message,
+                            'noti_type' => 1
+                        ];
+                        AdminCriteriaNotification::create($criteria_data);
+                    
+                   }
+                }
+
+            }
+
+            if($admin_transaction_notification->sms_type == 1){
+                \SMSGlobal\Credentials::set(env('SMS_GLOBAL_API'),env('SMS_GLOBAL_SECERET'));
+                $sms = new \SMSGlobal\Resource\Sms();
+                $message = $admin_transaction_notification->message;
+                try {
+                    $response = $sms->sendToOne($user_find->country_code.$user_find->mobile_number, $message,'CM-Society');
+                } catch (\Exception $e) {
+                    
+                }
+            }
+
+            if($admin_transaction_notification->email_type == 1){
+                try{
+                    \Mail::to($user_find->email)->send(new TransactionEmail($admin_transaction_notification, $user_find));
+                }catch(\Exception $ex){
+                    //return $ex->getMessage();
+                }
+            }
+        }
+
+        $refer_user_find = null;
+        if(!empty($user_find->reference_code) && $user_find->refer_amount_used == 0){
+
+            $refer_user_find = User::whereSelfReferenceCode($user_find->reference_code)->whereDeletedAt(null)->where('is_block','=',0)->first();
+
+
+        }
+        if(!empty($admin_refer_notification) && !empty($refer_user_find)){
+
+            $user_find->refer_amount_used = 1;
+            $user_find->update();
+
+            if($admin_refer_notification->push_type == 1){
+
+                if($refer_user_find->device_type == 'Android'){
+                    if($refer_user_find->device_token && strlen($refer_user_find->device_token) > 20){
+                       $android_notify =  $this->send_android_notification_new($refer_user_find->device_token, $admin_refer_notification->message, $notmessage = "Referral Bonus Notification", $noti_type = 4);
+
+                       $criteria_data = [
+                            'user_id'   => $refer_user_find->id,
+                            'message'   => $admin_refer_notification->message,
+                            'noti_type' => 4
+                        ];
+                        AdminCriteriaNotification::create($criteria_data);
+                   
+                   }
+                }
+
+                if($refer_user_find->device_type == 'Ios' && strlen($refer_user_find->device_token) > 20){
+                    if($refer_user_find->device_token){
+                        $ios_notify =  $this->iphoneNotification($refer_user_find->device_token, $admin_refer_notification->message, $notmessage = "Referral Bonus Notification", $noti_type = 4);
+
+                        $criteria_data = [
+                            'user_id'   => $refer_user_find->id,
+                            'message'   => $admin_refer_notification->message,
+                            'noti_type' => 4
+                        ];
+                        AdminCriteriaNotification::create($criteria_data);
+                    
+                   }
+                }
+
+            }
+
+            if($admin_refer_notification->sms_type == 1){
+                \SMSGlobal\Credentials::set(env('SMS_GLOBAL_API'),env('SMS_GLOBAL_SECERET'));
+                $sms = new \SMSGlobal\Resource\Sms();
+                $message = $admin_refer_notification->message;
+                try {
+                    $response = $sms->sendToOne($refer_user_find->country_code.$refer_user_find->mobile_number, $message,'CM-Society');
+                } catch (\Exception $e) {
+                    
+                }
+
+            }
+
+            if($admin_refer_notification->email_type == 1){
+                try{
+                    \Mail::to($refer_user_find->email)->send(new ReferralEmail($admin_refer_notification, $refer_user_find));
+                }catch(\Exception $ex){
+                    //return $ex->getMessage();
+                }
+            }
+
+            $refer_user_find->wallet_cash = $refer_user_find->wallet_cash + $user_find->refer_amount;
+            $refer_user_find->update();
+        }
+
+
+
+
+
+
+
+
+
+        if(!empty($admin_cashback_notification)){
+            if($admin_cashback_notification->push_type == 1){
+
+                if($user_find->device_type == 'Android'){
+                    if($user_find->device_token && strlen($user_find->device_token) > 20){
+                       $android_notify =  $this->send_android_notification_new($user_find->device_token, $admin_cashback_notification->message, $notmessage = "Cashback Notification", $noti_type = 1);
+
+                       $criteria_data = [
+                            'user_id'   => $user_find->id,
+                            'message'   => $admin_cashback_notification->message,
+                            'noti_type' => 1
+                       ];
+                       AdminCriteriaNotification::create($criteria_data);
+                   
+                   }
+                }
+
+                if($user_find->device_type == 'Ios' && strlen($user_find->device_token) > 20){
+                    if($user_find->device_token){
+                        $ios_notify =  $this->iphoneNotification($user_find->device_token, $admin_cashback_notification->message, $notmessage = "Cashback Notification", $noti_type = 1);
+
+                        $criteria_data = [
+                            'user_id'   => $user_find->id,
+                            'message'   => $admin_cashback_notification->message,
+                            'noti_type' => 1
+                        ];
+                        AdminCriteriaNotification::create($criteria_data);
+                    
+                   }
+                }
+
+            }
+
+            if($admin_cashback_notification->sms_type == 1){
+                \SMSGlobal\Credentials::set(env('SMS_GLOBAL_API'),env('SMS_GLOBAL_SECERET'));
+                $sms = new \SMSGlobal\Resource\Sms();
+                $message = $admin_cashback_notification->message;
+                try {
+                    $response = $sms->sendToOne($user_find->country_code.$user_find->mobile_number, $message,'CM-Society');
+                } catch (\Exception $e) {
+                    
+                }
+            }
+
+            if($admin_cashback_notification->email_type == 1){
+                try{
+                    \Mail::to($user_find->email)->send(new CashbackEmail($admin_cashback_notification, $user_find));
+                }catch(\Exception $ex){
+                    //return $ex->getMessage();
+                }
+            }
+        }
+
+        return $this->responseOk("Payment has been successfully processed.");
+
+
+
+
+
+
     }
 }

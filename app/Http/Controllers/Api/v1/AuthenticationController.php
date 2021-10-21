@@ -385,6 +385,7 @@ class AuthenticationController extends ResponseController
                     ->whereRaw("FIND_IN_SET(?, when_day) > 0", $today_days)
                     ->whereDate('from_date', '<=', Carbon::now()->toDateString())
                     ->whereDate('to_date','>=', Carbon::now()->toDateString())
+                    ->orderBy('created_at','desc')
                     ->get();
 
         if(!empty($venue)){
@@ -406,6 +407,7 @@ class AuthenticationController extends ResponseController
                     ->whereDate('from_date', '<=', Carbon::now()->toDateString())
                     ->whereDate('to_date','>=', Carbon::now()->toDateString())
                     ->with('venu')
+                    ->orderBy('created_at','desc')
                     ->get();
 
         return $this->responseOk('Event Listing', ['event_listing' => $events]);

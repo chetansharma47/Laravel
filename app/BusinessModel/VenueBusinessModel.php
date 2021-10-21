@@ -227,6 +227,7 @@ class VenueBusinessModel extends Model
 			$offer->from_date = $data['offer_from_date'];
 			$offer->to_date = $data['offer_to_date'];
 			$offer->time = $data['offer_time_data'];
+			$offer->to_time = $data['offer_to_time_data'];
 			$offer->status = $data['offer_status'];
 			$offer->pos_product_id = $data['pos_product_id'];
 			$offer->update();

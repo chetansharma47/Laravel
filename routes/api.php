@@ -80,6 +80,7 @@ Route::group(['namespace' => 'Api\v1','prefix'=>'v1'], function() {
     Route::group(['middleware' => 'venuePosCheck'], function(){
 
         Route::post('scan-pos','RestaurantAuthenticationController@scanPos');
+        Route::post('pos-pay-bill','RestaurantAuthenticationController@posPayBill');
     });
     
 

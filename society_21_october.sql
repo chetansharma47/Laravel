@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Oct 20, 2021 at 07:35 PM
+-- Generation Time: Oct 21, 2021 at 02:29 PM
 -- Server version: 5.7.35-0ubuntu0.18.04.1
 -- PHP Version: 7.2.34-10+ubuntu18.04.1+deb.sury.org+1
 
@@ -41,7 +41,7 @@ CREATE TABLE `admins` (
 --
 
 INSERT INTO `admins` (`id`, `name`, `email`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'Nadeer', 'phpapi870@gmail.com', '$2y$10$MM0//hGlDn4uCg4rTNDiaudMWYEJZcY7wrLLvRu16miH5BtZB7pxa', 'Ntox4T22yXXPeMkFtOecnhbV52D2Hd6Dbwt67lakmAKILzeNVwEULcNH8NTqd9ic', NULL, '2021-10-20 12:38:59');
+(1, 'Nadeer', 'adminn@yopmail.com', '$2y$10$MM0//hGlDn4uCg4rTNDiaudMWYEJZcY7wrLLvRu16miH5BtZB7pxa', 'YzqzGFeIUln0PU0knHW0toGmbvBZwUTZwp5TbrPi5SCuKfR3Dbu36yQ3xBCM4QgF', NULL, '2021-10-21 08:26:26');
 
 -- --------------------------------------------------------
 
@@ -101,8 +101,8 @@ CREATE TABLE `admin_notifications` (
 --
 
 INSERT INTO `admin_notifications` (`id`, `uniq_id`, `title`, `message`, `image`, `image_type`, `name_of_file_show`, `push_type`, `sms_type`, `email_type`, `notification_type`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 1, NULL, 'Your Amount has been transaction successfully.\n\nhttps://www.google.com', NULL, NULL, NULL, 1, 1, 1, 'Transaction', '2021-10-11 11:04:04', '2021-10-20 09:03:22', NULL),
-(2, 2, NULL, 'Your cashback has been successfully earned.\n\n\nhttps://www.google.com', NULL, NULL, NULL, 1, 1, 1, 'Cashback', '2021-10-11 11:05:06', '2021-10-20 09:03:20', NULL),
+(1, 1, NULL, 'Your Amount has been transaction successfully.', NULL, NULL, NULL, 1, 1, 1, 'Transaction', '2021-10-11 11:04:04', '2021-10-21 08:39:23', NULL),
+(2, 2, NULL, 'Your cashback has been successfully earned.', NULL, NULL, NULL, 1, 1, 1, 'Cashback', '2021-10-11 11:05:06', '2021-10-21 08:45:37', NULL),
 (3, 3, NULL, 'You have successfully earned bonus.', NULL, NULL, NULL, 1, 1, 1, 'Welcome Bonus', '2021-10-11 11:05:37', '2021-10-20 09:23:12', NULL),
 (4, 4, NULL, 'This is a referral code bonus😍😍', NULL, NULL, NULL, 1, 1, 1, 'Referral Bonus', '2021-10-11 11:05:59', '2021-10-20 09:23:10', NULL),
 (5, 5, NULL, 'New event from admin has been assigned.', NULL, NULL, NULL, 1, 1, 1, 'Event', '2021-10-11 11:08:01', '2021-10-20 08:42:32', NULL),
@@ -1069,7 +1069,7 @@ CREATE TABLE `wallet_cashbacks` (
 CREATE TABLE `wallet_transactions` (
   `id` int(10) UNSIGNED NOT NULL,
   `user_id` int(10) UNSIGNED NOT NULL,
-  `venue_user_id` int(10) UNSIGNED NOT NULL,
+  `venue_user_id` int(10) UNSIGNED DEFAULT NULL,
   `venu_id` int(11) DEFAULT NULL,
   `description` longtext COLLATE utf8mb4_unicode_ci,
   `date_and_time` datetime NOT NULL,

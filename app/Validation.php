@@ -373,7 +373,7 @@ class Validation extends Model
       $validation = [
             'timezone'      => 'required',
             'user_id'       => 'required|exists:users,id',
-            'redeemed_amount' => 'required|numeric'
+            'redeemed_amount' => 'sometimes|nullable|numeric'
 
       ];
 
@@ -469,7 +469,7 @@ class Validation extends Model
 
       $validation = [
           'venue_pos_id' => 'required|exists:venus,pos_venue_id',
-          'user_id'  => 'required|exists:users,id',
+          'user_id'  => 'required',
           'timezone'  => 'required'
          
       ];
@@ -477,6 +477,33 @@ class Validation extends Model
       $message = [
         'venue_pos_id.required' => 'Please enter venue POS ID.',
         'user_id.required'     => 'Please enter user ID.'
+      ];
+
+      return $data = ['validation' => $validation, 'message' => $message];
+    }
+
+    public static function posPayBillValidate($validation = null, $message = null){
+
+
+      $validation = [
+          'venue_pos_id' => 'required|exists:venus,pos_venue_id',
+          'user_id'  => 'required',
+          'timezone'  => 'required',
+          'description'   => 'sometimes||nullable|max:500',
+          'invoice_number' => 'required|max:50',
+          'redeemed_amount'  => 'sometimes|nullable|numeric',
+          'total_bill_amount'    => 'required|numeric|min:0.5'
+         
+      ];
+      
+      $message = [
+        'venue_pos_id.required' => 'Please enter venue POS ID.',
+        'user_id.required'     => 'Please enter user ID.',
+        'timezone.required'    => 'Please enter timezone.',
+        'description.sometimes'   =>  "Please enter description id.",
+        'invoice_number.required' => "Please enter invoice number.",
+        'redeemed_amount.required'  =>  "Please enter redeemed amount.",
+        'total_bill_amount.required'    =>  "Please enter total bill amount."
       ];
 
       return $data = ['validation' => $validation, 'message' => $message];

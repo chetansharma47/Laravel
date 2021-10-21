@@ -651,7 +651,7 @@ class TabController extends ResponseController
         }
 
 
-        $data = WalletTransaction::select("id","description","cashback_earned",DB::raw("DATE_FORMAT(date_and_time, '%d-%M-%Y %H:%i %p') AS date_and_time"),DB::raw("(select customer_id from users where id = wallet_transactions.user_id) AS customer_id"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where id = wallet_transactions.user_id) AS mobile_number"),DB::raw("(select wallet_cash from users where id = wallet_transactions.user_id) AS wallet_cash"))->orderBy($column,$asc_desc);
+        $data = WalletTransaction::select("id","description","cashback_earned",DB::raw("DATE_FORMAT(date_and_time, '%d-%M-%Y %H:%i %p') AS date_and_time"),DB::raw("(select customer_id from users where id = wallet_transactions.user_id) AS customer_id"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where id = wallet_transactions.user_id) AS mobile_number"),DB::raw("(select wallet_cash from users where id = wallet_transactions.user_id) AS wallet_cash"))->where('venue_user_id','!=',null)->orderBy($column,$asc_desc);
 
             
         $total = $data->get()->count();
@@ -726,7 +726,7 @@ class TabController extends ResponseController
     }
 
     public function downloadWalletTransactions(Request $request){
-        $wallet_transactions = WalletTransaction::select(DB::raw("(select customer_id from users where id = wallet_transactions.user_id) AS 'Customer ID'"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where id = wallet_transactions.user_id) AS 'Mobile Number'"),"description AS Description","cashback_earned AS Cashback Earned",DB::raw("(select wallet_cash from users where id = wallet_transactions.user_id) AS 'Wallet Cash'"),DB::raw("DATE_FORMAT(date_and_time, '%d-%M-%Y %H:%i %p') AS 'Date Added'"))->get()->toArray();
+        $wallet_transactions = WalletTransaction::select(DB::raw("(select customer_id from users where id = wallet_transactions.user_id) AS 'Customer ID'"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where id = wallet_transactions.user_id) AS 'Mobile Number'"),"description AS Description","cashback_earned AS Cashback Earned",DB::raw("(select wallet_cash from users where id = wallet_transactions.user_id) AS 'Wallet Cash'"),DB::raw("DATE_FORMAT(date_and_time, '%d-%M-%Y %H:%i %p') AS 'Date Added'"))->where('venue_user_id','!=',null)->get()->toArray();
         return $download =  Excel::create('export-wallet-transactions', function($excel) use ($wallet_transactions){
 
             $excel->sheet('export-wallet-transactions', function($sheet) use ($wallet_transactions){

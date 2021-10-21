@@ -20,6 +20,7 @@ use App\Models\TierSetting;
 use App\Models\AdminNotification;
 use App\Models\AdminCriteriaNotification;
 use App\Models\Country;
+use App\Models\Venu;
 use App\Mail\CashbackEmail;
 use App\Jobs\OfferNotificationJob;
 require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
@@ -43,6 +44,7 @@ class Controller extends BaseController
     public function OfferAssignUserCronJob(Request $request){
         date_default_timezone_set("Asia/Kolkata");
         $today_date = Carbon::now();
+        $active_venue_ids = Venu::whereDeletedAt(null)->where('status','=','Active')->pluck('id');
         /*Change Logical*/
         $pluck_offer_ids = OfferSetting::where(function($query) use ($today_date){
                             $query->whereDate('date','=',$today_date->toDateString());
@@ -53,7 +55,7 @@ class Controller extends BaseController
                             $query->whereDeletedAt(null);
                         })->pluck('offer_id');
 
-        $offers = Offer::whereIn('id', $pluck_offer_ids)->whereDeletedAt(null)->where('status','=','Active')->with('offerSetting')->get();
+        $offers = Offer::whereIn('id', $pluck_offer_ids)->whereIn('venu_id', $active_venue_ids)->whereDeletedAt(null)->where('status','=','Active')->with('offerSetting')->get();
         // return $offers;
 
         foreach ($offers as $offer){
