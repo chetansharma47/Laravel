@@ -331,21 +331,21 @@ class Controller extends BaseController
         $not_message = array('sound' =>1,
                     'message'=>array("noti_type" => $noti_type, "event_id" => $event_id, "offer_id" => $offer_id, 'message' => $message),
                     'notifykey'=>"HOME_KEY",
-                    "title" => "AndroidNotification",
-                    'description'=>"NotiAndroid",
+                    //"title" => "SocietyApp",
+                    'body'=>$message,
                   );
 
         $registrationIds = $deviceToken;
 
         $fields = array(
           'registration_ids' => array($registrationIds),
-          'notification' => $not_message,
+         // 'notification' => $not_message,
           'alert' => $message,
           'sound' => 'default',
           'Notifykey' => $noti_type,
           "click_action" => "HOME_KEY",
-          'data' => $not_message
-            
+          'data' => $not_message,
+          "android" => (object)array("priority" => "high")
         );
         $headers = array(
           'Authorization: key=' . API_ACCESS_KEY,

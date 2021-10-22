@@ -245,6 +245,7 @@ select.form-control.form-group.status_select:focus{
 	</header>
 	<section class="mt-3">
 		<input type="hidden" id="venue_selection">
+		<input type="hidden" id="update_id" value="">
 		<div class="container-fluid">
 			<div class="row">
 				<div class="col-md-3">
@@ -457,6 +458,20 @@ select.form-control.form-group.status_select:focus{
 		$("#venue_selection").val("");
 		$(".venue_select").prop("checked",false);
 		$('#venue_add_new').on("click",function(){
+
+			let check_text = $(this).text();
+			if(check_text == "Cancel"){
+				$("#venue_username").val("");
+				$("#venue_user_password").val("");
+				$(".venue_select").prop("checked",false);
+				$("#venue_user_status").val("");
+				$("#venue_selection").val("");
+				$(this).text("Add New");
+				$("#update_id").val("");
+				return false;
+
+			}
+
 			$(".invalid_cls").remove();
 			var vuser = $('#venue_username').val();
 			var vuser_password = $('#venue_user_password').val();
@@ -543,19 +558,19 @@ select.form-control.form-group.status_select:focus{
 						$(".venue_select").prop("checked",false);
 					},500);
 				},error: function(data, textStatus, xhr) {
-		          if(data.status == 422){
-		            setTimeout(function(){
-	            		$("#loaderModel").modal("hide");
-		                var result = data.responseJSON;
-		               	if(result['username_err'] && result['username_err'].length > 0){
-		               		$("#alert_text").text(result['username_err']);
-							$("#validationModel").modal("show");
-							$("#validationModel").unbind("click");
-		               	}
-		                return false;
-		            },500);
-          } 
-      	}
+		          	if(data.status == 422){
+			            setTimeout(function(){
+		            		$("#loaderModel").modal("hide");
+			                var result = data.responseJSON;
+			               	if(result['username_err'] && result['username_err'].length > 0){
+			               		$("#alert_text").text(result['username_err']);
+								$("#validationModel").modal("show");
+								$("#validationModel").unbind("click");
+			               	}
+			                return false;
+			            },500);
+      				} 
+      			}
 			});
 
 		});
@@ -575,13 +590,15 @@ select.form-control.form-group.status_select:focus{
 				createdRow: function( row, data, dataIndex ) {
 
 				
+		        $( row ).find('td:eq(0)').attr('data-id', data['id']).attr('key_type','serial_number').addClass('td_edit');
 		        $( row ).find('td:eq(1)').attr('data-id', data['id']).attr('key_type','username').addClass('td_edit').addClass('white_space').addClass('break-all');
 		        $( row ).find('td:eq(2)').attr('data-id', data['id']).attr({key_type:'password',type:'password'}).addClass('td_edit').addClass('white_space').addClass('break-all').html('<span>'+data.password+'</span>');
 		        $( row ).find('td:eq(3)').attr('data-id', data['id']).attr('key_type','venue_name').addClass('td_edit').addClass('white_space').addClass('venu_edit').addClass('col_min_width');
-		        $( row ).find('td:eq(4)').attr('data-id', data['id']).attr('key_type','status').html(`<select class="form-control form-group status_select" style="cursor:pointer; width:max-content;">
+		        /*$( row ).find('td:eq(4)').attr('data-id', data['id']).attr('key_type','status').html(`<select class="form-control form-group status_select" style="cursor:pointer; width:max-content;">
 													<option value="Active" ${(data.status == "Active") ? 'selected' : ''}>Active</option>
 													<option value="Inactive" ${(data.status == "Inactive") ? 'selected' : ''}>Inactive</option>
-												</select>`);
+												</select>`);*/
+				$( row ).find('td:eq(4)').attr('data-id', data['id']).attr('key_type','status').addClass('td_edit').addClass('white_space').addClass('venu_edit');
 		        $( row ).find('td:eq(5)').attr('data-id', data['id']).attr('key_type','created_at').addClass('td_edit').addClass('white_space').addClass('date_white_space').addClass('col_min_width');
 		        $( row ).find('td:eq(6)').attr('data-id', data['id']).attr('key_type','created_by').addClass('td_edit').addClass('white_space');
 		        $( row ).find('td:eq(7)').attr('data-id', data['id']).attr('key_type','updated_at').addClass('td_edit').addClass('white_space').addClass('date_white_space').addClass('col_min_width');
@@ -629,7 +646,7 @@ select.form-control.form-group.status_select:focus{
 
 		$(document).on('dblclick','.td_edit',function(){
 
-			var dataId = $(this).attr('data-id');
+			/*var dataId = $(this).attr('data-id');
 			var keyType = $(this).attr('key_type');
 			var content = $(this).text();
 
@@ -662,7 +679,56 @@ select.form-control.form-group.status_select:focus{
 					}
 				});
 
+			}*/
+
+
+			var dataId = $(this).attr('data-id');
+			var objectData = {
+				'_token':'{{ csrf_token() }}',
+				'venue_user_id': dataId
 			}
+
+			$.ajax({
+				url:'{{ route("admin.getSingleVenueUser") }}',
+				dataType:'JSON',
+				type:'POST',
+				data:objectData,
+				beforeSend:function(){
+	          		$("#loaderModel").modal("show");
+						$("#loaderModel").unbind("click");
+					},
+				success:function(res){
+					setTimeout(function(){
+					$("#assign_user_venues").val("");
+					$(".venue_select").prop("checked",false);
+					$("#venue_add_new").text("Cancel");
+					$("#update_id").val(res.id);
+					$("#loaderModel").modal("hide");
+				  		$("#venue_username").val(res.username);
+				  		$("#venue_user_status").val(res.status);
+
+				  		let assign_user_venues = res.assign_user_venues;
+				  		for(let k=0; k < assign_user_venues.length; k++){
+					  		let venue_selection = $("#venue_selection").val();
+					  		if(venue_selection == ""){
+					  			$("#venue_selection").val(assign_user_venues[k]["venu_id"]);
+					  		}else{
+					  			$("#venue_selection").val($("#venue_selection").val() + "," + assign_user_venues[k]["venu_id"]);
+					  		}
+
+					  		$(".venue_select[data-id='"+assign_user_venues[k]["venu_id"]+"']").prop("checked",true);
+
+				  		}
+					},500);
+				},error: function(data, textStatus, xhr) {
+
+					alert("Something went wrong.");
+					window.location.href = "";
+		                if(data.status == 422){
+		                  
+		                } 
+              	}
+			});
 
 			// if(keyType == 'username'){
 
@@ -677,7 +743,7 @@ select.form-control.form-group.status_select:focus{
 
 		$('.update_btn').click(function(){
 
-		if($('.td_edit[contenteditable=true]').length <= 0){
+		/*if($('.td_edit[contenteditable=true]').length <= 0){
 			$("#alert_text").text("Please edit at least one value.");
 			$("#validationModel").modal("show");
 			$("#validationModel").unbind("click");
@@ -774,6 +840,122 @@ select.form-control.form-group.status_select:focus{
 	                  },500);
 	                } 
 	              }
+			});*/
+
+
+			$(".invalid_cls").remove();
+			var vuser = $('#venue_username').val();
+			var vuser_password = $('#venue_user_password').val();
+			var vselection = $('#venue_selection').val();
+			var vstatus = $('#venue_user_status').val();
+			var vtoken = $('#token').val();
+			var vupdateid = $('#update_id').val();
+
+			if(vupdateid == ""){
+				$("#alert_text").text("Please select venue user for update.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
+			
+			if($('#venue_username').val()==""){
+				$("#alert_text").text("Please enter username.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+
+			}
+
+			if($('#venue_username').val().length < 2){
+				$("#alert_text").text("Username should be at least 2 characters long.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+
+			}
+
+			// if($('#venue_user_password').val()==""){
+			// 	$("#alert_text").text("Please enter password.");
+			// 	$("#validationModel").modal("show");
+			// 	$("#validationModel").unbind("click");
+			// 	return false;
+
+			// }
+
+			if($('#venue_user_password').val() != "" && $('#venue_user_password').val().length < 6 ){
+				$("#alert_text").text("Password must be at least 6 characters long.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+
+			}
+
+			if($('#venue_user_password').val().length > 200 ){
+				$("#alert_text").text("Password may not be greater than 200 characters.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+
+			}
+
+			if($("#venue_selection").val()==""){
+				$("#alert_text").text("Please select venue.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+
+			}
+
+			if($("#venue_user_status").val()==""){
+				$("#alert_text").text("Please select status.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+
+			}
+			$.ajax({
+				url:'{{ route("admin.updateVenueUser") }}',
+				type:'POST',
+				dataType:'JSON',
+				data:{v_user:vuser,v_password:vuser_password,v_name:vselection,v_status:vstatus,v_updateid:vupdateid,'_token':vtoken},
+				beforeSend:function(){
+          			$("#loaderModel").modal("show");
+					$("#loaderModel").unbind("click");
+				},
+				success:function(data){
+					setTimeout(function(){
+						$("#loaderModel").modal("hide");
+				        $("#successModel").modal("show");
+			        	$("#success_alert_text").text("Venue user details has been updated successfully.");
+			        	$("#successModel").unbind("click");
+			        	$('#venue_username').val('');
+						$('#venue_user_password').val('');
+						$("#venue_selection").val('');
+						$("#venue_user_status").val('');
+						$("#update_id").val("");
+						$("#venue_add_new").text("Add New");
+						$('#basic-datatables').DataTable().ajax.reload();
+						$(".venue_select").prop("checked",false);
+
+
+
+
+
+					},500);
+				},error: function(data, textStatus, xhr) {
+		          	if(data.status == 422){
+			            setTimeout(function(){
+		            		$("#loaderModel").modal("hide");
+			                var result = data.responseJSON;
+			               	if(result['username_err'] && result['username_err'].length > 0){
+			               		$("#alert_text").text(result['username_err']);
+								$("#validationModel").modal("show");
+								$("#validationModel").unbind("click");
+			               	}
+			                return false;
+			            },500);
+      				} 
+      			}
 			});
 
 		});

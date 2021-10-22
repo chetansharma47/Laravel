@@ -2453,6 +2453,32 @@ class TabController extends ResponseController
         return response()->json($data);
 
     }
+
+    public function getSingleVenueUser(Request $request){
+        $venue_user_id = VenueUser::whereId($request->venue_user_id)->with('assignUserVenues')->first();
+
+        return $venue_user_id;
+
+    }
+
+    public function updateVenueUser(Request $request){
+        $venue_selection = explode(",", $request->v_name);
+        $delete_assign_user_venue = AssignUserVenue::whereVenueUserId($request->v_updateid)->delete();
+        $find_venue_user = VenueUser::whereId($request->v_updateid)->first();
+        $find_venue_user->username = $request->v_user ? $request->v_user : $find_venue_user->username;
+        $find_venue_user->password = $request->v_password ? Hash::make($request->v_password) : $find_venue_user->password;
+        $find_venue_user->status = $request->v_status ? $request->v_status : $find_venue_user->status;
+        $find_venue_user->update();
+
+        foreach ($venue_selection as $venue_select_id) {
+            $assign_user_venue = new AssignUserVenue();
+            $assign_user_venue->venue_user_id = $find_venue_user->id;
+            $assign_user_venue->venu_id = $venue_select_id;
+            $assign_user_venue->save();
+        }
+
+        return $find_venue_user;
+    }
 }
 
 
