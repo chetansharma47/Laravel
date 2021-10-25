@@ -771,6 +771,7 @@ class RestaurantAuthenticationController extends ResponseController
         $data['offer_product_ids'] = $data['verify_offer_ids'];
 
         $wallet_transaction = new WalletTransaction();
+        $data['user_id'] = $user_find->id;
         $wallet_transaction->fill($data);
         $wallet_transaction->save();
 
