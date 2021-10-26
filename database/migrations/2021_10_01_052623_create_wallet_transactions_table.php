@@ -31,6 +31,7 @@ class CreateWalletTransactionsTable extends Migration
             $table->integer('is_cross_verify')->default(0);
             $table->string('invoice_number')->nullable();
             $table->string('offer_product_ids')->nullable();
+            $table->string('cashier_name')->nullable()->default('Admin');
             $table->timestamps();
             $table->softDeletes();
             

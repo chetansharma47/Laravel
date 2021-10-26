@@ -19,7 +19,8 @@ class WalletTransaction extends Model
     	'pay_bill_amount',
     	'is_cross_verify',
         'invoice_number',
-        'offer_product_ids'
+        'offer_product_ids',
+        'cashier_name'
     ]; 
 
     

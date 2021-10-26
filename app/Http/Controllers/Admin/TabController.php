@@ -1169,7 +1169,10 @@ class TabController extends ResponseController
 
             $pos_venue_id = $request->pos_venue_id;
 
-            $check_pos_id = Venu::whereDeletedAt(null)->where('unique_id','!=',$data['uniq'])->wherePosVenueId($pos_venue_id)->first();
+            if(!empty($pos_venue_id)){
+
+                $check_pos_id = Venu::whereDeletedAt(null)->where('unique_id','!=',$data['uniq'])->wherePosVenueId($pos_venue_id)->first();
+            }
 
             if(!empty($check_pos_id)){
                 return response()->json(['venue_name_err' => "Venue POS ID already exists."],422);
@@ -1351,8 +1354,12 @@ class TabController extends ResponseController
                 if(!empty($check_offer)){
                     return response()->json(['offer_name_err' => "Offer name already exists."],422);
                 }
+                //return $data['pos_product_id'];
+                $check_pos_id = null;
+                if(!empty($data['pos_product_id'])){
 
-                $check_pos_id = Offer::whereDeletedAt(null)->whereOfferType('Normal')->where('unique_id','!=',$data['uniq_id'])->where('pos_product_id',$data['pos_product_id'])->first();
+                    $check_pos_id = Offer::whereDeletedAt(null)->whereOfferType('Normal')->where('unique_id','!=',$data['uniq_id'])->where('pos_product_id',$data['pos_product_id'])->first();
+                }
 
                 if(!empty($check_pos_id)){
                     return response()->json(['offer_name_err' => "Offer POS Product ID already exists."],422);
