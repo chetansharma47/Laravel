@@ -40,7 +40,7 @@ class EventNotificationJob implements ShouldQueue
 
         if($this->admin_event_notification->email_type == 1){
             try{
-                \Mail::to($this->user_find->email)->send(new NewEventCreateMail($this->admin_event_notification, $this->user_find));
+                \Mail::to($this->user_find->email)->send(new NewEventCreateMail($this->admin_event_notification, $this->user_find, $this->find_event));
             }catch(\Exception $ex){
                 //return $ex->getMessage();
             }

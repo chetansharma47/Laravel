@@ -17,11 +17,12 @@ class NewEventCreateMail extends Mailable
      * @return void
      */
 
-    protected $admin_event_notification, $user_find;
-    public function __construct($admin_event_notification, $user_find)
+    protected $admin_event_notification, $user_find, $find_event;
+    public function __construct($admin_event_notification, $user_find, $find_event)
     {
         $this->admin_event_notification = $admin_event_notification;
         $this->user_find = $user_find;
+        $this->find_event = $find_event;
     }
 
     /**
@@ -31,6 +32,11 @@ class NewEventCreateMail extends Mailable
      */
     public function build()
     {
+        $event = $this->find_event;
+
+        $url = $event->image;
+        $event_image = substr(strrchr($url, '/'), 1);
+
         return $this->from(env('MAIL_USERNAME'), 'Capital Motion')
         ->subject('New Event Create Notification')
         ->view('admin.email.event-create-email')
@@ -38,6 +44,8 @@ class NewEventCreateMail extends Mailable
             'admin_event_notification'   => $this->admin_event_notification,
             'user_find'   => $this->user_find,
             'logo'   => public_path('admin/assets/email_img/CM-Logo-2.png'),
+            'event_image'   => public_path('/storage/venue') . "/" . $event_image,
+            'event' => $event
         ]);
     }
 }

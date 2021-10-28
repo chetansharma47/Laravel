@@ -22,7 +22,7 @@
        </td>
     </tr>
   </table>
-  <table width="600" border="0" align="center" cellpadding="0" cellspacing="0">
+  <table width="400" border="0" align="center" cellpadding="0" cellspacing="0">
   <tr>
     <td width="20" align="left" valign="top">
 
@@ -31,15 +31,23 @@
         $img_third = public_path("admin/assets/email_img/CM-Logo-2.png");
         $iimg = public_path("admin/assets/email_img/curve-bg.png");
         $footer_img = public_path("admin/assets/email_img/footer-bg.png");
+        $pin = public_path("pin.png");
+        $cal = public_path("cal.png");
+        $clock = public_path("icon.png");
+        $call = public_path("call.png");
+        $location = public_path("location.png");
+        $bag = public_path("bag.png");
+        $open_app = public_path("open_app.png");
+        $event_image = $event_image;
        ?>
 
-      <table width="100%" border="0" cellspacing="0" cellpadding="0"  style="background-image: url('{{$message->embed($iimg)}}'); background-repeat: no-repeat; background-size: cover; border-top-left-radius: 30px;border-top-right-radius: 30px;     background-position: bottom;">
+      <table width="100%" border="0" cellspacing="0" cellpadding="0"  style="background-image: url('{{$message->embed($event_image)}}'); background-repeat: no-repeat; background-size: cover; border-top-left-radius: 30px;border-top-right-radius: 30px;background-position: bottom;height: 200px;">
         
         <tr>
           <td width="20" align="left" valign="top">&nbsp;</td>
           <td align="center" valign="top" style="padding:5px 0;">
              
-              <img src="{{$message->embed($img_second)}}" alt="CR-Logo" style="width: 100px;" width="100"/>
+            <!--   <img src="{{$message->embed($img_second)}}" alt="CR-Logo" style="width: 100px;" width="100"/> -->
           </td>
           <td width="20" align="left" valign="top">&nbsp;</td>
         </tr>
@@ -47,7 +55,7 @@
           <td width="20" align="left" valign="top">&nbsp;</td>
           <td align="center" valign="top" style="font-family: 'Lato', sans-serif;
      font-weight: 700; color: #fff; padding-bottom: 17px;">
-            New Event Create Notification
+          &nbsp;
           </td>
           <td width="20" align="left" valign="top">&nbsp;</td>
         </tr>
@@ -72,16 +80,106 @@
 
           <tr>
             <td align="left" valign="top" style="font-family: 'Lato', sans-serif;
-     font-weight: 400; font-size:14px; color:#474747;">{{$admin_event_notification->message}}<br><br>
+     font-weight: 500; font-size:18px; color:#000;">Events
+            
+            </td>
+          </tr>
+
+          <tr>
+            <td align="left" valign="top" style="font-family: 'Lato', sans-serif;
+     font-weight: 600; font-size:28px; color:#dba520;">{{$event->event_name}}
+            
+            </td>
+          </tr>
+
+          <tr>
+            <td align="left" valign="top" style="font-family: 'Lato', sans-serif;
+     font-weight: 500; font-size:14px; color:#1081af;"><img src="{{$message->embed($pin)}}">&nbsp;{{$event->venu->venue_name}}
+            
+            </td>
+          </tr>
+
+          <tr>
+            <td align="left" valign="top" style="font-family: 'Lato', sans-serif;
+     font-weight: 500; font-size:14px; color:#1081af;">{{$event->venu->address}}
+            
+            </td>
+          </tr>
+
+          <?php 
+            $from_date = Carbon\Carbon::parse($event->from_date)->format('d M Y');
+            $to_date = Carbon\Carbon::parse($event->to_date)->format('d M Y');
+            $from_time = Carbon\Carbon::parse($event->from_date." ".$event->event_time)->format('g:i A');
+            $to_time = Carbon\Carbon::parse($event->to_date." ".$event->to_time)->format('g:i A');
+             
+
+          ?>
+          <tr>
+            <td align="left" valign="top" style="font-family: 'Lato', sans-serif;
+     font-weight: 600; font-size:14px; color:#ccc;"><img src="{{$message->embed($cal)}}">&nbsp;{{$from_date}} - {{$to_date}}
+            
+            </td>
+          </tr>
+
+          <tr>
+            <td align="left" valign="top" style="font-family: 'Lato', sans-serif;
+     font-weight: 600; font-size:14px; color:#ccc;"><img src="{{$message->embed($clock)}}">&nbsp;{{$from_time}} to {{$to_time}}
+            
+            </td>
+          </tr>
+
+          <tr>
+            <td align="left" valign="top" style="font-family: 'Lato', sans-serif;
+     font-weight: 600; font-size:14px; color:#ccc;">{{$event->when_day}}
+            </td>
+          </tr>
+
+
+          <tr>
+            <td align="left" valign="top">&nbsp;</td>
+          </tr>
+
+          <tr>
+            <td align="left" valign="top" style="font-family: 'Lato', sans-serif;
+     font-weight: 400; font-size:14px; color:#000;">{{$admin_event_notification->message}}<br><br>
 
             
             </td>
           </tr>
           <tr>
-            <td height="10" align="left" valign="top"></td>
+            <td height="10" align="left" valign="top">&nbsp;</td>
           </tr>
+
+           <tr>
+            <td align="left" valign="top" style="font-family: 'Lato', sans-serif;
+     font-weight: 600; font-size:14px; color:#ccc; text-align: center;">
+               <a href="javascript:void(0)" style="color: #fff!important">
+                <img src="{{$message->embed($call)}}">
+              </a>
+               <a href="{{$event->venu->google_map_location_link}}" style="color: #fff!important">
+                <img src="{{$message->embed($location)}}">
+              </a>
+              <a href="{{$event->venu->book_now_link}}" style="color: #fff!important">
+                <img src="{{$message->embed($bag)}}">
+              </a>
+              <a href="https://gozl8.test-app.link/RN3Hfsykbkb" style="color: #fff!important">
+                <img src="{{$message->embed($open_app)}}" style="width: 50px;">
+              </a>
+            </td>
+          </tr>
+
+
           <tr>
-            <td height="10" align="left" valign="top"></td>
+            <td height="10" align="left" valign="top" style="text-align: center; color: #ccc; padding-left: 16px; font-size: 11px;">
+              <span style="padding: 0px 8px 0px 0px;">Call Us</span>
+              <span style="padding: 0px 8px 0px 0px;">Location</span>
+              <span style="padding: 0px 8px 0px 0px;">Book Now</span>
+              <span style="padding: 0px 8px 0px 0px;">Open App</span>
+            </td>
+          </tr>
+
+          <tr>
+            <td height="10" align="left" valign="top">&nbsp;</td>
           </tr>
            <!--   <tr>
             <td align="left" valign="top" style="font-family:arial, sans-serif; font-size: 15px; font-weight:  bold; color:#474747;">ThankYou Team</b></td>

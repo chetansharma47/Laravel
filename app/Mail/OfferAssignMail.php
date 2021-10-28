@@ -17,11 +17,13 @@ class OfferAssignMail extends Mailable
      * @return void
      */
 
-    protected $admin_offer_notification, $user_find;
-    public function __construct($admin_offer_notification, $user_find)
+    protected $admin_offer_notification, $user_find, $offer_assign, $offer;
+    public function __construct($admin_offer_notification, $user_find, $offer_assign, $offer)
     {
         $this->admin_offer_notification = $admin_offer_notification;
         $this->user_find = $user_find;
+        $this->offer_assign = $offer_assign;
+        $this->offer = $offer;
     }
 
     /**
@@ -31,6 +33,18 @@ class OfferAssignMail extends Mailable
      */
     public function build()
     {
+
+        $offer = $this->offer;
+
+        $url = $offer->image;
+        $offer_image = substr(strrchr($url, '/'), 1);
+
+        if($offer->offer_type == "BirthdayOffer"){
+            $path = public_path('/') . $offer_image;
+        }else{
+            $path = public_path('/storage/venue') . "/" . $offer_image;
+        }
+
         return $this->from(env('MAIL_USERNAME'), 'Capital Motion')
         ->subject('Offer Assign Notification')
         ->view('admin.email.offer-assign-email')
@@ -38,6 +52,8 @@ class OfferAssignMail extends Mailable
             'admin_offer_notification'   => $this->admin_offer_notification,
             'user_find'   => $this->user_find,
             'logo'   => public_path('admin/assets/email_img/CM-Logo-2.png'),
+            'offer_image'   => $path,
+            'offer' => $offer
         ]);
     }
 }

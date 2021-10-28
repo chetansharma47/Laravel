@@ -23,6 +23,7 @@ use App\Models\Country;
 use App\Models\Venu;
 use App\Mail\CashbackEmail;
 use App\Jobs\OfferNotificationJob;
+use App\Mail\OfferAssignMail;
 require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
 
 class Controller extends BaseController
@@ -63,22 +64,22 @@ class Controller extends BaseController
          //  return $offer;
             if(!empty($offer->offerSetting->city_id) && !empty($offer->offerSetting->gender)){
                 $find_city_name = City::select('city_name')->whereId($offer->offerSetting->city_id)->first();
-                $user_match_with_offers = User::select('id','dob','first_name','last_name','device_type','device_token','country_code','mobile_number')->whereCityOfResidence($find_city_name->city_name)->where('gender','=',$offer->offerSetting->gender)->whereDeletedAt(null)->where('is_block','=',0)->get();
+                $user_match_with_offers = User::select('id','email','dob','first_name','last_name','device_type','device_token','country_code','mobile_number')->whereCityOfResidence($find_city_name->city_name)->where('gender','=',$offer->offerSetting->gender)->whereDeletedAt(null)->where('is_block','=',0)->get();
 
             }
             if(!empty($offer->offerSetting->city_id) && empty($offer->offerSetting->gender)){
 
                 $find_city_name = City::select('city_name')->whereId($offer->offerSetting->city_id)->first();
-                $user_match_with_offers = User::select('id','dob','first_name','last_name','device_type','device_token','country_code','mobile_number')->whereCityOfResidence($find_city_name->city_name)->whereDeletedAt(null)->where('is_block','=',0)->get();
+                $user_match_with_offers = User::select('id','email','dob','first_name','last_name','device_type','device_token','country_code','mobile_number')->whereCityOfResidence($find_city_name->city_name)->whereDeletedAt(null)->where('is_block','=',0)->get();
 
             }
             if(empty($offer->offerSetting->city_id) && !empty($offer->offerSetting->gender)){
-                $user_match_with_offers = User::select('id','dob','first_name','last_name','device_type','device_token','country_code','mobile_number')->where('gender','=',$offer->offerSetting->gender)->whereDeletedAt(null)->where('is_block','=',0)->get();
+                $user_match_with_offers = User::select('id','email','dob','first_name','last_name','device_type','device_token','country_code','mobile_number')->where('gender','=',$offer->offerSetting->gender)->whereDeletedAt(null)->where('is_block','=',0)->get();
             }
 
             if(empty($offer->offerSetting->city_id) && empty($offer->offerSetting->gender)){
                 //both are empty
-                $user_match_with_offers = User::select('id','dob','first_name','last_name','device_type','device_token','country_code','mobile_number')->whereDeletedAt(null)->where('is_block','=',0)->get();
+                $user_match_with_offers = User::select('id','email','dob','first_name','last_name','device_type','device_token','country_code','mobile_number')->whereDeletedAt(null)->where('is_block','=',0)->get();
             }
 
           //  return $user_match_with_offers;
@@ -116,8 +117,11 @@ class Controller extends BaseController
 
                         if(!empty($admin_offer_notification)){
 
-                            $notificationJob = (new OfferNotificationJob($admin_offer_notification, $offer_assign, $user_match_with_offer))->delay(Carbon::now()->addSeconds(3));
+                            if($admin_offer_notification->email_type == 1){
+
+                                $notificationJob = (new OfferNotificationJob($admin_offer_notification, $offer_assign, $user_match_with_offer, $offer))->delay(Carbon::now()->addSeconds(3));
                                 dispatch($notificationJob);
+                            }
 
 
 
@@ -125,11 +129,11 @@ class Controller extends BaseController
 
                                 if($user_match_with_offer->device_type == 'Android'){
                                     if($user_match_with_offer->device_token && strlen($user_match_with_offer->device_token) > 20){
-                                       $android_notify =  $this->send_android_notification_new($user_match_with_offer->device_token, $admin_offer_notification->message,"Offer Assign Notification", $noti_type = 6, null,$offer_id = $offer_assign->offer_id);
+                                       $android_notify =  $this->send_android_notification_new($user_match_with_offer->device_token, "What's Happening Today: Enjoy ".$offer->offer_name." at ".$offer->venu->venue_name."\n".$admin_offer_notification->message,"Offer Assign Notification", $noti_type = 6, null,$offer_id = $offer_assign->offer_id);
 
                                         $criteria_data = [
                                             'user_id'   => $user_match_with_offer->id,
-                                            'message'   => $admin_offer_notification->message,
+                                            'message'   => "What's Happening Today: Enjoy ".$offer->offer_name." at ".$offer->venu->venue_name."\n".$admin_offer_notification->message,
                                             'noti_type' => 6,
                                             'offer_id'  => $offer_assign->offer_id
                                         ];
@@ -140,11 +144,11 @@ class Controller extends BaseController
 
                                 if($user_match_with_offer->device_type == 'Ios' && strlen($user_match_with_offer->device_token) > 20){
                                     if($user_match_with_offer->device_token){
-                                        $ios_notify =  $this->iphoneNotification($user_match_with_offer->device_token, $admin_offer_notification->message,"Offer Assign Notification", $noti_type = 6, null,$offer_id = $offer_assign->offer_id);
+                                        $ios_notify =  $this->iphoneNotification($user_match_with_offer->device_token, "What's Happening Today: Enjoy ".$offer->offer_name." at ".$offer->venu->venue_name."\n".$admin_offer_notification->message,"Offer Assign Notification", $noti_type = 6, null,$offer_id = $offer_assign->offer_id);
 
                                         $criteria_data = [
                                             'user_id'   => $user_match_with_offer->id,
-                                            'message'   => $admin_offer_notification->message,
+                                            'message'   => "What's Happening Today: Enjoy ".$offer->offer_name." at ".$offer->venu->venue_name."\n".$admin_offer_notification->message,
                                             'noti_type' => 6,
                                             'offer_id'  => $offer_assign->offer_id
                                         ];
@@ -158,7 +162,7 @@ class Controller extends BaseController
                             if($admin_offer_notification->sms_type == 1){
                                 \SMSGlobal\Credentials::set(env('SMS_GLOBAL_API'),env('SMS_GLOBAL_SECERET'));
                                 $sms = new \SMSGlobal\Resource\Sms();
-                                $message = $admin_offer_notification->message;
+                                $message = "What's Happening Today: Enjoy ".$offer->offer_name." at ".$offer->venu->venue_name."\n".$admin_offer_notification->message;
                                 try {
                                     $response = $sms->sendToOne($user_match_with_offer->country_code.$user_match_with_offer->mobile_number, $message,'CM-Society');
                                 } catch (\Exception $e) {
@@ -224,19 +228,22 @@ class Controller extends BaseController
 
                             if(!empty($admin_offer_notification)){
 
-                                $notificationJob = (new OfferNotificationJob($admin_offer_notification, $offer_assign, $user_match_with_offer))->delay(Carbon::now()->addSeconds(3));
+                                if($admin_offer_notification->email_type == 1){
+
+                                    $notificationJob = (new OfferNotificationJob($admin_offer_notification, $offer_assign, $user_match_with_offer, $offer))->delay(Carbon::now()->addSeconds(3));
                                     dispatch($notificationJob);
+                                }
 
 
                                 if($admin_offer_notification->push_type == 1){
 
                                     if($user_match_with_offer->device_type == 'Android'){
                                         if($user_match_with_offer->device_token && strlen($user_match_with_offer->device_token) > 20){
-                                           $android_notify =  $this->send_android_notification_new($user_match_with_offer->device_token, $admin_offer_notification->message,"Offer Assign Notification", $noti_type = 6, null,$offer_id = $offer_assign->offer_id);
+                                           $android_notify =  $this->send_android_notification_new($user_match_with_offer->device_token, "What's Happening Today: Enjoy ".$offer->offer_name." at ".$offer->venu->venue_name."\n".$admin_offer_notification->message,"Offer Assign Notification", $noti_type = 6, null,$offer_id = $offer_assign->offer_id);
 
                                             $criteria_data = [
                                                 'user_id'   => $user_match_with_offer->id,
-                                                'message'   => $admin_offer_notification->message,
+                                                'message'   => "What's Happening Today: Enjoy ".$offer->offer_name." at ".$offer->venu->venue_name."\n".$admin_offer_notification->message,
                                                 'noti_type' => 6,
                                                 'offer_id'  => $offer_assign->offer_id
                                             ];
@@ -247,11 +254,11 @@ class Controller extends BaseController
 
                                     if($user_match_with_offer->device_type == 'Ios' && strlen($user_match_with_offer->device_token) > 20){
                                         if($user_match_with_offer->device_token){
-                                            $ios_notify =  $this->iphoneNotification($user_match_with_offer->device_token, $admin_offer_notification->message,"Offer Assign Notification", $noti_type = 6, null,$offer_id = $offer_assign->offer_id);
+                                            $ios_notify =  $this->iphoneNotification($user_match_with_offer->device_token, "What's Happening Today: Enjoy ".$offer->offer_name." at ".$offer->venu->venue_name."\n".$admin_offer_notification->message,"Offer Assign Notification", $noti_type = 6, null,$offer_id = $offer_assign->offer_id);
 
                                             $criteria_data = [
                                                 'user_id'   => $user_match_with_offer->id,
-                                                'message'   => $admin_offer_notification->message,
+                                                'message'   => "What's Happening Today: Enjoy ".$offer->offer_name." at ".$offer->venu->venue_name."\n".$admin_offer_notification->message,
                                                 'noti_type' => 6,
                                                 'offer_id'  => $offer_assign->offer_id
                                             ];
@@ -265,7 +272,7 @@ class Controller extends BaseController
                                 if($admin_offer_notification->sms_type == 1){
                                     \SMSGlobal\Credentials::set(env('SMS_GLOBAL_API'),env('SMS_GLOBAL_SECERET'));
                                     $sms = new \SMSGlobal\Resource\Sms();
-                                    $message = $admin_offer_notification->message;
+                                    $message = "What's Happening Today: Enjoy ".$offer->offer_name." at ".$offer->venu->venue_name."\n".$admin_offer_notification->message;
                                     try {
                                         $response = $sms->sendToOne($user_match_with_offer->country_code.$user_match_with_offer->mobile_number, $message,'CM-Society');
                                     } catch (\Exception $e) {

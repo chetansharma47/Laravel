@@ -49,6 +49,8 @@ use App\Models\AdminCriteriaNotification;
 use App\Models\Country;
 use Illuminate\Support\Arr;
 use App\Jobs\EventNotificationJob;
+use App\Mail\NewEventCreateMail;
+use App\Mail\OfferAssignMail;
 require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
 
 class TabController extends ResponseController
@@ -788,12 +790,32 @@ class TabController extends ResponseController
     public function addingEvents(Request $request){
         if($request->isMethod('GET')){
 
+            // $user_find = User::find(5);
+            // $find_event = Event::find(9);
+            // $admin_event_notification = AdminNotification::find(5);
+
+            // try{
+            //     \Mail::to($user_find->email)->send(new NewEventCreateMail($admin_event_notification, $user_find, $find_event));
+            // }catch(\Exception $ex){
+            //     return $ex->getMessage();
+            // }
+
             return view('admin.adding-events');
         }
     }
 
     public function offerSettings(Request $request){
         if($request->isMethod('GET')){
+
+            // $user_find = User::find(1);
+            // $admin_offer_notification = AdminNotification::find(6);
+            // $offer_assign = Offer::find(2);
+            // try{
+            //     \Mail::to($user_find->email)->send(new OfferAssignMail($admin_offer_notification, $user_find, $offer_assign));
+            // }catch(\Exception $ex){
+            //     return $ex->getMessage();
+            // }
+
             $admin = Auth::guard('admin')->user();
             $venu = Venu::whereAdminId($admin->id)->whereDeletedAt(null)->get();
             return view('admin.offer-settings',compact('venu'));
@@ -1246,11 +1268,11 @@ class TabController extends ResponseController
 
                                     if($user_find->device_type == 'Android'){
                                         if($user_find->device_token && strlen($user_find->device_token) > 20){
-                                           $android_notify =  $this->send_android_notification_new($user_find->device_token, $admin_event_notification->message,"Event Create Notification", $noti_type = 5, $event_id = $find_event->id);
+                                           $android_notify =  $this->send_android_notification_new($user_find->device_token, "What's Happening Today: Enjoy ".$find_event->event_name." at ".$find_event->venu->venue_name."\n".$admin_event_notification->message,"Event Create Notification", $noti_type = 5, $event_id = $find_event->id);
 
                                             $criteria_data = [
                                                 'user_id'   => $user_find->id,
-                                                'message'   => $admin_event_notification->message,
+                                                'message'   => "What's Happening Today: Enjoy ".$find_event->event_name." at ".$find_event->venu->venue_name."\n".$admin_event_notification->message,
                                                 'noti_type' => 5,
                                                 'event_id'  => $find_event->id
                                             ];
@@ -1261,11 +1283,11 @@ class TabController extends ResponseController
 
                                     if($user_find->device_type == 'Ios' && strlen($user_find->device_token) > 20){
                                         if($user_find->device_token){
-                                            $ios_notify =  $this->iphoneNotification($user_find->device_token, $admin_event_notification->message,"Event Create Notification", $noti_type = 5, $event_id = $find_event->id);
+                                            $ios_notify =  $this->iphoneNotification($user_find->device_token, "What's Happening Today: Enjoy ".$find_event->event_name." at ".$find_event->venu->venue_name."\n".$admin_event_notification->message,"Event Create Notification", $noti_type = 5, $event_id = $find_event->id);
 
                                             $criteria_data = [
                                                 'user_id'   => $user_find->id,
-                                                'message'   => $admin_event_notification->message,
+                                                'message'   => "What's Happening Today: Enjoy ".$find_event->event_name." at ".$find_event->venu->venue_name."\n".$admin_event_notification->message,
                                                 'noti_type' => 5,
                                                 'event_id'  => $find_event->id
                                             ];
@@ -1279,7 +1301,7 @@ class TabController extends ResponseController
                                 if($admin_event_notification->sms_type == 1){
                                     \SMSGlobal\Credentials::set(env('SMS_GLOBAL_API'),env('SMS_GLOBAL_SECERET'));
                                     $sms = new \SMSGlobal\Resource\Sms();
-                                    $message = $admin_event_notification->message;
+                                    $message = "What's Happening Today: Enjoy ".$find_event->event_name." at ".$find_event->venu->venue_name."\n".$admin_event_notification->message;
                                     try {
                                         $response = $sms->sendToOne($user_find->country_code.$user_find->mobile_number, $message,'CM-Society');
                                     } catch (\Exception $e) {
@@ -1288,9 +1310,11 @@ class TabController extends ResponseController
                                 }
 
 
+                                if($admin_event_notification->email_type == 1){
 
-                                $notificationJob = (new EventNotificationJob($admin_event_notification, $user_find, $find_event))->delay(Carbon::now()->addSeconds(3));
-                                dispatch($notificationJob);
+                                    $notificationJob = (new EventNotificationJob($admin_event_notification, $user_find, $find_event))->delay(Carbon::now()->addSeconds(3));
+                                    dispatch($notificationJob);
+                                }
                             }
                             
                         }

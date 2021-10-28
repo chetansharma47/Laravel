@@ -19,12 +19,13 @@ class OfferNotificationJob implements ShouldQueue
      *
      * @return void
      */
-    protected $admin_offer_notification, $offer_assign, $user_find;
-    public function __construct($admin_offer_notification, $offer_assign, $user_find)
+    protected $admin_offer_notification, $offer_assign, $user_find, $offer;
+    public function __construct($admin_offer_notification, $offer_assign, $user_find, $offer)
     {
         $this->admin_offer_notification = $admin_offer_notification;
         $this->offer_assign = $offer_assign;
         $this->user_find = $user_find;
+        $this->offer = $offer;
     }
 
     /**
@@ -37,7 +38,7 @@ class OfferNotificationJob implements ShouldQueue
 
         if($this->admin_offer_notification->email_type == 1){
             try{
-                \Mail::to($this->user_find->email)->send(new OfferAssignMail($this->admin_offer_notification, $this->user_find));
+                \Mail::to($this->user_find->email)->send(new OfferAssignMail($this->admin_offer_notification, $this->user_find, $this->offer_assign, $this->offer));
             }catch(\Exception $ex){
                 //return $ex->getMessage();
             }
