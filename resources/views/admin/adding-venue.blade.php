@@ -720,6 +720,7 @@ $(document).on('change','#img_upload',function(e){
 		
 
 			reader.readAsDataURL(file);
+			$("#img_upload")[0].value = '';
 
 		}else{
 			$("#alert_text").text("Please upload .jpg, .jpeg or .png format file only.");

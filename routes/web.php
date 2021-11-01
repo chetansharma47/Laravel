@@ -172,6 +172,17 @@ Route::group(['middleware' => 'TimeZone','namespace' => 'Admin','prefix'=>'/admi
         /*Analytics dashboard*/
         
         Route::post('analytics-dashboard','TabController@AnalyticsDashboard')->name('analyticsDashboard');
+
+         /*Cross Verifiction Sales*/
+
+        Route::post('cross-verification-sales-dashboard','TabController@CrossVerificationSalesDashboard')->name('CrossVerificationSalesDashboard');
+        Route::post('excel-verify-transaction','TabController@ExcelVerifyTransaction')->name('excel_verify_transaction');
+        Route::get('export-cross-verification-sales','TabController@ExportCrossVerificationSales')->name('export_cross_verification_sales');
+        Route::post('force-verify-all-pending-sales','TabController@ForceVerifyAllPendingSales')->name('force_verify_all_pending_sales');
+        Route::post('delete-selected-transactions','TabController@DeleteSelectedTransactions')->name('delete_selected_transactions');
+        Route::post('verify-selected-transactions','TabController@VerifySelectTransactions')->name('verify_select_transactions');
+
+        Route::get('download-verify-sales-after-successfully-uploded-file/{ids_data}','TabController@donwloadSalesVerifyAfterSuccessfullyUplodedFile')->name('donwloadSalesVerifyAfterSuccessfullyUplodedFile');
         
     }); 
            

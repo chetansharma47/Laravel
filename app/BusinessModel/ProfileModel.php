@@ -21,6 +21,7 @@ use Picqer;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use App\Mail\SignupMail;
 use App\Models\AdminNotification;
+use App\Models\Otp;
 class ProfileModel extends Model
 {
 
@@ -46,6 +47,59 @@ class ProfileModel extends Model
 
     public static function createUser($data){
         return User::create($data);
+    }
+
+    public static function updateUserProfile($data, $user){
+        $id = $user->id;
+
+        if(!empty($data['mobile_number']) && !empty($data['country_code']) && !empty($data['otp'])){
+           $find_otp = Otp::whereOtp($data['otp'])->whereMobileNumber($data['mobile_number'])->whereCountryCode($data['country_code'])->first();
+            if($find_otp){
+            $find_otp->delete();
+                $update_user = $user->update(['mobile_number' => $data['mobile_number'], 'country_code' => $data['country_code'] ]);
+                  return ["status" => 1, "success_msg" => "Mobile number has been updated successfully."];
+            }else{
+                return ["status" => 2, "error_msg" => "Please enter valid OTP."];
+            }
+        }
+
+        if(!empty($data['email'])){
+            $data['first_name']=$user->first_name;
+            $data['last_name']=$user->last_name;
+            $token = str_random(64);
+            try{
+                $link = url("confirm-account/$token");
+                \Mail::to($data['email'])->send(new UserVerifyMail($data, $link));
+            }catch(\Exception $ex){
+                return ["status" => 0, "data" => null, "error_msg" => "Something went wrong."];
+            }
+
+            $update_user = $user->update(['email' => $data['email'],  'verify_email_token' => $token, 'is_verify' => 0]);
+            return ["status" => 3, "success_msg" => "Email has been updated successfully."];
+        }
+
+        if(!empty($data['city_of_residence'])){
+            $update_user = $user->update(['city_of_residence' => $data['city_of_residence'] ]);
+            return ["status" => 4, "success_msg" => "City has been updated successfully."];
+        }
+
+        /*if(!empty($data['password']) && !empty($data['confirm_password']) && !empty($data['old_password']) ){
+            if(Hash::check($data['old_password'], $user->password)){
+                $data['password'] = Hash::make($data['password']);
+                $update_user = $user->update(['password' => $data['password']]);
+                return ["status" => 5, "success_msg" => "Password has been updated successfully."];
+            }else{
+                return ["status" => 6, "error_msg" => "Invalid password."];
+            }
+        }*/
+
+        if(!empty($data['password']) && !empty($data['confirm_password'])){
+            $data['password'] = Hash::make($data['password']);
+            $update_user = $user->update(['password' => $data['password']]);
+            return ["status" => 5, "success_msg" => "Password has been updated successfully."];
+        }
+        
+        return User::find($id);
     }
 
     public static function updateUser($data, $user){

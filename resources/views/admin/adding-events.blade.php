@@ -895,6 +895,7 @@ if(file){
 				$('.event_imghidden2[uniq-id='+form_activeid+']').val('');
 			}
 			reader.readAsDataURL(file);
+			$("#img_upload")[0].value = '';
 
 		}else{
 			$("#alert_text").text("Please upload .jpg, .jpeg or .png format file only.");

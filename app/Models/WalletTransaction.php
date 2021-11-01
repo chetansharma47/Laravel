@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\UserAssignOffer;
 
 class WalletTransaction extends Model
 {
@@ -20,8 +21,17 @@ class WalletTransaction extends Model
     	'is_cross_verify',
         'invoice_number',
         'offer_product_ids',
-        'cashier_name'
+        'cashier_name',
+        'updated_at',
+        'updated_by',
+        'created_at',
+        'created_by',
+        'check_amount_pos',
     ]; 
+
+    public function offerProductIds(){
+        return $this->hasMany(UserAssignOffer::class,'offer_id','offer_product_ids');
+    }
 
     
 }

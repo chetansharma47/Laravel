@@ -255,7 +255,7 @@ class VenueBusinessModel extends Model
 			$offersetting->offer_type = $offer->offer_type;
 			$offersetting->save();
 
-		}else{
+		}/*else{
 
 			$offersetting->dob = $data['dob_condition'];
 			$offersetting->gender = $data['gender_condition'];
@@ -269,7 +269,7 @@ class VenueBusinessModel extends Model
 			$offersetting->offer_type = $offer->offer_type;
 			$offersetting->update();
 
-		}
+		}*/
 
 		return ['data' => $offer, 'message' => $message];
 	}

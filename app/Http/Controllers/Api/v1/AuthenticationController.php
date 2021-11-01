@@ -35,6 +35,9 @@ use App\Models\AdminNotification;
 use App\Models\AdminCriteriaNotification;
 use App\Models\Country;
 use App\Mail\BonusEmail;
+use App\Models\GeneralSettings;
+use App\Mail\ContactUsAdmin;
+
 require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
 
 class AuthenticationController extends ResponseController
@@ -161,34 +164,28 @@ class AuthenticationController extends ResponseController
     }
 
 
-    public function updateUser(Request $request){
+     public function updateUser(Request $request){
         $user = Auth::guard()->user();
         $user_id = $user->id;
         $this->is_validationRule(Validation::userAppUpdateUser($Validation = "", $message = "", $user_id) , $request);
-
-        $profile = $request->file('image');
-        if($profile){
-
-            $extension = $profile->getClientOriginalExtension();
-            $size = $profile->getSize();
-
-            if($extension != 'jpg' && $extension != 'jpeg' && $extension != 'png' && $extension != 'JPG' && $extension != 'JPEG' && $extension != 'PNG'){
-                return $this->responseWithErrorValidation("Please select image type of Jpg, Jpeg or Png format file only.");
-            }
-
-            if($extension == "jpg" || $extension == "jpeg" || $extension == "png" || $extension == "JPG" || $extension == "JPEG" || $extension == "PNG"){
-                if($size > 20971520){
-                    return $this->responseWithErrorValidation("Image should not be greater than 20 MB.");
-                }
-            }
-
-
-        }
-
-        $data['image'] = $profile;
         $data = $request->all();
-        $update_user = $this->profileModel->updateUser($data, $user);
-        return $this->responseOk('User has been updated successfully.', ['update_user' => $update_user]);
+        $update_user = $this->profileModel->updateUserProfile($data, $user);
+        if($update_user['status'] == 1){
+            return $this->responseOk($update_user['success_msg']);
+        }else if($update_user['status'] == 2){
+            return $this->responseWithErrorCode($update_user['error_msg'],406);
+        }else if($update_user['status'] == 3){
+            return $this->responseOk($update_user['success_msg']);
+        }else if($update_user['status'] == 4){
+            return $this->responseOk($update_user['success_msg']);
+        }else if($update_user['status'] == 5){
+            return $this->responseOk($update_user['success_msg']);
+        }/*else if($update_user['status'] == 6){
+            return $this->responseOk($update_user['error_msg']);
+        }*/else{
+            return $this->responseOk('User has been updated successfully.', ['update_user' => $update_user]);
+        }
+        // return $this->responseWithErrorCode("Please enter valid OTP.",406);
     }
 
     public function getProfile(Request $request){
@@ -621,6 +618,28 @@ class AuthenticationController extends ResponseController
        $admin_notification_history = AdminCriteriaNotification::whereUserId($user->id)->orderBy('id','desc')->with('event','offer')->paginate(10);
 
        return $this->responseOk('User Notification History', ['user_notification_history' => $admin_notification_history]);
+    }
+
+    public function contentManagment(Request $request){
+        $general_settings = GeneralSettings::get();
+        return $this->responseOk('Content Managment',['content_managment' => $general_settings]);
+    }
+    public function contactUsEmail(Request $request){
+         $this->is_validationRule(Validation::contactUsEmail($Validation = "", $message = "") , $request);
+         $user = Auth::guard()->user();
+         $data = $request->all();
+
+         $admin_email = GeneralSettings::whereUniqId(5)->first();
+         $admin_email->setting_content;
+
+        try{
+          \Mail::to($admin_email->setting_content)->send(new ContactUsAdmin($user, $data));
+        }catch(\Exception $ex){
+          return ["status" => 0, "data" => null, "error_msg" => "Something went wrong."];
+        }
+
+        return $this->responseOk("Thank you for contacting us. Our customer executive will contact you shortly.");
+
     }
 
 }

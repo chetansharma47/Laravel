@@ -520,7 +520,7 @@ table#basic-datatables {
 									<th style="min-width: 40px">Sr. No.</th>
 									<th style="min-width: 110px">Customer ID</th>
 									<th style="min-width: 200px">Badge Name</th>
-									<th>Status</th>
+									<th style="min-width: 130px">Badge Status</th>
 									<th  style="min-width: 130px">From Date</th>
 									<th  style="min-width: 130px">To Date</th>
 									<th  style="min-width: 130px">From Time</th>
@@ -777,7 +777,7 @@ table#basic-datatables {
 	            	$( row ).find('td:eq(0)').attr('data-id', data['id']).attr('key_type','serial_number').addClass('td_click1');
 			        $( row ).find('td:eq(1)').attr('data-id', data['id']).attr('key_type','customer_id').addClass('td_click1');
 			        $( row ).find('td:eq(2)').attr('data-id', data['id']).attr('key_type','badge_name').addClass('td_click1');
-			        $( row ).find('td:eq(3)').attr('data-id', data['id']).attr('key_type','status').addClass('td_click1');
+			        $( row ).find('td:eq(3)').attr('data-id', data['id']).attr('key_type','badge_status').addClass('td_click1');
 			        $( row ).find('td:eq(4)').attr('data-id', data['id']).attr('key_type','from_date').addClass('td_click1');
 			        $( row ).find('td:eq(5)').attr('data-id', data['id']).attr('key_type','to_date').addClass('td_click1');
 			        $( row ).find('td:eq(6)').attr('data-id', data['id']).attr('key_type','from_time').addClass('td_click1');
@@ -791,7 +791,7 @@ table#basic-datatables {
 	             	{data: 'DT_RowIndex', name: 'DT_RowIndex'},
 	                {data: 'customer_id', name: 'customer_id'},
 		            {data: 'badge_name', name: 'badge_name'},
-		            {data: 'status', name: 'status'},
+		            {data: 'badge_status', name: 'badge_status'},
 		            {data: 'from_date', name: 'from_date'},
 		            {data: 'to_date', name: 'to_date'},
 		            {data: 'from_time', name: 'from_time'},

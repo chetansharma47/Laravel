@@ -563,20 +563,24 @@
 
 				  		var users_referral = thousand_format(data.customer_referal);
 				  		$('.user_referrals h3').text(users_referral);
-
-				  		$('.customer_dirham_earned h3').text(data.customer_dirhams_wallet.toLocaleString());
+				  		
+				  		var customer_dirhams_wallet = thousand_format(data.customer_dirhams_wallet);
+				  		$('.customer_dirham_earned h3').text(customer_dirhams_wallet);
 				  		$('.graph_text_dirham_earn h3 span.value').text(data.customer_dirhams_wallet);
 				  		customer_dirshams_wallet_cash(data.customer_dirshams_wallet_cash_trends);
 
-				  		$('.total_sales h3').text(data.total_sales.toLocaleString());
+				  		var total_sales = thousand_format(data.total_sales);
+				  		$('.total_sales h3').text(total_sales);
 				  		$('.graph_text_total_sales h3 span.value').text(data.total_sales.toLocaleString());
 				  		totalsales(data.totalsales_amount_trends);
 
-				  		$('.cashback_redeem h3').text(data.redeemed_amount.toLocaleString());
+				  		var redeemed_amount = thousand_format(data.redeemed_amount);
+				  		$('.cashback_redeem h3').text(redeemed_amount);
 				  		$('.graph_text_dirham_redeemed h3 span.value').text(data.redeemed_amount);
 				  		redeemed_amount_trends(data.redeemed_amount_trends);
 
-				  		$('.cashback_earned h3').text(data.cashback_earned.toLocaleString());
+				  		var cashback_earned = thousand_format(data.cashback_earned);
+				  		$('.cashback_earned h3').text(cashback_earned);
 
 				  		var referral_first_transaction_done = thousand_format(data.referral_first_transaction_done);
 				  		$('.referral_first_transaction_done h3').text(referral_first_transaction_done);

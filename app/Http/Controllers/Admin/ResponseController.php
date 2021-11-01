@@ -10,6 +10,13 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Validator;
 use Illuminate\Support\Facades\Auth;
+use App\Models\AdminNotification;
+use App\Models\AdminCriteriaNotification;
+use App\Models\Country;
+use Illuminate\Support\Arr;
+use App\Mail\CashbackEmail;
+use App\Jobs\CashbackEmailJob;
+use Carbon\Carbon;
 
 class ResponseController extends Controller
 {
@@ -184,4 +191,93 @@ class ResponseController extends Controller
 
         return  $result;
     }
+
+     public function transferToWallet($wallet_transaction_verified){
+        
+        date_default_timezone_set("Asia/Kolkata");
+            
+        $admin_cashback_notification_find = AdminNotification::where("uniq_id","=",2)->first();
+
+        foreach ($wallet_transaction_verified as $WalletTransaction) {
+            $find_user = User::whereId($WalletTransaction->user_id)->where('is_block','=',0)->first();
+            $find_user->wallet_cash = $find_user->wallet_cash + $WalletTransaction->cashback_earned;
+            $find_user->update();
+
+            $this->send_notifications_verified_users($admin_cashback_notification_find,$find_user);
+        }
+
+        return 'Cashback credit successfully';
+    }
+
+    public function transferToWalletForUploadVerify($wallet_transaction_verified){
+            
+        date_default_timezone_set("Asia/Kolkata");
+            
+        $admin_cashback_notification_find = AdminNotification::where("uniq_id","=",2)->first();
+
+        $find_user = User::whereId($wallet_transaction_verified->user_id)->where('is_block','=',0)->first();
+        $find_user->wallet_cash = $find_user->wallet_cash + $wallet_transaction_verified->cashback_earned;
+        $find_user->update();
+
+        $this->send_notifications_verified_users($admin_cashback_notification_find,$find_user);
+
+        return 'Cashback credit successfully';
+    }
+
+    public function send_notifications_verified_users($admin_cashback_notification,$find_user){
+        if(!empty($admin_cashback_notification)){
+            if($admin_cashback_notification->push_type == 1){
+
+                if($find_user->device_type == 'Android'){
+                    if($find_user->device_token && strlen($find_user->device_token) > 20){
+                       $android_notify =  $this->send_android_notification_new($find_user->device_token, $admin_cashback_notification->message, $notmessage = "Cashback Notification", $noti_type = 2);
+                        $criteria_data = [
+                            'user_id'   => $find_user->id,
+                            'message'   => $admin_cashback_notification->message,
+                            'noti_type' => 2,
+                            'created_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString(),
+                            'updated_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString()
+                        ];
+                        AdminCriteriaNotification::create($criteria_data);
+                   
+                   }
+                }
+
+                if($find_user->device_type == 'Ios' && strlen($find_user->device_token) > 20){
+                    if($find_user->device_token){
+                        $ios_notify =  $this->iphoneNotification($find_user->device_token, $admin_cashback_notification->message, $notmessage = "Cashback Notification", $noti_type = 2);
+                        $criteria_data = [
+                            'user_id'   => $find_user->id,
+                            'message'   => $admin_cashback_notification->message,
+                            'noti_type' => 2,
+                            'created_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString(),
+                            'updated_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString()
+                        ];
+                        AdminCriteriaNotification::create($criteria_data);
+                    
+                   }
+                }
+
+            }
+
+            if($admin_cashback_notification->sms_type == 1){
+                \SMSGlobal\Credentials::set(env('SMS_GLOBAL_API'),env('SMS_GLOBAL_SECERET'));
+                $sms = new \SMSGlobal\Resource\Sms();
+                $message = $admin_cashback_notification->message;
+                try {
+                    $response = $sms->sendToOne($find_user->country_code.$find_user->mobile_number, $message,'CM-Society');
+                } catch (\Exception $e) {
+                    // return $e->getMessage();
+                    // continue;
+                }
+            }
+
+
+            if($admin_cashback_notification->email_type == 1){
+                $cashbackNotificationJob = (new CashbackEmailJob($admin_cashback_notification, $find_user))->delay(Carbon::now()->addSeconds(3));
+
+                dispatch($cashbackNotificationJob);
+            }             
+        }
+      }
 }

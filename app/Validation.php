@@ -139,36 +139,39 @@ class Validation extends Model
 
     }
 
-    public static function userAppUpdateUser($validation = null, $message = null, $user_id){
+    public static function userAppUpdateUser($validation = null, $message = null){
 
 
       $validation = [
             'country_code'      => 'sometimes|nullable',
-            'mobile_number'     => 'sometimes|nullable|numeric|digits_between:8,15',
-            'first_name'        => 'sometimes|nullable|max:50',
-            'last_name'         => 'sometimes|nullable|max:50',
-            'email'             => 'sometimes|nullable|email|max:100|unique:users,email,'.$user_id.',id',
+            'mobile_number'     => 'sometimes|nullable|numeric|digits_between:8,15|unique:users,mobile_number',
+            'email'             => 'sometimes|nullable|email|max:100|unique:users,email',
             'city_of_residence' => 'sometimes|nullable|max:100',
-            'nationality'       => 'sometimes|nullable|max:50',
-            'dob'               => 'sometimes|nullable|date_format:Y-m-d',
-            'gender'            => 'sometimes|nullable|in:Male,Female,Other',
-            'reference_code'    => 'sometimes|nullable|max:12',
+            'password'  => ['sometimes','nullable','max:100','min:6'],
+            'confirm_password'  => 'sometimes|required|same:password',
+            'otp'  => 'sometimes|nullable|min:4',
+
 
       ];
 
       $message = [
-              'country_code.required'       =>  "Please enter country code",
-              'mobile_number.required'      =>  "Please enter mobile number.",
-              'mobile_number.numeric'       =>  "Mobile number should be numeric only.",
-              'mobile_number.digits_between' =>  "Mobile number should be between 8 to 15 digits only.",
-              'first_name.max'              =>  "First name should be less than 50 characters.",
-              'last_name.required'          =>  "Last name should be less than 50 characters.",
-              'email.unique'                =>  "Email already exists.",
-              'city_of_residence.max'       =>  "City of residence should be less than 100 characters.",
-              'nationality.max'             =>  "Nationality should be less than 50 characters.",
-              'dob.date_format'             =>  "DOB should be Y-m-d format only.",
-              'gender.in'                   =>  "Gender should be male,female,other only.",
-              'reference_code.max'          =>  "Referral code should be less than or equal to 12 characters."
+              'country_code.required'         =>  "Please enter country code",
+              'mobile_number.required'        =>  "Please enter mobile number.",
+              'mobile_number.numeric'         =>  "Mobile number should be numeric only.",
+              'mobile_number.digits_between'  =>  "Mobile number should be between 8 to 15 digits only.",
+              'mobile_number.unique'        =>  "Mobile number already registered with us. Please use another mobile number.",
+              'email.unique'                  =>  "Email address already registered with us. Please use another email address.",
+              'email.email'       => 'Please enter valid email address.',
+              'city_of_residence.max'         =>  "City of residence should be less than 100 characters.",
+              'password.required'             => 'Please enter new password.',
+              'password.min'                  =>  "New Password must be at 6 characters long.",
+              'confirm_password.required'     => 'Please enter confirm password.',
+              'confirm_password.same'         => 'New password and confirm password must be same.',
+              'password.min'                  => 'The new password must be at least 6 characters.',
+              'password.max'                  => 'The new password may not be greater than 100 characters.',
+              'otp.required'                  =>  "Please enter OTP.",
+              'otp.min'                  =>  "Please enter valid OTP.",
+              
       ];
 
       return $data = ['validation' => $validation, 'message' => $message];
@@ -336,8 +339,8 @@ class Validation extends Model
             'user_id'       => 'required',
             'description'   => 'sometimes||nullable|max:500',
             'invoice_number' => 'required|max:50',
-            'redeemed_amount'  => 'sometimes|nullable|numeric',
-            'total_bill_amount'    => 'required|numeric|min:0.5'
+            'redeemed_amount'  => 'sometimes|nullable|numeric|max:10000000',
+            'total_bill_amount'    => 'required|numeric|min:0.5|max:10000000'
       ];
 
       $message = [
@@ -491,8 +494,8 @@ class Validation extends Model
           'timezone'  => 'required',
           'description'   => 'sometimes||nullable|max:500',
           'invoice_number' => 'required|max:50',
-          'redeemed_amount'  => 'sometimes|nullable|numeric',
-          'total_bill_amount'    => 'required|numeric|min:0.5'
+          'redeemed_amount'  => 'sometimes|nullable|numeric|min:0|max:10000000',
+          'total_bill_amount'    => 'required|numeric|min:0.5|max:10000000'
          
       ];
       
@@ -508,7 +511,18 @@ class Validation extends Model
 
       return $data = ['validation' => $validation, 'message' => $message];
     }
-      
+    
+    public static function contactUsEmail($validation = null, $message = null){
+      $validation = [
+            'message'      => 'required|max:500',
+      ];
+
+      $message = [
+        'message.required'       =>  "Please enter message.",
+      ];
+
+      return $data = ['validation' => $validation, 'message' => $message];
+    }
 
 }
 

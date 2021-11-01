@@ -300,9 +300,13 @@ class RestaurantAuthenticationController extends ResponseController
 
         if(isset($data['redeemed_amount'])){
 
+            if($data['redeemed_amount'] > $data['total_bill_amount']){
+                return $this->responseWithErrorCode("Bill amount should be greater than or equal to redeem amount.",406);
+            }
             if($user_find->wallet_cash < $data['redeemed_amount']){
                 return $this->responseWithErrorCode("Redeem amount should be less than or equal to wallet amount.",406);
             }
+
         }else{
             $data['redeemed_amount'] = 0;
         }
@@ -315,6 +319,15 @@ class RestaurantAuthenticationController extends ResponseController
         }else if($user_find->is_block == 1){
             return $this->responseWithErrorCode("User has been blocked by admin.",404);
         }
+
+        /*Check for duplicate  invoice number*/
+        $check_exists_invoice_number = WalletTransaction::whereVenuId($venue_login_id)->whereInvoiceNumber($request->invoice_number)->whereIsCrossVerify(0)->whereDeletedAt(null)->first();
+
+        if(!empty($check_exists_invoice_number)){
+            return $this->responseWithErrorCode("Invoice number already exists.",406); 
+        }
+
+        /*End*/
 
         $transaction_amount_check_last_days = 30;
         $customer_tier_validity_check = 30;
@@ -674,6 +687,15 @@ class RestaurantAuthenticationController extends ResponseController
         }else if($user_find->is_block == 1){
             return $this->responseWithErrorCode("User has been blocked by admin.",404);
         }
+
+        /*Check for duplicate  invoice number*/
+        $check_exists_invoice_number = WalletTransaction::whereVenuId($venue_find->id)->whereInvoiceNumber($request->invoice_number)->first();
+
+        if(!empty($check_exists_invoice_number)){
+            return $this->responseWithErrorCode("Invoice number already exists.",406); 
+        }
+
+        /*End*/
 
         $transaction_amount_check_last_days = 30;
         $customer_tier_validity_check = 30;

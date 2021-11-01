@@ -485,7 +485,8 @@
 										<label>
 											Gender
 										</label>
-										<select offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}" ${(offertype=='BirthdayOffer')?'disabled':''} class="form-control form-group select_option criteria_gender" style="padding: .6rem 1rem; position: relative; font-size: 14px !important; border-radius: 10px;    background-size: 12px!important; background-position: 91% 50%!important; cursor:pointer;" venu-id="${venuid}" uniq-id="${uniqid}">
+										<select offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}" ${(offertype=='BirthdayOffer')?'disabled':''} ${(offer_id)?'disabled':''}
+										 class="form-control form-group select_option criteria_gender" style="padding: .6rem 1rem; position: relative; font-size: 14px !important; border-radius: 10px;    background-size: 12px!important; background-position: 91% 50%!important; ${(offer_id)?'cursor:default;':'cursor:pointer;'} venu-id="${venuid}" uniq-id="${uniqid}">
 											<option value="">Select Gender</option>
 											<option value="Male" ${(gender == 'Male')  ? 'selected' : ''}>Male</option>
 											<option value="Female" ${(gender == 'Female')  ? 'selected' : ''}>Female</option>
@@ -496,13 +497,13 @@
 										<label>
 											Transaction Start Period
 										</label>
-										<input type="date" offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}" ${(offertype=='BirthdayOffer')?'disabled':''}   class="form-control form-control-user criteria_txn_start" value="${(offer_id) ? offer_setting.txn_start_period : ''}" style="font-size: 14px !important; border-radius: 10px;" venu-id="${venuid}" uniq-id="${uniqid}">
+										<input type="date" offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}" ${(offertype=='BirthdayOffer')?'disabled':''} ${(offer_id)?'disabled':''}  class="form-control form-control-user criteria_txn_start" value="${(offer_id) ? offer_setting.txn_start_period : ''}" style="font-size: 14px !important; border-radius: 10px;" venu-id="${venuid}" uniq-id="${uniqid}">
 									</div>
 									<div class="col-md-3 venue_inputs">
 										<label>
 											Transaction End Period
 										</label>
-										<input type="date" offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}" ${(offertype=='BirthdayOffer')?'disabled':''}  class="form-control form-control-user criteria_txn_end" value="${(offer_id) ? offer_setting.txn_end_period : ''}" style="font-size: 14px !important; border-radius: 10px;"  venu-id="${venuid}" uniq-id="${uniqid}">
+										<input type="date" offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}" ${(offertype=='BirthdayOffer')?'disabled':''} ${(offer_id)?'disabled':''}   class="form-control form-control-user criteria_txn_end" value="${(offer_id) ? offer_setting.txn_end_period : ''}" style="font-size: 14px !important; border-radius: 10px;"  venu-id="${venuid}" uniq-id="${uniqid}">
 									</div>
 								</div>
 								<div class="row mt-1">
@@ -510,13 +511,13 @@
 										<label>
 											Date
 										</label>
-										<input type="date" min="${min_date}" offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}" ${(offertype=='BirthdayOffer')?'disabled':''} class="form-control form-control-user criteria_date" style="font-size: 14px !important; padding: .6rem 1rem; border-radius: 10px; background-size: 12px!important; background-position: 91% 50%!important;" value="${(offer_id) ? offer_setting.date : ''}" venu-id="${venuid}" uniq-id="${uniqid}">
+										<input type="date" min="${min_date}" offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}"  ${(offertype=='BirthdayOffer')?'disabled':''} class="form-control form-control-user criteria_date" ${(offer_id)?'disabled':''}  style="font-size: 14px !important; padding: .6rem 1rem; border-radius: 10px; background-size: 12px!important; background-position: 91% 50%!important;" value="${(offer_id) ? offer_setting.date : ''}" venu-id="${venuid}" uniq-id="${uniqid}">
 									</div>
 									<div class="col-md-3 venue_inputs">
 										<label>
 											City of residence
 										</label>
-										<select offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}" ${(offertype=='BirthdayOffer')?'disabled':''} class="form-control form-group select_option criteria_city" style="padding: .6rem 1rem; position: relative; font-size: 14px !important; border-radius: 10px;background-size: 12px!important; background-position: 91% 50%!important; cursor:pointer;" venu-id="${venuid}" uniq-id="${uniqid}">
+										<select offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}" ${(offertype=='BirthdayOffer')?'disabled':''} class="form-control form-group select_option criteria_city" ${(offer_id)?'disabled':''}  style="padding: .6rem 1rem; position: relative; font-size: 14px !important; border-radius: 10px;background-size: 12px!important; background-position: 91% 50%!important; ${(offer_id)?'cursor:default;':'cursor:pointer;'} " venu-id="${venuid}" uniq-id="${uniqid}">
 										<option value="">Select City</option>
 										</select>
 									</div>
@@ -524,7 +525,7 @@
 										<label>
 											Transaction Amount Condition
 										</label>
-										<select offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}" ${(offertype=='BirthdayOffer')?'disabled':''} class="form-control form-group select_option criteria_txn_condition" style="padding: .6rem 1rem; position: relative; font-size: 14px !important; border-radius: 10px;background-size: 12px!important; background-position: 91% 50%!important; cursor:pointer;" venu-id="${venuid}" uniq-id="${uniqid}">
+										<select offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}" ${(offertype=='BirthdayOffer')?'disabled':''} class="form-control form-group select_option criteria_txn_condition" ${(offer_id)?'disabled':''} style="padding: .6rem 1rem; position: relative; font-size: 14px !important; border-radius: 10px;background-size: 12px!important; background-position: 91% 50%!important; ${(offer_id)?'cursor:default;':'cursor:pointer;'}" venu-id="${venuid}" uniq-id="${uniqid}">
 											<option value="">Select Amount</option>
 											<option value="Between" ${(txn_condition=='Between')?'selected':''}>Between</option>
 											<option value="Greater Than" ${(txn_condition=='Greater Than')?'selected':''}>Greater Than</option>
@@ -535,8 +536,8 @@
 											Transaction Amount
 										</label>
 										<div class="d-flex">
-											<input type="text" offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}" ${(offertype=='BirthdayOffer')?'disabled':''} class="form-control form-control-user criteria_from_price" placeholder="From Price" style="font-size: 14px !important; border-radius: 10px; margin-right: 12px;"  venu-id="${venuid}" value="${(setting_from_price) ? setting_from_price : ''}" uniq-id="${uniqid}" maxlength="10">
-											<input type="text" offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}" ${(offertype=='BirthdayOffer')?'disabled':''} class="form-control form-control-user criteria_to_price" placeholder="To Price" style="font-size: 14px !important; border-radius: 10px;" value="${(setting_to_price) ? setting_to_price : ''}" maxlength="10" venu-id="${venuid}" uniq-id="${uniqid}">
+											<input type="text" offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}" ${(offertype=='BirthdayOffer')?'disabled':''} class="form-control form-control-user criteria_from_price" placeholder="From Price" style="font-size: 14px !important; border-radius: 10px; margin-right: 12px;" ${(offer_id)?'disabled':''} venu-id="${venuid}" value="${(setting_from_price) ? setting_from_price : ''}" uniq-id="${uniqid}" maxlength="10">
+											<input type="text" offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}" ${(offertype=='BirthdayOffer')?'disabled':''} class="form-control form-control-user criteria_to_price" placeholder="To Price" style="font-size: 14px !important; border-radius: 10px;" ${(offer_id)?'disabled':''}   value="${(setting_to_price) ? setting_to_price : ''}" maxlength="10" venu-id="${venuid}" uniq-id="${uniqid}">
 										</div>
 									</div>
 								</div>
@@ -871,6 +872,7 @@ let venu_tab_id = $('.venu-tab-list.active').attr('venu-id');
 						$('.offer_imagehidden2[uniq-id='+form_activeid+']').val('');
 					}
 					reader.readAsDataURL(file);
+					$(".img_upload")[0].value = '';
 
 				}else{
 					$("#alert_text").text("Please upload .jpg, .jpeg or .png format file only.");
@@ -1193,6 +1195,19 @@ $.ajax({
 			$("#successModel").modal("show");
   		$("#success_alert_text").text(data.message);
   		$("#successModel").unbind("click");
+  		$('.criteria_city[uniq-id='+uniq_id+']').attr('disabled',true);
+  		$('.criteria_city[uniq-id='+uniq_id+']').css('cursor','default');
+  		$('.criteria_dob[uniq-id='+uniq_id+']').attr('disabled',true);
+		$('.criteria_gender[uniq-id='+uniq_id+']').attr('disabled',true);
+		$('.criteria_gender[uniq-id='+uniq_id+']').css('cursor','default');
+		$('.criteria_txn_start[uniq-id='+uniq_id+']').attr('disabled',true);
+		$('.criteria_txn_end[uniq-id='+uniq_id+']').attr('disabled',true);
+		$('.criteria_date[uniq-id='+uniq_id+']').attr('disabled',true);
+		$('.criteria_txn_condition[uniq-id='+uniq_id+']').attr('disabled',true);
+		$('.criteria_txn_condition[uniq-id='+uniq_id+']').css('cursor','default');
+		$('.criteria_from_price[uniq-id='+uniq_id+']').attr('disabled',true);
+		$('.criteria_to_price[uniq-id='+uniq_id+']').attr('disabled',true);
+  		
   	},500);
   	$(this).attr('data-id',data.data.id);
   	$('.offers_list[uniq-id='+uniq_id+']').attr('data-id',data.data.id);

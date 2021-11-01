@@ -11,7 +11,7 @@ class ApplicationData extends Model
     	'admin_id',
     	'logo',
     	'video',
-    	'color'
+    	'color',
     ];
 
     public function applicationImages(){

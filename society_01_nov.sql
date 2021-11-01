@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Oct 26, 2021 at 03:17 PM
+-- Generation Time: Nov 01, 2021 at 01:29 PM
 -- Server version: 5.7.36-0ubuntu0.18.04.1
--- PHP Version: 7.2.34-10+ubuntu18.04.1+deb.sury.org+1
+-- PHP Version: 7.2.34-24+ubuntu18.04.1+deb.sury.org+1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -17,7 +17,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `society_20_october`
+-- Database: `society_01_nov`
 --
 
 -- --------------------------------------------------------
@@ -41,7 +41,7 @@ CREATE TABLE `admins` (
 --
 
 INSERT INTO `admins` (`id`, `name`, `email`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'Nadeer', 'adminn@yopmail.com', '$2y$10$MM0//hGlDn4uCg4rTNDiaudMWYEJZcY7wrLLvRu16miH5BtZB7pxa', 'w6mxAKKQxoDxR6mmKOTH0wNCD8mKq66oCiJQNaK3XaGMKgDk3MxtIetVXnITf52b', NULL, '2021-10-26 07:25:32');
+(1, 'Nadeer', 'adminn@yopmail.com', '$2y$10$MM0//hGlDn4uCg4rTNDiaudMWYEJZcY7wrLLvRu16miH5BtZB7pxa', 'emEEWMkYwTRBrPiNdqhtVJsVLHqP8u5cmZTamxCKLb0054pfjdP18ppzYa9Qzp5u', NULL, '2021-11-01 06:45:09');
 
 -- --------------------------------------------------------
 
@@ -73,51 +73,6 @@ CREATE TABLE `admin_criteria_notifications` (
   `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `admin_criteria_notifications`
---
-
-INSERT INTO `admin_criteria_notifications` (`id`, `city_id`, `user_id`, `city_name`, `message`, `push_type`, `sms_type`, `gender`, `nationality`, `sent_by`, `txn_start_period`, `txn_end_period`, `txn_amount_condition`, `from_price`, `to_price`, `noti_type`, `event_id`, `offer_id`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, NULL, 3, NULL, 'Your Amount has been transaction successfully.', 0, 0, 'None', NULL, 'Admin', NULL, NULL, NULL, 0, 0, 1, NULL, NULL, '2021-10-26 07:44:22', '2021-10-26 07:44:22', NULL),
-(2, NULL, 2, NULL, 'This is a referral code bonus😍😍', 0, 0, 'None', NULL, 'Admin', NULL, NULL, NULL, 0, 0, 4, NULL, NULL, '2021-10-26 07:44:29', '2021-10-26 07:44:29', NULL),
-(3, NULL, 3, NULL, 'Your cashback has been successfully earned.', 0, 0, 'None', NULL, 'Admin', NULL, NULL, NULL, 0, 0, 2, NULL, NULL, '2021-10-26 07:44:50', '2021-10-26 07:44:50', NULL),
-(4, NULL, 3, NULL, 'Your Amount has been transaction successfully.', 0, 0, 'None', NULL, 'Admin', NULL, NULL, NULL, 0, 0, 1, NULL, NULL, '2021-10-26 07:46:09', '2021-10-26 07:46:09', NULL),
-(5, NULL, 3, NULL, 'Your cashback has been successfully earned.', 0, 0, 'None', NULL, 'Admin', NULL, NULL, NULL, 0, 0, 2, NULL, NULL, '2021-10-26 07:46:44', '2021-10-26 07:46:44', NULL),
-(6, NULL, 1, NULL, 'New event from admin has been assigned.', 0, 0, 'None', NULL, 'Admin', NULL, NULL, NULL, 0, 0, 5, 1, NULL, '2021-10-26 07:48:00', '2021-10-26 07:48:00', NULL),
-(7, NULL, 2, NULL, 'New event from admin has been assigned.', 0, 0, 'None', NULL, 'Admin', NULL, NULL, NULL, 0, 0, 5, 1, NULL, '2021-10-26 07:48:02', '2021-10-26 07:48:02', NULL),
-(8, NULL, 3, NULL, 'New event from admin has been assigned.', 0, 0, 'None', NULL, 'Admin', NULL, NULL, NULL, 0, 0, 5, 1, NULL, '2021-10-26 07:48:04', '2021-10-26 07:48:04', NULL),
-(9, NULL, 1, NULL, 'New event from admin has been assigned.', 0, 0, 'None', NULL, 'Admin', NULL, NULL, NULL, 0, 0, 5, 2, NULL, '2021-10-26 07:50:44', '2021-10-26 07:50:44', NULL),
-(10, NULL, 2, NULL, 'New event from admin has been assigned.', 0, 0, 'None', NULL, 'Admin', NULL, NULL, NULL, 0, 0, 5, 2, NULL, '2021-10-26 07:50:46', '2021-10-26 07:50:46', NULL),
-(11, NULL, 3, NULL, 'New event from admin has been assigned.', 0, 0, 'None', NULL, 'Admin', NULL, NULL, NULL, 0, 0, 5, 2, NULL, '2021-10-26 07:50:47', '2021-10-26 07:50:47', NULL),
-(12, NULL, 1, NULL, 'New event from admin has been assigned.', 0, 0, 'None', NULL, 'Admin', NULL, NULL, NULL, 0, 0, 5, 3, NULL, '2021-10-26 07:51:39', '2021-10-26 07:51:39', NULL),
-(13, NULL, 2, NULL, 'New event from admin has been assigned.', 0, 0, 'None', NULL, 'Admin', NULL, NULL, NULL, 0, 0, 5, 3, NULL, '2021-10-26 07:51:41', '2021-10-26 07:51:41', NULL),
-(14, NULL, 3, NULL, 'New event from admin has been assigned.', 0, 0, 'None', NULL, 'Admin', NULL, NULL, NULL, 0, 0, 5, 3, NULL, '2021-10-26 07:51:42', '2021-10-26 07:51:42', NULL),
-(15, NULL, 1, NULL, 'New offer from admin has been assigned successfully.', 0, 0, 'None', NULL, 'Admin', NULL, NULL, NULL, 0, 0, 6, NULL, 1, '2021-10-26 07:52:51', '2021-10-26 07:52:51', NULL),
-(16, NULL, 2, NULL, 'New offer from admin has been assigned successfully.', 0, 0, 'None', NULL, 'Admin', NULL, NULL, NULL, 0, 0, 6, NULL, 1, '2021-10-26 07:52:53', '2021-10-26 07:52:53', NULL),
-(17, NULL, 3, NULL, 'New offer from admin has been assigned successfully.', 0, 0, 'None', NULL, 'Admin', NULL, NULL, NULL, 0, 0, 6, NULL, 1, '2021-10-26 07:52:54', '2021-10-26 07:52:54', NULL),
-(18, NULL, 1, NULL, 'New offer from admin has been assigned successfully.', 0, 0, 'None', NULL, 'Admin', NULL, NULL, NULL, 0, 0, 6, NULL, 2, '2021-10-26 07:52:56', '2021-10-26 07:52:56', NULL),
-(19, NULL, 2, NULL, 'New offer from admin has been assigned successfully.', 0, 0, 'None', NULL, 'Admin', NULL, NULL, NULL, 0, 0, 6, NULL, 2, '2021-10-26 07:52:58', '2021-10-26 07:52:58', NULL),
-(20, NULL, 3, NULL, 'New offer from admin has been assigned successfully.', 0, 0, 'None', NULL, 'Admin', NULL, NULL, NULL, 0, 0, 6, NULL, 2, '2021-10-26 07:53:00', '2021-10-26 07:53:00', NULL),
-(21, NULL, 1, NULL, 'New offer from admin has been assigned successfully.', 0, 0, 'None', NULL, 'Admin', NULL, NULL, NULL, 0, 0, 6, NULL, 1, '2021-10-26 07:54:03', '2021-10-26 07:54:03', NULL),
-(22, NULL, 2, NULL, 'New offer from admin has been assigned successfully.', 0, 0, 'None', NULL, 'Admin', NULL, NULL, NULL, 0, 0, 6, NULL, 1, '2021-10-26 07:54:04', '2021-10-26 07:54:04', NULL),
-(23, NULL, 3, NULL, 'New offer from admin has been assigned successfully.', 0, 0, 'None', NULL, 'Admin', NULL, NULL, NULL, 0, 0, 6, NULL, 1, '2021-10-26 07:54:06', '2021-10-26 07:54:06', NULL),
-(24, NULL, 1, NULL, 'New offer from admin has been assigned successfully.', 0, 0, 'None', NULL, 'Admin', NULL, NULL, NULL, 0, 0, 6, NULL, 3, '2021-10-26 07:54:08', '2021-10-26 07:54:08', NULL),
-(25, NULL, 2, NULL, 'New offer from admin has been assigned successfully.', 0, 0, 'None', NULL, 'Admin', NULL, NULL, NULL, 0, 0, 6, NULL, 3, '2021-10-26 07:54:10', '2021-10-26 07:54:10', NULL),
-(26, NULL, 3, NULL, 'New offer from admin has been assigned successfully.', 0, 0, 'None', NULL, 'Admin', NULL, NULL, NULL, 0, 0, 6, NULL, 3, '2021-10-26 07:54:11', '2021-10-26 07:54:11', NULL),
-(27, NULL, 1, NULL, 'New offer from admin has been assigned successfully.', 0, 0, 'None', NULL, 'Admin', NULL, NULL, NULL, 0, 0, 6, NULL, 1, '2021-10-26 07:55:14', '2021-10-26 07:55:14', NULL),
-(28, NULL, 2, NULL, 'New offer from admin has been assigned successfully.', 0, 0, 'None', NULL, 'Admin', NULL, NULL, NULL, 0, 0, 6, NULL, 1, '2021-10-26 07:55:16', '2021-10-26 07:55:16', NULL),
-(29, NULL, 3, NULL, 'New offer from admin has been assigned successfully.', 0, 0, 'None', NULL, 'Admin', NULL, NULL, NULL, 0, 0, 6, NULL, 1, '2021-10-26 07:55:17', '2021-10-26 07:55:17', NULL),
-(30, NULL, 1, NULL, 'New offer from admin has been assigned successfully.', 0, 0, 'None', NULL, 'Admin', NULL, NULL, NULL, 0, 0, 6, NULL, 1, '2021-10-26 07:56:21', '2021-10-26 07:56:21', NULL),
-(31, NULL, 2, NULL, 'New offer from admin has been assigned successfully.', 0, 0, 'None', NULL, 'Admin', NULL, NULL, NULL, 0, 0, 6, NULL, 1, '2021-10-26 07:56:23', '2021-10-26 07:56:23', NULL),
-(32, NULL, 3, NULL, 'New offer from admin has been assigned successfully.', 0, 0, 'None', NULL, 'Admin', NULL, NULL, NULL, 0, 0, 6, NULL, 1, '2021-10-26 07:56:25', '2021-10-26 07:56:25', NULL),
-(33, 1, 1, 'Abu Dhabi', 'fd', 1, 0, 'All', 'Afghanistan', 'Admin', NULL, NULL, NULL, NULL, NULL, 7, NULL, NULL, '2021-10-26 07:56:49', '2021-10-26 07:56:49', NULL),
-(34, 1, 2, 'Abu Dhabi', 'fd', 1, 0, 'All', 'Afghanistan', 'Admin', NULL, NULL, NULL, NULL, NULL, 7, NULL, NULL, '2021-10-26 07:56:50', '2021-10-26 07:56:50', NULL),
-(35, 1, 3, 'Abu Dhabi', 'fd', 1, 0, 'All', 'Afghanistan', 'Admin', NULL, NULL, NULL, NULL, NULL, 7, NULL, NULL, '2021-10-26 07:56:50', '2021-10-26 07:56:50', NULL),
-(36, 1, 3, 'Abu Dhabi', 'ffdgfg', 1, 0, 'All', 'Afghanistan', 'Admin', '2021-10-26', '2021-10-26', 'Greater Than', 5, NULL, 7, NULL, NULL, '2021-10-26 07:57:53', '2021-10-26 07:57:53', NULL),
-(37, NULL, 1, NULL, 'New event from admin has been assigned.', 0, 0, 'None', NULL, 'Admin', NULL, NULL, NULL, 0, 0, 5, 4, NULL, '2021-10-26 08:01:54', '2021-10-26 08:01:54', NULL),
-(38, NULL, 2, NULL, 'New event from admin has been assigned.', 0, 0, 'None', NULL, 'Admin', NULL, NULL, NULL, 0, 0, 5, 4, NULL, '2021-10-26 08:01:56', '2021-10-26 08:01:56', NULL),
-(39, NULL, 3, NULL, 'New event from admin has been assigned.', 0, 0, 'None', NULL, 'Admin', NULL, NULL, NULL, 0, 0, 5, 4, NULL, '2021-10-26 08:01:57', '2021-10-26 08:01:57', NULL);
-
 -- --------------------------------------------------------
 
 --
@@ -146,13 +101,13 @@ CREATE TABLE `admin_notifications` (
 --
 
 INSERT INTO `admin_notifications` (`id`, `uniq_id`, `title`, `message`, `image`, `image_type`, `name_of_file_show`, `push_type`, `sms_type`, `email_type`, `notification_type`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 1, NULL, 'Your Amount has been transaction successfully.', NULL, NULL, NULL, 1, 1, 1, 'Transaction', '2021-10-11 11:04:04', '2021-10-21 08:39:23', NULL),
-(2, 2, NULL, 'Your cashback has been successfully earned.', NULL, NULL, NULL, 1, 1, 1, 'Cashback', '2021-10-11 11:05:06', '2021-10-21 08:45:37', NULL),
-(3, 3, NULL, 'You have successfully earned bonus.', NULL, NULL, NULL, 1, 1, 1, 'Welcome Bonus', '2021-10-11 11:05:37', '2021-10-20 09:23:12', NULL),
-(4, 4, NULL, 'This is a referral code bonus😍😍', NULL, NULL, NULL, 1, 1, 1, 'Referral Bonus', '2021-10-11 11:05:59', '2021-10-20 09:23:10', NULL),
-(5, 5, NULL, 'New event from admin has been assigned.', NULL, NULL, NULL, 1, 1, 1, 'Event', '2021-10-11 11:08:01', '2021-10-20 08:42:32', NULL),
-(6, 6, NULL, 'New offer from admin has been assigned successfully.', NULL, NULL, NULL, 1, 1, 1, 'Specific Customer', '2021-10-11 11:08:56', '2021-10-20 08:42:12', NULL),
-(7, 7, 'Welcome Buddy! To Nadeer', 'Hi welcome your registerartion has been done successfully and you will get bonus upto 5000.', '102020211757399061700b3bd5e0c.jpg', 'jpg', 'iimm.jpg', 0, 0, 1, 'Welcome Email', '2021-10-11 11:11:56', '2021-10-20 12:27:39', NULL);
+(1, 1, NULL, 'Your Amount has been transaction successfully.', NULL, NULL, NULL, 0, 0, 1, 'Transaction', '2021-10-11 11:04:04', '2021-11-01 06:22:08', NULL),
+(2, 2, NULL, 'Your cashback has been successfully earned.', NULL, NULL, NULL, 0, 0, 1, 'Cashback', '2021-10-11 11:05:06', '2021-11-01 06:22:23', NULL),
+(3, 3, NULL, 'You have successfully earned bonus.', NULL, NULL, NULL, 0, 0, 1, 'Welcome Bonus', '2021-10-11 11:05:37', '2021-11-01 06:22:25', NULL),
+(4, 4, NULL, 'This is a referral code bonus', NULL, NULL, NULL, 0, 0, 1, 'Referral Bonus', '2021-10-11 11:05:59', '2021-11-01 06:22:31', NULL),
+(5, 5, NULL, 'Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Loream Ipsum Lore', NULL, NULL, NULL, 0, 0, 1, 'Event', '2021-10-11 11:08:01', '2021-11-01 06:22:34', NULL),
+(6, 6, NULL, 'New offer from admin has been assigned successfully.', NULL, NULL, NULL, 0, 0, 1, 'Specific Customer', '2021-10-11 11:08:56', '2021-11-01 06:22:37', NULL),
+(7, 7, 'Welcome to Capital Motion Loyalty', 'Hi welcome,\r\nYour registration has been done successfully and you will get bonus on your register.', '1028202112425292617a4d742cd20.png', 'png', 'fc338f_66229a0992f34750b1b33b4f797a532e_mv2.png', 0, 0, 1, 'Welcome Email', '2021-10-11 11:11:56', '2021-10-28 07:12:52', NULL);
 
 -- --------------------------------------------------------
 
@@ -176,7 +131,7 @@ CREATE TABLE `application_datas` (
 --
 
 INSERT INTO `application_datas` (`id`, `admin_id`, `logo`, `video`, `color`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 1, 'logo.png', 'splashVideo.mp4', '#0B68AC', '2021-07-26 18:30:00', '2021-07-26 18:30:00', NULL);
+(1, 1, 'logo.png', 'splashVideo.mp4', '#0B68AC', '2021-10-27 18:30:00', '2021-10-27 18:30:00', NULL);
 
 -- --------------------------------------------------------
 
@@ -241,13 +196,6 @@ CREATE TABLE `assign_user_venues` (
   `updated_at` timestamp NULL DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `assign_user_venues`
---
-
-INSERT INTO `assign_user_venues` (`id`, `venu_id`, `venue_user_id`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 1, 1, '2021-10-26 07:43:18', '2021-10-26 07:43:18', NULL);
 
 -- --------------------------------------------------------
 
@@ -624,16 +572,6 @@ CREATE TABLE `events` (
   `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `events`
---
-
-INSERT INTO `events` (`id`, `admin_id`, `venu_id`, `unique_id`, `event_name`, `event_description`, `when_day`, `from_date`, `to_date`, `event_time`, `to_time`, `status`, `image`, `name_of_file_show`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 1, 1, 1, 'Event 1', 'testing', 'Tuesday', '2021-10-26', '2021-10-26', '13:17:00', '13:26:00', 'Inactive', '10262021131840416177b2d8f0764.png', 'download (1) Cropped.png', '2021-10-26 07:48:00', '2021-10-26 07:48:40', NULL),
-(2, 1, 1, 2, 'event2', 'testing', 'Tuesday', '2021-10-26', '2021-10-26', '13:20:00', '13:25:00', 'Active', '10262021132043216177b353ecfe6.jpeg', 'Screenshot_20211025_122945.jpg', '2021-10-26 07:50:43', '2021-10-26 07:50:43', NULL),
-(3, 1, 1, 3, 'Event3', 'testing', 'Tuesday', '2021-10-26', '2021-10-26', '13:21:00', '13:26:00', 'Active', '10262021132139206177b38b57e63.png', '2 Cropped.png', '2021-10-26 07:51:39', '2021-10-26 07:51:39', NULL),
-(4, 1, 1, 4, 'event5', 'testing', 'Tuesday', '2021-10-26', '2021-10-26', '13:31:00', '13:35:00', 'Active', '10262021133153396177b5f1e0da6.png', '2 Cropped.png', '2021-10-26 08:01:53', '2021-10-26 08:01:53', NULL);
-
 -- --------------------------------------------------------
 
 --
@@ -648,6 +586,34 @@ CREATE TABLE `failed_jobs` (
   `exception` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
   `failed_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `general_settings`
+--
+
+CREATE TABLE `general_settings` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `uniq_id` int(11) NOT NULL DEFAULT '0',
+  `setting_content` longtext COLLATE utf8mb4_unicode_ci,
+  `setting_type` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `general_settings`
+--
+
+INSERT INTO `general_settings` (`id`, `uniq_id`, `setting_content`, `setting_type`, `deleted_at`, `created_at`, `updated_at`) VALUES
+(1, 1, 'About our loyalty program?\r\nHere we introduce our new loyalty program where you can earn the direct cash bacl to your wallet when you dine in / transaction with us. This is a good chance for anyone who loves food, to dine in and get the cash back to your wallet. You can use the wallet amount anytime when you dine in with us.\r\n\r\nCustomer Tiers:\r\nThere are many types of customer categories available depending on the total transaction you do with us in the specified time period. Some of the categories are as follows:', 'About Us', NULL, '2021-10-25 18:30:00', '2021-10-25 18:30:00'),
+(2, 2, 'Q: How many dirhams will I get when I dine in at Pacifico Tiki?\n\nA:The dirhams earned on your wallet depends on the offer applicable on the day of your transaction.\n\nQ: When will I get the Cashback on my wallet?\n\nA:You will get the cash back into your wallet the next day of your purchase.\n\nQ: Can I use the wallet amount everywhere?\n\nA:You can use the wallet amount anywhere in our chain of restaurants.\n\n', 'FAQ', NULL, '2021-10-25 18:30:00', '2021-10-25 18:30:00'),
+(3, 3, 'These terms and conditions are a set of rules about use of a website or application. They set out how users may use the site or application, and what they can and cannot do on the site or application. For example, if a user posts offensive or defamatory content on a website, the owner of the site will want to have terms and conditions to fall back on which clearly state that the owner of the site does not permit or take responsibility for that offensive content, and that any liability (such as a defamation claim) should therefore sit with the user. In addition, the owner of the site may want to have the ability to terminate the user\'s account - and this also will need to be explained in the terms and conditions.', 'T&c', NULL, '2021-10-25 18:30:00', '2021-10-25 18:30:00'),
+(4, 4, 'A Privacy Policy is a legal statement that specifies what the business owner does with the personal data collected from users, along with how the data is processed and for what purposes.\r\n\r\nIn 1968, Council of Europe did studies on the threat of the Internet expansion as they were concerned with the effects of technology on human rights. This lead to the development of policies that were to be developed to protect personal data.', 'Privacy Policy', NULL, '2021-10-25 18:30:00', '2021-10-25 18:30:00'),
+(7, 5, 'infoadmin@yopmail.com', 'Contact Email', NULL, '2021-10-26 18:30:00', '2021-10-26 18:30:00'),
+(8, 6, '1234567892', 'Contact Number', NULL, '2021-10-26 18:30:00', '2021-10-26 18:30:00');
 
 -- --------------------------------------------------------
 
@@ -701,13 +667,6 @@ CREATE TABLE `login_requests` (
   `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `login_requests`
---
-
-INSERT INTO `login_requests` (`id`, `venue_user_id`, `venu_id`, `device_model`, `mac_address`, `authorized_status`, `date_time`, `device_type`, `device_token`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 1, 1, 'iPad', '7A1925D6-8E97-4B11-9A8A-E4593CA5BB0C', 'Authorized', '2021-10-26 13:13:41', 'Ipad', '12335556', '2021-10-26 07:43:41', '2021-10-26 07:44:03', NULL);
-
 -- --------------------------------------------------------
 
 --
@@ -736,7 +695,6 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (13, '2021_07_12_092052_create_admins_table', 3),
 (18, '2021_07_13_090942_create_tier_settings_table', 4),
 (19, '2021_07_13_091013_create_tier_conditions_table', 4),
-(20, '2021_07_27_104038_create_application_datas_table', 5),
 (21, '2021_07_27_104625_create_application_images_table', 6),
 (22, '2021_07_28_121136_create_venus_table', 7),
 (23, '2021_07_28_125108_create_venue_users_table', 8),
@@ -756,7 +714,9 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (51, '2021_10_01_072908_create_admin_criteria_notifications_table', 19),
 (52, '2021_10_12_110145_create_jobs_table', 20),
 (53, '2021_10_13_123229_create_failed_jobs_table', 21),
-(54, '2021_10_20_125747_create_login_poses_table', 22);
+(54, '2021_10_20_125747_create_login_poses_table', 22),
+(55, '2021_10_26_135654_create_general_settings_table', 23),
+(56, '2021_07_27_104038_create_application_datas_table', 24);
 
 -- --------------------------------------------------------
 
@@ -775,20 +735,6 @@ CREATE TABLE `oauth_access_tokens` (
   `updated_at` timestamp NULL DEFAULT NULL,
   `expires_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `oauth_access_tokens`
---
-
-INSERT INTO `oauth_access_tokens` (`id`, `user_id`, `client_id`, `name`, `scopes`, `revoked`, `created_at`, `updated_at`, `expires_at`) VALUES
-('1bb624d192ddd66a4df9ec8f6ddb438f2d63ca6d473de879e9f9292d16619f326dac2824ee58c4d0', 2, 1, 'andrew', '[]', 0, '2021-10-26 01:56:25', '2021-10-26 01:56:25', '2022-10-26 07:26:25'),
-('28d718fd54b6602c50ac9381820426251b01b8a32d3809b6056cb5dedf76fc33a6d1447c3de56e7c', 3, 1, 'andrew', '[]', 1, '2021-10-26 07:36:19', '2021-10-26 07:36:19', '2022-10-26 13:06:19'),
-('5acf20b0f2366e66bc5f51ed982270eb73deb198717ffb892fd4cab39277ffd9dd6a9a58cd66428d', 1, 1, 'andrew', '[]', 1, '2021-10-26 01:55:01', '2021-10-26 01:55:01', '2022-10-26 07:25:01'),
-('65c485b5adb284f6cecad93e02cc314c388905f30812898ece4d2b6a2aae9a450e880a3378d1fe72', 1, 1, 'andrew', '[]', 0, '2021-10-26 01:58:56', '2021-10-26 01:58:56', '2022-10-26 07:28:56'),
-('8471f254c5e026a56bdbfaacfa19cdc0a904cc1973f156aa20d056ffb6049c0a990901d300707c4f', 1, 1, 'andrew', '[]', 1, '2021-10-26 05:54:56', '2021-10-26 05:54:56', '2022-10-26 11:24:56'),
-('8c2bb661b81da2e5d1ab964bec76cd7f0e907e36c3005f58ddfb21f9457b2827514528bf7fd44835', 1, 1, 'andrew', '[]', 1, '2021-10-26 01:57:56', '2021-10-26 01:57:56', '2022-10-26 07:27:56'),
-('948c61d34ba48d423a6b24c06ec964dc8ccb01843a57163e355a30adee923cb05487b4faa8fe88de', 3, 1, 'andrew', '[]', 0, '2021-10-26 02:11:34', '2021-10-26 02:11:34', '2022-10-26 07:41:34'),
-('b18d871043a9d93d9b5311892c05f48b3c2531881d32620388c04a25d5c7992094e5578a0c9753bb', 2, 1, 'andrew', '[]', 1, '2021-10-26 07:25:33', '2021-10-26 07:25:33', '2022-10-26 12:55:33');
 
 -- --------------------------------------------------------
 
@@ -892,17 +838,6 @@ CREATE TABLE `offers` (
   `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `offers`
---
-
-INSERT INTO `offers` (`id`, `admin_id`, `venu_id`, `unique_id`, `offer_name`, `offer_desc`, `image`, `name_of_file_show`, `from_date`, `to_date`, `time`, `to_time`, `status`, `pos_product_id`, `offer_type`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 1, 1, 1, 'Birthday Offer', 'Birthday Offer', 'app_icon.png', 'app icon', NULL, NULL, NULL, NULL, 'Active', NULL, 'BirthdayOffer', '2021-10-26 07:43:02', '2021-10-26 07:43:02', NULL),
-(2, 1, 1, 2, 'ofer1', 'testing', '10262021132240716177b3c8d823a.png', '2 Cropped.png', '2021-10-26', '2021-10-26', '13:22:00', '13:25:00', 'Active', NULL, 'Normal', '2021-10-26 07:52:40', '2021-10-26 07:52:40', NULL),
-(3, 1, 1, 3, 'offer2', 'tessting', '10262021132354496177b41297f34.png', 'download (1) Cropped.png', '2021-10-26', '2021-10-26', '13:23:00', '13:30:00', 'Active', NULL, 'Normal', '2021-10-26 07:53:54', '2021-10-26 07:53:54', NULL),
-(4, 1, 1, 4, 'offer3', 'testing', '10262021132508336177b45cc51dd.png', '2 Cropped.png', '2021-10-26', '2021-10-26', '13:25:00', '13:30:00', 'Active', NULL, 'Normal', '2021-10-26 07:55:08', '2021-10-26 07:55:08', NULL),
-(5, 1, 1, 5, 'offer4', 'testing', '10262021132615976177b49f7c86b.png', 'download (1) Cropped.png', '2021-10-26', '2021-10-26', '13:26:00', '13:30:00', 'Active', NULL, 'Normal', '2021-10-26 07:56:15', '2021-10-26 07:56:15', NULL);
-
 -- --------------------------------------------------------
 
 --
@@ -926,17 +861,6 @@ CREATE TABLE `offer_settings` (
   `updated_at` timestamp NULL DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `offer_settings`
---
-
-INSERT INTO `offer_settings` (`id`, `offer_id`, `city_id`, `dob`, `gender`, `date`, `txn_start_period`, `txn_end_period`, `txn_amount_condition`, `from_price`, `to_price`, `offer_type`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 1, NULL, 'Today', NULL, NULL, NULL, NULL, NULL, 0, 0, 'BirthdayOffer', '2021-10-26 07:43:02', '2021-10-26 07:43:02', NULL),
-(2, 2, NULL, 'Today', 'Male', '2021-10-26', NULL, NULL, NULL, NULL, NULL, 'Normal', '2021-10-26 07:52:41', '2021-10-26 07:52:41', NULL),
-(3, 3, NULL, 'Today', 'Male', '2021-10-26', NULL, NULL, NULL, NULL, NULL, 'Normal', '2021-10-26 07:53:54', '2021-10-26 07:53:54', NULL),
-(4, 4, 1, 'Today', 'Female', '2021-10-26', NULL, NULL, NULL, NULL, NULL, 'Normal', '2021-10-26 07:55:08', '2021-10-26 07:55:08', NULL),
-(5, 5, 2, 'Today', 'Male', '2021-10-26', NULL, NULL, NULL, NULL, NULL, 'Normal', '2021-10-26 07:56:15', '2021-10-26 07:56:15', NULL);
 
 -- --------------------------------------------------------
 
@@ -985,17 +909,6 @@ CREATE TABLE `tier_conditions` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `tier_conditions`
---
-
-INSERT INTO `tier_conditions` (`id`, `unique_id_by_tier`, `tier_setting_id`, `tier_name`, `from_amount`, `to_amount`, `color_code`, `percentage`, `deleted_at`, `created_at`, `updated_at`) VALUES
-(1, '1', 1, 'Silver', 0, 100, '#4eae17', 10, NULL, NULL, '2021-10-22 17:32:13'),
-(2, '2', 1, 'Platinum', 700, 1500, '#ff0000', 20, '2021-10-15 10:46:53', '2021-10-08 09:13:51', '2021-10-15 10:46:53'),
-(3, '3', 1, 'Gold', 1501, 2501, '#ff0000', 30, '2021-10-15 10:46:47', '2021-10-08 09:14:10', '2021-10-15 10:46:47'),
-(4, '4', 1, 'Diamond', 2502, 3501, '#ff0000', 40, '2021-10-15 10:46:42', '2021-10-08 09:14:31', '2021-10-15 10:46:42'),
-(5, '5', 1, 'Gold', 101, 500, '#ff0000', 10, NULL, '2021-10-21 10:40:05', '2021-10-22 17:32:16');
-
 -- --------------------------------------------------------
 
 --
@@ -1011,13 +924,6 @@ CREATE TABLE `tier_settings` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `tier_settings`
---
-
-INSERT INTO `tier_settings` (`id`, `admin_id`, `transaction_amount_check_last_days`, `customer_tier_validity_check`, `deleted_at`, `created_at`, `updated_at`) VALUES
-(1, 1, 30, 1, NULL, NULL, '2021-10-08 09:27:54');
 
 -- --------------------------------------------------------
 
@@ -1063,15 +969,6 @@ CREATE TABLE `users` (
   `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `users`
---
-
-INSERT INTO `users` (`id`, `image`, `country_code`, `mobile_number`, `first_name`, `last_name`, `email`, `password`, `city_of_residence`, `nationality`, `dob`, `gender`, `self_reference_code`, `reference_code`, `device_type`, `device_token`, `reset_password_token`, `verify_email_token`, `is_block`, `is_verify`, `refresh_token`, `remember_token`, `is_active`, `customer_id`, `customer_tier`, `wallet_cash`, `reference_by`, `bar_code`, `qr_code`, `tier_update_date`, `refer_amount`, `refer_amount_used`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, NULL, '+91', '7018292209', 'jerry', 'raj is the best option to get a job.', 'k1@yopmail.com', '$2y$10$P7ed8Lh1uE7Rye9tlTtXHOAT7JjAYHEFv6.Rg.4LGZTAJ54/cahsm', 'Abu Dhabi', 'Afghanistan', '2004-10-26', 'Male', 'Elyq7995yHRc', NULL, 'Android', 'csGB0dxmRqeBnNcA6lIfhY:APA91bHXdV8NOCk_09CYHDW9qfb6juLLGte7EDC23dQ-EDcBLPVMH8EtT3wUWqyfrec205iRF5iL5bjrETPZaLHOqRdr5qExEdj934HZtUJDWUc17D-4jD0dVjMwLDHedI5hRFr09jKL', NULL, NULL, '0', '1', NULL, NULL, 'Active', 76815955368, 'Silver', '0', NULL, '10262021112442206177ad3a1d415.png', '10262021112442366177ad3a2272d.png', '2021-10-26', 0, 0, '2021-10-26 05:54:41', '2021-10-26 01:57:56', NULL),
-(2, '102620211255186177ad5e28631.jpg', '+91', '7206531926', 'kamal', 'hasan', 'kamal@yopmail.com', '$2y$10$nJJ4KWrFqr5e8ypjk7D8Y.QOY41rDfw2B2eDwTAVyob82FS3.JTgK', 'Abu Dhabi', 'Afghanistan', '2004-10-26', 'Male', 'nF8D1226nFCF', NULL, 'Android', 'c0DqSITnT6OFx0x4ntoSTm:APA91bE03vKMnQiKc_VXjgpsmeGlYxDhbrPCGYV3NzL7lvbilhxpgsC1Co0N9EFmfkB4cTGY9rmBLJt5i3uPjxZkqfhhQ56yzomjBrzpyGKJqRRpjacpUwCDnhFUDPMA_c_u2Sq8CHJY', NULL, NULL, '0', '1', NULL, NULL, 'Active', 23412069705, 'Silver', '200', NULL, '10262021125518196177ad5e50f2b.png', '10262021125518676177ad5e51180.png', '2021-10-26', 0, 0, '2021-10-26 07:25:18', '2021-10-26 07:44:35', NULL),
-(3, NULL, '+91', '8708869252', 'kumar', 'sanu', 'kumar@yopmail.com', '$2y$10$RxY98yY3y79IeQyQ9G8FDucxQIbyl9aG3so0i2R2mcz1xscreQ0M6', 'Abu Dhabi', 'Afghanistan', '2004-10-26', 'Male', 'YfLA1757P7sp', 'nF8D1226nFCF', 'Android', 'ckUCEUP1Q9ie3d2RJkQGU3:APA91bF5b45VRVyNS_C_gUnUaJW8bsZRuMi-UIad3BiAaOups7CzLOU1Co8Ww4bA1SAnLzZ123z1ZF9xBPp7W0Xys4Qm4dodPeci98_jPk6A9K667ihJThATdFngz_LS8FRU6PSLWzqi', NULL, NULL, '0', '1', NULL, NULL, 'Active', 13684759262, 'Silver', '102', 'kamal hasan', '10262021130605246177afe56bea2.png', '10262021130605406177afe56c09a.png', '2021-10-26', 200, 1, '2021-10-26 07:36:05', '2021-10-26 07:46:44', NULL);
-
 -- --------------------------------------------------------
 
 --
@@ -1100,30 +997,6 @@ CREATE TABLE `user_assign_offers` (
   `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `user_assign_offers`
---
-
-INSERT INTO `user_assign_offers` (`id`, `offer_id`, `offer_setting_id`, `user_id`, `city_id`, `dob`, `gender`, `date`, `assign_at`, `txn_start_period`, `txn_end_period`, `txn_amount_condition`, `from_price`, `to_price`, `offer_type`, `offer_redeem`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 1, 1, 1, NULL, 'Today', NULL, NULL, '2021-10-26', NULL, NULL, NULL, 0, 0, 'BirthdayOffer', 0, '2021-10-26 07:52:51', '2021-10-26 07:52:51', NULL),
-(2, 1, 1, 2, NULL, 'Today', NULL, NULL, '2021-10-26', NULL, NULL, NULL, 0, 0, 'BirthdayOffer', 0, '2021-10-26 07:52:52', '2021-10-26 07:52:52', NULL),
-(3, 1, 1, 3, NULL, 'Today', NULL, NULL, '2021-10-26', NULL, NULL, NULL, 0, 0, 'BirthdayOffer', 0, '2021-10-26 07:52:54', '2021-10-26 07:52:54', NULL),
-(4, 2, 2, 1, NULL, 'Today', 'Male', '2021-10-26', '2021-10-26', NULL, NULL, NULL, NULL, NULL, 'Normal', 0, '2021-10-26 07:52:56', '2021-10-26 07:52:56', NULL),
-(5, 2, 2, 2, NULL, 'Today', 'Male', '2021-10-26', '2021-10-26', NULL, NULL, NULL, NULL, NULL, 'Normal', 0, '2021-10-26 07:52:57', '2021-10-26 07:52:57', NULL),
-(6, 2, 2, 3, NULL, 'Today', 'Male', '2021-10-26', '2021-10-26', NULL, NULL, NULL, NULL, NULL, 'Normal', 0, '2021-10-26 07:52:59', '2021-10-26 07:52:59', NULL),
-(7, 1, 1, 1, NULL, 'Today', NULL, NULL, '2021-10-26', NULL, NULL, NULL, 0, 0, 'BirthdayOffer', 0, '2021-10-26 07:54:02', '2021-10-26 07:54:02', NULL),
-(8, 1, 1, 2, NULL, 'Today', NULL, NULL, '2021-10-26', NULL, NULL, NULL, 0, 0, 'BirthdayOffer', 0, '2021-10-26 07:54:04', '2021-10-26 07:54:04', NULL),
-(9, 1, 1, 3, NULL, 'Today', NULL, NULL, '2021-10-26', NULL, NULL, NULL, 0, 0, 'BirthdayOffer', 0, '2021-10-26 07:54:06', '2021-10-26 07:54:06', NULL),
-(10, 3, 3, 1, NULL, 'Today', 'Male', '2021-10-26', '2021-10-26', NULL, NULL, NULL, NULL, NULL, 'Normal', 0, '2021-10-26 07:54:07', '2021-10-26 07:54:07', NULL),
-(11, 3, 3, 2, NULL, 'Today', 'Male', '2021-10-26', '2021-10-26', NULL, NULL, NULL, NULL, NULL, 'Normal', 0, '2021-10-26 07:54:09', '2021-10-26 07:54:09', NULL),
-(12, 3, 3, 3, NULL, 'Today', 'Male', '2021-10-26', '2021-10-26', NULL, NULL, NULL, NULL, NULL, 'Normal', 0, '2021-10-26 07:54:11', '2021-10-26 07:54:11', NULL),
-(13, 1, 1, 1, NULL, 'Today', NULL, NULL, '2021-10-26', NULL, NULL, NULL, 0, 0, 'BirthdayOffer', 0, '2021-10-26 07:55:13', '2021-10-26 07:55:13', NULL),
-(14, 1, 1, 2, NULL, 'Today', NULL, NULL, '2021-10-26', NULL, NULL, NULL, 0, 0, 'BirthdayOffer', 0, '2021-10-26 07:55:15', '2021-10-26 07:55:15', NULL),
-(15, 1, 1, 3, NULL, 'Today', NULL, NULL, '2021-10-26', NULL, NULL, NULL, 0, 0, 'BirthdayOffer', 0, '2021-10-26 07:55:17', '2021-10-26 07:55:17', NULL),
-(16, 1, 1, 1, NULL, 'Today', NULL, NULL, '2021-10-26', NULL, NULL, NULL, 0, 0, 'BirthdayOffer', 0, '2021-10-26 07:56:21', '2021-10-26 07:56:21', NULL),
-(17, 1, 1, 2, NULL, 'Today', NULL, NULL, '2021-10-26', NULL, NULL, NULL, 0, 0, 'BirthdayOffer', 0, '2021-10-26 07:56:23', '2021-10-26 07:56:23', NULL),
-(18, 1, 1, 3, NULL, 'Today', NULL, NULL, '2021-10-26', NULL, NULL, NULL, 0, 0, 'BirthdayOffer', 0, '2021-10-26 07:56:24', '2021-10-26 07:56:24', NULL);
-
 -- --------------------------------------------------------
 
 --
@@ -1147,13 +1020,6 @@ CREATE TABLE `venue_users` (
   `updated_at` timestamp NULL DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `venue_users`
---
-
-INSERT INTO `venue_users` (`id`, `venu_id`, `username`, `password`, `status`, `device_model`, `mac_address`, `authorized_status`, `date_time`, `access_token`, `created_by`, `updated_by`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, NULL, 'kanhaiya', '$2y$10$cgdYAoKceZryLJnt4OgvW.kXjC3Fl9YO.4hF5x0jwEjx8k1r1GkSO', 'Active', 'N/A', 'N/A', 'Unauthorized', '2021-10-26 13:13:18', '$2y$10$7Xg2zjrmSUFVGSh7N1rJ9O/gy7ZSciP.PMA5uN9fCndG2O.ukTrPG', 'Admin', 'Admin', '2021-10-26 07:43:18', '2021-10-26 07:43:41', NULL);
 
 -- --------------------------------------------------------
 
@@ -1181,13 +1047,6 @@ CREATE TABLE `venus` (
   `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `venus`
---
-
-INSERT INTO `venus` (`id`, `admin_id`, `venue_name`, `unique_id`, `address`, `venue_description`, `phone_number`, `google_map_location_link`, `book_now_link`, `image`, `name_of_file_show`, `menu_link`, `status`, `pos_venue_id`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 1, 'venue1', 1, 'AL BANDAR, AL RAHA BEACH, ABU DHABI UAE', 'testinfg', '5454565655', 'http://192.168.3.121/society_14_october_debug/admin/adding-venue', 'http://192.168.3.121/society_14_october_debug/admin/adding-venue', '10262021131302566177b18642a7a.png', 'download (1) Cropped.png', 'http://192.168.3.121/society_14_october_debug/admin/adding-venue', 'Active', 544545, '2021-10-26 07:43:02', '2021-10-26 07:43:02', NULL);
-
 -- --------------------------------------------------------
 
 --
@@ -1205,13 +1064,6 @@ CREATE TABLE `wallet_cashbacks` (
   `updated_at` timestamp NULL DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `wallet_cashbacks`
---
-
-INSERT INTO `wallet_cashbacks` (`id`, `admin_id`, `bonus`, `bonus_text`, `refer_friend`, `refer_friend_text`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 1, 100, 'AED', 200, 'AED', '2021-10-26 07:25:46', '2021-10-26 07:25:49', NULL);
 
 -- --------------------------------------------------------
 
@@ -1231,22 +1083,17 @@ CREATE TABLE `wallet_transactions` (
   `redeemed_amount` double NOT NULL DEFAULT '0',
   `total_bill_amount` double NOT NULL DEFAULT '0',
   `pay_bill_amount` double NOT NULL DEFAULT '0',
+  `check_amount_pos` double DEFAULT '0',
   `is_cross_verify` int(11) NOT NULL DEFAULT '0',
   `invoice_number` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `offer_product_ids` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `cashier_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT 'Admin',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `updated_by` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Admin',
+  `created_by` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Admin'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `wallet_transactions`
---
-
-INSERT INTO `wallet_transactions` (`id`, `user_id`, `venue_user_id`, `venu_id`, `description`, `date_and_time`, `cashback_earned`, `cashback_percentage`, `redeemed_amount`, `total_bill_amount`, `pay_bill_amount`, `is_cross_verify`, `invoice_number`, `offer_product_ids`, `cashier_name`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 3, 1, 1, 'Cash Back Earnings', '2021-10-26 13:14:21', 1, 10, 0, 10, 10, 1, 'bjvjbh', NULL, 'Admin', '2021-10-26 07:44:21', '2021-10-26 07:44:49', NULL),
-(2, 3, 1, 1, 'Cash Back Earnings', '2021-10-26 13:16:08', 1, 10, 0, 10, 10, 1, 'ncnnc', NULL, 'Admin', '2021-10-26 07:46:08', '2021-10-26 07:46:44', NULL);
 
 --
 -- Indexes for dumped tables
@@ -1340,6 +1187,12 @@ ALTER TABLE `events`
 -- Indexes for table `failed_jobs`
 --
 ALTER TABLE `failed_jobs`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `general_settings`
+--
+ALTER TABLE `general_settings`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -1501,7 +1354,7 @@ ALTER TABLE `admins`
 -- AUTO_INCREMENT for table `admin_criteria_notifications`
 --
 ALTER TABLE `admin_criteria_notifications`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `admin_notifications`
 --
@@ -1526,7 +1379,7 @@ ALTER TABLE `assign_badges`
 -- AUTO_INCREMENT for table `assign_user_venues`
 --
 ALTER TABLE `assign_user_venues`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `badges`
 --
@@ -1551,17 +1404,22 @@ ALTER TABLE `countries`
 -- AUTO_INCREMENT for table `events`
 --
 ALTER TABLE `events`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `failed_jobs`
 --
 ALTER TABLE `failed_jobs`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 --
+-- AUTO_INCREMENT for table `general_settings`
+--
+ALTER TABLE `general_settings`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+--
 -- AUTO_INCREMENT for table `jobs`
 --
 ALTER TABLE `jobs`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `login_poses`
 --
@@ -1571,12 +1429,12 @@ ALTER TABLE `login_poses`
 -- AUTO_INCREMENT for table `login_requests`
 --
 ALTER TABLE `login_requests`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
 --
 -- AUTO_INCREMENT for table `oauth_clients`
 --
@@ -1591,57 +1449,57 @@ ALTER TABLE `oauth_personal_access_clients`
 -- AUTO_INCREMENT for table `offers`
 --
 ALTER TABLE `offers`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `offer_settings`
 --
 ALTER TABLE `offer_settings`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `otps`
 --
 ALTER TABLE `otps`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `tier_conditions`
 --
 ALTER TABLE `tier_conditions`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `tier_settings`
 --
 ALTER TABLE `tier_settings`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `user_assign_offers`
 --
 ALTER TABLE `user_assign_offers`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `venue_users`
 --
 ALTER TABLE `venue_users`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `venus`
 --
 ALTER TABLE `venus`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `wallet_cashbacks`
 --
 ALTER TABLE `wallet_cashbacks`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `wallet_transactions`
 --
 ALTER TABLE `wallet_transactions`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 --
 -- Constraints for dumped tables
 --

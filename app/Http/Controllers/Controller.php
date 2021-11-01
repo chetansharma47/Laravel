@@ -380,7 +380,7 @@ class Controller extends BaseController
         return  $result;
     }
 
-    public function transferToWallet(Request $request){
+    /*public function transferToWallet(Request $request){
         
         date_default_timezone_set("Asia/Kolkata");
             
@@ -451,5 +451,5 @@ class Controller extends BaseController
 
         // return "success";
         return $this->responseOk('Cashback Transafer to wallet', ['message' => 'Cahback transfer successfully']);
-    } 
+    } */
 }
