@@ -38,7 +38,7 @@ use App\Mail\BonusEmail;
 use App\Models\GeneralSettings;
 use App\Mail\ContactUsAdmin;
 
-require_once $_SERVER['DOCUMENT_ROOT'].'/society_29_october/vendor/autoload.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
 
 class AuthenticationController extends ResponseController
 {

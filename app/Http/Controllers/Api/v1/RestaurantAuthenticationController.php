@@ -44,7 +44,7 @@ use App\Mail\ReferralEmail;
 use App\Mail\TransactionEmail;
 use App\Mail\CashbackEmail;
 use App\Models\LoginPose;
-require_once $_SERVER['DOCUMENT_ROOT'].'/society_29_october/vendor/autoload.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
 
 class RestaurantAuthenticationController extends ResponseController
 {

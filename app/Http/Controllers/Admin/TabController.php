@@ -52,7 +52,7 @@ use App\Jobs\EventNotificationJob;
 use App\Mail\NewEventCreateMail;
 use App\Mail\OfferAssignMail;
 use App\Mail\CashbackEmail;
-require_once $_SERVER['DOCUMENT_ROOT'].'/society_29_october/vendor/autoload.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
 
 class TabController extends ResponseController
 {
