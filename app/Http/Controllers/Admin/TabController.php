@@ -52,7 +52,7 @@ use App\Jobs\EventNotificationJob;
 use App\Mail\NewEventCreateMail;
 use App\Mail\OfferAssignMail;
 use App\Mail\CashbackEmail;
-require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/society_29_october/vendor/autoload.php';
 
 class TabController extends ResponseController
 {
@@ -2204,9 +2204,9 @@ class TabController extends ResponseController
 
         if($request->gender == "All"){
 
-            $users_notify = User::whereCityOfResidence($request->city_name)->whereNationality($request->nationality)->where('is_block','=',0)->get();
+            $users_notify = User::whereCityOfResidence($request->city_name)->where('is_block','=',0)->get();
         }else{
-            $users_notify = User::whereCityOfResidence($request->city_name)->whereGender($request->gender)->whereNationality($request->nationality)->where('is_block','=',0)->get();
+            $users_notify = User::whereCityOfResidence($request->city_name)->whereGender($request->gender)->where('is_block','=',0)->get();
         }
 
         $data = [

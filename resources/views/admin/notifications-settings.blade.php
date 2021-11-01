@@ -863,12 +863,12 @@
 				return false;
 			}
 
-			if(nationality == ''){
+			/*if(nationality == ''){
 				$("#alert_text").text("Please select nationality.");
 				$("#validationModel").modal("show");
 				$("#validationModel").unbind("click");
 				return false;
-			}
+			}*/
 
 			if(txn_start_date || txn_end_date || txn_amount_condition || txn_from_price || txn_to_price){
 				if(txn_start_date == ''){

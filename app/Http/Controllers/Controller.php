@@ -24,7 +24,7 @@ use App\Models\Venu;
 use App\Mail\CashbackEmail;
 use App\Jobs\OfferNotificationJob;
 use App\Mail\OfferAssignMail;
-require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/society_29_october/vendor/autoload.php';
 
 class Controller extends BaseController
 {
