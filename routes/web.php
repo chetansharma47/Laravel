@@ -183,6 +183,9 @@ Route::group(['middleware' => 'TimeZone','namespace' => 'Admin','prefix'=>'/admi
         Route::post('verify-selected-transactions','TabController@VerifySelectTransactions')->name('verify_select_transactions');
 
         Route::get('download-verify-sales-after-successfully-uploded-file/{ids_data}','TabController@donwloadSalesVerifyAfterSuccessfullyUplodedFile')->name('donwloadSalesVerifyAfterSuccessfullyUplodedFile');
+
+        Route::post('end-user-customer-transactions','TabController@EndUserCustomerTransactions')->name('EndUserCustomerTransactions');
+        Route::get('excel-download-customer-transactions','TabController@ExcelDownloadCustomerTransactions')->name('ExcelDownloadCustomerTransactions');
         
     }); 
            

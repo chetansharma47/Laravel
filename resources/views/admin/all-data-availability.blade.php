@@ -34,7 +34,8 @@
 		}
 		#basic-datatables_wrapper,
 		#basic-datatables2_wrapper,
-		#basic-datatables3_wrapper {
+		#basic-datatables3_wrapper,
+		#basic-datatables4_wrapper {
 			padding: 0 !important;
 		}
 		#basic-datatables_length,
@@ -43,6 +44,10 @@
 		}
 		#basic-datatables2_length,
 		.dataTables2_length {
+			display: none;
+		}
+		#basic-datatables4_length,
+		.dataTables3_length {
 			display: none;
 		}
 		.page-item.active .page-link {
@@ -59,6 +64,9 @@
 			display: none;
 		}
 		#basic-datatables2_length {
+			display: none;
+		}
+		#basic-datatables4_length {
 			display: none;
 		}
 		.page-item.active .page-link {
@@ -97,6 +105,30 @@
 			    font-size: 20px !important;
 			    color: #676767 !important;
 			    background-color: #EBEBEB !important;
+		}
+		div.dataTables4_wrapper div.dataTables4_filter input {
+			    font-size: 14px !important;
+    			border-radius: 0px !important;
+    			margin-bottom: 14px;
+    			padding: 3px 10px !important;
+			    border: 0 !important;
+			    background: #EBEBEB !important;
+			    font-family: 'Signika', sans-serif;
+			    font-weight: 700;
+			    font-size: 20px !important;
+			    color: #676767 !important;
+			    background-color: #EBEBEB !important;
+		}
+
+		#basic-datatables4_wrapper{
+		padding: 0 !important;
+		}
+
+		div#basic-datatables4_wrapper .col-sm-12{
+		overflow: auto;
+		display: inline-block;
+		width: 100%;
+
 		}
 
 
@@ -523,38 +555,41 @@
 					<div class="d-flex">
 						<div class="venue_inputs mb-3 px-2">
 							<label>
-								Joining Date - From
+								Transaction Date - From
 							</label>
-							<input type="date" class="form-control form-control-user" placeholder="Joining Date - From" value="" style="border-radius: 0px;  padding: 8px 10px !important;" />
+							<input type="date" class="form-control joined_from_date form-control-user" placeholder="Joining Date - From" value="" style="border-radius: 0px;  padding: 8px 10px !important;" />
 						</div>
 						<div class="venue_inputs mb-3 px-2">
 							<label>
-								Joining Date - To
+								Transaction Date - To
 							</label>
-							<input type="date" class="form-control form-control-user" placeholder="Joining Date - To" value="" style="border-radius: 0px;  padding: 8px 10px !important;" />
+							<input type="date" class="form-control joined_to_date form-control-user" placeholder="Joining Date - To" value="" style="border-radius: 0px;  padding: 8px 10px !important;" />
 						</div>
 						<div class="venue_inputs mb-3 px-2">
 							<label>
 								Venue Name
 							</label>
-							<select class="form-control form-group select_option" style="position: relative;border-radius: 0px; padding: 9px 28px 9px 12px !important;" id="exampleFormControlSelect1">
-								<option>Select Venue</option>
-								<option>Caramel</option>
-								<option>Salt</option>
+							<select class="form-control form-group venue_name_wallet select_option" style="position: relative;border-radius: 0px; padding: 9px 28px 9px 12px !important;" id="exampleFormControlSelect1">
+								<option value="">Select Venue</option>
+								@if(count($venues) > 0)
+									@foreach($venues as $venu)
+										<option value="{{ $venu->id }}">{{ $venu->venue_name }}</option>
+									@endforeach
+								@endif
 							</select>
 						</div>
 						<div class="venue_inputs mb-3 px-2">
 							<label>
 								Transaction Verification
 							</label>
-							<select class="form-control form-group select_option" style="position: relative;border-radius: 0px; padding: 9px 36px 9px 12px !important;" id="exampleFormControlSelect1">
-								<option>Select Transaction Verification</option>
-								<option>Verified</option>
-								<option>Not Verified</option>
-								<option>All</option>
+							<select class="form-control txn_status_wallet form-group select_option" style="position: relative;border-radius: 0px; padding: 9px 36px 9px 12px !important;" id="exampleFormControlSelect1">
+								<option value="">Select Transaction Verification</option>
+								<option value="verified">Verified</option>
+								<option value="not_verified">Not Verified</option>
+								<option value="all">All</option>
 							</select>
 						</div>
-						<div class="venue_inputs mb-3 px-2">
+						<!-- <div class="venue_inputs mb-3 px-2">
 							<label>
 								Redemption Verification
 							</label>
@@ -564,7 +599,7 @@
 								<option>Not Verified</option>
 								<option>All</option>
 							</select>
-						</div>
+						</div> -->
 						<!-- <div class="d-flex justify-content-between mt-4">
 							<div>
 								<a href="" class="btn btn-primary btn-user btn-block common_btn" style="     font-size: 16px;">
@@ -583,54 +618,62 @@
 							<label>
 								Offer Products
 							</label>
-							<select class="form-control form-group select_option" style="position: relative;border-radius: 0px; padding: 9px 28px 9px 12px !important;" id="exampleFormControlSelect1">
-								<option>Select Offer Products</option><option>Birthday Offer - Free Coffee</option>
-								<option>Birthday Offer - Free Coffee</option>
-								<option>Birthday Offer - Free Coffee</option>
+							<select class="form-control offers_product_wallet form-group select_option" style="position: relative;border-radius: 0px; padding: 9px 28px 9px 12px !important;" id="exampleFormControlSelect1">
+								<option value="">Select Offer Products</option>
+								@if(count($offers) > 0)
+									@foreach($offers as $offer)
+										<option value="{{ $offer->id }}">{{ $offer->offer_name }}</option>
+									@endforeach
+								@endif
 							</select>
 						</div>
 						<div class="venue_inputs mb-3 px-2">
 							<label>
 								Customer Mobile No
 							</label>
-							<input type="text" class="form-control form-control-user" placeholder="Customer Mobile No" value="0588727169" style="border-radius: 0px;padding: 9px 14px 9px 12px !important;"/>
+							<input type="text" class="form-control mobile_number_wallet form-control-user" placeholder="Customer Mobile No" value="" style="border-radius: 0px;padding: 9px 14px 9px 12px !important;"/>
 						</div>
 						<div class="venue_inputs mb-3 px-2">
 							<label>
 								Email ID
 							</label>
-							<input type="text" class="form-control form-control-user" placeholder="Email Id" value="Nadeer@capitalmotion.com" style="border-radius: 0px;padding: 9px 14px 9px 12px !important;"/>
+							<input type="text" class="form-control email_wallet form-control-user" placeholder="Email Id" value="" style="border-radius: 0px;padding: 9px 14px 9px 12px !important;"/>
 						</div>
 						<div class="venue_inputs mb-3 px-2">
 							<label>
 							Check No
 							</label>
-							<input type="text" class="form-control form-control-user" placeholder="Check No" value="SC100001" style="border-radius: 0px;padding: 9px 14px 9px 12px !important;"/>
+							<input type="text" class="form-control form-control-user invoice_number_wallet" placeholder="Check No" value="" style="border-radius: 0px;padding: 9px 14px 9px 12px !important;"/>
 						</div>
 						<div class="venue_inputs mb-3 px-2">
 							<label>
 								Venue User
 							</label>
-							<select class="form-control form-group select_option" style="position: relative;border-radius: 0px; padding: 9px 28px 9px 12px !important;" id="exampleFormControlSelect1">
-								<option>Select Venue User</option>
-								<option>All</option>
-								<option>Select</option>
+							<select class="form-control venu_username_wallet form-group select_option" style="position: relative;border-radius: 0px; padding: 9px 28px 9px 12px !important;" id="exampleFormControlSelect1">
+								<option value="">Select Venue User</option>
+
+								@if(count($venue_users) > 0)
+									@foreach($venue_users as $venue_user)
+										<option value="{{ $venue_user->id }}">{{ $venue_user->username }}</option>
+									@endforeach
+								@endif
+								
 							</select>
 						</div>
 					</div>
 					<div class="d-flex px-2" style="margin-top: 35px;">
 						<div>
-							<a href="" class="btn btn-primary btn-user btn-block common_btn" style="     font-size: 18px; width: 154px; margin-right: 15px; text-transform: none; padding: 8px 0;">
+							<a href="javascript:void(0)" class="btn btn-primary btn-user btn-block search_wallet_txn common_btn" style="     font-size: 18px; width: 154px; margin-right: 15px; text-transform: none; padding: 8px 0;">
 								Search
 							</a>
 						</div>
 						<div>
-							<a href="" class="btn btn-primary btn-user btn-block common_btn" style="     font-size: 18px; width: 154px; margin-right: 15px; text-transform: none; padding: 8px 0;">
+							<a href="{{ route('admin.ExcelDownloadCustomerTransactions') }}" target="_blank" class="btn btn-primary btn-user btn-block download_customer_wallet_transactions common_btn" style="     font-size: 18px; width: 154px; margin-right: 15px; text-transform: none; padding: 8px 0;">
 								Download
 							</a>
 						</div>
 						<div>
-							<a href="" class="btn btn-primary btn-user btn-block common_btn" style="     font-size: 18px; width: 154px; margin-right: 15px; text-transform: none; padding: 8px 0;">
+							<a href="javascript:void(0)" class="btn btn-primary btn-user btn-block reset_wallet_txn common_btn" style="     font-size: 18px; width: 154px; margin-right: 15px; text-transform: none; padding: 8px 0;">
 								Reset Selection
 							</a>
 						</div>
@@ -650,10 +693,10 @@
 			<div class="row">
 				<div class="col-md-12 mb-4" style="margin-top: -67px;">
 					<div class="table-responsive px-2">
-							<table id="basic-datatables3" class="display table table-striped table-hover" style="padding: 0">
+							<table id="basic-datatables4" class="display table table-striped table-hover" style="padding: 0">
 								<thead>
 									<tr style="background-color: #193358;    color: #fff;">
-										<th>Customer ID</th>
+										<!-- <th>Customer ID</th>
 										<th>Customer No.</th>
 										<th>Check No</th>
 										<th>Check Amount</th>
@@ -662,18 +705,31 @@
 										<th>Cash Back %</th>
 										<th>Redeemed Wallet</th>
 										<th>Redemption from Loyalty</th>
-										<th>Redeemed from (POS)</th>
-										<th>Redemption Status</th>
 										<th>Restaurant Name</th>
 										<th>Offer Products</th>
 										<th>Date of Entry</th>
 										<th>Updated On</th>
 										<th>Updated By</th>
-										<th>Restaurant Logged In User</th>
+										<th>Restaurant Logged In User</th> -->
+										<th style="min-width: 128px;">Customer ID</th>
+										<th style="min-width: 128px;">Customer No.</th>
+										<th style="min-width: 100px;">Check No.</th>
+										<th style="min-width: 128px;">Check Amount</th>
+										<th style="min-width: 128px;">Check Amount POS</th>
+										<th style="min-width: 128px;">Transaction Status</th>
+										<th style="min-width: 128px;">Cash Back %</th>
+										<th style="min-width: 128px;">Redeemed Wallet</th>
+										<th style="min-width: 165px;">Redemption from Loyalty</th>
+										<th style="min-width: 128px;">Restaurant Name</th>
+										<th style="min-width: 128px;">Offer Products</th>
+										<th style="min-width: 140px;">Date of Entry</th>
+										<th style="min-width: 140px;">Updated On</th>
+										<th style="min-width: 128px;">Updated By</th>
+										<th style="min-width: 211px;">Restaurant Logged In User</th>
 									</tr>
 								</thead>
 								<tbody>
-									<tr>
+									<!-- <tr>
 										<td>382632873</td>
 										<td>
 											588727166
@@ -693,238 +749,7 @@
 										<td>12/06/2021 21:00</td>
 										<td>Nadeer</td>
 										<td>ABC</td>
-									</tr>
-									<tr>
-										<td>382632873</td>
-										<td>
-											588727166
-										</td>
-										<td>SC1000003</td>
-										<td></td>
-										<td></td>
-										<td>NotVerified</td>
-										<td>1%</td>
-										<td>100 AED</td>
-										<td></td>
-										<td></td>
-										<td>NotVerified</td>
-										<td>Salt & Caramel</td>
-										<td></td>
-										<td>12/06/2021 21:00</td>
-										<td>12/06/2021 21:00</td>
-										<td>Nadeer</td>
-										<td>ABC</td>
-									</tr>
-									<tr>
-										<td>382632873</td>
-										<td>
-											588727166
-										</td>
-										<td>SC1000003</td>
-										<td></td>
-										<td></td>
-										<td>NotVerified</td>
-										<td>1%</td>
-										<td>100 AED</td>
-										<td></td>
-										<td></td>
-										<td>NotVerified</td>
-										<td>Salt & Caramel</td>
-										<td></td>
-										<td>12/06/2021 21:00</td>
-										<td>12/06/2021 21:00</td>
-										<td>Nadeer</td>
-										<td>ABC</td>
-									</tr>
-									<tr>
-										<td>382632873</td>
-										<td>
-											588727166
-										</td>
-										<td>SC1000003</td>
-										<td></td>
-										<td></td>
-										<td>NotVerified</td>
-										<td>1%</td>
-										<td>100 AED</td>
-										<td></td>
-										<td></td>
-										<td>NotVerified</td>
-										<td>Salt & Caramel</td>
-										<td></td>
-										<td>12/06/2021 21:00</td>
-										<td>12/06/2021 21:00</td>
-										<td>Nadeer</td>
-										<td>ABC</td>
-									</tr>
-									<tr>
-										<td>382632873</td>
-										<td>
-											588727166
-										</td>
-										<td>SC1000003</td>
-										<td></td>
-										<td></td>
-										<td>NotVerified</td>
-										<td>1%</td>
-										<td>100 AED</td>
-										<td></td>
-										<td></td>
-										<td>NotVerified</td>
-										<td>Salt & Caramel</td>
-										<td></td>
-										<td>12/06/2021 21:00</td>
-										<td>12/06/2021 21:00</td>
-										<td>Nadeer</td>
-										<td>ABC</td>
-									</tr>
-									<tr>
-										<td>382632873</td>
-										<td>
-											588727166
-										</td>
-										<td>SC1000003</td>
-										<td></td>
-										<td></td>
-										<td>NotVerified</td>
-										<td>1%</td>
-										<td>100 AED</td>
-										<td></td>
-										<td></td>
-										<td>NotVerified</td>
-										<td>Salt & Caramel</td>
-										<td></td>
-										<td>12/06/2021 21:00</td>
-										<td>12/06/2021 21:00</td>
-										<td>Nadeer</td>
-										<td>ABC</td>
-									</tr>
-									<tr>
-										<td>382632873</td>
-										<td>
-											588727166
-										</td>
-										<td>SC1000003</td>
-										<td></td>
-										<td></td>
-										<td>NotVerified</td>
-										<td>1%</td>
-										<td>100 AED</td>
-										<td></td>
-										<td></td>
-										<td>NotVerified</td>
-										<td>Salt & Caramel</td>
-										<td></td>
-										<td>12/06/2021 21:00</td>
-										<td>12/06/2021 21:00</td>
-										<td>Nadeer</td>
-										<td>ABC</td>
-									</tr>
-									<tr>
-										<td>382632873</td>
-										<td>
-											588727166
-										</td>
-										<td>SC1000003</td>
-										<td></td>
-										<td></td>
-										<td>NotVerified</td>
-										<td>1%</td>
-										<td>100 AED</td>
-										<td></td>
-										<td></td>
-										<td>NotVerified</td>
-										<td>Salt & Caramel</td>
-										<td></td>
-										<td>12/06/2021 21:00</td>
-										<td>12/06/2021 21:00</td>
-										<td>Nadeer</td>
-										<td>ABC</td>
-									</tr>
-									<tr>
-										<td>382632873</td>
-										<td>
-											588727166
-										</td>
-										<td>SC1000003</td>
-										<td></td>
-										<td></td>
-										<td>NotVerified</td>
-										<td>1%</td>
-										<td>100 AED</td>
-										<td></td>
-										<td></td>
-										<td>NotVerified</td>
-										<td>Salt & Caramel</td>
-										<td></td>
-										<td>12/06/2021 21:00</td>
-										<td>12/06/2021 21:00</td>
-										<td>Nadeer</td>
-										<td>ABC</td>
-									</tr>
-									<tr>
-										<td>382632873</td>
-										<td>
-											588727166
-										</td>
-										<td>SC1000003</td>
-										<td></td>
-										<td></td>
-										<td>NotVerified</td>
-										<td>1%</td>
-										<td>100 AED</td>
-										<td></td>
-										<td></td>
-										<td>NotVerified</td>
-										<td>Salt & Caramel</td>
-										<td></td>
-										<td>12/06/2021 21:00</td>
-										<td>12/06/2021 21:00</td>
-										<td>Nadeer</td>
-										<td>ABC</td>
-									</tr>
-									<tr>
-										<td>382632873</td>
-										<td>
-											588727166
-										</td>
-										<td>SC1000003</td>
-										<td></td>
-										<td></td>
-										<td>NotVerified</td>
-										<td>1%</td>
-										<td>100 AED</td>
-										<td></td>
-										<td></td>
-										<td>NotVerified</td>
-										<td>Salt & Caramel</td>
-										<td></td>
-										<td>12/06/2021 21:00</td>
-										<td>12/06/2021 21:00</td>
-										<td>Nadeer</td>
-										<td>ABC</td>
-									</tr>
-									<tr>
-										<td>382632873</td>
-										<td>
-											588727166
-										</td>
-										<td>SC1000003</td>
-										<td></td>
-										<td></td>
-										<td>NotVerified</td>
-										<td>1%</td>
-										<td>100 AED</td>
-										<td></td>
-										<td></td>
-										<td>NotVerified</td>
-										<td>Salt & Caramel</td>
-										<td></td>
-										<td>12/06/2021 21:00</td>
-										<td>12/06/2021 21:00</td>
-										<td>Nadeer</td>
-										<td>ABC</td>
-									</tr>
+									</tr> -->
 								</tbody>
 							</table>
 						</div>
@@ -2229,6 +2054,97 @@ chart.render();
 	      }
 		});
     });
+
+</script>
+
+<script>
+
+	$('.search_wallet_txn').click(function(){
+		let joined_from = $(".joined_from_date").val();
+    	let joined_to = $(".joined_to_date").val();
+    	let venue_id_wallet = $(".venue_name_wallet").val();
+    	let txn_status_wallet = $(".txn_status_wallet").val();
+    	let offers_product_wallet_id = $(".offers_product_wallet").val();
+    	let mobile_number = $(".mobile_number_wallet").val();
+    	let email = $(".email_wallet").val();
+    	let invoice_number_wallet = $(".invoice_number_wallet").val();
+    	let venu_username_id_wallet = $(".venu_username_wallet").val();
+
+    	if(joined_from > joined_to){
+			$("#alert_text").text("Transaction from date should be greater than transaction to date");
+			$("#validationModel").modal("show");
+			$("#validationModel").unbind("click");
+			return false;
+		}
+    	cross_verification_sales(joined_from,joined_to,venue_id_wallet,txn_status_wallet,offers_product_wallet_id,email,mobile_number,invoice_number_wallet,venu_username_id_wallet);
+	});
+
+	$('.reset_wallet_txn').click(function(){
+		$(".joined_from_date").val('');
+    	$(".joined_to_date").val('');
+    	$(".venue_name_wallet").val('');
+    	$(".txn_status_wallet").val('');
+    	$(".offers_product_wallet").val('');
+    	$(".mobile_number_wallet").val('');
+    	$(".email_wallet").val('');
+    	$(".invoice_number_wallet").val('');
+    	$(".venu_username_wallet").val('');
+    	cross_verification_sales();
+	});
+	
+	function cross_verification_sales(joined_from="",joined_to="",venue_id_wallet="",txn_status_wallet="",offers_product_wallet_id="",email="",mobile_number="",invoice_number_wallet="",venu_username_id_wallet=""){
+
+    		$("#basic-datatables4").dataTable().fnDestroy();
+			let table = $("#basic-datatables4").DataTable({
+				processing:true,
+				serverSide:true,
+				retrieve: true,
+				paging: true,
+				searching:true,
+				pageLength:10,
+				ajax:{
+					url:"{{ route('admin.EndUserCustomerTransactions') }}",
+					type:"POST",
+					data:{'_token':'{{csrf_token()}}',joined_from,joined_to,venue_id_wallet,txn_status_wallet,offers_product_wallet_id,email,mobile_number,invoice_number_wallet,venu_username_id_wallet},
+				},
+				columns:[
+					{data:'customer_id', name:'customer_id'},
+					{data:'mobile_number', name:'mobile_number'},
+					{data:'invoice_number', name:'invoice_number'},
+					{data:'total_bill_amount', name:'total_bill_amount'},
+					{data:'check_amount_pos', name:'check_amount_pos'},
+					{data:'txn_status', name:'txn_status', orderable: false},
+					{data:'cashback_percentage', name:'cashback_percentage'},
+					{data:'wallet_cash', name:'wallet_cash'},
+					{data:'redeemed_amount', name:'redeemed_amount'},
+					{data:'venue_name', name:'venue_name'},
+					{data:'offer_name', name:'offer_name', orderable: false,  searchable: false},
+					{data:'date_and_time', name:'date_and_time'},
+					{data:'updated_at', name:'updated_at'},
+					{data:'updated_by', name:'updated_by'},
+					{data:'username', name:'username'},
+				]
+			
+			});
+		}
+
+		cross_verification_sales();
+
+		$('.email_wallet, .mobile_number_wallet, .invoice_number_wallet').on('keydown',function(e){
+			if(e.which===32){
+				return false;
+			}
+		});
+
+		$('.mobile_number_wallet').on('input',function(e){
+			return process(this);
+		});
+
+		function process(input){
+		  let value = input.value;
+		  let numbers = value.replace(/[^0-9]/g, "");
+		  input.value = numbers;
+		}
 
 </script>
 
