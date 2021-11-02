@@ -46,7 +46,7 @@ class OfferAssignMail extends Mailable
         }
 
         return $this->from(env('MAIL_USERNAME'), 'Capital Motion')
-        ->subject('Offer Assign Notification')
+        ->subject("What's Happening: ".$this->offer->offer_name." at ".$this->offer->venu->venue_name)
         ->view('admin.email.offer-assign-email')
         ->with([
             'admin_offer_notification'   => $this->admin_offer_notification,

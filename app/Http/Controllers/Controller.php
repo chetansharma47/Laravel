@@ -164,7 +164,7 @@ class Controller extends BaseController
                                 $sms = new \SMSGlobal\Resource\Sms();
                                 $message = "What's Happening Today: Enjoy ".$offer->offer_name." at ".$offer->venu->venue_name."\n".$admin_offer_notification->message;
                                 try {
-                                    $response = $sms->sendToOne($user_match_with_offer->country_code.$user_match_with_offer->mobile_number, $message,'CM-Society');
+                                    $response = $sms->sendToOne($user_match_with_offer->country_code.$user_match_with_offer->mobile_number, $message,'AD-MSociety');
                                 } catch (\Exception $e) {
                                     continue;
                                 }
@@ -274,7 +274,7 @@ class Controller extends BaseController
                                     $sms = new \SMSGlobal\Resource\Sms();
                                     $message = "What's Happening Today: Enjoy ".$offer->offer_name." at ".$offer->venu->venue_name."\n".$admin_offer_notification->message;
                                     try {
-                                        $response = $sms->sendToOne($user_match_with_offer->country_code.$user_match_with_offer->mobile_number, $message,'CM-Society');
+                                        $response = $sms->sendToOne($user_match_with_offer->country_code.$user_match_with_offer->mobile_number, $message,'AD-MSociety');
                                     } catch (\Exception $e) {
                                         continue;
                                     }

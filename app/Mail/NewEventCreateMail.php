@@ -38,7 +38,7 @@ class NewEventCreateMail extends Mailable
         $event_image = substr(strrchr($url, '/'), 1);
 
         return $this->from(env('MAIL_USERNAME'), 'Capital Motion')
-        ->subject('New Event Create Notification')
+        ->subject("What's Happening: ".$this->find_event->event_name." at ".$this->find_event->venu->venue_name)
         ->view('admin.email.event-create-email')
         ->with([
             'admin_event_notification'   => $this->admin_event_notification,

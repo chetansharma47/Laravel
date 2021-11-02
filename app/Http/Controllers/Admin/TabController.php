@@ -1304,7 +1304,7 @@ class TabController extends ResponseController
                                     $sms = new \SMSGlobal\Resource\Sms();
                                     $message = "What's Happening Today: Enjoy ".$find_event->event_name." at ".$find_event->venu->venue_name."\n".$admin_event_notification->message;
                                     try {
-                                        $response = $sms->sendToOne($user_find->country_code.$user_find->mobile_number, $message,'CM-Society');
+                                        $response = $sms->sendToOne($user_find->country_code.$user_find->mobile_number, $message,'AD-Mociety');
                                     } catch (\Exception $e) {
                                         continue;
                                     }
@@ -2315,7 +2315,7 @@ class TabController extends ResponseController
                         $message = $request->specific_criteria_message;
 
                         try {
-                            $response = $sms->sendToOne($user->country_code.$user->mobile_number, $message,'CM-Society');
+                            $response = $sms->sendToOne($user->country_code.$user->mobile_number, $message,'AD-MSociety');
                         } catch (\Exception $e) {
                             continue;
                         }
