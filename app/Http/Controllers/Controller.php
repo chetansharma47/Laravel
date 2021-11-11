@@ -31,7 +31,7 @@ use App\Jobs\MultipleEventsJobSendMail;
 use App\Mail\OfferAssignMail;
 use Illuminate\Support\Arr;
 date_default_timezone_set("Asia/Kolkata");
-require_once $_SERVER['DOCUMENT_ROOT'].'/society_11_november/vendor/autoload.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
 
 class Controller extends BaseController
 {

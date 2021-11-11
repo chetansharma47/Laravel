@@ -773,7 +773,7 @@
 					  			CKEDITOR.instances.privacy_policy.getData();
 					  		}
 					  		if(val.setting_enabled_disbaled == 'Enabled'){
-					  			$('.app_checkboxes input[uniq_id=18]').prop('checked',true);
+					  			$('.app_checkboxes input[uniq_id=17]').prop('checked',true);
 					  		}
 					  		// $('.form-control-user[uniq_id='+val.uniq_id+']').attr('src',val.image);
 					  	});

@@ -61,7 +61,7 @@ use App\Models\ApplicationImage;
 use App\Models\GeneralSetting;
 use Image;
 use App\Models\Admin;
-require_once $_SERVER['DOCUMENT_ROOT'].'/society_11_november/vendor/autoload.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
 
 class TabController extends ResponseController
 {
