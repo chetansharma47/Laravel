@@ -13,10 +13,12 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\AdminNotification;
 use App\Models\AdminCriteriaNotification;
 use App\Models\Country;
+use App\Models\WalletDetail;
 use Illuminate\Support\Arr;
 use App\Mail\CashbackEmail;
 use App\Jobs\CashbackEmailJob;
 use Carbon\Carbon;
+use App\Models\NotiRecord;
 
 class ResponseController extends Controller
 {
@@ -203,6 +205,15 @@ class ResponseController extends Controller
             $find_user->wallet_cash = $find_user->wallet_cash + $WalletTransaction->cashback_earned;
             $find_user->update();
 
+            $wallet_detail2 = new WalletDetail();
+            $wallet_detail2->user_id = $find_user->id;
+            $wallet_detail2->description = "Cash Back Earnings";
+            $wallet_detail2->cashback_earned = $WalletTransaction->cashback_earned;
+            $wallet_detail2->date_and_time = Carbon::now()->toDateString(). " ". Carbon::now()->toTimeString();
+            $wallet_detail2->type_of_transaction = "Cashback";
+            $wallet_detail2->user_wallet_cash = $find_user->wallet_cash;
+            $wallet_detail2->save();
+
             $this->send_notifications_verified_users($admin_cashback_notification_find,$find_user);
         }
 
@@ -219,6 +230,16 @@ class ResponseController extends Controller
         $find_user->wallet_cash = $find_user->wallet_cash + $wallet_transaction_verified->cashback_earned;
         $find_user->update();
 
+
+        $wallet_detail2 = new WalletDetail();
+        $wallet_detail2->user_id = $find_user->id;
+        $wallet_detail2->description = "Cash Back Earnings";
+        $wallet_detail2->cashback_earned = $wallet_transaction_verified->cashback_earned;
+        $wallet_detail2->date_and_time = Carbon::now()->toDateString(). " ". Carbon::now()->toTimeString();
+        $wallet_detail2->type_of_transaction = "Cashback";
+        $wallet_detail2->user_wallet_cash = $find_user->wallet_cash;
+        $wallet_detail2->save();
+
         $this->send_notifications_verified_users($admin_cashback_notification_find,$find_user);
 
         return 'Cashback credit successfully';
@@ -230,6 +251,21 @@ class ResponseController extends Controller
 
                 if($find_user->device_type == 'Android'){
                     if($find_user->device_token && strlen($find_user->device_token) > 20){
+
+
+                        $noti_record_find = NotiRecord::whereUserId($find_user->id)->first();
+
+                        if(empty($noti_record_find)){
+                            $save_noti_record = new NotiRecord();
+                            $save_noti_record->user_id = $find_user->id;
+                            $save_noti_record->wallet = 1;
+                            $save_noti_record->save();
+
+                        }else{
+                            $noti_record_find->wallet = $noti_record_find->wallet + 1;
+                            $noti_record_find->update();
+                        }
+
                        $android_notify =  $this->send_android_notification_new($find_user->device_token, $admin_cashback_notification->message, $notmessage = "Cashback Notification", $noti_type = 2);
                         $criteria_data = [
                             'user_id'   => $find_user->id,
@@ -245,6 +281,20 @@ class ResponseController extends Controller
 
                 if($find_user->device_type == 'Ios' && strlen($find_user->device_token) > 20){
                     if($find_user->device_token){
+
+                        $noti_record_find = NotiRecord::whereUserId($find_user->id)->first();
+
+                        if(empty($noti_record_find)){
+                            $save_noti_record = new NotiRecord();
+                            $save_noti_record->user_id = $find_user->id;
+                            $save_noti_record->wallet = 1;
+                            $save_noti_record->save();
+
+                        }else{
+                            $noti_record_find->wallet = $noti_record_find->wallet + 1;
+                            $noti_record_find->update();
+                        }
+
                         $ios_notify =  $this->iphoneNotification($find_user->device_token, $admin_cashback_notification->message, $notmessage = "Cashback Notification", $noti_type = 2);
                         $criteria_data = [
                             'user_id'   => $find_user->id,

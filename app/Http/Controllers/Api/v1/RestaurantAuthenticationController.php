@@ -44,7 +44,10 @@ use App\Mail\ReferralEmail;
 use App\Mail\TransactionEmail;
 use App\Mail\CashbackEmail;
 use App\Models\LoginPose;
-require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
+use App\Models\WalletDetail;
+use App\Models\NotiRecord;
+use App\Models\GeneralSetting;
+require_once $_SERVER['DOCUMENT_ROOT'].'/society_11_november/vendor/autoload.php';
 
 class RestaurantAuthenticationController extends ResponseController
 {
@@ -140,7 +143,15 @@ class RestaurantAuthenticationController extends ResponseController
         $user->badges = $user_assign_badge;
         $now_time = Carbon::now();
         $time_after_10mins = Carbon::now()->addMinutes(10);
-        $user->valid_time = $now_time->diffInSeconds($time_after_10mins);   //10 min = 600 secs 
+
+        $find_venue_timeout_time = GeneralSetting::whereUniqId(16)->first();
+
+        if(!empty($find_venue_timeout_time)){
+            $user->valid_time = (string)$find_venue_timeout_time->setting_content;
+        }else{
+
+            $user->valid_time = (string)$now_time->diffInSeconds($time_after_10mins);   //10 min = 600 secs 
+        }
         return $this->responseOk("User Data",['user_data' => $user]);
     }
 
@@ -226,6 +237,15 @@ class RestaurantAuthenticationController extends ResponseController
         $otp_save->mobile_number = $user->mobile_number;
         $otp_save->otp = $otp;
         $otp_save->save();
+
+        $find_otp_timeout_time = GeneralSetting::whereUniqId(17)->first();
+
+        if($find_otp_timeout_time->setting_enabled_disbaled == 'Enabled'){
+            $otp_save->otp_valid_time = $find_otp_timeout_time->setting_content;
+        }else{
+           $otp_save->otp_valid_time = (string)600; 
+        }
+        
         return $this->responseOk("OTP has been sent successfully to selected user.", ["otp_data" => $otp_save]);
     }
 
@@ -320,8 +340,26 @@ class RestaurantAuthenticationController extends ResponseController
             return $this->responseWithErrorCode("User has been blocked by admin.",404);
         }
 
+        $check_days_for_repeat_invoice = GeneralSetting::whereUniqId(15)->first();
+
         /*Check for duplicate  invoice number*/
-        $check_exists_invoice_number = WalletTransaction::whereVenuId($venue_login_id)->whereInvoiceNumber($request->invoice_number)->whereIsCrossVerify(0)->whereDeletedAt(null)->first();
+
+        if(empty($check_days_for_repeat_invoice)){
+
+            $check_exists_invoice_number = WalletTransaction::whereVenuId($venue_login_id)->whereInvoiceNumber($request->invoice_number)->whereDeletedAt(null)->first();
+        }else{
+            $day_up_to = (int)$check_days_for_repeat_invoice->setting_content;
+            $end_day = Carbon::now()->toDateString();
+            $start_day = Carbon::now()->subDays($day_up_to)->toDateString();
+            $check_exists_invoice_number = WalletTransaction::where(function($query) use ($start_day, $end_day, $request, $venue_login_id){
+                    $query->whereVenuId($venue_login_id);
+                    $query->whereInvoiceNumber($request->invoice_number);
+                    $query->whereDeletedAt(null);
+                    $query->whereDate('date_and_time', '>=', $start_day);
+                    $query->whereDate('date_and_time', '<=', $end_day);
+                })->first();
+
+        }
 
         if(!empty($check_exists_invoice_number)){
             return $this->responseWithErrorCode("Invoice number already exists.",406); 
@@ -390,7 +428,7 @@ class RestaurantAuthenticationController extends ResponseController
         }
 
 
-        $data['description'] = "Cash Back Earnings";
+        $data['description'] = "Redeemed Earnings";
 
         $data['venue_user_id'] = $login_user->id;
 
@@ -426,12 +464,26 @@ class RestaurantAuthenticationController extends ResponseController
         $data['venu_id'] = $venue_login_id;
         $data['offer_product_ids'] = $data['verify_offer_ids'];
 
+
+        $user_find->wallet_cash = $user_find->wallet_cash - $data['redeemed_amount'];
+        $user_find->update();
+
+        $data['description'] = "Cash Back Earnings";
+
         $wallet_transaction = new WalletTransaction();
         $wallet_transaction->fill($data);
         $wallet_transaction->save();
 
-        $user_find->wallet_cash = $user_find->wallet_cash - $data['redeemed_amount'];
-        $user_find->update();
+        /*Second Entry in wallet transaction table*/
+        $wallet_detail1 = new WalletDetail();
+        $wallet_detail1->user_id = $user_find->id;
+        $wallet_detail1->description = "Redeemed Earnings";
+        $wallet_detail1->redeemed_amount = $data['redeemed_amount'];
+        $wallet_detail1->date_and_time = Carbon::now()->toDateString(). " ". Carbon::now()->toTimeString();
+        $wallet_detail1->type_of_transaction = "Redeem";
+        $wallet_detail1->user_wallet_cash = $user_find->wallet_cash;
+        $wallet_detail1->save();
+
 
         if(isset($data['verify_offer_ids']) && !empty($data['verify_offer_ids'])){
             $offer_ids = explode(",", $data['verify_offer_ids']);
@@ -449,6 +501,20 @@ class RestaurantAuthenticationController extends ResponseController
 
                 if($user_find->device_type == 'Android'){
                     if($user_find->device_token && strlen($user_find->device_token) > 20){
+
+                        $noti_record_find = NotiRecord::whereUserId($user_find->id)->first();
+
+                        if(empty($noti_record_find)){
+                            $save_noti_record = new NotiRecord();
+                            $save_noti_record->user_id = $user_find->id;
+                            $save_noti_record->wallet = 1;
+                            $save_noti_record->save();
+
+                        }else{
+                            $noti_record_find->wallet = $noti_record_find->wallet + 1;
+                            $noti_record_find->update();
+                        }
+
                        $android_notify =  $this->send_android_notification_new($user_find->device_token, $admin_transaction_notification->message, $notmessage = "Transaction Notification", $noti_type = 1);
 
                        $criteria_data = [
@@ -463,6 +529,20 @@ class RestaurantAuthenticationController extends ResponseController
 
                 if($user_find->device_type == 'Ios' && strlen($user_find->device_token) > 20){
                     if($user_find->device_token){
+
+                        $noti_record_find = NotiRecord::whereUserId($user_find->id)->first();
+
+                        if(empty($noti_record_find)){
+                            $save_noti_record = new NotiRecord();
+                            $save_noti_record->user_id = $user_find->id;
+                            $save_noti_record->wallet = 1;
+                            $save_noti_record->save();
+
+                        }else{
+                            $noti_record_find->wallet = $noti_record_find->wallet + 1;
+                            $noti_record_find->update();
+                        }
+
                         $ios_notify =  $this->iphoneNotification($user_find->device_token, $admin_transaction_notification->message, $notmessage = "Transaction Notification", $noti_type = 1);
 
                         $criteria_data = [
@@ -497,7 +577,7 @@ class RestaurantAuthenticationController extends ResponseController
             }
         }
 
-        $refer_user_find = null;
+        /*$refer_user_find = null;
         if(!empty($user_find->reference_code) && $user_find->refer_amount_used == 0){
 
             $refer_user_find = User::whereSelfReferenceCode($user_find->reference_code)->whereDeletedAt(null)->where('is_block','=',0)->first();
@@ -563,7 +643,7 @@ class RestaurantAuthenticationController extends ResponseController
 
             $refer_user_find->wallet_cash = $refer_user_find->wallet_cash + $user_find->refer_amount;
             $refer_user_find->update();
-        }
+        }*/
         return $this->responseOk("Payment has been successfully processed.");
 
     }
@@ -672,9 +752,13 @@ class RestaurantAuthenticationController extends ResponseController
 
         if(isset($data['redeemed_amount'])){
 
+            if($data['redeemed_amount'] > $data['total_bill_amount']){
+                return $this->responseWithErrorCode("Bill amount should be greater than or equal to redeem amount.",406);
+            }
             if($user_find->wallet_cash < $data['redeemed_amount']){
                 return $this->responseWithErrorCode("Redeem amount should be less than or equal to wallet amount.",406);
             }
+
         }else{
             $data['redeemed_amount'] = 0;
         }
@@ -688,8 +772,26 @@ class RestaurantAuthenticationController extends ResponseController
             return $this->responseWithErrorCode("User has been blocked by admin.",404);
         }
 
+        $check_days_for_repeat_invoice = GeneralSetting::whereUniqId(15)->first();
+
         /*Check for duplicate  invoice number*/
-        $check_exists_invoice_number = WalletTransaction::whereVenuId($venue_find->id)->whereInvoiceNumber($request->invoice_number)->first();
+
+        if(empty($check_days_for_repeat_invoice)){
+
+            $check_exists_invoice_number = WalletTransaction::whereVenuId($venue_find->id)->whereInvoiceNumber($request->invoice_number)->whereDeletedAt(null)->first();
+        }else{
+            $day_up_to = (int)$check_days_for_repeat_invoice->setting_content;
+            $end_day = Carbon::now()->toDateString();
+            $start_day = Carbon::now()->subDays($day_up_to)->toDateString();
+            $check_exists_invoice_number = WalletTransaction::where(function($query) use ($start_day, $end_day, $request, $venue_find){
+                    $query->whereVenuId($venue_find->id);
+                    $query->whereInvoiceNumber($request->invoice_number);
+                    $query->whereDeletedAt(null);
+                    $query->whereDate('date_and_time', '>=', $start_day);
+                    $query->whereDate('date_and_time', '<=', $end_day);
+                })->first();
+
+        }
 
         if(!empty($check_exists_invoice_number)){
             return $this->responseWithErrorCode("Invoice number already exists.",406); 
@@ -758,7 +860,7 @@ class RestaurantAuthenticationController extends ResponseController
         }
 
 
-        $data['description'] = "Cash Back Earnings";
+        $data['description'] = "Redeemed Earnings";
 
         $data['date_and_time'] = Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString();
         $today_date = Carbon::now();
@@ -789,16 +891,43 @@ class RestaurantAuthenticationController extends ResponseController
             $data['pay_bill_amount'] = $data['total_bill_amount'] - $data['redeemed_amount'];
         }
 
+        $redeemed_wallet_amount_user = $user_find->wallet_cash - $data['redeemed_amount'];
+
         $data['venu_id'] = $venue_find->id;
         $data['offer_product_ids'] = $data['verify_offer_ids'];
+        
+        /*Second Entry in wallet transaction table for redeemed*/
+        $wallet_detail1 = new WalletDetail();
+        $wallet_detail1->user_id = $user_find->id;
+        $wallet_detail1->description = "Redeemed Earnings";
+        $wallet_detail1->redeemed_amount = $data['redeemed_amount'];
+        $wallet_detail1->date_and_time = Carbon::now()->toDateString(). " ". Carbon::now()->toTimeString();
+        $wallet_detail1->type_of_transaction = "Redeem";
+        $wallet_detail1->user_wallet_cash = $user_find->wallet_cash - $data['redeemed_amount'];
+        $wallet_detail1->save();
 
+
+        
+        $data['description'] = "Cash Back Earnings";
         $wallet_transaction = new WalletTransaction();
         $data['user_id'] = $user_find->id;
         $wallet_transaction->fill($data);
         $wallet_transaction->save();
 
+        /*Second Entry in wallet transaction table for cashback*/
+        $wallet_detail2 = new WalletDetail();
+        $wallet_detail2->user_id = $user_find->id;
+        $wallet_detail2->description = "Cash Back Earnings";
+        $wallet_detail2->cashback_earned = $data['cashback_earned'];
+        $wallet_detail2->date_and_time = Carbon::now()->toDateString(). " ". Carbon::now()->toTimeString();
+        $wallet_detail2->type_of_transaction = "Cashback";
+        $wallet_detail2->user_wallet_cash = $user_find->wallet_cash - $data['redeemed_amount'] + $data['cashback_earned'];
+        $wallet_detail2->save();
+
         $user_find->wallet_cash = $user_find->wallet_cash - $data['redeemed_amount'] + $data['cashback_earned'];
         $user_find->update();
+
+
 
         if(isset($data['verify_offer_ids']) && !empty($data['verify_offer_ids'])){
             $offer_ids = explode(",", $data['verify_offer_ids']);
@@ -817,6 +946,20 @@ class RestaurantAuthenticationController extends ResponseController
 
                 if($user_find->device_type == 'Android'){
                     if($user_find->device_token && strlen($user_find->device_token) > 20){
+
+                        $noti_record_find = NotiRecord::whereUserId($user_find->id)->first();
+
+                        if(empty($noti_record_find)){
+                            $save_noti_record = new NotiRecord();
+                            $save_noti_record->user_id = $user_find->id;
+                            $save_noti_record->wallet = 1;
+                            $save_noti_record->save();
+
+                        }else{
+                            $noti_record_find->wallet = $noti_record_find->wallet + 1;
+                            $noti_record_find->update();
+                        }
+
                        $android_notify =  $this->send_android_notification_new($user_find->device_token, $admin_transaction_notification->message, $notmessage = "Transaction Notification", $noti_type = 1);
 
                        $criteria_data = [
@@ -831,6 +974,20 @@ class RestaurantAuthenticationController extends ResponseController
 
                 if($user_find->device_type == 'Ios' && strlen($user_find->device_token) > 20){
                     if($user_find->device_token){
+
+                        $noti_record_find = NotiRecord::whereUserId($user_find->id)->first();
+
+                        if(empty($noti_record_find)){
+                            $save_noti_record = new NotiRecord();
+                            $save_noti_record->user_id = $user_find->id;
+                            $save_noti_record->wallet = 1;
+                            $save_noti_record->save();
+
+                        }else{
+                            $noti_record_find->wallet = $noti_record_find->wallet + 1;
+                            $noti_record_find->update();
+                        }
+
                         $ios_notify =  $this->iphoneNotification($user_find->device_token, $admin_transaction_notification->message, $notmessage = "Transaction Notification", $noti_type = 1);
 
                         $criteria_data = [
@@ -877,10 +1034,38 @@ class RestaurantAuthenticationController extends ResponseController
             $user_find->refer_amount_used = 1;
             $user_find->update();
 
+            $refer_user_find->wallet_cash = $refer_user_find->wallet_cash + $user_find->refer_amount;
+            $refer_user_find->update();
+
+            $wallet_transaction3 = new WalletTransaction();
+            $wallet_transaction3->user_id = $refer_user_find->id;
+            $wallet_transaction3->venu_id = $venue_find->id;
+            $wallet_transaction3->description = "Referral Earnings";
+            $wallet_transaction3->date_and_time = Carbon::now()->toDateString(). " ". Carbon::now()->toTimeString();
+            $wallet_transaction3->type_of_transactions = "Refer";
+            $wallet_transaction3->refer_amount = $user_find->refer_amount;
+            $wallet_transaction3->wallet_amount_user = $refer_user_find->wallet_cash;
+            $wallet_transaction2->save();
+
+
             if($admin_refer_notification->push_type == 1){
 
                 if($refer_user_find->device_type == 'Android'){
                     if($refer_user_find->device_token && strlen($refer_user_find->device_token) > 20){
+
+                        $noti_record_find = NotiRecord::whereUserId($refer_user_find->id)->first();
+
+                        if(empty($noti_record_find)){
+                            $save_noti_record = new NotiRecord();
+                            $save_noti_record->user_id = $refer_user_find->id;
+                            $save_noti_record->wallet = 1;
+                            $save_noti_record->save();
+
+                        }else{
+                            $noti_record_find->wallet = $noti_record_find->wallet + 1;
+                            $noti_record_find->update();
+                        }
+
                        $android_notify =  $this->send_android_notification_new($refer_user_find->device_token, $admin_refer_notification->message, $notmessage = "Referral Bonus Notification", $noti_type = 4);
 
                        $criteria_data = [
@@ -895,6 +1080,20 @@ class RestaurantAuthenticationController extends ResponseController
 
                 if($refer_user_find->device_type == 'Ios' && strlen($refer_user_find->device_token) > 20){
                     if($refer_user_find->device_token){
+
+                        $noti_record_find = NotiRecord::whereUserId($refer_user_find->id)->first();
+
+                        if(empty($noti_record_find)){
+                            $save_noti_record = new NotiRecord();
+                            $save_noti_record->user_id = $refer_user_find->id;
+                            $save_noti_record->wallet = 1;
+                            $save_noti_record->save();
+
+                        }else{
+                            $noti_record_find->wallet = $noti_record_find->wallet + 1;
+                            $noti_record_find->update();
+                        }
+
                         $ios_notify =  $this->iphoneNotification($refer_user_find->device_token, $admin_refer_notification->message, $notmessage = "Referral Bonus Notification", $noti_type = 4);
 
                         $criteria_data = [
@@ -929,8 +1128,7 @@ class RestaurantAuthenticationController extends ResponseController
                 }
             }
 
-            $refer_user_find->wallet_cash = $refer_user_find->wallet_cash + $user_find->refer_amount;
-            $refer_user_find->update();
+            
         }
 
 
@@ -946,6 +1144,20 @@ class RestaurantAuthenticationController extends ResponseController
 
                 if($user_find->device_type == 'Android'){
                     if($user_find->device_token && strlen($user_find->device_token) > 20){
+
+                        $noti_record_find = NotiRecord::whereUserId($user_find->id)->first();
+
+                        if(empty($noti_record_find)){
+                            $save_noti_record = new NotiRecord();
+                            $save_noti_record->user_id = $user_find->id;
+                            $save_noti_record->wallet = 1;
+                            $save_noti_record->save();
+
+                        }else{
+                            $noti_record_find->wallet = $noti_record_find->wallet + 1;
+                            $noti_record_find->update();
+                        }
+
                        $android_notify =  $this->send_android_notification_new($user_find->device_token, $admin_cashback_notification->message, $notmessage = "Cashback Notification", $noti_type = 1);
 
                        $criteria_data = [
@@ -960,6 +1172,20 @@ class RestaurantAuthenticationController extends ResponseController
 
                 if($user_find->device_type == 'Ios' && strlen($user_find->device_token) > 20){
                     if($user_find->device_token){
+
+                        $noti_record_find = NotiRecord::whereUserId($user_find->id)->first();
+
+                        if(empty($noti_record_find)){
+                            $save_noti_record = new NotiRecord();
+                            $save_noti_record->user_id = $user_find->id;
+                            $save_noti_record->wallet = 1;
+                            $save_noti_record->save();
+
+                        }else{
+                            $noti_record_find->wallet = $noti_record_find->wallet + 1;
+                            $noti_record_find->update();
+                        }
+
                         $ios_notify =  $this->iphoneNotification($user_find->device_token, $admin_cashback_notification->message, $notmessage = "Cashback Notification", $noti_type = 1);
 
                         $criteria_data = [

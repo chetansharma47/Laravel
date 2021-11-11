@@ -188,11 +188,11 @@
 							<div class="col-md-5 text-right pr-0">
 								<ul class="navbar-nav">
 									<li class="nav-item">
-										<a class="nav-link" href="#">User: Nadeer</a>
+										<a class="nav-link" href="#">User: {{auth()->guard('admin')->user()->name}}</a>
 									</li>
 									<li class="nav-item">
 										<a class="nav-link" href="{{route('admin.adminTabs')}}" style="color: #FFDA7A;">
-											Admin
+											{{auth()->guard('admin')->user()->role_type}}
 										</a>
 									</li>
 									<li class="nav-item">
@@ -1137,12 +1137,12 @@ if(offer_to_time=="" && txn_condition_attr == "Normal"){
 	return false;
 }
 
-if(offer_time_data >= offer_to_time_data && txn_condition_attr == "Normal"){
-	$("#alert_text").text("To time should be greater than from time.");
-	$("#validationModel").modal("show");
-	$("#validationModel").unbind("click");
-	return false;
-}
+// if(offer_time_data >= offer_to_time_data && txn_condition_attr == "Normal"){
+// 	$("#alert_text").text("To time should be greater than from time.");
+// 	$("#validationModel").modal("show");
+// 	$("#validationModel").unbind("click");
+// 	return false;
+// }
 
 if(offer_status==""){
 	$("#alert_text").text("Please select status.");

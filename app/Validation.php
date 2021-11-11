@@ -339,7 +339,7 @@ class Validation extends Model
             'user_id'       => 'required',
             'description'   => 'sometimes||nullable|max:500',
             'invoice_number' => 'required|max:50',
-            'redeemed_amount'  => 'sometimes|nullable|numeric|max:10000000',
+            'redeemed_amount'  => 'sometimes|nullable|numeric|min:0|max:10000000',
             'total_bill_amount'    => 'required|numeric|min:0.5|max:10000000'
       ];
 
@@ -369,6 +369,24 @@ class Validation extends Model
 
       return $data = ['validation' => $validation, 'message' => $message];
     }
+
+
+
+    public static function readNotification($validation = null, $message = null){
+      $validation = [
+            'timezone'      => 'required',
+            'type_of_read'  => 'required|in:wallet,offer,event,normal'
+      ];
+
+      $message = [
+        'timezone.required'       =>  "Please enter timezone.",
+        'type_of_read.required'   =>  "Please enter type of read.",
+        'type_of_read.in'         =>  "Type of read should be wallet,offer,event & normal only.",
+      ];
+
+      return $data = ['validation' => $validation, 'message' => $message];
+    }
+
 
     public static function sendOtpIpadValidation($validation = null, $message = null){
 

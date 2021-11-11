@@ -18,6 +18,7 @@ class CreateGeneralSettingsTable extends Migration
             $table->integer('uniq_id')->default(0);
             $table->longText('setting_content')->nullable();
             $table->string('setting_type')->nullable();
+            $table->enum('setting_enabled_disbaled',['Enabled','Disabled','None'])->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

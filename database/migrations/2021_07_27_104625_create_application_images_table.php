@@ -18,6 +18,9 @@ class CreateApplicationImagesTable extends Migration
             $table->integer('application_data_id')->unsigned();
             $table->foreign('application_data_id')->references('id')->on('application_datas')->onDelete('cascade');
             $table->string('image');
+            $table->string('name_of_file_show');
+            $table->string('image_type');
+            $table->integer('uniq_id');
             $table->timestamps();
             $table->softDeletes();
         });

@@ -8,10 +8,12 @@ use App\Models\ApplicationImage;
 class ApplicationData extends Model
 {
     protected $fillable = [
-    	'admin_id',
-    	'logo',
-    	'video',
-    	'color',
+        'admin_id',
+        'logo',
+        'video',
+        'color',
+        'name_of_file_show_logo',
+        'name_of_file_show_video',
     ];
 
     public function applicationImages(){

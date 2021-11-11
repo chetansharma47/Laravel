@@ -94,6 +94,10 @@
 			</div>
 		</div>
 	</header>
+	
+	@if(Auth()->guard('admin')->user()->role_type == "Super Admin")
+
+
 	<div class="container-fluid">
 		<div class="button_tabs pt-4">
 			<div class="row">
@@ -170,6 +174,217 @@
 			</div>
 		</div>
 	</div>
+
+	@elseif(Auth()->guard('admin')->user()->role_type == "Admin")
+
+	<div class="container-fluid">
+		<div class="button_tabs pt-4">
+			<div class="row">
+				<div class="col-md-3">
+					<a href="{{route('admin.customerTierSettings')}}">
+						<div class="grey_btn">
+							Customer Tier Management
+						</div>
+					</a>
+					<a href="{{route('admin.addingVenueTable')}}">
+						<div class="grey_btn">
+							New Login Request
+						</div>
+					</a>
+					<a href="{{route('admin.cashBack')}}">
+						<div class="grey_btn">
+							Loyalty Cash Back Management
+						</div>
+					</a>
+					<a href="{{route('admin.allDataAvailability')}}">
+						<div class="grey_btn">
+							End User Management (Customer)
+						</div>
+					</a>
+					<a href="{{route('admin.addingVenue')}}">
+						<div class="grey_btn">
+							Venue/ Restaurant, Events, Offers Management
+						</div>
+					</a>
+					<a href="{{route('admin.venueUser')}}">
+						<div class="grey_btn">
+							Venue User Management
+						</div>
+					</a>
+
+					<!-- <a href="{{route('admin.assignBadges')}}">
+						<div class="grey_btn">
+							User Assign Badges
+						</div>
+					</a> -->
+
+					<a href="{{route('admin.notificationSetting')}}">
+						<div class="grey_btn">
+							Notification Management
+						</div>
+					</a>
+					<a href="{{route('admin.adminUser')}}">
+						<div class="grey_btn">
+							Admin User Management
+						</div>
+					</a>
+					<a href="{{route('admin.performanceDashboard')}}">
+						<div class="grey_btn">Performance DashBoard</div>
+					</a>
+				</div>
+				<div class="col-md-3">
+					<!-- <a href="{{route('admin.crossVerificationSales')}}">
+						<div class="grey_btn">
+							Cross Verification Sales
+						</div>
+					</a> -->
+				<!-- 	<div class="grey_btn">Cross Verification Redemption</div> -->
+					<a href="{{route('admin.generalSettings')}}">
+						<div class="grey_btn">
+							Content Management
+						</div>
+					</a>
+					<a href="{{route('admin.badges')}}">
+						<div class="grey_btn">
+							Badges
+						</div>
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	@elseif(Auth()->guard('admin')->user()->role_type == "Marketing")
+
+	<div class="container-fluid">
+		<div class="button_tabs pt-4">
+			<div class="row">
+				<div class="col-md-3">
+					<!-- <a href="{{route('admin.customerTierSettings')}}">
+						<div class="grey_btn">
+							Customer Tier Management
+						</div>
+					</a>
+					<a href="{{route('admin.addingVenueTable')}}">
+						<div class="grey_btn">
+							New Login Request
+						</div>
+					</a>
+					<a href="{{route('admin.cashBack')}}">
+						<div class="grey_btn">
+							Loyalty Cash Back Management
+						</div>
+					</a>
+					<a href="{{route('admin.allDataAvailability')}}">
+						<div class="grey_btn">
+							End User Management (Customer)
+						</div>
+					</a> -->
+					<a href="{{route('admin.addingVenue')}}">
+						<div class="grey_btn">
+							Venue/ Restaurant, Events, Offers Management
+						</div>
+					</a>
+					<!-- <a href="{{route('admin.venueUser')}}">
+						<div class="grey_btn">
+							Venue User Management
+						</div>
+					</a> -->
+
+					<!-- <a href="{{route('admin.assignBadges')}}">
+						<div class="grey_btn">
+							User Assign Badges
+						</div>
+					</a> -->
+
+					<a href="{{route('admin.notificationSetting')}}">
+						<div class="grey_btn">
+							Notification Management
+						</div>
+					</a>
+					<!-- <a href="{{route('admin.adminUser')}}">
+						<div class="grey_btn">
+							Admin User Management
+						</div>
+					</a> -->
+					<a href="{{route('admin.performanceDashboard')}}">
+						<div class="grey_btn">Performance DashBoard</div>
+					</a>
+				</div>
+				<!-- <div class="col-md-3"> -->
+					<!-- <a href="{{route('admin.crossVerificationSales')}}">
+						<div class="grey_btn">
+							Cross Verification Sales
+						</div>
+					</a> -->
+				<!-- 	<div class="grey_btn">Cross Verification Redemption</div> -->
+					<!-- <a href="{{route('admin.generalSettings')}}">
+						<div class="grey_btn">
+							Content Management
+						</div>
+					</a>
+					<a href="{{route('admin.badges')}}">
+						<div class="grey_btn">
+							Badges
+						</div>
+					</a> -->
+				<!-- </div> -->
+			</div>
+		</div>
+	</div>
+	@elseif(Auth()->guard('admin')->user()->role_type == "Managment")
+	<div class="container-fluid">
+		<div class="button_tabs pt-4">
+			<div class="row">
+				<div class="col-md-3">
+					<!-- <a href="{{route('admin.addingVenue')}}">
+						<div class="grey_btn">
+							Venue/ Restaurant, Events, Offers Management
+						</div>
+					</a>
+					<a href="{{route('admin.notificationSetting')}}">
+						<div class="grey_btn">
+							Notification Management
+						</div>
+					</a> -->
+					<a href="{{route('admin.performanceDashboard')}}">
+						<div class="grey_btn">Performance DashBoard</div>
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	@elseif(Auth()->guard('admin')->user()->role_type == "Staff")
+<div class="container-fluid">
+		<div class="button_tabs pt-4">
+			<div class="row">
+				<div class="col-md-3">
+					<!-- <a href="{{route('admin.crossVerificationSales')}}">
+						<div class="grey_btn">
+							Cross Verification Sales
+						</div>
+					</a> -->
+				<!-- 	<div class="grey_btn">Cross Verification Redemption</div> -->
+					<!-- <a href="{{route('admin.generalSettings')}}">
+						<div class="grey_btn">
+							Content Management
+						</div>
+					</a> -->
+					<a href="{{route('admin.badges')}}">
+						<div class="grey_btn">
+							Badges
+						</div>
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	@endif()
+
+	
+
+
+
 <!--   Core JS Files   -->
 	<script src="{{url('public/admin/assets/js/core/jquery.3.2.1.min.js')}}"></script>
 	<script src="{{url('public/admin/assets/js/core/popper.min.js')}}"></script>

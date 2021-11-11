@@ -34,11 +34,15 @@ use App\Models\AssignBadge;
 use App\Models\AdminNotification;
 use App\Models\AdminCriteriaNotification;
 use App\Models\Country;
+use App\Models\TierCondition;
 use App\Mail\BonusEmail;
 use App\Models\GeneralSettings;
+use App\Models\NotiRecord;
+use App\Models\GeneralSetting;
 use App\Mail\ContactUsAdmin;
+use App\Models\EventSentNotification;
 
-require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/society_11_november/vendor/autoload.php';
 
 class AuthenticationController extends ResponseController
 {
@@ -113,6 +117,20 @@ class AuthenticationController extends ResponseController
 
                 if($register['data']['device_type'] == 'Android'){
                     if($register['data']['device_token'] && strlen($register['data']['device_token']) > 20){
+
+                        $noti_record_find = NotiRecord::whereUserId($register['data']['id'])->first();
+
+                        if(empty($noti_record_find)){
+                            $save_noti_record = new NotiRecord();
+                            $save_noti_record->user_id = $register['data']['id'];
+                            $save_noti_record->wallet = 1;
+                            $save_noti_record->save();
+
+                        }else{
+                            $noti_record_find->wallet = $noti_record_find->wallet + 1;
+                            $noti_record_find->update();
+                        }
+
                        $android_notify =  $this->send_android_notification_new($register['data']['device_token'], $admin_notification_find->message, $notmessage = "Bonus Notification", $noti_type = 3);
 
                        $criteria_data = [
@@ -127,6 +145,20 @@ class AuthenticationController extends ResponseController
 
                 if($register['data']['device_type'] == 'Ios' && strlen($register['data']['device_token']) > 20){
                     if($register['data']['device_token']){
+
+                        $noti_record_find = NotiRecord::whereUserId($register['data']['id'])->first();
+
+                        if(empty($noti_record_find)){
+                            $save_noti_record = new NotiRecord();
+                            $save_noti_record->user_id = $register['data']['id'];
+                            $save_noti_record->wallet = 1;
+                            $save_noti_record->save();
+
+                        }else{
+                            $noti_record_find->wallet = $noti_record_find->wallet + 1;
+                            $noti_record_find->update();
+                        }
+
                         $ios_notify =  $this->iphoneNotification($register['data']['device_token'], $admin_notification_find->message, $notmessage = "Bonus Notification", $noti_type = 3);
 
                         $criteria_data = [
@@ -353,7 +385,7 @@ class AuthenticationController extends ResponseController
 
     public function applicationData(Request $request){
         $admin = Admin::orderBy("id","desc")->first();
-        $applicationData = ApplicationData::whereAdminId($admin->id)->whereDeletedAt(null)->with('applicationImages')->first();
+        $applicationData = ApplicationData::whereDeletedAt(null)->with('applicationImages')->first();
         return $this->responseOk("Application Datas",['application_datas' => $applicationData]);
     }
 
@@ -397,12 +429,14 @@ class AuthenticationController extends ResponseController
         $user = Auth::guard()->user();
         $active_venue_ids = Venu::where('status' , 'Active')->where('deleted_at' , null)->pluck('id');
         $today_days = Carbon::now()->format('l');
+        $event_notification_ids = EventSentNotification::whereUserId($user->id)->pluck('event_id');
         $events = Event::whereDeletedAt(null)
                     ->whereStatus('Active')
                     ->whereIn('venu_id', $active_venue_ids)
                     ->whereRaw("FIND_IN_SET(?, when_day) > 0", $today_days)
                     ->whereDate('from_date', '<=', Carbon::now()->toDateString())
                     ->whereDate('to_date','>=', Carbon::now()->toDateString())
+                    ->whereIn("id", $event_notification_ids)
                     ->with('venu')
                     ->orderBy('created_at','desc')
                     ->get();
@@ -553,6 +587,9 @@ class AuthenticationController extends ResponseController
                         $query->whereRaw("FIND_IN_SET(?, when_day) > 0", $today_days);
                     })->with('venu')->orderBy('event_time','asc')->get();
 
+        // $tier = TierCondition::whereTierName($user->customer_tier)->orderBy('id','desc')->first();
+
+        // return $this->responseOk('Today Event Listing', ['event_listing' => $events, 'customer_tier' => $tier, 'user' => $user]);
         return $this->responseOk('Today Event Listing', ['event_listing' => $events]);
     }
 
@@ -571,13 +608,17 @@ class AuthenticationController extends ResponseController
         $active_venue_ids = Venu::where('status' , 'Active')->where('deleted_at' , null)->pluck('id');
 
         $today_days = Carbon::now()->format('l');
-        $events = Event::where(function($query) use ($user,$today_date, $active_venue_ids, $today_days){
+
+        $event_notification_ids = EventSentNotification::whereUserId($user->id)->pluck('event_id');
+
+        $events = Event::where(function($query) use ($user,$today_date, $active_venue_ids, $today_days, $event_notification_ids){
                         $query->whereDeletedAt(null);
                         $query->whereStatus('Active');
                         $query->whereDate('from_date', '<=', $today_date->toDateString());
                         $query->whereDate('to_date','>=', $today_date->toDateString());
                         $query->whereIn('venu_id', $active_venue_ids);
                         $query->whereRaw("FIND_IN_SET(?, when_day) > 0", $today_days);
+                        $query->whereIn("id", $event_notification_ids);
                     })->with('venu')->orderBy('created_at','desc')->get();
 
         $promotion = Cashback::where(function($query) use ($user,$today_date, $active_venue_ids, $today_days){
@@ -621,7 +662,7 @@ class AuthenticationController extends ResponseController
     }
 
     public function contentManagment(Request $request){
-        $general_settings = GeneralSettings::get();
+        $general_settings = GeneralSetting::get();
         return $this->responseOk('Content Managment',['content_managment' => $general_settings]);
     }
     public function contactUsEmail(Request $request){
@@ -629,7 +670,7 @@ class AuthenticationController extends ResponseController
          $user = Auth::guard()->user();
          $data = $request->all();
 
-         $admin_email = GeneralSettings::whereUniqId(5)->first();
+         $admin_email = GeneralSetting::whereUniqId(1)->first();
          $admin_email->setting_content;
 
         try{
@@ -639,6 +680,39 @@ class AuthenticationController extends ResponseController
         }
 
         return $this->responseOk("Thank you for contacting us. Our customer executive will contact you shortly.");
+
+    }
+
+    public function notiRecords(Request $request){
+        $user = Auth::guard()->user();
+        $noti_record_find = NotiRecord::whereUserId($user->id)->first();
+        return $this->responseOk('Notification Counts',['noti_counts' => $noti_record_find]);
+    }
+
+    public function readNotiRecords(Request $request){
+        $this->is_validationRule(Validation::readNotification($Validation = "", $message = "") , $request);
+
+
+        $user = Auth::guard()->user();
+        $noti_record_find = NotiRecord::whereUserId($user->id)->first();
+
+        $type = $request->type_of_read;
+        if($type == "wallet"){
+            $noti_record_find->wallet = 0;
+            $noti_record_find->update();
+        }else if($type == "offer"){
+            $noti_record_find->offer = 0;
+            $noti_record_find->update();
+        }else if($type == "event"){
+            $noti_record_find->event = 0;
+            $noti_record_find->update();
+        }else{
+            //normal state
+            $noti_record_find->normal = 0;
+            $noti_record_find->update();
+        }
+
+        return $this->responseOk("Notification Read Successfully.");
 
     }
 

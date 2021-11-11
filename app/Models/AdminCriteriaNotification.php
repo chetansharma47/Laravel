@@ -28,6 +28,7 @@ class AdminCriteriaNotification extends Model
     	'offer_id',
         'created_at',
         'updated_at',
+        'sent_by'
     ];
 
     public function event(){

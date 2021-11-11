@@ -10,6 +10,7 @@ use App\User;
 use Auth;
 use App\Models\Cashback;
 use Carbon\Carbon;
+use Image;
 class TabBusiness extends Model
 {
     public function saveTier($data, $admin, $tier_setting = null){
@@ -53,7 +54,7 @@ class TabBusiness extends Model
             return ['status' => 'success', 'tier_name' => $data['tier_name'], 'update_type' => $data['update_type']];
         }else if($data['update_type'] == "more_wallet_cashback"){
 
-            $find_wallet_cashback = WalletCashback::whereAdminId($admin->id)->whereDeletedAt(null)->first();
+            $find_wallet_cashback = WalletCashback::whereDeletedAt(null)->first();
             if(!empty($find_wallet_cashback)){
                 $find_wallet_cashback->fill($data);
                 $find_wallet_cashback->update();
@@ -70,13 +71,18 @@ class TabBusiness extends Model
 
     }
 
-    public function uploadBase64Img($data){
+    public function uploadBase64Img($data,$name_of_file_show){
+        $extension = pathinfo($name_of_file_show)['extension'];
         $destinationPath = storage_path(). DIRECTORY_SEPARATOR . env('CASHBACK_STORAGE');
         $image1 = str_replace('data:image/jpeg;base64,', '', $data);
         $image1 = str_replace('data:image/png;base64,', '', $image1);
         $image1 = str_replace(' ', '+', $image1);
         $imageName = date('mdYHis') . '1' . uniqid().'.png';
-        file_put_contents($destinationPath. '/' . $imageName, base64_decode($image1));
+
+        $img_new = Image::make(base64_decode($image1))->stream($extension, 50);
+        file_put_contents($destinationPath. '/' . $imageName, $img_new);
+
+        // file_put_contents($destinationPath. '/' . $imageName, base64_decode($image1));
         //\File::put($destinationPath. '/' . $imageName, base64_decode($image1));
         return $imageName;
     }
@@ -87,7 +93,7 @@ class TabBusiness extends Model
         $data['from_time'] = Carbon::parse(Carbon::now()->toDateString()." ".$data['from_time'])->toTimeString();
         $data['to_time'] = Carbon::parse(Carbon::now()->toDateString()." ".$data['to_time'])->toTimeString();
         if(isset($data['image']) && $data['image'] != ""){
-            $data['image'] = $this->uploadBase64Img($data['image']);
+            $data['image'] = $this->uploadBase64Img($data['image'], $data['name_of_file_show']);
         }
         $find_cashback = Cashback::where("unique_id_cashback","=", $data['unique_id_cashback'])->whereDeletedAt(null)->first();
         if(empty($find_cashback)){

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Badge;
 use Auth;
 use Carbon\Carbon;
+use Image;
 
 class BadgeBusinessModel extends Model
 {
@@ -22,7 +23,12 @@ class BadgeBusinessModel extends Model
         	$imageName = date('mdYHis') . rand(10,100) . uniqid().'.jpeg';
 		}
         
-        file_put_contents($destinationPath. '/' . $imageName, base64_decode($image1));
+        //file_put_contents($destinationPath. '/' . $imageName, base64_decode($image1));
+
+        $img_new = Image::make(base64_decode($image1))->stream($extension, 50);
+        
+        file_put_contents($destinationPath. '/' . $imageName, $img_new);
+        
         return $imageName;
 	}
 
@@ -39,8 +45,8 @@ class BadgeBusinessModel extends Model
         $add_badge->image = $data['badge_image_hidden_val'];
         $add_badge->name_of_file_show = $data['badge_image_hidden_imgname'];
         $add_badge->status = $data['badge_select'];
-        $add_badge->created_by = 'Admin';
-        $add_badge->updated_by = 'Admin';
+        $add_badge->created_by = $admin->name;
+        $add_badge->updated_by = $admin->name;
         $add_badge->save();
 
         if($add_badge){
@@ -65,8 +71,7 @@ class BadgeBusinessModel extends Model
             $find_badge->name_of_file_show = $data['badge_image_hidden_imgname'];
         }
         $find_badge->status = $data['badge_select'];
-        $find_badge->created_by = 'Admin';
-        $find_badge->updated_by = 'Admin';
+        $find_badge->updated_by = $admin->name;
         $find_badge->update();
 
         if($find_badge){

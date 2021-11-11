@@ -19,6 +19,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request){
     
 Route::get('transfer-to-wallet','Controller@transferToWallet');   
 Route::get('offer-assign-user-cron-job','Controller@OfferAssignUserCronJob');
+Route::get('evenet-notification-cron-job','Controller@eventNotificationCronJob');
   
 Route::group(['namespace' => 'Api\v1','prefix'=>'v1'], function() {
 
@@ -56,6 +57,9 @@ Route::group(['namespace' => 'Api\v1','prefix'=>'v1'], function() {
         Route::get('user-notification-history','AuthenticationController@userNotificationHistory');
 
         Route::post('contactus-email-send','AuthenticationController@contactUsEmail');
+
+        Route::get('noti-records','AuthenticationController@notiRecords');
+        Route::post('read-noti-records','AuthenticationController@readNotiRecords');
         
 
     });

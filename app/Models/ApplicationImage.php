@@ -8,8 +8,11 @@ use App\Models\ApplicationData;
 class ApplicationImage extends Model
 {
     protected $fillable = [
-    	'application_data_id',
-    	'image'
+        'application_data_id',
+        'image',
+        'name_of_file_show',
+        'uniq_id',
+        'image_type',
     ];
 
     //Relationships

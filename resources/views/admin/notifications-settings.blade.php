@@ -164,11 +164,11 @@
 							<div class="col-md-5 text-right pr-0">
 								<ul class="navbar-nav">
 									<li class="nav-item">
-										<a class="nav-link" href="#">User: Nadeer</a>
+										<a class="nav-link" href="#">User: {{auth()->guard('admin')->user()->name}}</a>
 									</li>
 									<li class="nav-item">
 										<a class="nav-link" href="{{route('admin.adminTabs')}}" style="color: #FFDA7A;">
-											Admin
+											{{auth()->guard('admin')->user()->role_type}}
 										</a>
 									</li>
 									<li class="nav-item">
@@ -1216,6 +1216,7 @@
 				if(file.type == "image/jpeg" || file.type == "image/png" || file.type == "image/jpg" || file.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || file.type == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" || file.type == "application/excel" || file.type == "application/vnd.ms-excel" || file.type == "application/pdf" || file.type=="text/csv"){
 
 					var size = file.size;
+					console.log(size);
 					if(parseInt(size) > 5242880){
 						$("#alert_text").text("File should be less than or equal to 5 MB.");
 				        $("#validationModel").modal("show");

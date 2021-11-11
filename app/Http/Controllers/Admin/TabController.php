@@ -49,10 +49,19 @@ use App\Models\AdminCriteriaNotification;
 use App\Models\Country;
 use Illuminate\Support\Arr;
 use App\Jobs\EventNotificationJob;
+use App\Jobs\ReferMailSend;
 use App\Mail\NewEventCreateMail;
 use App\Mail\OfferAssignMail;
 use App\Mail\CashbackEmail;
-require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
+use App\Mail\ReferralEmail;
+use App\Models\WalletDetail;
+use App\Models\NotiRecord;
+use App\Models\ApplicationData;
+use App\Models\ApplicationImage;
+use App\Models\GeneralSetting;
+use Image;
+use App\Models\Admin;
+require_once $_SERVER['DOCUMENT_ROOT'].'/society_11_november/vendor/autoload.php';
 
 class TabController extends ResponseController
 {
@@ -78,7 +87,11 @@ class TabController extends ResponseController
     public function customerTierSettings(Request $request){
     	if($request->isMethod('GET')){
             $admin = Auth()->guard('admin')->user();
-            $tier_settings = TierSetting::whereAdminId($admin->id)->whereDeletedAt(null)->first();
+
+            if($admin->role_type == "Marketing" || $admin->role_type == "Managment" || $admin->role_type == "Staff"){
+                return redirect()->route('admin.adminTabs');
+            }
+            $tier_settings = TierSetting::whereDeletedAt(null)->first();
             $first_tier_unique_id = "";
             if(!empty($tier_settings)){
 
@@ -100,14 +113,14 @@ class TabController extends ResponseController
 
     public function customerTierSettingsAjax(Request $request){
         $admin = Auth()->guard('admin')->user();
-        $tier_settings = TierSetting::whereAdminId($admin->id)->whereDeletedAt(null)->with('tierConditions')->first();
+        $tier_settings = TierSetting::whereDeletedAt(null)->with('tierConditions')->first();
         return $tier_settings;
 
     }
 
     public function customerTierNameRemove(Request $request){
         $admin = Auth()->guard('admin')->user();
-        $tier_find = TierSetting::whereAdminId($admin->id)->first();
+        $tier_find = TierSetting::first();
         if(!empty($tier_find)){
 
             $tier_cond_find = TierCondition::where("unique_id_by_tier","=",$request->unique_id_by_tier)->whereTierSettingId($tier_find->id)->first();
@@ -202,7 +215,7 @@ class TabController extends ResponseController
         $data['customer_tier_validity_check'] = (int)str_replace(" Days from status change", "", $data['customer_tier_validity_check']);
         $admin = Auth()->guard('admin')->user();
 
-        $tier_find = TierSetting::whereAdminId($admin->id)->first();
+        $tier_find = TierSetting::first();
         $tier_cond = null;
         if(!empty($tier_find)){
 
@@ -272,6 +285,10 @@ class TabController extends ResponseController
 
     public function addingVenueTable(Request $request){
     	if($request->isMethod('GET')){
+            $admin = Auth::guard('admin')->user();
+            if($admin->role_type == "Marketing" || $admin->role_type == "Managment" || $admin->role_type == "Staff"){
+                return redirect()->route('admin.adminTabs');
+            }
     		return view('admin.adding_venue_table');
     	}
 
@@ -384,10 +401,13 @@ class TabController extends ResponseController
     public function cashBack(Request $request){
     	if($request->isMethod('GET')){
             $admin = Auth::guard('admin')->user();
-            $tier = TierSetting::whereAdminId($admin->id)->with('tierConditions')->first();
-            $wallet_cashback = WalletCashback::whereAdminId($admin->id)->whereDeletedAt(null)->first();
-            $venues = Venu::whereAdminId($admin->id)->whereDeletedAt(null)->get();
-            $cashback_last = Cashback::whereAdminId($admin->id)->orderBy('id','desc')->first();
+            if($admin->role_type == "Marketing" || $admin->role_type == "Managment" || $admin->role_type == "Staff"){
+                return redirect()->route('admin.adminTabs');
+            }
+            $tier = TierSetting::with('tierConditions')->first();
+            $wallet_cashback = WalletCashback::whereDeletedAt(null)->first();
+            $venues = Venu::whereDeletedAt(null)->get();
+            $cashback_last = Cashback::orderBy('id','desc')->first();
             if(!empty($cashback_last)){
                 $last_id = $cashback_last->unique_id_cashback;
             }else{
@@ -429,13 +449,31 @@ class TabController extends ResponseController
 
     public function allDataAvailability(Request $request){
     	if($request->isMethod('GET')){
+            // $data = DB::table("wallet_transactions")
+            //     ->select(DB::raw("(select customer_id from users where id = wallet_transactions.user_id) AS 'Customer id'"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where users.id = wallet_transactions.user_id) AS 'Mobile Number'"),"wallet_transactions.invoice_number AS Invoice Number","wallet_transactions.total_bill_amount AS Check Amount","wallet_transactions.check_amount_pos AS Check Amount POS",DB::raw("CONCAT(case wallet_transactions.is_cross_verify when '0' then 'Not Verified' when '1' then 'Verified' else 'Mismatch' end) AS 'Transaction Status'"),"wallet_transactions.id","wallet_transactions.cashback_percentage AS Cashback Percentage",DB::raw("(select wallet_cash from users where id = wallet_transactions.user_id) AS 'Redeemed Wallet'"),"wallet_transactions.redeemed_amount AS Redemption From Loylty",DB::raw("GROUP_CONCAT(offers.offer_name) AS 'Offers Product Name'"),DB::raw("(select venue_name from venus where id = wallet_transactions.venu_id) AS 'Restaurant Name'"),DB::raw("(select username from venue_users where id = wallet_transactions.venue_user_id) AS 'Restaurant User'"),DB::raw("DATE_FORMAT(wallet_transactions.date_and_time, '%Y-%m-%d') AS Date"))
+            //     ->join("offers",DB::raw("FIND_IN_SET(offers.id,wallet_transactions.offer_product_ids)"),">",DB::raw("'0'"))
+            //     ->groupBy("wallet_transactions.id")
+            //     ->join("users","users.id","=","wallet_transactions.user_id")
+            //     ->join("venus","venus.id","=","wallet_transactions.venu_id")
+            //     ->join("venue_users","venue_users.id","=","wallet_transactions.venue_user_id")
+            //     ->orderBy('id','desc')
+            //     ->where('wallet_transactions.deleted_at','=',null)
+            //     ->get();
+
+            /*$data = WalletTransaction::select(DB::raw("(select customer_id from users where id = wallet_transactions.user_id) AS 'Customer id'"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where users.id = wallet_transactions.user_id) AS 'Mobile Number'"),"wallet_transactions.invoice_number AS Invoice Number","wallet_transactions.total_bill_amount AS Check Amount","wallet_transactions.check_amount_pos AS Check Amount POS",DB::raw("CONCAT(case wallet_transactions.is_cross_verify when '0' then 'Not Verified' when '1' then 'Verified' else 'Mismatch' end) AS 'Transaction Status'"),"wallet_transactions.id","wallet_transactions.cashback_percentage AS Cashback Percentage",DB::raw("(select wallet_cash from users where id = wallet_transactions.user_id) AS 'Redeemed Wallet'"),DB::raw("CONCAT(case wallet_transactions.redeemed_amount when wallet_transactions.redeemed_amount IS NOT NULL then wallet_transactions.redeemed_amount else '0' end) AS 'Redemption From Loylaty'") ,"wallet_transactions.id",DB::raw("(select venue_name from venus where id = wallet_transactions.venu_id) AS 'Restaurant Name'"),DB::raw("(select username from venue_users where id = wallet_transactions.venue_user_id) AS 'Restaurant User'"),DB::raw("DATE_FORMAT(wallet_transactions.date_and_time, '%Y-%m-%d') AS Date"))->whereDeletedAt(null)->get();
+
+                return $data;*/
+
             $admin = Auth()->guard('admin')->user();
-            $tiers = TierSetting::whereAdminId($admin->id)->with('tierConditions')->get();
-            $venues = Venu::whereAdminId($admin->id)->whereDeletedAt(null)->get();
-            $offers = Offer::whereAdminId($admin->id)->whereDeletedAt(null)->get();
+            if($admin->role_type == "Marketing" || $admin->role_type == "Managment" || $admin->role_type == "Staff"){
+                return redirect()->route('admin.adminTabs');
+            }
+            $tiers = TierSetting::with('tierConditions')->get();
+            $venues = Venu::whereDeletedAt(null)->get();
+            $offers = Offer::whereDeletedAt(null)->get();
             $venue_users = VenueUser::whereDeletedAt(null)->get();
 
-            return view('admin.all-data-availability',compact('tiers','venues','offers','venue_users'));
+    		return view('admin.all-data-availability',compact('tiers','venues','offers','venue_users'));
     	}
 
         if ($request->isMethod('POST')) {
@@ -595,7 +633,7 @@ class TabController extends ResponseController
                 $user_select->DT_RowIndex = $start_from++;
 
                 if(empty($user_select->customer_tier)){
-                    $tier_setting = TierSetting::whereAdminId($admin->id)->whereDeletedAt(null)->first();
+                    $tier_setting = TierSetting::whereDeletedAt(null)->first();
                     if(!empty($tier_setting)){
                         $tier_cond_find_data = TierCondition::whereTierSettingId($tier_setting->id)->whereDeletedAt(null)->first();
                         if($tier_cond_find_data){
@@ -650,13 +688,15 @@ class TabController extends ResponseController
         }elseif ($order == 4) {
             $column = "cashback_earned";
         }elseif ($order == 5) {
-            $column = "wallet_cash";
+            $column = "redeemed_amount";
+        }elseif ($order == 6) {
+            $column = "user_wallet_cash";
         }else {
             $column = "date_and_time";
         }
 
 
-        $data = WalletTransaction::select("id","description","cashback_earned",DB::raw("DATE_FORMAT(date_and_time, '%d-%M-%Y %H:%i %p') AS date_and_time"),DB::raw("(select customer_id from users where id = wallet_transactions.user_id) AS customer_id"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where id = wallet_transactions.user_id) AS mobile_number"),DB::raw("(select wallet_cash from users where id = wallet_transactions.user_id) AS wallet_cash"))->where('venue_user_id','!=',null)->orderBy($column,$asc_desc);
+        $data = WalletDetail::select("id","description","cashback_earned","redeemed_amount","user_wallet_cash",DB::raw("DATE_FORMAT(date_and_time, '%d-%M-%Y %H:%i %p') AS date_and_time"),DB::raw("(select customer_id from users where id = wallet_details.user_id) AS customer_id"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where id = wallet_details.user_id) AS mobile_number"))->orderBy($column,$asc_desc);
 
             
         $total = $data->get()->count();
@@ -671,11 +711,12 @@ class TabController extends ResponseController
 
         if($search){
             $data  = $data->where(function($query) use($search){
-                        $query->orWhere(DB::raw("(select customer_id from users where id = wallet_transactions.user_id)"), 'Like', '%'. $search . '%');
-                        $query->orWhere(DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where id = wallet_transactions.user_id)"), 'Like', '%' . $search . '%');
+                        $query->orWhere(DB::raw("(select customer_id from users where id = wallet_details.user_id)"), 'Like', '%'. $search . '%');
+                        $query->orWhere(DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where id = wallet_details.user_id)"), 'Like', '%' . $search . '%');
                         $query->orWhere('description', 'Like', '%' . $search . '%');
                         $query->orWhere('cashback_earned', 'Like', '%' . $search . '%');
-                        $query->orWhere(DB::raw("(select wallet_cash from users where id = wallet_transactions.user_id)"), 'Like', '%' . $search . '%');
+                        $query->orWhere('redeemed_amount', 'Like', '%' . $search . '%');
+                        $query->orWhere('user_wallet_cash', 'Like', '%' . $search . '%');
                         $query->orWhere(DB::raw("DATE_FORMAT(date_and_time, '%d-%M-%Y %H:%i %p')"), 'Like', '%' . $search . '%');
                     });
 
@@ -701,7 +742,7 @@ class TabController extends ResponseController
                 
             $user_select->DT_RowIndex = $start_from++;
 
-            $user_select->wallet_cash = round($user_select->wallet_cash,2);
+            $user_select->user_wallet_cash = round($user_select->user_wallet_cash,2);
         }
 
 
@@ -786,6 +827,10 @@ class TabController extends ResponseController
 
     public function addingVenue(Request $request){
         if($request->isMethod('GET')){
+            $admin = Auth::guard('admin')->user();
+            if($admin->role_type == "Managment" || $admin->role_type == "Staff"){
+                return redirect()->route('admin.adminTabs');
+            }
             return view('admin.adding-venue');
         }
     }
@@ -802,6 +847,10 @@ class TabController extends ResponseController
             // }catch(\Exception $ex){
             //     return $ex->getMessage();
             // }
+            $admin = Auth::guard('admin')->user();
+            if($admin->role_type == "Managment" || $admin->role_type == "Staff"){
+                return redirect()->route('admin.adminTabs');
+            }
 
             return view('admin.adding-events');
         }
@@ -820,7 +869,10 @@ class TabController extends ResponseController
             // }
 
             $admin = Auth::guard('admin')->user();
-            $venu = Venu::whereAdminId($admin->id)->whereDeletedAt(null)->get();
+            if($admin->role_type == "Managment" || $admin->role_type == "Staff"){
+                return redirect()->route('admin.adminTabs');
+            }
+            $venu = Venu::whereDeletedAt(null)->get();
             return view('admin.offer-settings',compact('venu'));
         }
     }
@@ -834,13 +886,20 @@ class TabController extends ResponseController
 
             // return $data = VenueUser::select('*',DB::raw("GROUP_CONCAT((select venu_id from assign_user_venues where id = assign_user_venues.venue_user_id) SEPARATOR ',')"))->whereDeletedAt(null)->get();
             $admin = Auth::guard('admin')->user();
-            $venulist = Venu::whereAdminId($admin->id)->whereDeletedAt(null)->get();
+            if($admin->role_type == "Marketing" || $admin->role_type == "Managment" || $admin->role_type == "Staff"){
+                return redirect()->route('admin.adminTabs');
+            }
+            $venulist = Venu::whereDeletedAt(null)->get();
             return view('admin.venue-user',compact('venulist'));
         }
     }
 
     public function notificationSetting(Request $request){
         if($request->isMethod('GET')){
+            $admin = Auth::guard('admin')->user();
+            if($admin->role_type == "Managment" || $admin->role_type == "Staff"){
+                return redirect()->route('admin.adminTabs');
+            }
             $city = City::get();
             $country = Country::orderBy("name","asc")->get();
             return view('admin.notifications-settings',compact('city','country'));
@@ -849,24 +908,40 @@ class TabController extends ResponseController
 
     public function adminUser(Request $request){
         if($request->isMethod('GET')){
+            $admin = Auth::guard('admin')->user();
+            if($admin->role_type == "Marketing" || $admin->role_type == "Managment" || $admin->role_type == "Staff"){
+                return redirect()->route('admin.adminTabs');
+            }
             return view('admin.admin-user');
         }
     }
 
     public function performanceDashboard(Request $request){
         if($request->isMethod('GET')){
+            $admin = Auth::guard('admin')->user();
+            if($admin->role_type == "Staff"){
+                return redirect()->route('admin.adminTabs');
+            }
             return view('admin.performance-dashboard');
         }
     }
 
     public function crossVerificationSales(Request $request){
         if($request->isMethod('GET')){
+            $admin = Auth::guard('admin')->user();
+            if($admin->role_type == "Admin" || $admin->role_type == "Marketing" || $admin->role_type == "Managment" || $admin->role_type == "Staff"){
+                return redirect()->route('admin.adminTabs');
+            }
             return view('admin.cross-verification-sales');
         }
     }
 
     public function generalSettings(Request $request){
         if($request->isMethod('GET')){
+            $admin = Auth::guard('admin')->user();
+            if($admin->role_type == "Marketing" || $admin->role_type == "Managment" || $admin->role_type == "Staff"){
+                return redirect()->route('admin.adminTabs');
+            }
             return view('admin.general-settings');
         }
     }
@@ -890,8 +965,8 @@ class TabController extends ResponseController
             //$venuecreate->venu_id = $request->v_name;
             $venuecreate->status = $request->v_status;
             $venuecreate->date_time = Carbon::now();
-            $venuecreate->created_by = "Admin";
-            $venuecreate->updated_by = "Admin";
+            $venuecreate->created_by = $admin->name;
+            $venuecreate->updated_by = $admin->name;
             $venuecreate->save();
 
             $venue_ids = explode(",", $request->v_name);
@@ -1151,8 +1226,8 @@ class TabController extends ResponseController
     public function venueList(Request $request){
         if($request->isMethod('GET')){
             $auth = Auth::guard('admin')->user();
-            $last_venue = Venu::whereAdminId($auth->id)->orderBy('unique_id','desc')->first();
-            $vlist = Venu::whereAdminId($auth->id)->whereDeletedAt(null)->orderBy('unique_id','asc')->get();
+            $last_venue = Venu::orderBy('unique_id','desc')->first();
+            $vlist = Venu::whereDeletedAt(null)->orderBy('unique_id','asc')->get();
             return response()->json(['list' => $vlist,'last_venue' => $last_venue]);
         }
     }
@@ -1160,7 +1235,7 @@ class TabController extends ResponseController
     public function venueRemove(Request $request){
         if($request->isMethod('POST')){
             $admin = Auth::guard('admin')->user();
-            $vlist = Venu::whereAdminId($admin->id)->whereUniqueId($request->elem_id)->whereDeletedAt(null)->first();
+            $vlist = Venu::whereUniqueId($request->elem_id)->whereDeletedAt(null)->first();
             if(!empty($vlist)){
 
                 $count_event = Event::whereVenuId($vlist->id)->whereDeletedAt(null)->count();
@@ -1214,7 +1289,7 @@ class TabController extends ResponseController
     Public function allVenuEvents(Request $request){
         if($request->isMethod('GET')){
              $admin = Auth::guard('admin')->user();
-             $vlist = Venu::whereAdminId($admin->id)->whereDeletedAt(null)->get();
+             $vlist = Venu::whereDeletedAt(null)->get();
              if($vlist){
                 return response()->json(['message' => 200 , 'venulist' => $vlist]);
              }
@@ -1225,7 +1300,7 @@ class TabController extends ResponseController
     public function ParticularVenu(Request $request){
         if($request->isMethod('POST')){
             $admin = Auth::guard('admin')->user();
-             $venuelist = Venu::whereAdminId($admin->id)->whereId($request->venu_id)->first();
+             $venuelist = Venu::whereId($request->venu_id)->first();
              if($venuelist){
                 return response()->json(['message' => 200 ,'venuls' => $venuelist]);
              }
@@ -1248,7 +1323,7 @@ class TabController extends ResponseController
             $saveEvent = $this->venueBusinessModel()->eventCreate($data,$admin);
             if($saveEvent['data']){
 
-                $admin_event_notification = AdminNotification::where("uniq_id","=",5)->first();
+                /*$admin_event_notification = AdminNotification::where("uniq_id","=",5)->first();
 
                 $find_event = Event::whereId($saveEvent['data']['id'])->first();
 
@@ -1306,7 +1381,7 @@ class TabController extends ResponseController
                                     $sms = new \SMSGlobal\Resource\Sms();
                                     $message = "What's Happening Today: Enjoy ".$find_event->event_name." at ".$find_event->venu->venue_name."\n".$admin_event_notification->message;
                                     try {
-                                        $response = $sms->sendToOne($user_find->country_code.$user_find->mobile_number, $message,'AD-Mociety');
+                                        $response = $sms->sendToOne($user_find->country_code.$user_find->mobile_number, $message,'AD-MSociety');
                                     } catch (\Exception $e) {
                                         continue;
                                     }
@@ -1325,7 +1400,7 @@ class TabController extends ResponseController
 
 
                     
-                }
+                }*/
 
                 return response()->json($saveEvent);
             }
@@ -1337,8 +1412,8 @@ class TabController extends ResponseController
         if($request->isMethod('GET')){
             $admin = Auth::guard('admin')->user();
             $venu_list = Venu::whereDeletedAt(null)->get();
-            $last_event = Event::whereAdminId($admin->id)->orderBy("unique_id","desc")->first();
-            $eventlist = Event::whereAdminId($admin->id)->whereDeletedAt(null)->orderBy('unique_id','asc')->with('venu','venueAll')->get();
+            $last_event = Event::orderBy("unique_id","desc")->first();
+            $eventlist = Event::whereDeletedAt(null)->orderBy('unique_id','asc')->with('venu','venueAll')->get();
             return response()->json(['list' => $eventlist,'last_event' => $last_event]);
         }
     }
@@ -1347,7 +1422,7 @@ class TabController extends ResponseController
     public function eventRemove(Request $request){
         if($request->isMethod('POST')){
             $admin = Auth::guard('admin')->user();
-            $event_remove = Event::whereAdminId($admin->id)->whereUniqueId($request->uniq_id)->first();
+            $event_remove = Event::whereUniqueId($request->uniq_id)->first();
 
             if(!empty($event_remove)){
                 $event_remove->deleted_at = Carbon::now();
@@ -1361,7 +1436,7 @@ class TabController extends ResponseController
     public function venuSelect(Request $request){
         if($request->isMethod('POST')){
             $admin = Auth::guard('admin')->user();
-            $venuOffers = Venu::whereAdminId($admin->id)->whereId($request->venuid)->whereDeletedAt(null)->first();
+            $venuOffers = Venu::whereId($request->venuid)->whereDeletedAt(null)->first();
             $cityall = City::all();
 
             if($venuOffers){
@@ -1404,8 +1479,8 @@ class TabController extends ResponseController
     public function AllOffers(Request $request){
         if($request->isMethod('GET')){
             $admin = Auth::guard('admin')->user();
-            $last_offer = Offer::whereAdminId($admin->id)->orderBy("unique_id","desc")->first();
-            $offer = Offer::whereAdminId($admin->id)->whereDeletedAt(null)->orderBy('unique_id','asc')->with(['offerSetting','venu','offerSetting.city'])->get();
+            $last_offer = Offer::orderBy("unique_id","desc")->first();
+            $offer = Offer::whereDeletedAt(null)->orderBy('unique_id','asc')->with(['offerSetting','venu','offerSetting.city'])->get();
             $cityall = City::all();
             return ['offer' => $offer, 'cityall' => $cityall,'last_offer' => $last_offer];
         }
@@ -1415,7 +1490,7 @@ class TabController extends ResponseController
          if($request->isMethod('POST')){
              $admin = Auth::guard('admin')->user();
              $data = $request->all();
-             $offer_remove = Offer::whereAdminId($admin->id)->whereUniqueId($request->uniq_id)->first();
+             $offer_remove = Offer::whereUniqueId($request->uniq_id)->first();
              $user_assign_offer = UserAssignOffer::whereOfferId($offer_remove->id)->get();
              
              foreach ($user_assign_offer as $key => $value){
@@ -1463,13 +1538,19 @@ class TabController extends ResponseController
     public function badges(Request $request){
 
         $admin = Auth()->guard('admin')->user();
-        $badges = Badge::whereAdminId($admin->id)->whereDeletedAt(null)->orderBy("id","desc")->get();
+        if($admin->role_type == "Marketing" || $admin->role_type == "Managment"){
+            return redirect()->route('admin.adminTabs');
+        }
+        $badges = Badge::whereDeletedAt(null)->orderBy("id","desc")->get();
         return view('admin.badges',compact('badges'));
     }
 
     public function assignBadges(Request $request){
-        $admin = Auth()->guard('admin')->user();
-        $badges = Badge::whereAdminId($admin->id)->whereDeletedAt(null)->orderBy("id","desc")->get();
+        $admin = Auth::guard('admin')->user();
+        if($admin->role_type == "Marketing" || $admin->role_type == "Managment"){
+            return redirect()->route('admin.adminTabs');
+        }
+        $badges = Badge::whereDeletedAt(null)->orderBy("id","desc")->get();
         $current_date = Carbon::now()->toDateString();
         return view('admin.assign_badges',compact('badges','current_date'));
     }
@@ -2115,7 +2196,11 @@ class TabController extends ResponseController
                 $file = $request->file('img_upload');
                 $destinationPath = storage_path(). DIRECTORY_SEPARATOR . env('ATTACHMENT_MAIL_STORAGE');
                 $imageName = date('mdYHis') . rand(10,100) . uniqid(). '.' . $extension;
-                $file->move($destinationPath, $imageName);
+                $img_new = Image::make($file)->stream($extension, 50);
+        
+                file_put_contents($destinationPath. '/' . $imageName, $img_new);
+                
+                //$file->move($destinationPath, $imageName);
             }
 
         }else{
@@ -2199,7 +2284,7 @@ class TabController extends ResponseController
 
    public function SaveCriteriaMessage(Request $request){
 
-
+        $admin = Auth()->guard('admin')->user();
 
         ($request->msg_type == "Push") ? $push_type = 1 : $push_type = 0;  
         ($request->msg_type == "Sms") ? $sms_type = 1 : $sms_type = 0;  
@@ -2224,7 +2309,8 @@ class TabController extends ResponseController
             'txn_amount_condition' => $request->txn_amount_condition,
             'from_price' => $request->txn_from_price,
             'to_price' => $request->txn_to_price,
-            'noti_type' => 7
+            'noti_type' => 7,
+            'sent_by' => $admin->name
         ];
 
         $message_success = '';
@@ -2259,6 +2345,21 @@ class TabController extends ResponseController
                     if($is_send == 1){
                         if($user->device_type == 'Android'){
                            if($user->device_token && strlen($user->device_token) > 20){
+
+
+                            $noti_record_find = NotiRecord::whereUserId($user->id)->first();
+
+                            if(empty($noti_record_find)){
+                                $save_noti_record = new NotiRecord();
+                                $save_noti_record->user_id = $user->id;
+                                $save_noti_record->normal = 1;
+                                $save_noti_record->save();
+
+                            }else{
+                                $noti_record_find->normal = $noti_record_find->normal + 1;
+                                $noti_record_find->update();
+                            }
+
                            $android_notify =  $this->send_android_notification_new($user->device_token, $request->specific_criteria_message, $notmessage = "Admin Send notification message", $noti_type = 7);
                            if($android_notify){
                               (!empty($wallet_transactions->user_id)) ? $data['user_id'] = $wallet_transactions->user_id : $data['user_id'] = $user->id;
@@ -2269,7 +2370,21 @@ class TabController extends ResponseController
 
                         if($user->device_type == 'Ios' && strlen($user->device_token) > 20){
                             if($user->device_token){
-                           $ios_notify =  $this->iphoneNotification($user->device_token, $request->specific_criteria_message, $notmessage = "Admin Send notification message", $noti_type = 7);
+
+                            $noti_record_find = NotiRecord::whereUserId($user->id)->first();
+
+                            if(empty($noti_record_find)){
+                                $save_noti_record = new NotiRecord();
+                                $save_noti_record->user_id = $user->id;
+                                $save_noti_record->normal = 1;
+                                $save_noti_record->save();
+
+                            }else{
+                                $noti_record_find->normal = $noti_record_find->normal + 1;
+                                $noti_record_find->update();
+                            }
+
+                            $ios_notify =  $this->iphoneNotification($user->device_token, $request->specific_criteria_message, $notmessage = "Admin Send notification message", $noti_type = 7);
                             if($ios_notify){
                                (!empty($wallet_transactions->user_id)) ? $data['user_id'] = $wallet_transactions->user_id : $data['user_id'] = $user->id;
                                 $save_notification = AdminCriteriaNotification::create($data);
@@ -2317,7 +2432,7 @@ class TabController extends ResponseController
                         $message = $request->specific_criteria_message;
 
                         try {
-                            $response = $sms->sendToOne($user->country_code.$user->mobile_number, $message,'AD-MSociety');
+                            $response = $sms->sendToOne($user->country_code.$user->mobile_number, $message,'CM-Society');
                         } catch (\Exception $e) {
                             continue;
                         }
@@ -2496,12 +2611,15 @@ class TabController extends ResponseController
     }
 
     public function updateVenueUser(Request $request){
+        $admin = auth()->guard('admin')->user();
+
         $venue_selection = explode(",", $request->v_name);
         $delete_assign_user_venue = AssignUserVenue::whereVenueUserId($request->v_updateid)->delete();
         $find_venue_user = VenueUser::whereId($request->v_updateid)->first();
         $find_venue_user->username = $request->v_user ? $request->v_user : $find_venue_user->username;
         $find_venue_user->password = $request->v_password ? Hash::make($request->v_password) : $find_venue_user->password;
         $find_venue_user->status = $request->v_status ? $request->v_status : $find_venue_user->status;
+        $find_venue_user->updated_by = $admin->name;
         $find_venue_user->update();
 
         foreach ($venue_selection as $venue_select_id) {
@@ -2664,8 +2782,9 @@ class TabController extends ResponseController
             return response()->json(['message'=>'No data exists to verify transactions.'],422);
         }
 
-       if(count($data) > 0){
-        $ids_data = [];
+        $admin_refer_notification = AdminNotification::where("uniq_id","=",4)->first();
+        if(count($data) > 0){
+            $ids_data = [];
             foreach ($data->toArray() as $val){
                 $db_array_keys = ["date","outlet_name","check_no","check_total"];
                 $array_keys =  array_keys($val);
@@ -2681,6 +2800,7 @@ class TabController extends ResponseController
 
                     if(!empty($wallet_txn)){
                         $users = User::select('customer_id')->whereId($wallet_txn->user_id)->first();
+                        $user_find = $users;
                         // if($outlet_name->venue_name === $val['outlet_name']){
                             if(!empty($val['check_total'])){
                                 if($wallet_txn->total_bill_amount == $val['check_total']){
@@ -2690,6 +2810,121 @@ class TabController extends ResponseController
                                     $wallet_txn->update();
                                     array_push($ids_data, $wallet_txn->id);
                                     $this->transferToWalletForUploadVerify($wallet_txn);
+
+
+                                    $refer_user_find = null;
+                                    if(!empty($user_find->reference_code) && $user_find->refer_amount_used == 0){
+
+                                        $refer_user_find = User::whereSelfReferenceCode($user_find->reference_code)->whereDeletedAt(null)->where('is_block','=',0)->first();
+
+
+                                    }
+                                    if(!empty($admin_refer_notification) && !empty($refer_user_find)){
+
+                                        $user_find->refer_amount_used = 1;
+                                        $user_find->update();
+
+                                        $refer_user_find->wallet_cash = $refer_user_find->wallet_cash + $user_find->refer_amount;
+                                        $refer_user_find->update();
+
+                                        $wallet_detail3 = new WalletDetail();
+                                        $wallet_detail3->user_id = $refer_user_find->id;
+                                        $wallet_detail3->description = "Referral Earnings";
+                                        $wallet_detail3->cashback_earned = $user_find->refer_amount;
+                                        $wallet_detail3->date_and_time = Carbon::now()->toDateString(). " ". Carbon::now()->toTimeString();
+                                        $wallet_detail3->type_of_transaction = "Refer";
+                                        $wallet_detail3->user_wallet_cash = $refer_user_find->wallet_cash;
+                                        $wallet_detail3->save();
+
+
+                                        if($admin_refer_notification->push_type == 1){
+
+                                            if($refer_user_find->device_type == 'Android'){
+                                                if($refer_user_find->device_token && strlen($refer_user_find->device_token) > 20){
+
+                                                    $noti_record_find = NotiRecord::whereUserId($refer_user_find->id)->first();
+
+                                                    if(empty($noti_record_find)){
+                                                        $save_noti_record = new NotiRecord();
+                                                        $save_noti_record->user_id = $refer_user_find->id;
+                                                        $save_noti_record->wallet = 1;
+                                                        $save_noti_record->save();
+
+                                                    }else{
+                                                        $noti_record_find->wallet = $noti_record_find->wallet + 1;
+                                                        $noti_record_find->update();
+                                                    }
+
+                                                   $android_notify =  $this->send_android_notification_new($refer_user_find->device_token, $admin_refer_notification->message, $notmessage = "Referral Bonus Notification", $noti_type = 4);
+
+                                                   $criteria_data = [
+                                                        'user_id'   => $refer_user_find->id,
+                                                        'message'   => $admin_refer_notification->message,
+                                                        'noti_type' => 4
+                                                    ];
+                                                    AdminCriteriaNotification::create($criteria_data);
+                                               
+                                               }
+                                            }
+
+                                            if($refer_user_find->device_type == 'Ios' && strlen($refer_user_find->device_token) > 20){
+                                                if($refer_user_find->device_token){
+
+                                                    $noti_record_find = NotiRecord::whereUserId($refer_user_find->id)->first();
+
+                                                    if(empty($noti_record_find)){
+                                                        $save_noti_record = new NotiRecord();
+                                                        $save_noti_record->user_id = $refer_user_find->id;
+                                                        $save_noti_record->wallet = 1;
+                                                        $save_noti_record->save();
+
+                                                    }else{
+                                                        $noti_record_find->wallet = $noti_record_find->wallet + 1;
+                                                        $noti_record_find->update();
+                                                    }
+
+                                                    $ios_notify =  $this->iphoneNotification($refer_user_find->device_token, $admin_refer_notification->message, $notmessage = "Referral Bonus Notification", $noti_type = 4);
+
+                                                    $criteria_data = [
+                                                        'user_id'   => $refer_user_find->id,
+                                                        'message'   => $admin_refer_notification->message,
+                                                        'noti_type' => 4
+                                                    ];
+                                                    AdminCriteriaNotification::create($criteria_data);
+                                                
+                                               }
+                                            }
+
+                                        }
+
+                                        if($admin_refer_notification->sms_type == 1){
+                                            \SMSGlobal\Credentials::set(env('SMS_GLOBAL_API'),env('SMS_GLOBAL_SECERET'));
+                                            $sms = new \SMSGlobal\Resource\Sms();
+                                            $message = $admin_refer_notification->message;
+                                            try {
+                                                $response = $sms->sendToOne($refer_user_find->country_code.$refer_user_find->mobile_number, $message,'CM-Society');
+                                            } catch (\Exception $e) {
+                                                
+                                            }
+
+                                        }
+
+                                        if($admin_refer_notification->email_type == 1){
+                                            // try{
+                                            //     \Mail::to($refer_user_find->email)->send(new ReferralEmail($admin_refer_notification, $refer_user_find));
+                                            // }catch(\Exception $ex){
+                                            //     //return $ex->getMessage();
+                                            // }
+
+
+                                            $notificationJobR = (new ReferMailSend($admin_refer_notification, $refer_user_find))->delay(Carbon::now()->addSeconds(3));
+                                            dispatch($notificationJobR);
+
+                                        }
+
+                                        
+                                    }
+
 
                                 }else{
                                     $wallet_txn->is_cross_verify = 2;
@@ -2770,11 +3005,126 @@ class TabController extends ResponseController
         }else{
             $wallet_txn = WalletTransaction::whereIn('id',$wallet_arr_ids_pluck)->get();
 
+            $admin_refer_notification = AdminNotification::where("uniq_id","=",4)->first();
             foreach ($wallet_txn as $key => $value) {
                 $user_wallet_txn = WalletTransaction::whereId($value->id)->first();
                 $user_wallet_txn->is_cross_verify = 1;
                 $user_wallet_txn->check_amount_pos = $user_wallet_txn->total_bill_amount;
                 $user_wallet_txn->update();
+
+
+                $user_find = User::find($user_wallet_txn->user_id);
+                $refer_user_find = null;
+                if(!empty($user_find->reference_code) && $user_find->refer_amount_used == 0){
+
+                    $refer_user_find = User::whereSelfReferenceCode($user_find->reference_code)->whereDeletedAt(null)->where('is_block','=',0)->first();
+
+
+                }
+                if(!empty($admin_refer_notification) && !empty($refer_user_find)){
+
+                    $user_find->refer_amount_used = 1;
+                    $user_find->update();
+
+                    $refer_user_find->wallet_cash = $refer_user_find->wallet_cash + $user_find->refer_amount;
+                    $refer_user_find->update();
+
+                    $wallet_detail3 = new WalletDetail();
+                    $wallet_detail3->user_id = $refer_user_find->id;
+                    $wallet_detail3->description = "Referral Earnings";
+                    $wallet_detail3->cashback_earned = $user_find->refer_amount;
+                    $wallet_detail3->date_and_time = Carbon::now()->toDateString(). " ". Carbon::now()->toTimeString();
+                    $wallet_detail3->type_of_transaction = "Refer";
+                    $wallet_detail3->user_wallet_cash = $refer_user_find->wallet_cash;
+                    $wallet_detail3->save();
+
+
+                    if($admin_refer_notification->push_type == 1){
+
+                        if($refer_user_find->device_type == 'Android'){
+                            if($refer_user_find->device_token && strlen($refer_user_find->device_token) > 20){
+
+                                $noti_record_find = NotiRecord::whereUserId($refer_user_find->id)->first();
+
+                                if(empty($noti_record_find)){
+                                    $save_noti_record = new NotiRecord();
+                                    $save_noti_record->user_id = $refer_user_find->id;
+                                    $save_noti_record->wallet = 1;
+                                    $save_noti_record->save();
+
+                                }else{
+                                    $noti_record_find->wallet = $noti_record_find->wallet + 1;
+                                    $noti_record_find->update();
+                                }
+
+                               $android_notify =  $this->send_android_notification_new($refer_user_find->device_token, $admin_refer_notification->message, $notmessage = "Referral Bonus Notification", $noti_type = 4);
+
+                               $criteria_data = [
+                                    'user_id'   => $refer_user_find->id,
+                                    'message'   => $admin_refer_notification->message,
+                                    'noti_type' => 4
+                                ];
+                                AdminCriteriaNotification::create($criteria_data);
+                           
+                           }
+                        }
+
+                        if($refer_user_find->device_type == 'Ios' && strlen($refer_user_find->device_token) > 20){
+                            if($refer_user_find->device_token){
+
+                                $noti_record_find = NotiRecord::whereUserId($refer_user_find->id)->first();
+
+                                if(empty($noti_record_find)){
+                                    $save_noti_record = new NotiRecord();
+                                    $save_noti_record->user_id = $refer_user_find->id;
+                                    $save_noti_record->wallet = 1;
+                                    $save_noti_record->save();
+
+                                }else{
+                                    $noti_record_find->wallet = $noti_record_find->wallet + 1;
+                                    $noti_record_find->update();
+                                }
+
+                                $ios_notify =  $this->iphoneNotification($refer_user_find->device_token, $admin_refer_notification->message, $notmessage = "Referral Bonus Notification", $noti_type = 4);
+
+                                $criteria_data = [
+                                    'user_id'   => $refer_user_find->id,
+                                    'message'   => $admin_refer_notification->message,
+                                    'noti_type' => 4
+                                ];
+                                AdminCriteriaNotification::create($criteria_data);
+                            
+                           }
+                        }
+
+                    }
+
+                    if($admin_refer_notification->sms_type == 1){
+                        \SMSGlobal\Credentials::set(env('SMS_GLOBAL_API'),env('SMS_GLOBAL_SECERET'));
+                        $sms = new \SMSGlobal\Resource\Sms();
+                        $message = $admin_refer_notification->message;
+                        try {
+                            $response = $sms->sendToOne($refer_user_find->country_code.$refer_user_find->mobile_number, $message,'CM-Society');
+                        } catch (\Exception $e) {
+                            
+                        }
+
+                    }
+
+                    if($admin_refer_notification->email_type == 1){
+                        // try{
+                        //     \Mail::to($refer_user_find->email)->send(new ReferralEmail($admin_refer_notification, $refer_user_find));
+                        // }catch(\Exception $ex){
+                        //     //return $ex->getMessage();
+                        // }
+
+                        $notificationJobR = (new ReferMailSend($admin_refer_notification, $refer_user_find))->delay(Carbon::now()->addSeconds(3));
+                        dispatch($notificationJobR);
+
+                    }
+
+                    
+                }
             }
 
             $wallet_transaction_verified = WalletTransaction::whereIn('id',$wallet_arr_ids_pluck)->whereIsCrossVerify(1)->get();
@@ -2803,6 +3153,7 @@ class TabController extends ResponseController
         $request_ids = explode(',',$request->verify_selected_checkboxes);
 
         $wallet_transaction_verify = WalletTransaction::whereIn('id',$request_ids)->get();
+        $admin_refer_notification = AdminNotification::where("uniq_id","=",4)->first();
 
         foreach ($wallet_transaction_verify as $key => $value) {
             $user_wallet_txn = WalletTransaction::whereId($value->id)->first();
@@ -2815,6 +3166,119 @@ class TabController extends ResponseController
                 $user_wallet_txn->is_cross_verify = 1;
                 $user_wallet_txn->check_amount_pos = $user_wallet_txn->total_bill_amount;
                 $user_wallet_txn->update();
+            }
+
+
+            $user_find = User::find($user_wallet_txn->user_id);
+            $refer_user_find = null;
+            if(!empty($user_find->reference_code) && $user_find->refer_amount_used == 0){
+
+                $refer_user_find = User::whereSelfReferenceCode($user_find->reference_code)->whereDeletedAt(null)->where('is_block','=',0)->first();
+
+
+            }
+            if(!empty($admin_refer_notification) && !empty($refer_user_find)){
+
+                $user_find->refer_amount_used = 1;
+                $user_find->update();
+
+                $refer_user_find->wallet_cash = $refer_user_find->wallet_cash + $user_find->refer_amount;
+                $refer_user_find->update();
+
+                $wallet_detail3 = new WalletDetail();
+                $wallet_detail3->user_id = $refer_user_find->id;
+                $wallet_detail3->description = "Referral Earnings";
+                $wallet_detail3->cashback_earned = $user_find->refer_amount;
+                $wallet_detail3->date_and_time = Carbon::now()->toDateString(). " ". Carbon::now()->toTimeString();
+                $wallet_detail3->type_of_transaction = "Refer";
+                $wallet_detail3->user_wallet_cash = $refer_user_find->wallet_cash;
+                $wallet_detail3->save();
+
+
+                if($admin_refer_notification->push_type == 1){
+
+                    if($refer_user_find->device_type == 'Android'){
+                        if($refer_user_find->device_token && strlen($refer_user_find->device_token) > 20){
+
+                            $noti_record_find = NotiRecord::whereUserId($refer_user_find->id)->first();
+
+                            if(empty($noti_record_find)){
+                                $save_noti_record = new NotiRecord();
+                                $save_noti_record->user_id = $refer_user_find->id;
+                                $save_noti_record->wallet = 1;
+                                $save_noti_record->save();
+
+                            }else{
+                                $noti_record_find->wallet = $noti_record_find->wallet + 1;
+                                $noti_record_find->update();
+                            }
+
+                           $android_notify =  $this->send_android_notification_new($refer_user_find->device_token, $admin_refer_notification->message, $notmessage = "Referral Bonus Notification", $noti_type = 4);
+
+                           $criteria_data = [
+                                'user_id'   => $refer_user_find->id,
+                                'message'   => $admin_refer_notification->message,
+                                'noti_type' => 4
+                            ];
+                            AdminCriteriaNotification::create($criteria_data);
+                       
+                       }
+                    }
+
+                    if($refer_user_find->device_type == 'Ios' && strlen($refer_user_find->device_token) > 20){
+                        if($refer_user_find->device_token){
+
+                            $noti_record_find = NotiRecord::whereUserId($refer_user_find->id)->first();
+
+                            if(empty($noti_record_find)){
+                                $save_noti_record = new NotiRecord();
+                                $save_noti_record->user_id = $refer_user_find->id;
+                                $save_noti_record->wallet = 1;
+                                $save_noti_record->save();
+
+                            }else{
+                                $noti_record_find->wallet = $noti_record_find->wallet + 1;
+                                $noti_record_find->update();
+                            }
+                            $ios_notify =  $this->iphoneNotification($refer_user_find->device_token, $admin_refer_notification->message, $notmessage = "Referral Bonus Notification", $noti_type = 4);
+
+                            $criteria_data = [
+                                'user_id'   => $refer_user_find->id,
+                                'message'   => $admin_refer_notification->message,
+                                'noti_type' => 4
+                            ];
+                            AdminCriteriaNotification::create($criteria_data);
+                        
+                       }
+                    }
+
+                }
+
+                if($admin_refer_notification->sms_type == 1){
+                    \SMSGlobal\Credentials::set(env('SMS_GLOBAL_API'),env('SMS_GLOBAL_SECERET'));
+                    $sms = new \SMSGlobal\Resource\Sms();
+                    $message = $admin_refer_notification->message;
+                    try {
+                        $response = $sms->sendToOne($refer_user_find->country_code.$refer_user_find->mobile_number, $message,'CM-Society');
+                    } catch (\Exception $e) {
+                        
+                    }
+
+                }
+
+                if($admin_refer_notification->email_type == 1){
+                    // try{
+                    //     \Mail::to($refer_user_find->email)->send(new ReferralEmail($admin_refer_notification, $refer_user_find));
+                    // }catch(\Exception $ex){
+                    //     //return $ex->getMessage();
+                    // }
+
+                    $notificationJobR = (new ReferMailSend($admin_refer_notification, $refer_user_find))->delay(Carbon::now()->addSeconds(3));
+                    dispatch($notificationJobR);
+                        
+                }
+
+                
             }
         }
 
@@ -2829,7 +3293,8 @@ class TabController extends ResponseController
         }
     }
 
-    public function EndUserCustomerTransactions(Request $request){
+
+     public function EndUserCustomerTransactions(Request $request){
 
         $asc_desc = $request->get('order')[0]['dir'];
         $column_id = $request->get('order')[0]['column'];
@@ -2922,7 +3387,10 @@ class TabController extends ResponseController
                 if($request->offers_product_wallet_id){
                     $query->whereRaw("FIND_IN_SET(?, offer_product_ids) > 0", [$request->offers_product_wallet_id]);
                 }
-        })->where('wallet_transactions.deleted_at',null)->with('offerProductIds')->orderBy($column,$asc_desc);
+        })
+        ->where('wallet_transactions.deleted_at',null)
+        ->with('offerProductIds')
+        ->orderBy($column,$asc_desc);
 
 
         $total = $data->count();
@@ -3000,6 +3468,280 @@ class TabController extends ResponseController
 
             });
         })->download('xlsx');
+    }
+
+    public function generalSettingsSave(Request $request){
+        $find_setting = GeneralSetting::whereUniqId($request->uniq_id)->first();
+
+        (empty($request->setting_content)) ? $content = $request->editorText : $content = $request->setting_content;
+
+        if(empty($find_setting)){
+
+            $find_setting = new GeneralSetting();
+            $find_setting->uniq_id = $request->uniq_id;
+            $find_setting->setting_content = $content;
+            $find_setting->setting_enabled_disbaled = $request->setting_enabled_disabled;
+            $find_setting->setting_type = $request->data_name;
+            $find_setting->save();
+
+            return response()->json(['message' => ucfirst($request->data_name).' content added successfully.']);
+        }else{
+
+            $find_setting->setting_content = $content;
+            $find_setting->setting_enabled_disbaled = $request->setting_enabled_disabled;
+            $find_setting->setting_type = $request->data_name;
+            $find_setting->update();
+
+            return response()->json(['message' => ucfirst($request->data_name).' content updated successfully.']);
+
+        }
+    }
+
+    public function applicationDataSave(Request $request){
+
+        $imageName = '';
+
+        if(!empty($request->name_of_file_show)){
+           $extension = pathinfo($request->name_of_file_show)['extension'];
+            if($extension=='png'){
+                $image1 = str_replace('data:image/png;base64,', '', $request->hidden_image);
+                $destinationPath = storage_path(). DIRECTORY_SEPARATOR . env('APPLICATION_DATA_STORAGE');
+                $imageName = date('mdYHis') . rand(10,100) . uniqid().'.png';
+            }else{
+                $image1 = str_replace('data:image/jpeg;base64,', '', $request->hidden_image);
+                $destinationPath = storage_path(). DIRECTORY_SEPARATOR . env('APPLICATION_DATA_STORAGE');
+                $imageName = date('mdYHis') . rand(10,100) . uniqid().'.jpeg';
+            }
+            
+            // file_put_contents($destinationPath. '/' . $imageName, base64_decode($image1));
+            $img_new = Image::make(base64_decode($image1))->stream($extension, 50);
+            
+            file_put_contents($destinationPath. '/' . $imageName, $img_new);
+        }
+
+        
+        $application_data = ApplicationData::first();
+
+        $find_application_image = ApplicationImage::whereApplicationDataId($application_data->id)->whereUniqId($request->uniq_id)->first();
+
+        if(empty($find_application_image)){
+            $find_application_image = new ApplicationImage();
+            $find_application_image->image = $imageName;
+            $find_application_image->name_of_file_show = $request->name_of_file_show;
+            $find_application_image->application_data_id = $application_data->id;
+            $find_application_image->uniq_id = $request->uniq_id;
+            $find_application_image->image_type = $request->data_name;
+            $find_application_image->save();
+
+            return response()->json(['message' => ucfirst($request->data_name).' content added successfully.']);
+        }else{
+            if($imageName != null || $request->name_of_file_show != null){
+                $find_application_image->image = $imageName;
+                $find_application_image->name_of_file_show = $request->name_of_file_show;
+                $find_application_image->image_type = $request->data_name;
+                $find_application_image->update();
+            }else{
+                $find_application_image->image_type = $request->data_name;
+                $find_application_image->update();
+            }
+            return response()->json(['message' => ucfirst($request->data_name).' content updated successfully.']);
+        }
+
+
+    }
+
+    public function saveGenApplicationData(Request $request){
+
+        $application_data = ApplicationData::first();
+
+        if($request->data_name == "Welcome Screen Logo"){
+            if(!empty($request->name_of_file_show)){
+                $extension = pathinfo($request->name_of_file_show)['extension'];
+                if($extension=='png'){
+                    $image1 = str_replace('data:image/png;base64,', '', $request->hidden_image);
+                    $destinationPath = storage_path(). DIRECTORY_SEPARATOR . env('APPLICATION_DATA_STORAGE');
+                    // $imageName = date('mdYHis') . rand(10,100) . uniqid().'.png';
+                }else{
+                    $image1 = str_replace('data:image/jpeg;base64,', '', $request->hidden_image);
+                    $destinationPath = storage_path(). DIRECTORY_SEPARATOR . env('APPLICATION_DATA_STORAGE');
+                    // $imageName = date('mdYHis') . rand(10,100) . uniqid().'.jpeg';
+                }
+                
+                $img_new = Image::make(base64_decode($image1))->stream($extension, 50);
+                file_put_contents($destinationPath. '/' . $request->name_of_file_show, $img_new);
+                
+                $application_data->logo = $request->name_of_file_show;
+                $application_data->name_of_file_show_logo = $request->name_of_file_show;
+                $application_data->update();
+            }
+
+            return response()->json(['message' => 'Welcome logo updated successfully.']);
+        }
+
+        if($request->hasfile('img_upload')){
+            $file_original_name = $request->file('img_upload')->getClientOriginalName();
+            $extension = $request->file('img_upload')->getClientOriginalExtension();
+
+            $file = $request->file('img_upload');
+            $destinationPath = $destinationPath = storage_path(). DIRECTORY_SEPARATOR . env('APPLICATION_DATA_STORAGE');
+            // $imageName = date('mdYHis') . rand(10,100) . uniqid(). '.' . $extension;
+            $file->move($destinationPath, $file_original_name);
+
+            $application_data->video = $file_original_name;
+            $application_data->name_of_file_show_video = $file_original_name;
+            $application_data->update();
+            return response()->json(['message' => 'Launch animation video updated successfully.']);
+        }
+
+        if($request->data_name == "App Theme Color"){
+            $application_data->color = $request->theme_color;
+            $application_data->update();
+            return response()->json(['message' => 'App theme color updated successfully.']);
+        }
+
+    }
+
+    public function getGeneralSettings(){
+         $application_data = ApplicationData::with('applicationImages')->first();
+         $general_settings = GeneralSetting::get();
+         return response()->json(['application_data' => $application_data, 'general_settings' => $general_settings]);
+    }
+
+    public function adminUserSave(Request $request){
+        $admin_user = Auth::guard('admin')->user();
+
+        $check_already_username = Admin::whereName($request->name)->first();
+
+        if(!empty($check_already_username)){
+            return response()->json(['admin_name_err' => "Admin username already exists."],422);
+        }
+
+
+        $hash_password = Hash::make($request->password);
+
+        $data =  $request->all();
+        $data['password'] = $hash_password;
+        $data['created_by'] = $admin_user->name;
+        $data['updated_by'] = $admin_user->name;
+        $data['password'] = $hash_password;
+
+        $admin = new Admin;
+        $admin->fill($data);
+        $admin->save();
+
+        if($admin){
+            return response()->json(['message' => 'New admin added successfully.']);
+        }
+    }
+
+    public function adminUserUpdate(Request $request){
+
+        $check_already_username = Admin::whereName($request->name)->where('id','!=',$request->update_id)->first();
+
+        if(!empty($check_already_username)){
+            return response()->json(['admin_name_err' => "Admin username already exists."],422);
+        }
+
+        $update_user = Admin::whereId($request->update_id)->first();
+        $admin_user = Auth::guard('admin')->user();
+
+        $hash_password = Hash::make($request->password);
+        $update_user->name = $request->name;
+        $update_user->password = $hash_password;
+        $update_user->status = $request->status;
+        $update_user->role_type = $request->role_type;
+        $update_user->updated_by = $admin_user->name;
+        $update_user->update();
+
+        if($update_user){
+            return response()->json(['message' => $request->name.' has been updated successfully.']);
+        }
+    }
+    public function getSingleAdminUser(Request $request){
+        $find_admin_user = Admin::whereId($request->data_id)->first();
+        return response()->json($find_admin_user);
+    }
+
+    public function getAdminUsersList(Request $request){
+        $column = "id";
+            $asc_desc = $request->get("order")[0]['dir'];
+         
+            if($asc_desc == "asc"){
+                $asc_desc = "desc";
+            }else{
+                $asc_desc = "asc";
+            }
+
+            $order = $request->get("order")[0]['column'];
+            if($order == 1){
+                $column = "name";
+            }elseif($order == 2){
+                $column = "password";
+            }elseif ($order == 3) {
+                $column = "role_type";
+            }elseif ($order == 4) {
+                $column = "status";
+            }elseif ($order == 5) {
+                $column = "created_at";
+            }elseif($order == 6){
+                $column = "created_by";
+            }elseif($order == 7){
+                $column = "updated_at";
+            }elseif($order == 8){
+                $column = "updated_by";
+            }
+
+        $data =Admin::orderBy($column,$asc_desc);
+        $total = $data->count();
+
+        $search = $request->get("search")["value"];
+        $filter = $total;
+
+        if($search){
+            $data  = $data->where(function($query) use($search){
+                            
+                $query->orWhere('name', 'Like', '%' . $search . '%');
+                $query->orWhere('role_type', 'Like', '%' . $search . '%');
+                $query->orWhere('created_at', 'Like', '%' . $search . '%');
+                $query->orWhere('created_by', 'Like', '%' . $search . '%');
+                $query->orWhere('updated_at', 'Like', '%' . $search . '%');
+                $query->orWhere('updated_by', 'Like', '%' . $search . '%');
+                $query->orWhere('status', 'Like', '%' . $search . '%');
+            });
+
+            $filter = $data->get()->count();
+                            
+        }
+
+        $data = $data->offset($request->start);
+        $data = $data->take($request->length);
+        $data = $data->get();
+
+
+        $start_from = $request->start;
+        if($start_from == 0){
+            $start_from  = 1;
+        }
+        if($start_from % 10 == 0){
+            $start_from = $start_from + 1;
+        }
+
+
+        foreach ($data as $k => $user_select) {
+            $user_select->DT_RowIndex = $start_from++;
+            $user_select->password = "******";
+        }
+
+
+        $return_data = [
+                "data" => $data,
+                "draw" => (int)$request->draw,
+                "recordsTotal" => $total,
+                "recordsFiltered" => $filter,
+                "input" => $request->all()
+        ];
+        return response()->json($return_data);
+        
     }
 }
 

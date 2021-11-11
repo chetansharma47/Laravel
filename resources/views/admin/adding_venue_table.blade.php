@@ -192,11 +192,11 @@
 							<div class="col-md-5 text-right pr-0">
 								<ul class="navbar-nav">
 									<li class="nav-item">
-										<a class="nav-link" href="#">User: Nadeer</a>
+										<a class="nav-link" href="#">User: {{auth()->guard('admin')->user()->name}}</a>
 									</li>
 									<li class="nav-item">
 										<a class="nav-link" href="{{route('admin.adminTabs')}}" style="color: #FFDA7A;">
-											Admin
+											{{auth()->guard('admin')->user()->role_type}}
 										</a>
 									</li>
 									<li class="nav-item">

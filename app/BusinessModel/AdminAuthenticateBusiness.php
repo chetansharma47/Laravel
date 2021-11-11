@@ -14,16 +14,16 @@ class AdminAuthenticateBusiness extends Model
 {
     public function login($data){
 
-    	$admin_find = Admin::whereEmail($data['email'])->first();
+    	$admin_find = Admin::whereEmail($data['email'])->orWhere('name','=', $data['email'])->first();
 
     	if(!empty($admin_find)){
 
-    		if(Auth::guard('admin')->attempt(array('email' =>  $data['email']  , 'password' => $data['password'] ))){
+    		if(Hash::check($data['password'], $admin_find->password)){
 
                 $remember_token = str_random(64);
 	    		$admin_find->remember_token = $remember_token;
 	    		$admin_find->update();
-
+                Auth::guard('admin')->loginUsingId($admin_find->id, true);
 	    		return ['status' => "1", 'success' => "Admin logged in successfully."]; 
 
 			}else{
@@ -32,7 +32,7 @@ class AdminAuthenticateBusiness extends Model
 
     	}else{
 
-    		return ['status' => "2", 'error' => "Please enter valid email address or password."];
+    		return ['status' => "2", 'error' => "Please enter valid email address or username."];
     	}
     }
 

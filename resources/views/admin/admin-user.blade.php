@@ -38,7 +38,7 @@
 .row.left-side {
     margin-left: -5px;
 }
-#basic-datatables_wrapper,
+/*#basic-datatables_wrapper,
 		#basic-datatables2_wrapper,
 		#basic-datatables3_wrapper {
 			padding: 0 !important;
@@ -65,10 +65,108 @@
     font-size: 20px !important;
     color: #676767 !important;
     background-color: #EBEBEB !important;
+		}*/
+		#basic-datatables_length {
+			display: none;
+		}
+		.page-item.active .page-link {
+			background-color: #193358;
+			border-color: #193358;
+		}
+		.page-item.active .page-link:hover {
+			color: #fff !important
+		}
+		div.dataTables_wrapper div.dataTables_filter input {
+			font-size: 14px !important;
+			border-radius: 0px !important;
+			margin-bottom: 14px;
+			padding: 3px 10px !important;
+			border: 0 !important;
+			background: #EBEBEB !important;
+			font-family: 'Signika', sans-serif;
+			font-weight: 700;
+			font-size: 20px !important;
+			color: #676767 !important;
+			background-color: #EBEBEB !important;
+		}
+
+		#basic-datatables_wrapper{
+		padding: 0 !important;
+		}
+
+		div#basic-datatables_wrapper .col-sm-12{
+		overflow: auto;
+		display: inline-block;
+		width: 100%;
+
 		}
 		.venue_inputs input::-webkit-input-placeholder {
 	     font-family: 'Signika', sans-serif !important;
 	    font-weight: 700 !important;
+		}
+		#validationModel .modal-header {
+		    background-color: #5f5f5f;
+		    color: #fff;
+		    justify-content: center;
+		}
+
+		#validationModel .modal-body {
+			text-align: center;
+		}
+
+		#validationModel .modal-body p {
+			margin-bottom: 0rem;
+		}
+		#successModel .modal-title{
+		    text-align: center;
+		    width: 100%;
+		    font-size: 20px;
+		    font-weight: 600;
+		}
+		#successModel .modal-header {
+		    background-color: #5f5f5f;
+		    color: #fff;
+		    justify-content: center;
+		}
+
+		#successModel .modal-body {
+			text-align: center;
+		}
+
+		#successModel .modal-body p {
+			margin-bottom: 0rem;
+		}
+
+		#confirmationmodel .modal-title{
+		    text-align: center;
+		    width: 100%;
+		    font-size: 20px;
+		    font-weight: 600;
+		}
+		#confirmationmodel .modal-header {
+		    background-color: #5f5f5f;
+		    color: #fff;
+		    justify-content: center;
+		}
+
+		#confirmationmodel .modal-body {
+			text-align: center;
+		}
+
+		#confirmationmodel .modal-body p {
+			margin-bottom: 0rem;
+		}
+		div#loaderImg2 {
+		    position: absolute;
+		    left: 0;
+		    right: 0;
+		    text-align: center;
+		    margin-top: 250px;
+		}
+
+		.td_edit[key_type=password]{
+			-webkit-text-security: disc;
+			color:#6f6f6f;
 		}
 	</style>
 
@@ -126,11 +224,11 @@
 							<div class="col-md-5 text-right pr-0">
 								<ul class="navbar-nav">
 									<li class="nav-item">
-										<a class="nav-link" href="#">User: Nadeer</a>
+										<a class="nav-link" href="#">User: {{auth()->guard('admin')->user()->name}}</a>
 									</li>
 									<li class="nav-item">
 										<a class="nav-link" href="{{route('admin.adminTabs')}}" style="color: #FFDA7A;">
-											Admin
+											{{auth()->guard('admin')->user()->role_type}}
 										</a>
 									</li>
 									<li class="nav-item">
@@ -146,6 +244,7 @@
 			</div>
 		</div>
 	</header>
+	<input type="hidden" class="admin_user_id">
 	<section class="mt-3">
 		<div class="container-fluid">
 			<div class="row">
@@ -154,43 +253,45 @@
 						<label style="font-weight: 400;">
 							Username
 						</label>
-						<input type="text" class="form-control form-control-user" placeholder="Username" value="Username" style="border-radius: 10px"/>
+						<input type="text" class="form-control form-control-user admin_username" value="" maxlength="30" placeholder="Username" value="" style="border-radius: 10px"/>
 					</div>
 					<div class="venue_inputs mb-3 px-2 pl-3">
 						<label style="font-weight: 400;">
 							Password
 						</label>
-						<input type="password" class="form-control form-control-user" placeholder="Password" value="Password" style="border-radius: 10px; font-family: 'Lato', sans-serif;"/>
+						<input type="password" class="form-control form-control-user admin_password" maxlength="65" placeholder="Password" value="" style="border-radius: 10px; font-family: 'Lato', sans-serif;"/>
 					</div>
 					<div class="venue_inputs mb-3 px-2 pl-3">
 						<label style="font-weight: 400;">
 							Select the Role
 						</label>
-						<select class="form-control form-group select_option" style="position: relative;border-radius: 10px;" id="exampleFormControlSelect1">
-							<option>Select User</option>
-							<option>Admin</option>
-							<option>Admin2</option>
-							<option>Admin3</option>
-							<option>Admin4</option>
+						<select class="form-control form-group select_option select_role_option" style="position: relative;border-radius: 10px;">
+							<option value="">Select User</option>
+							<option value="Super Admin">Super Admin</option>
+							<option value="Admin">Admin</option>
+							<option value="Marketing">Marketing</option>
+							<option value="Managment">Managment</option>
+							<option value="Staff">Staff</option>
 						</select>
 					</div>
 					<div class="venue_inputs mb-3 px-2 pl-3">
 						<label style="font-weight: 400;">
 							Status
 						</label>
-						<select class="form-control form-group select_option" style="position: relative;border-radius: 10px;" id="exampleFormControlSelect1">
-							<option>Active</option>
-							<option>Inactive</option>
+						<select class="form-control form-group select_option select_status_option" style="position: relative;border-radius: 10px;">
+							<option value="">Select Status</option>
+							<option value="Active">Active</option>
+							<option value="Inactive">Inactive</option>
 						</select>
 					</div>
 					<div class="d-flex justify-content-between mt-4">
 						<div>
-							<a href="" class="btn btn-primary btn-user btn-block common_btn" style="     font-size: 18px; text-transform: none;">
+							<a href="javascript:void(0);" class="btn btn-primary btn-user btn-block common_btn add_new_btn" style="     font-size: 18px; text-transform: none;">
 								Add New
 							</a>
 						</div>
 						<div>
-							<a href="" class="btn btn-primary btn-user btn-block common_btn" style="    font-size: 18px; text-transform: none;">
+							<a href="javascript:void(0);" class="btn btn-primary btn-user btn-block common_btn update_btn" style="font-size: 18px; text-transform: none;">
 								Update
 							</a>
 						</div>
@@ -212,77 +313,18 @@
 						<table id="basic-datatables" class="display table table-striped table-hover" >
 							<thead>
 								<tr style="background-color: #193358;    color: #fff;">
-									<th>Username</th>
+									<th>Sr.No.</th>
+									<th style="min-width: 200px;">Username</th>
 									<th>Password</th>
-									<th>Role</th>
+									<th style="min-width: 100px;">Role</th>
 									<th>Status</th>
-									<th>Created On</th>
-									<th>Created By</th>
-									<th>Updated On</th>
-									<th>Updated By</th>
+									<th style="min-width: 135px;">Created On</th>
+									<th style="min-width: 100px;">Created By</th>
+									<th style="min-width: 135px;">Updated On</th>
+									<th style="min-width: 100px;">Updated By</th>
 								</tr>
 							</thead>
 							<tbody>
-								<tr>
-									<td>NadChanllenge</td>
-									<td>*******</td>
-									<td>Admin</td>
-									<td>Active</td>
-									<td>21 June 2021 8:00 AM</td>
-									<td>Nadeer</td>
-									<td>21 June 2021 8:00 AM</td>
-									<td>Nadeer</td>
-								</tr>
-								<tr>
-									<td>Melvin</td>
-									<td>*******</td>
-									<td>Admin</td>
-									<td>Active</td>
-									<td>21 June 2021 8:00 AM</td>
-									<td>Nadeer</td>
-									<td>21 June 2021 8:00 AM</td>
-									<td>Nadeer</td>
-								</tr>
-								<tr>
-									<td>NadChanllenge</td>
-									<td>*******</td>
-									<td>Admin</td>
-									<td>Active</td>
-									<td>21 June 2021 8:00 AM</td>
-									<td>Nadeer</td>
-									<td>21 June 2021 8:00 AM</td>
-									<td>Nadeer</td>
-								</tr>
-								<tr>
-									<td>Melvin</td>
-									<td>*******</td>
-									<td>Admin</td>
-									<td>Active</td>
-									<td>21 June 2021 8:00 AM</td>
-									<td>Nadeer</td>
-									<td>21 June 2021 8:00 AM</td>
-									<td>Nadeer</td>
-								</tr>
-								<tr>
-									<td>NadChanllenge</td>
-									<td>*******</td>
-									<td>Admin</td>
-									<td>Active</td>
-									<td>21 June 2021 8:00 AM</td>
-									<td>Nadeer</td>
-									<td>21 June 2021 8:00 AM</td>
-									<td>Nadeer</td>
-								</tr>
-								<tr>
-									<td>Melvin</td>
-									<td>*******</td>
-									<td>Admin</td>
-									<td>Active</td>
-									<td>21 June 2021 8:00 AM</td>
-									<td>Nadeer</td>
-									<td>21 June 2021 8:00 AM</td>
-									<td>Nadeer</td>
-								</tr>
 							</tbody>
 						</table>
 					</div>
@@ -291,6 +333,83 @@
 			</div>
 		</div>
 	</section>
+
+			<!-- loader modal -->
+
+<div id="loaderModel" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <div class="loaderImg2" id="loaderImg2">
+               <img src = "{{url('public/loader.gif')}}">
+            </div>
+
+  </div>
+</div>
+
+<!-- validation model -->
+
+<div class="modal fade" id="validationModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Alert</h5>
+        <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button> -->
+      </div>
+      <div class="modal-body">
+        <p id="alert_text">info</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary ok" style="background-color: #3ABD6F!important; border: none; border-radius: 50px; color: #fff;"  data-dismiss="modal">Ok</button>
+       <!--  <button type="button" class="btn btn-primary">Save changes</button> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- success modal show -->
+<div class="modal fade" id="successModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Success</h5>
+        <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button> -->
+      </div>
+      <div class="modal-body">
+        <p id="success_alert_text">Info Text</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary ok" style="background-color: #3ABD6F!important; border: none; border-radius: 50px; color: #fff;"  data-dismiss="modal">Ok</button>
+       <!--  <button type="button" class="btn btn-primary">Save changes</button> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- confirmation modal show -->
+<div class="modal fade" id="confirmationmodel" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Alert</h5>
+        <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button> -->
+      </div>
+      <div class="modal-body">
+        <p id="success_alert_text">Are you sure, you want to delete this venue?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary ok" style="background-color: #3ABD6F!important; border: none; border-radius: 50px; color: #fff;"  data-dismiss="modal">No</button> 
+        <button type="button" class="btn btn-secondary confirm_ok" style="background-color: #3ABD6F!important; border: none; border-radius: 50px; color: #fff;" onclick="removeVenue();"  data-dismiss="modal">Yes</button>
+       <!--  <button type="button" class="btn btn-primary">Save changes</button> -->
+      </div>
+    </div>
+  </div>
+</div>
 <!--   Core JS Files   -->
 	<script src="{{url('public/admin/assets/js/core/jquery.3.2.1.min.js')}}"></script>
 	<script src="{{url('public/admin/assets/js/core/popper.min.js')}}"></script>
@@ -331,262 +450,284 @@
 
 	<!-- Atlantis DEMO methods, don't include it in your project! -->
 	<script src="{{url('public/admin/assets/js/setting-demo.js')}}"></script>
-	<script src="{{url('public/admin/assets/js/demo.js')}}"></script>
+	<!-- <script src="{{url('public/admin/assets/js/demo.js')}}"></script> -->
 	<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 	<script>
-window.onload = function () {
-
-var chart = new CanvasJS.Chart("chartContainer", {
-	animationEnabled: true,
-	title:{
-		text: ""
-	},
-	axisX:{
-		valueFormatString: "DD MMM",
-		crosshair: {
-			enabled: true,
-			snapToDataPoint: true
-		}
-	},
-	axisY: {
-		title: "",
-		valueFormatString: "2k",
-		crosshair: {
-			enabled: true,
-			snapToDataPoint: true,
-			labelFormatter: function(e) {
-				return "$" + CanvasJS.formatNumber(e.value, "2k");
-			}
-		}
-	},
-	data: [{
-		type: "area",
-		xValueFormatString: "DD MMM",
-		yValueFormatString: "2k",
-		dataPoints: [
-			{ x: new Date(2016, 07, 01), y: 76.727997 },
-			{ x: new Date(2016, 07, 02), y: 75.459999 },
-			{ x: new Date(2016, 07, 03), y: 76.011002 },
-			{ x: new Date(2016, 07, 04), y: 75.751999 }
-		]
-	}]
-});
-chart.render();
-
-
-var chart = new CanvasJS.Chart("chartContainer1", {
-	animationEnabled: true,
-	title:{
-		text: ""
-	},
-	axisX:{
-		valueFormatString: "DD MMM",
-		crosshair: {
-			enabled: true,
-			snapToDataPoint: true
-		}
-	},
-	axisY: {
-		title: "",
-		valueFormatString: "2k",
-		crosshair: {
-			enabled: true,
-			snapToDataPoint: true,
-			labelFormatter: function(e) {
-				return "$" + CanvasJS.formatNumber(e.value, "2k");
-			}
-		}
-	},
-	data: [{
-		type: "area",
-		xValueFormatString: "DD MMM",
-		yValueFormatString: "2k",
-		dataPoints: [
-			{ x: new Date(2016, 07, 01), y: 76.727997 },
-			{ x: new Date(2016, 07, 02), y: 75.459999 },
-			{ x: new Date(2016, 07, 03), y: 76.011002 },
-			{ x: new Date(2016, 07, 04), y: 75.751999 }
-		]
-	}]
-});
-chart.render();
-
-var chart = new CanvasJS.Chart("chartContainer2", {
-	animationEnabled: true,
-	title:{
-		text: ""
-	},
-	axisX:{
-		valueFormatString: "DD MMM",
-		crosshair: {
-			enabled: true,
-			snapToDataPoint: true
-		}
-	},
-	axisY: {
-		title: "",
-		valueFormatString: "2k",
-		crosshair: {
-			enabled: true,
-			snapToDataPoint: true,
-			labelFormatter: function(e) {
-				return "$" + CanvasJS.formatNumber(e.value, "2k");
-			}
-		}
-	},
-	data: [{
-		type: "area",
-		xValueFormatString: "DD MMM",
-		yValueFormatString: "2k",
-		dataPoints: [
-			{ x: new Date(2016, 07, 01), y: 76.727997 },
-			{ x: new Date(2016, 07, 02), y: 75.459999 },
-			{ x: new Date(2016, 07, 03), y: 76.011002 },
-			{ x: new Date(2016, 07, 04), y: 75.751999 }
-		]
-	}]
-});
-chart.render();
-
-var chart = new CanvasJS.Chart("chartContainer3", {
-	animationEnabled: true,
-	title:{
-		text: ""
-	},
-	axisX:{
-		valueFormatString: "DD MMM",
-		crosshair: {
-			enabled: true,
-			snapToDataPoint: true
-		}
-	},
-	axisY: {
-		title: "",
-		valueFormatString: "2k",
-		crosshair: {
-			enabled: true,
-			snapToDataPoint: true,
-			labelFormatter: function(e) {
-				return "$" + CanvasJS.formatNumber(e.value, "2k");
-			}
-		}
-	},
-	data: [{
-		type: "area",
-		xValueFormatString: "DD MMM",
-		yValueFormatString: "2k",
-		dataPoints: [
-			{ x: new Date(2016, 07, 01), y: 76.727997 },
-			{ x: new Date(2016, 07, 02), y: 75.459999 },
-			{ x: new Date(2016, 07, 03), y: 76.011002 },
-			{ x: new Date(2016, 07, 04), y: 75.751999 }
-		]
-	}]
-});
-chart.render();
-
-var chart = new CanvasJS.Chart("chartContainer4", {
-	animationEnabled: true,
-	theme: "light2", // "light1", "light2", "dark1", "dark2"
-	title:{
-		text: "Products Offer Redemption"
-	},
-	axisY: {
-		title: ""
-	},
-	data: [{        
-		type: "column",  
-		showInLegend: true, 
-		legendMarkerColor: "grey",
-		legendText: "",
-		dataPoints: [      
-			{ y: 6,  label: "Special Treat" },
-			{ y: 4, label: "Birthday Coffee" },
-			{ y: 2,  label: "Free Pizza" },
-			{ y: 0,  label: "Free Coffee" }
-		]
-	}]
-});
-chart.render();
-
-}
-
-</script>
-	<script>
-		$('#lineChart').sparkline([102,109,120,99,110,105,115], {
-			type: 'line',
-			height: '70',
-			width: '100%',
-			lineWidth: '2',
-			lineColor: 'rgba(255, 255, 255, .5)',
-			fillColor: 'rgba(255, 255, 255, .15)'
+		$(".ok").on("click",function(){
+			$("#validationModel").modal("hide");
+			$("#successModel").modal("hide");
 		});
 
-		$('#lineChart2').sparkline([99,125,122,105,110,124,115], {
-			type: 'line',
-			height: '70',
-			width: '100%',
-			lineWidth: '2',
-			lineColor: 'rgba(255, 255, 255, .5)',
-			fillColor: 'rgba(255, 255, 255, .15)'
+		$(document).on('keydown','.admin_username, .admin_password',function(e){
+			if(e.which===32){
+				return false;
+			}
 		});
 
-		$('#lineChart3').sparkline([105,103,123,100,95,105,115], {
-			type: 'line',
-			height: '70',
-			width: '100%',
-			lineWidth: '2',
-			lineColor: 'rgba(255, 255, 255, .5)',
-			fillColor: 'rgba(255, 255, 255, .15)'
-		});
-	</script>	
-	<script >
-		$(document).ready(function() {
-			$('#basic-datatables').DataTable({
+		$('.add_new_btn').click(function(){
+
+			let check_btn_text = $(this).text();
+
+			if(check_btn_text == 'Cancel'){
+				$('.admin_username').val('');
+				$('.admin_password').val('');
+				$('.select_role_option').val('');
+				$('.select_status_option').val('');
+				$('.admin_user_id').val('');
+				$(this).text('Admin');
+				return false;
+			}
+
+			let name = $('.admin_username').val();
+			let password = $('.admin_password').val();
+			let role_type = $('.select_role_option').val();
+			let status = $('.select_status_option').val();
+
+			if(name == ''){
+				$("#alert_text").text("Please enter username.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;	
+			}
+
+			if(name.length < 2){
+				$("#alert_text").text("Username should be at least 2 characters long.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+
+			}
+
+			if(password == ''){
+				$("#alert_text").text("Please enter password.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;	
+			}
+
+			if(password.length < 6 ){
+				$("#alert_text").text("Password must be at least 6 characters long.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
+			if(role_type == ''){
+				$("#alert_text").text("Please select role.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;	
+			}
+
+			if(status == ''){
+				$("#alert_text").text("Please select status.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;	
+			}
+
+			$.ajax({
+				url:'{{ route("admin.admin_user_save") }}',
+				type:'POST',
+				data_type:'JSON',
+				data:{name,password,role_type,status,'_token':'{{ csrf_token() }}'},
+				beforeSend:function(){
+		      		$("#loaderModel").modal("show");
+					$("#loaderModel").unbind("click");
+				},
+				success:function(data){
+					setTimeout(function(){
+					  	$("#loaderModel").modal("hide");
+					  	$("#successModel").modal("show");
+				  		$("#success_alert_text").text(data.message);
+				  		$("#successModel").unbind("click");
+				  		$('#basic-datatables').DataTable().ajax.reload();
+				  		$('.admin_username').val('');
+						$('.admin_password').val('');
+						$('.select_role_option').val('');
+						$('.select_status_option').val('');
+						$('.admin_user_id').val('');
+
+					},500);
+				},error: function(data, textStatus, xhr) {
+		            if(data.status == 422){
+		              setTimeout(function(){
+		              	$("#loaderModel").modal("hide");
+		                  	var result = data.responseJSON;
+		                 	if(result['admin_name_err'] && result['admin_name_err'].length > 0){
+		                 		$("#alert_text").text(result['admin_name_err']);
+								$("#validationModel").modal("show");
+								$("#validationModel").unbind("click");
+		                 	}
+		                  return false;
+		              },500);
+		            } 
+		      	}
 			});
+			
+		});
 
-			$('#multi-filter-select').DataTable( {
-				"pageLength": 5,
-				initComplete: function () {
-					this.api().columns().every( function () {
-						var column = this;
-						var select = $('<select class="form-control select_option"><option value=""></option></select>')
-						.appendTo( $(column.footer()).empty() )
-						.on( 'change', function () {
-							var val = $.fn.dataTable.util.escapeRegex(
-								$(this).val()
-								);
+		$('.update_btn').click(function(){
 
-							column
-							.search( val ? '^'+val+'$' : '', true, false )
-							.draw();
-						} );
+			let update_id = $('.admin_user_id').val();
+			let name = $('.admin_username').val();
+			let password = $('.admin_password').val();
+			let role_type = $('.select_role_option').val();
+			let status = $('.select_status_option').val();
 
-						column.data().unique().sort().each( function ( d, j ) {
-							select.append( '<option value="'+d+'">'+d+'</option>' )
-						} );
-					} );
+			if(update_id == ''){
+				$("#alert_text").text("Please select user for update.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;	
+			}
+			if(name == ''){
+				$("#alert_text").text("Please enter username.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;	
+			}
+			if(name.length < 2){
+				$("#alert_text").text("Username should be at least 2 characters long.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+
+			}
+
+			if(password == ''){
+				$("#alert_text").text("Please enter password.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;	
+			}
+
+			if(password.length < 6 ){
+				$("#alert_text").text("Password must be at least 6 characters long.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
+
+			if(role_type == ''){
+				$("#alert_text").text("Please select role.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;	
+			}
+
+			if(status == ''){
+				$("#alert_text").text("Please select status.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;	
+			}
+
+			$.ajax({
+				url:'{{ route("admin.admin_user_update") }}',
+				type:'POST',
+				data_type:'JSON',
+				data:{name,password,role_type,status,update_id,'_token':'{{ csrf_token() }}'},
+				beforeSend:function(){
+		      		$("#loaderModel").modal("show");
+					$("#loaderModel").unbind("click");
+				},
+				success:function(data){
+					setTimeout(function(){
+					  	$("#loaderModel").modal("hide");
+					  	$("#successModel").modal("show");
+				  		$("#success_alert_text").text(data.message);
+				  		$("#successModel").unbind("click");
+				  		$('#basic-datatables').DataTable().ajax.reload();
+				  		$('.admin_username').val('');
+						$('.admin_password').val('');
+						$('.select_role_option').val('');
+						$('.select_status_option').val('');
+						$('.admin_user_id').val('');
+					},500);
+				},error: function(data, textStatus, xhr) {
+		            if(data.status == 422){
+		              setTimeout(function(){
+		              	$("#loaderModel").modal("hide");
+		                  	var result = data.responseJSON;
+		                 	if(result['admin_name_err'] && result['admin_name_err'].length > 0){
+		                 		$("#alert_text").text(result['admin_name_err']);
+								$("#validationModel").modal("show");
+								$("#validationModel").unbind("click");
+		                 	}
+		                  return false;
+		              },500);
+		            } 
+		      	}
+			});
+			
+		});
+
+		function getAdminUsersList(){
+			let table = $("#basic-datatables").DataTable({
+				processing:true,
+				serverSide:true,
+				retrieve: true,
+				paging: true,
+				searching:true,
+				ajax:{
+					url:"{{ route('admin.get_admin_users_list') }}",
+					type:"POST",
+					data:{'_token':'{{csrf_token()}}'},
+				},
+				createdRow:function(row, data, dataIndex){
+					$( row ).find('td:eq(0)').attr('data-id', data['id']).addClass('td_edit');
+					$( row ).find('td:eq(1)').attr('data-id', data['id']).addClass('td_edit');
+					$( row ).find('td:eq(2)').attr('data-id', data['id']).attr({key_type:'password',type:'password'}).addClass('td_edit');
+					$( row ).find('td:eq(3)').attr('data-id', data['id']).addClass('td_edit');
+					$( row ).find('td:eq(4)').attr('data-id', data['id']).addClass('td_edit');
+					$( row ).find('td:eq(5)').attr('data-id', data['id']).addClass('td_edit');
+					$( row ).find('td:eq(6)').attr('data-id', data['id']).addClass('td_edit');
+					$( row ).find('td:eq(7)').attr('data-id', data['id']).addClass('td_edit');
+					$( row ).find('td:eq(8)').attr('data-id', data['id']).addClass('td_edit');
+				},
+				columns:[
+					{data: 'DT_RowIndex', name: 'DT_RowIndex'},
+					{data:'name',name:'name'},
+					{data:'password',name:'password', orderable: false},
+					{data:'role_type',name:'role_type'},
+					{data:'status',name:'status'},
+					{data:'created_at', name:'created_at'},
+					{data:'created_by', name:'created_by'},
+					{data:'updated_at', name:'updated_at'},
+					{data:'updated_by', name:'updated_by'},
+				]
+			
+			});
+				
+		}
+
+		getAdminUsersList();
+
+		$(document).on('dblclick','.td_edit',function(){
+			let data_id = $(this).attr('data-id');
+			$.ajax({
+				url:'{{ route("admin.get_single_admin_user") }}',
+				type:'POST',
+				data_type:'JSON',
+				data:{data_id, '_token':'{{ csrf_token() }}'},
+				beforeSend:function(){
+	          		$("#loaderModel").modal("show");
+					$("#loaderModel").unbind("click");
+				},
+				success:function(data){
+					setTimeout(function(){
+					  	$("#loaderModel").modal("hide");
+					  	$(".admin_username").val(data.name);
+						$('.admin_password').val('');
+						$('.select_role_option').val(data.role_type);
+						$('.select_status_option').val(data.status);
+						$('.admin_user_id').val(data.id);
+						$('.add_new_btn').text('Cancel');
+					},500);
 				}
 			});
-
-			// Add Row
-			$('#add-row').DataTable({
-				"pageLength": 5,
-			});
-
-			var action = '<td> <div class="form-button-action"> <button type="button" data-toggle="tooltip" title="" class="btn btn-link btn-primary btn-lg" data-original-title="Edit Task"> <i class="fa fa-edit"></i> </button> <button type="button" data-toggle="tooltip" title="" class="btn btn-link btn-danger" data-original-title="Remove"> <i class="fa fa-times"></i> </button> </div> </td>';
-
-			$('#addRowButton').click(function() {
-				$('#add-row').dataTable().fnAddData([
-					$("#addName").val(),
-					$("#addPosition").val(),
-					$("#addOffice").val(),
-					action
-					]);
-				$('#addRowModal').modal('hide');
-
-			});
 		});
+
 	</script>
 </body>
 </html>

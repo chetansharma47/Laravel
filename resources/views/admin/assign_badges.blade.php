@@ -266,11 +266,11 @@ table#basic-datatables {
 							<div class="col-md-5 text-right pr-0">
 								<ul class="navbar-nav">
 									<li class="nav-item">
-										<a class="nav-link" href="javascript:void(0);">User: Nadeer</a>
+										<a class="nav-link" href="javascript:void(0);">User: {{auth()->guard('admin')->user()->name}}</a>
 									</li>
 									<li class="nav-item">
 										<a class="nav-link" href="{{route('admin.adminTabs')}}" style="color: #FFDA7A;">
-											Admin
+											{{auth()->guard('admin')->user()->role_type}}
 										</a>
 									</li>
 									<li class="nav-item">
@@ -1097,7 +1097,7 @@ table#basic-datatables {
 				          	console.log(res)
 				          	setTimeout(function(){
 				          		$("#loaderModel").modal("hide");
-				          		
+				          		$(".days").val("");
 
 				          		if(res.action_type == "add"){
 
@@ -1355,6 +1355,7 @@ table#basic-datatables {
 				          	console.log(res)
 				          	setTimeout(function(){
 				          		$("#loaderModel").modal("hide");
+				          		$(".days").val("");
 				          		
 
 				          		if(res.action_type == "add"){

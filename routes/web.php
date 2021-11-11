@@ -183,10 +183,20 @@ Route::group(['middleware' => 'TimeZone','namespace' => 'Admin','prefix'=>'/admi
         Route::post('verify-selected-transactions','TabController@VerifySelectTransactions')->name('verify_select_transactions');
 
         Route::get('download-verify-sales-after-successfully-uploded-file/{ids_data}','TabController@donwloadSalesVerifyAfterSuccessfullyUplodedFile')->name('donwloadSalesVerifyAfterSuccessfullyUplodedFile');
-
+        
         Route::post('end-user-customer-transactions','TabController@EndUserCustomerTransactions')->name('EndUserCustomerTransactions');
         Route::get('excel-download-customer-transactions','TabController@ExcelDownloadCustomerTransactions')->name('ExcelDownloadCustomerTransactions');
-        
+
+        Route::get('get-general-settings','TabController@getGeneralSettings')->name('getGeneralSettings');
+        Route::post('general-settings-save','TabController@generalSettingsSave')->name('generalSettingsSave');
+        Route::post('application-data-save','TabController@applicationDataSave')->name('application_data_save');
+        Route::post('save-gen-application-data','TabController@saveGenApplicationData')->name('save_gen_application_data');
+        Route::post('admin-user-save','TabController@adminUserSave')->name('admin_user_save');
+        Route::post('admin-user-update','TabController@adminUserUpdate')->name('admin_user_update');
+
+
+        Route::post('get-admin-users-list','TabController@getAdminUsersList')->name('get_admin_users_list');
+        Route::post('get-single-admin-user','TabController@getSingleAdminUser')->name('get_single_admin_user');
     }); 
            
 });

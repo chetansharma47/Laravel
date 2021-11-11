@@ -209,11 +209,11 @@
 							<div class="col-md-5 text-right pr-0">
 								<ul class="navbar-nav">
 									<li class="nav-item">
-										<a class="nav-link" href="#">User: Nadeer</a>
+										<a class="nav-link" href="#">User: {{auth()->guard('admin')->user()->name}}</a>
 									</li>
 									<li class="nav-item">
 										<a class="nav-link" href="{{route('admin.adminTabs')}}" style="color: #FFDA7A;">
-											Admin
+											{{auth()->guard('admin')->user()->role_type}}
 										</a>
 									</li>
 									<li class="nav-item">
@@ -1033,12 +1033,12 @@ if(file){
 				$("#validationModel").unbind("click");
 				return false;
 			}
-			if(event_time_data >= to_time_data){
-				$("#alert_text").text("To time should be greater than from time.");
-				$("#validationModel").modal("show");
-				$("#validationModel").unbind("click");
-				return false;
-			}
+			// if(event_time_data >= to_time_data){
+			// 	$("#alert_text").text("To time should be greater than from time.");
+			// 	$("#validationModel").modal("show");
+			// 	$("#validationModel").unbind("click");
+			// 	return false;
+			// }
 
 			// if(event_time_data == to_time_data){
 			// 	$("#alert_text").text("To time should be greater than from time.");

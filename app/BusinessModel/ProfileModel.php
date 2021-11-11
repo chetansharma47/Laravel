@@ -22,6 +22,10 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use App\Mail\SignupMail;
 use App\Models\AdminNotification;
 use App\Models\Otp;
+use App\Models\WalletTransaction;
+use App\Models\WalletDetail;
+use App\Models\NotiRecord;
+use Image;
 class ProfileModel extends Model
 {
 
@@ -41,7 +45,12 @@ class ProfileModel extends Model
 
     public static function uploadImage($image, $destinationPath){
         $imageName = date('mdYHis') . uniqid() . '.' . str_replace(" ", "_", $image->getClientOriginalExtension());
-        $image->move($destinationPath, $imageName);
+        //$image->move($destinationPath, $imageName);
+
+        $img_new = Image::make($image)->stream($image->getClientOriginalExtension(), 50);
+        
+        file_put_contents($destinationPath. '/' . $imageName, $img_new);
+        
         return $imageName;
     }
 
@@ -184,6 +193,19 @@ class ProfileModel extends Model
         $data['password'] = Hash::make($request->password);
         $data['verify_email_token'] = $token;
         $save_user = self::createUser($data);
+
+        $noti_record = new NotiRecord();
+        $noti_record->user_id = $save_user->id;
+        $noti_record->save();
+
+        $wallet_detail = new WalletDetail();
+        $wallet_detail->user_id = $save_user->id;
+        $wallet_detail->description = "Bonus Earnings";
+        $wallet_detail->cashback_earned = $bonus;
+        $wallet_detail->date_and_time = Carbon::now()->toDateString(). " ". Carbon::now()->toTimeString();
+        $wallet_detail->type_of_transaction = "Bonus";
+        $wallet_detail->user_wallet_cash = $save_user->wallet_cash;
+        $wallet_detail->save();
 
 
         $generator = new Picqer\Barcode\BarcodeGeneratorPNG();

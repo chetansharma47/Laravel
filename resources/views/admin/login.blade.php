@@ -189,7 +189,7 @@ label.error {
                   	{{@csrf_field()}}
                     <div class="form-group" style="padding-right: 0; padding-left: 0">
                     	<label>Login</label>
-                      <input type="email" class="form-control form-control-user" id="exampleInputEmail" onkeypress="return AvoidSpace(event)" aria-describedby="emailHelp" name="email" placeholder="Email Address">
+                      <input type="text" class="form-control form-control-user" id="exampleInputEmail" onkeypress="return AvoidSpace(event)" aria-describedby="emailHelp" name="email" placeholder="Email Address">
                     </div>
                     <div class="form-group" style="padding-right: 0; padding-left: 0">
                     	<label>Password</label>
@@ -314,8 +314,8 @@ label.error {
 			rules:{
 				email:{
 					required:true,
-					email:true,
-					valid_email: true
+					//email:true,
+					//valid_email: true
 				},
 				password:{
 					required:true,
@@ -324,7 +324,7 @@ label.error {
 			},
 			messages:{
 				email:{
-					required: 'Please enter email address.',
+					required: 'Please enter email address or username.',
 					email: 'Please enter valid email address.'
 				},
 				password:{

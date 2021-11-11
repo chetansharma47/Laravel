@@ -249,11 +249,11 @@
 							<div class="col-md-5 text-right pr-0">
 								<ul class="navbar-nav">
 									<li class="nav-item">
-										<a class="nav-link" href="#">User: Nadeer</a>
+										<a class="nav-link" href="#">User: {{auth()->guard('admin')->user()->name}}</a>
 									</li>
 									<li class="nav-item">
 										<a class="nav-link" href="{{route('admin.adminTabs')}}" style="color: #FFDA7A;">
-											Admin
+											{{auth()->guard('admin')->user()->role_type}}
 										</a>
 									</li>
 									<li class="nav-item">
@@ -490,6 +490,7 @@
 									<th>Customer Mobile No.</th>
 									<th>Description</th>
 									<th>Cashback Earned</th>
+									<th>Redeemed Amount</th>
 									<th>Wallet Cash</th>
 									<th>Date Added</th>
 								</tr>
@@ -1415,8 +1416,9 @@ chart.render();
 		        $( row ).find('td:eq(2)').attr('data-id', data['id']).attr('key_type','mobile_number');
 		        $( row ).find('td:eq(3)').attr('data-id', data['id']).attr('key_type','description');
 		        $( row ).find('td:eq(4)').attr('data-id', data['id']).attr('key_type','cashback_earned');
-		        $( row ).find('td:eq(5)').attr('data-id', data['id']).attr('key_type','wallet_cash');
-		        $( row ).find('td:eq(6)').attr('data-id', data['id']).attr('key_type','date_and_time');
+		        $( row ).find('td:eq(5)').attr('data-id', data['id']).attr('key_type','redeemed_amount');
+		        $( row ).find('td:eq(6)').attr('data-id', data['id']).attr('key_type','user_wallet_cash');
+		        $( row ).find('td:eq(7)').attr('data-id', data['id']).attr('key_type','date_and_time');
 		    },
             "columns": [
              	{data: 'DT_RowIndex', name: 'DT_RowIndex'},
@@ -1424,7 +1426,8 @@ chart.render();
 	            {data: 'mobile_number', name: 'mobile_number'},
 	            {data: 'description', name: 'description'},
 	            {data: 'cashback_earned', name: 'cashback_earned'},
-	            {data: 'wallet_cash', name: 'wallet_cash'},
+	            {data: 'redeemed_amount', name: 'redeemed_amount'},
+	            {data: 'user_wallet_cash', name: 'user_wallet_cash'},
 	            {data: 'date_and_time', name: 'date_and_time'}
             ]
  

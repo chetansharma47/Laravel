@@ -14,6 +14,7 @@ use App\Models\OfferSetting;
 use App\Models\City;
 use App\Models\Badge;
 use App\Models\AssignBadge;
+use Image;
 
 class VenueBusinessModel extends Model
 {
@@ -30,7 +31,12 @@ class VenueBusinessModel extends Model
         	$imageName = date('mdYHis') . rand(10,100) . uniqid().'.jpeg';
 		}
         
-        file_put_contents($destinationPath. '/' . $imageName, base64_decode($image1));
+        //file_put_contents($destinationPath. '/' . $imageName, base64_decode($image1));
+
+        $img_new = Image::make(base64_decode($image1))->stream($extension, 50);
+        
+        file_put_contents($destinationPath. '/' . $imageName, $img_new);
+        
         return $imageName;
 	}
 
@@ -46,7 +52,7 @@ class VenueBusinessModel extends Model
 		
 
 		//exist query
-		$venue = Venu::whereAdminId($admin->id)->whereUniqueId($data['uniq'])->whereDeletedAt(null)->first();
+		$venue = Venu::whereUniqueId($data['uniq'])->whereDeletedAt(null)->first();
 
 
 		if(empty($venue)){
@@ -66,7 +72,7 @@ class VenueBusinessModel extends Model
 			$venue->pos_venue_id= $data['pos_venue_id'];
 			$venue->save();
 
-			$offer_data = Offer::whereAdminId($admin->id)->orderBy('unique_id','desc')->first();
+			$offer_data = Offer::orderBy('unique_id','desc')->first();
 
             if(empty($offer_data)){
                 $new_uniq_id = 1;
@@ -131,7 +137,7 @@ class VenueBusinessModel extends Model
 			}
 		}
 
-		$event = Event::whereAdminId($admin->id)->whereUniqueId($data['uniq'])->whereDeletedAt(null)->first();
+		$event = Event::whereUniqueId($data['uniq'])->whereDeletedAt(null)->first();
 
 		if(empty($event)){
 			$event = new Event();
@@ -188,7 +194,7 @@ class VenueBusinessModel extends Model
 			}
 		}
 
-		$offer = Offer::whereAdminId($admin->id)->whereUniqueId($data['uniq_id'])->whereDeletedAt(null)->first();
+		$offer = Offer::whereUniqueId($data['uniq_id'])->whereDeletedAt(null)->first();
 
 		if(empty($offer)){
 
@@ -275,6 +281,7 @@ class VenueBusinessModel extends Model
 	}
 
 	public function addOrUpdateBadgeAssignInTable($data){
+		$admin = Auth::guard('admin')->user();
 		$find_user = User::whereCustomerId($data['customer_id'])->first();
 		$find_badge_assign = AssignBadge::whereUserId($find_user->id)->whereBadgeId($data['badge_id'])->whereDeletedAt(null)->first();
 
@@ -290,8 +297,8 @@ class VenueBusinessModel extends Model
 			$assign_badge->to_date = $data['to_date'];
 			$assign_badge->from_time = $data['from_time'];
 			$assign_badge->to_time = $data['to_time'];
-			$assign_badge->created_by = "Admin";
-			$assign_badge->updated_by = "Admin";
+			$assign_badge->created_by = $admin->name;
+			$assign_badge->updated_by = $admin->name;
 			$assign_badge->save();
 			$assign_badge_find = AssignBadge::whereId($assign_badge->id)->with('user','badge')->first();
 		}else{
@@ -303,8 +310,7 @@ class VenueBusinessModel extends Model
 			$find_badge_assign->to_date = $data['to_date'];
 			$find_badge_assign->from_time = $data['from_time'];
 			$find_badge_assign->to_time = $data['to_time'];
-			$find_badge_assign->created_by = "Admin";
-			$find_badge_assign->updated_by = "Admin";
+			$find_badge_assign->updated_by = $admin->name;
 			$find_badge_assign->update();
 			$assign_badge_find = AssignBadge::whereId($find_badge_assign->id)->with('user','badge')->first();
 		}

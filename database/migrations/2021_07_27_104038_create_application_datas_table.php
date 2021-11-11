@@ -20,6 +20,8 @@ class CreateApplicationDatasTable extends Migration
             $table->string('logo');
             $table->string('video');
             $table->string('color');
+            $table->string('name_of_file_show_logo');
+            $table->string('name_of_file_show_video');
             $table->timestamps();
             $table->softDeletes();
         });

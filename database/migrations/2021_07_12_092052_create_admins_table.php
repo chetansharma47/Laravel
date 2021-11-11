@@ -16,10 +16,14 @@ class CreateAdminsTable extends Migration
         Schema::create('admins', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
-            $table->string('email');
+            $table->string('email')->nullable();
             $table->string('password');
+            $table->enum('status',['Inactive','Active'])->nullable();
+            $table->enum('role_type',['Super Admin','Admin','Marketing','Managment','Staff'])->nullable();
             $table->rememberToken();
             $table->timestamps();
+            $table->string('created_by')->defauly('Admin')->nullable();
+            $table->string('updated_by')->defauly('Admin')->nullable();
         });
     }
 
