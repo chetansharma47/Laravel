@@ -47,7 +47,7 @@ use App\Models\LoginPose;
 use App\Models\WalletDetail;
 use App\Models\NotiRecord;
 use App\Models\GeneralSetting;
-require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/society_16_november/vendor/autoload.php';
 
 class RestaurantAuthenticationController extends ResponseController
 {
@@ -497,6 +497,9 @@ class RestaurantAuthenticationController extends ResponseController
         $admin_refer_notification = AdminNotification::where("uniq_id","=",4)->first();
 
         if(!empty($admin_transaction_notification)){
+
+            $admin_transaction_notification->message = "Congratulations you have redeemed amount of ".$data['redeemed_amount']." AED for your transaction. ".$admin_transaction_notification->message;
+
             if($admin_transaction_notification->push_type == 1){
 
                 if($user_find->device_type == 'Android'){
@@ -942,6 +945,9 @@ class RestaurantAuthenticationController extends ResponseController
         $admin_cashback_notification = AdminNotification::where("uniq_id","=",2)->first();
 
         if(!empty($admin_transaction_notification)){
+
+            $admin_transaction_notification->message = "Congratulations you have redeemed amount of ".$data['redeemed_amount']." AED for your transaction. ".$admin_transaction_notification->message;
+
             if($admin_transaction_notification->push_type == 1){
 
                 if($user_find->device_type == 'Android'){
@@ -1030,6 +1036,8 @@ class RestaurantAuthenticationController extends ResponseController
 
         }
         if(!empty($admin_refer_notification) && !empty($refer_user_find)){
+
+            $admin_refer_notification->message = "Congratulations you have earned referral bonus of ".$user_find->refer_amount." AED. ".$admin_refer_notification->message;
 
             $user_find->refer_amount_used = 1;
             $user_find->update();
@@ -1140,6 +1148,9 @@ class RestaurantAuthenticationController extends ResponseController
 
 
         if(!empty($admin_cashback_notification)){
+
+            $admin_cashback_notification->message = "Congratulations you have cashback amount of ".$data['cashback_earned']." AED. ".$admin_cashback_notification->message;
+
             if($admin_cashback_notification->push_type == 1){
 
                 if($user_find->device_type == 'Android'){

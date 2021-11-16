@@ -32,7 +32,7 @@ use App\Mail\OfferAssignMail;
 use App\Mail\MultipleEventCroneMailSend;
 use Illuminate\Support\Arr;
 date_default_timezone_set("Asia/Kolkata");
-require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/society_16_november/vendor/autoload.php';
 
 class Controller extends BaseController
 {

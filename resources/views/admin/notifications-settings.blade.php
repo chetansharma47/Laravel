@@ -856,12 +856,12 @@
 				return false;
 			}
 
-			if(city_id == ''){
-				$("#alert_text").text("Please select city of residence.");
-				$("#validationModel").modal("show");
-				$("#validationModel").unbind("click");
-				return false;
-			}
+			// if(city_id == ''){
+			// 	$("#alert_text").text("Please select city of residence.");
+			// 	$("#validationModel").modal("show");
+			// 	$("#validationModel").unbind("click");
+			// 	return false;
+			// }
 
 			/*if(nationality == ''){
 				$("#alert_text").text("Please select nationality.");

@@ -61,7 +61,7 @@ use App\Models\ApplicationImage;
 use App\Models\GeneralSetting;
 use Image;
 use App\Models\Admin;
-require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/society_16_november/vendor/autoload.php';
 
 class TabController extends ResponseController
 {
@@ -2303,9 +2303,20 @@ class TabController extends ResponseController
 
         if($request->gender == "All"){
 
-            $users_notify = User::whereCityOfResidence($request->city_name)->where('is_block','=',0)->get();
+            if(!empty($request->city_name)){
+
+                $users_notify = User::whereCityOfResidence($request->city_name)->where('is_block','=',0)->get();
+            }else{
+                $users_notify = User::where('is_block','=',0)->get();
+            }
         }else{
-            $users_notify = User::whereCityOfResidence($request->city_name)->whereGender($request->gender)->where('is_block','=',0)->get();
+
+            if(!empty($request->city_name)){
+
+                $users_notify = User::whereCityOfResidence($request->city_name)->whereGender($request->gender)->where('is_block','=',0)->get();
+            }else{
+                $users_notify = User::whereGender($request->gender)->where('is_block','=',0)->get();
+            }
         }
 
         $data = [
@@ -2840,6 +2851,8 @@ class TabController extends ResponseController
                                     }
                                     if(!empty($admin_refer_notification) && !empty($refer_user_find)){
 
+                                        $admin_refer_notification->message = "Congratulations you have earned referral bonus of ".$user_find->refer_amount." AED. ".$admin_refer_notification->message;
+
                                         $user_find->refer_amount_used = 1;
                                         $user_find->update();
 
@@ -3042,6 +3055,8 @@ class TabController extends ResponseController
                 }
                 if(!empty($admin_refer_notification) && !empty($refer_user_find)){
 
+                    $admin_refer_notification->message = "Congratulations you have earned referral bonus of ".$user_find->refer_amount." AED. ".$admin_refer_notification->message;
+
                     $user_find->refer_amount_used = 1;
                     $user_find->update();
 
@@ -3197,6 +3212,8 @@ class TabController extends ResponseController
 
             }
             if(!empty($admin_refer_notification) && !empty($refer_user_find)){
+
+                $admin_refer_notification->message = "Congratulations you have earned referral bonus of ".$user_find->refer_amount." AED. ".$admin_refer_notification->message;
 
                 $user_find->refer_amount_used = 1;
                 $user_find->update();

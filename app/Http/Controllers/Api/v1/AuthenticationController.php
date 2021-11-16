@@ -42,7 +42,7 @@ use App\Models\GeneralSetting;
 use App\Mail\ContactUsAdmin;
 use App\Models\EventSentNotification;
 
-require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/society_16_november/vendor/autoload.php';
 
 class AuthenticationController extends ResponseController
 {
@@ -93,6 +93,10 @@ class AuthenticationController extends ResponseController
         if($register['data']['wallet_cash'] > 0){
 
             $admin_notification_find = AdminNotification::where("uniq_id","=",3)->first();
+
+            if(!empty($admin_notification_find)){
+                $admin_notification_find->message = "Congratulations you have earned welcome bonus of ".$register['data']['wallet_cash']." AED. ".$admin_notification_find->message;
+            }
 
             if(!empty($admin_notification_find) && $admin_notification_find->sms_type == 1){
                 \SMSGlobal\Credentials::set(env('SMS_GLOBAL_API'),env('SMS_GLOBAL_SECERET'));
