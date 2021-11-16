@@ -228,7 +228,7 @@
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 						<span class="navbar-toggler-icon"></span>
 					</button>
-
+					<input type="hidden" id="selected_id_input">
 					<div class="collapse navbar-collapse" id="navbarSupportedContent">
 						<div class="row w-100">
 							<div class="col-md-5 col-sm-12">
@@ -472,7 +472,7 @@
 							<label style="font-size: 18px !important; font-weight: 400; margin-right: 12px;">
 								Selected Customer Wallet Transactions (Selection from above)
 							</label>
-							<a href="{{route('admin.downloadWalletTransactions')}}" target="_blank" class="btn btn-primary btn-user btn-block common_btn" style="     font-size: 18px; width: 154px; margin-right: 15px; text-transform: none; padding: 8px 0; z-index: 99;">
+							<a href="javascript:void(0);" class="btn btn-primary btn-user btn-block selected_download_transactions common_btn" style="     font-size: 18px; width: 154px; margin-right: 15px; text-transform: none; padding: 8px 0; z-index: 99;">
 									Download
 							</a>
 						</div>
@@ -492,7 +492,7 @@
 									<th>Cashback Earned</th>
 									<th>Redeemed Amount</th>
 									<th>Wallet Cash</th>
-									<th>Date Added</th>
+									<th>Date and Time Added</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -669,7 +669,7 @@
 							</a>
 						</div>
 						<div>
-							<a href="{{ route('admin.ExcelDownloadCustomerTransactions') }}" target="_blank" class="btn btn-primary btn-user btn-block download_customer_wallet_transactions common_btn" style="     font-size: 18px; width: 154px; margin-right: 15px; text-transform: none; padding: 8px 0;">
+							<a href="javascript:void(0);" class="btn btn-primary btn-user btn-block download_customer_wallet_transactions common_btn" style="     font-size: 18px; width: 154px; margin-right: 15px; text-transform: none; padding: 8px 0;">
 								Download
 							</a>
 						</div>
@@ -851,267 +851,6 @@
 	<!-- Atlantis JS -->
 	<script src="{{url('public/admin/assets/js/atlantis.min.js')}}"></script>
 
-	<!-- Atlantis DEMO methods, don't include it in your project! -->
-	<!-- <script src="{{url('public/admin/assets/js/setting-demo.js')}}"></script>
-	<script src="{{url('public/admin/assets/js/demo.js')}}"></script>
-	<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script> -->
-<!-- 	<script>
-window.onload = function () {
-
-var chart = new CanvasJS.Chart("chartContainer", {
-	animationEnabled: true,
-	title:{
-		text: ""
-	},
-	axisX:{
-		valueFormatString: "DD MMM",
-		crosshair: {
-			enabled: true,
-			snapToDataPoint: true
-		}
-	},
-	axisY: {
-		title: "",
-		valueFormatString: "2k",
-		crosshair: {
-			enabled: true,
-			snapToDataPoint: true,
-			labelFormatter: function(e) {
-				return "$" + CanvasJS.formatNumber(e.value, "2k");
-			}
-		}
-	},
-	data: [{
-		type: "area",
-		xValueFormatString: "DD MMM",
-		yValueFormatString: "2k",
-		dataPoints: [
-			{ x: new Date(2016, 07, 01), y: 76.727997 },
-			{ x: new Date(2016, 07, 02), y: 75.459999 },
-			{ x: new Date(2016, 07, 03), y: 76.011002 },
-			{ x: new Date(2016, 07, 04), y: 75.751999 }
-		]
-	}]
-});
-chart.render();
-
-
-var chart = new CanvasJS.Chart("chartContainer1", {
-	animationEnabled: true,
-	title:{
-		text: ""
-	},
-	axisX:{
-		valueFormatString: "DD MMM",
-		crosshair: {
-			enabled: true,
-			snapToDataPoint: true
-		}
-	},
-	axisY: {
-		title: "",
-		valueFormatString: "2k",
-		crosshair: {
-			enabled: true,
-			snapToDataPoint: true,
-			labelFormatter: function(e) {
-				return "$" + CanvasJS.formatNumber(e.value, "2k");
-			}
-		}
-	},
-	data: [{
-		type: "area",
-		xValueFormatString: "DD MMM",
-		yValueFormatString: "2k",
-		dataPoints: [
-			{ x: new Date(2016, 07, 01), y: 76.727997 },
-			{ x: new Date(2016, 07, 02), y: 75.459999 },
-			{ x: new Date(2016, 07, 03), y: 76.011002 },
-			{ x: new Date(2016, 07, 04), y: 75.751999 }
-		]
-	}]
-});
-chart.render();
-
-var chart = new CanvasJS.Chart("chartContainer2", {
-	animationEnabled: true,
-	title:{
-		text: ""
-	},
-	axisX:{
-		valueFormatString: "DD MMM",
-		crosshair: {
-			enabled: true,
-			snapToDataPoint: true
-		}
-	},
-	axisY: {
-		title: "",
-		valueFormatString: "2k",
-		crosshair: {
-			enabled: true,
-			snapToDataPoint: true,
-			labelFormatter: function(e) {
-				return "$" + CanvasJS.formatNumber(e.value, "2k");
-			}
-		}
-	},
-	data: [{
-		type: "area",
-		xValueFormatString: "DD MMM",
-		yValueFormatString: "2k",
-		dataPoints: [
-			{ x: new Date(2016, 07, 01), y: 76.727997 },
-			{ x: new Date(2016, 07, 02), y: 75.459999 },
-			{ x: new Date(2016, 07, 03), y: 76.011002 },
-			{ x: new Date(2016, 07, 04), y: 75.751999 }
-		]
-	}]
-});
-chart.render();
-
-var chart = new CanvasJS.Chart("chartContainer3", {
-	animationEnabled: true,
-	title:{
-		text: ""
-	},
-	axisX:{
-		valueFormatString: "DD MMM",
-		crosshair: {
-			enabled: true,
-			snapToDataPoint: true
-		}
-	},
-	axisY: {
-		title: "",
-		valueFormatString: "2k",
-		crosshair: {
-			enabled: true,
-			snapToDataPoint: true,
-			labelFormatter: function(e) {
-				return "$" + CanvasJS.formatNumber(e.value, "2k");
-			}
-		}
-	},
-	data: [{
-		type: "area",
-		xValueFormatString: "DD MMM",
-		yValueFormatString: "2k",
-		dataPoints: [
-			{ x: new Date(2016, 07, 01), y: 76.727997 },
-			{ x: new Date(2016, 07, 02), y: 75.459999 },
-			{ x: new Date(2016, 07, 03), y: 76.011002 },
-			{ x: new Date(2016, 07, 04), y: 75.751999 }
-		]
-	}]
-});
-chart.render();
-
-var chart = new CanvasJS.Chart("chartContainer4", {
-	animationEnabled: true,
-	theme: "light2", // "light1", "light2", "dark1", "dark2"
-	title:{
-		text: "Products Offer Redemption"
-	},
-	axisY: {
-		title: ""
-	},
-	data: [{        
-		type: "column",  
-		showInLegend: true, 
-		legendMarkerColor: "grey",
-		legendText: "",
-		dataPoints: [      
-			{ y: 6,  label: "Special Treat" },
-			{ y: 4, label: "Birthday Coffee" },
-			{ y: 2,  label: "Free Pizza" },
-			{ y: 0,  label: "Free Coffee" }
-		]
-	}]
-});
-chart.render();
-
-}
-
-</script> -->
-	<script>
-		$('#lineChart').sparkline([102,109,120,99,110,105,115], {
-			type: 'line',
-			height: '70',
-			width: '100%',
-			lineWidth: '2',
-			lineColor: 'rgba(255, 255, 255, .5)',
-			fillColor: 'rgba(255, 255, 255, .15)'
-		});
-
-		$('#lineChart2').sparkline([99,125,122,105,110,124,115], {
-			type: 'line',
-			height: '70',
-			width: '100%',
-			lineWidth: '2',
-			lineColor: 'rgba(255, 255, 255, .5)',
-			fillColor: 'rgba(255, 255, 255, .15)'
-		});
-
-		$('#lineChart3').sparkline([105,103,123,100,95,105,115], {
-			type: 'line',
-			height: '70',
-			width: '100%',
-			lineWidth: '2',
-			lineColor: 'rgba(255, 255, 255, .5)',
-			fillColor: 'rgba(255, 255, 255, .15)'
-		});
-	</script>	
-
-<!-- 	<script type="text/javascript">
-    $(document).ready(function() {
-
-      $('#basic-datatables').dataTable({
-        processing: true,
-        serverSide: true,
-        ajax:{
-         url:"{{url('admin/all-data-availability')}}",
-         beforeSend:function(){
-          $('#basic-datatables').parent()
-          .find("#basic-datatables_processing").attr("ll",true)
-
-
-          // $('#basic-datatables').parent()
-          // .find("#basic-datatables_processing")
-          // .html(`<img src="{{url('public/website/images/loader.gif')}}" id="loaderIMG" />`);
-          
-          // $("#loaderIMG").css({"position":"absolute","margin-left":"45%","margin-top":"35%","text-align":"center","top":"0","bottom":"0","z-index":"999"})
-         },
-         complete:function(){
-          //  $('#basic-datatables').parent()
-          // .find("#basic-datatables_processing")
-          // .html('')
-         }
-        },
-        columns: [
-           // {data: 'DT_RowIndex', name: 'DT_RowIndex'},
-            {data: 'customer_id', name: 'customer_id'},
-            {data: 'mobile_number', name: 'mobile_number'},
-            {data: 'first_name', name: 'first_name'},
-            {data: 'last_name', name: 'last_name'},
-            {data: 'email', name: 'email'},
-            {data: 'nationality', name: 'nationality'},
-            {data: 'dob', name: 'dob'},
-            {data: 'gender', name: 'gender'},
-            {data: 'is_active', name: 'is_active'},
-            {data: 'created_at', name: 'created_at'},
-            {data: 'customer_tier', name: 'customer_tier'},
-            {data: 'wallet_cash', name: 'wallet_cash'},
-            {data: 'reference_code', name: 'reference_code'},
-            {data: 'reference_by', name: 'reference_by'},
-           
-            // {data: 'action', name: 'action', orderable: false, searchable: false},
-        ]
-
-       });
-      });
-</script> -->
-
 
 <script type="text/javascript">
     $(document).ready(function() {
@@ -1168,6 +907,7 @@ chart.render();
             },
             createdRow: function( row, data, dataIndex ) {
 
+		        $( row ).find('td:eq(0)').attr('data-id', data['id']).addClass('td_click').addClass('white_space');
 		        $( row ).find('td:eq(1)').attr('data-id', data['id']).attr('key_type','customer_id').addClass('td_click').addClass('white_space');
 		        $( row ).find('td:eq(2)').attr('data-id', data['id']).attr('key_type','mobile_number').addClass('td_click').addClass('white_space');
 		        $( row ).find('td:eq(3)').attr('data-id', data['id']).attr('key_type','first_name').addClass('td_click');
@@ -1388,7 +1128,10 @@ chart.render();
 		});
 	</script>
 	<script >
-		$(document).ready(function() {
+
+		function selected_customer_wallet_transactions(){
+
+			let selected_wallet_id = $('#selected_id_input').val();
 			$('#basic-datatables2').dataTable({
              dom: "Bfrtip",
             "processing": true,
@@ -1398,7 +1141,8 @@ chart.render();
                 "type": "POST",
                 "data" : {
                 	'_token': "{{csrf_token()}}",
-                	'first_time' : 'true'
+                	'first_time' : 'true',
+                	selected_wallet_id
                 },
                 complete:function(){
 
@@ -1432,7 +1176,8 @@ chart.render();
             ]
  
         });
-
+}
+selected_customer_wallet_transactions();
 			$('#multi-filter-select').DataTable( {
 				"pageLength": 5,
 				initComplete: function () {
@@ -1474,7 +1219,7 @@ chart.render();
 				$('#addRowModal').modal('hide');
 
 			});
-		});
+		// }
 	</script>
 		<script >
 		$(document).ready(function() {
@@ -1529,6 +1274,10 @@ chart.render();
 		function tdClick(){
 			$(".td_click").on("dblclick",function(){
 				let data_id = $(this).data("id");
+				$('#selected_id_input').val(data_id);
+				$("#basic-datatables2").dataTable().fnDestroy();
+
+				selected_customer_wallet_transactions();
 				let key_type = $(this).attr("key_type");
 				let currentVal = $(this).text();
 				if(key_type == "first_name" || key_type == "last_name" || key_type == "nationality" || key_type == "gender"){
@@ -1681,6 +1430,9 @@ chart.render();
 		              		$("#successModel").modal("show");
 		              		localStorage.setItem("search_click","true");
 		              		getData();
+                			$("#selected_checkboxes").val("");
+		              		$(".single_checkbox").prop("checked",false);
+		              		$(".select_all_checkbox").prop("checked",false);
 		              	},500);
 		              },
 		              error: function(data, textStatus, xhr) {
@@ -2148,6 +1900,53 @@ chart.render();
 		  let numbers = value.replace(/[^0-9]/g, "");
 		  input.value = numbers;
 		}
+
+		$('.download_customer_wallet_transactions').click(function(){
+			let joined_from = $(".joined_from_date").val();
+	    	let joined_to = $(".joined_to_date").val();
+	    	let venue_id_wallet = $(".venue_name_wallet").val();
+	    	let txn_status_wallet = $(".txn_status_wallet").val();
+	    	let offers_product_wallet_id = $(".offers_product_wallet").val();
+	    	let mobile_number = $(".mobile_number_wallet").val();
+	    	let email = $(".email_wallet").val();
+	    	let invoice_number_wallet = $(".invoice_number_wallet").val();
+	    	let venu_username_id_wallet = $(".venu_username_wallet").val();
+			let search_txt = $(".form-control[type='search'][aria-controls='basic-datatables4']").val();
+
+	    	if(joined_from > joined_to){
+				$("#alert_text").text("Transaction from date should be greater than transaction to date");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
+			
+			var data_value = {joined_from,joined_to,venue_id_wallet,txn_status_wallet,offers_product_wallet_id,email,invoice_number_wallet,venu_username_id_wallet,search_txt,'_token':'{{csrf_token()}}'}
+
+			$.ajax({
+				url:"{{ route('admin.ExcelDownloadCustomerTransactions') }}",
+				type:"POST",
+				data:data_value,
+				data_type:'JSON',
+				success:function(data){
+					if(data.ids_data.length > 0){
+						let hit_url = "{{url('admin/download-wallet-transactions-after-criteria-match')}}" + "/" + btoa(data.ids_data.toString());
+						window.open(hit_url);
+					}else{
+						$("#alert_text").text("Customer transactions details not match with selected criteria.");
+						$("#validationModel").modal("show");
+						$("#validationModel").unbind("click");
+					}
+				}
+			})
+		});
+
+
+
+		$('.selected_download_transactions').click(function(){
+			let selected_user = $('#selected_id_input').val();
+			let hit_url = "{{url('admin/download-wallet-transactions')}}" + "/" + selected_user;
+			window.open(hit_url);
+		});
 
 </script>
 

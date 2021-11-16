@@ -29,6 +29,7 @@ use App\Mail\CashbackEmail;
 use App\Jobs\OfferNotificationJob;
 use App\Jobs\MultipleEventsJobSendMail;
 use App\Mail\OfferAssignMail;
+use App\Mail\MultipleEventCroneMailSend;
 use Illuminate\Support\Arr;
 date_default_timezone_set("Asia/Kolkata");
 require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
@@ -525,98 +526,103 @@ class Controller extends BaseController
                 ->whereRaw("FIND_IN_SET(?, when_day) > 0", $today_days)
                 ->get();
 
-        $pluck_event_ids = Arr::pluck($events, 'id');
+        
 
-        $pluck_user_ids = User::whereDeletedAt(null)->where('is_block','=',0)->pluck('id');
-        $already_sent_noti_users = EventSentNotification::whereIn('event_id', $pluck_event_ids)->whereIn('user_id', $pluck_user_ids)->pluck('user_id');
-
-        $users = User::whereDeletedAt(null)->where('is_block','=',0)->whereNotIn('id', $already_sent_noti_users)->pluck('id');
+        $users = User::whereDeletedAt(null)->where('is_block','=',0)->pluck('id');
 
         if(count($events) > 0){
 
             foreach ($users as $user_id) {
                 $user_find = User::find($user_id);
 
+                $event_ids = Arr::pluck($events, "id");
+                $assign_events = EventSentNotification::whereUserId($user_find->id)->whereIn("event_id", $event_ids)->pluck("event_id");
+                $events_getting = Event::whereIn("id", $event_ids)->whereNotIn("id", $assign_events)->get();
+
                 foreach ($events as $find_event) {
 
+                    $check_already_send_noti = EventSentNotification::whereEventId($find_event->id)->whereUserId($user_find->id)->first();
 
-                    if($admin_event_notification->push_type == 1 || $admin_event_notification->sms_type == 1 || $admin_event_notification->email_type == 1){
-                        $save_email_sent_noti = new EventSentNotification();
-                        $save_email_sent_noti->event_id = $find_event->id;
-                        $save_email_sent_noti->user_id = $user_find->id;
-                        $save_email_sent_noti->save();
-                    }
+                    if(empty($check_already_send_noti)){
 
-                    if($admin_event_notification->push_type == 1){
-
-                        if($user_find->device_type == 'Android'){
-                            if($user_find->device_token && strlen($user_find->device_token) > 20){
-
-                                $noti_record_find = NotiRecord::whereUserId($user_find->id)->first();
-
-                                if(empty($noti_record_find)){
-                                    $save_noti_record = new NotiRecord();
-                                    $save_noti_record->user_id = $user_find->id;
-                                    $save_noti_record->event = 1;
-                                    $save_noti_record->save();
-
-                                }else{
-                                    $noti_record_find->event = $noti_record_find->event + 1;
-                                    $noti_record_find->update();
-                                }
-
-                               $android_notify =  $this->send_android_notification_new($user_find->device_token, "What's Happening Today: Enjoy ".$find_event->event_name." at ".$find_event->venu->venue_name."\n".$admin_event_notification->message,"Event Create Notification", $noti_type = 5, $event_id = $find_event->id);
-
-                                $criteria_data = [
-                                    'user_id'   => $user_find->id,
-                                    'message'   => "What's Happening Today: Enjoy ".$find_event->event_name." at ".$find_event->venu->venue_name."\n".$admin_event_notification->message,
-                                    'noti_type' => 5,
-                                    'event_id'  => $find_event->id
-                                ];
-                                AdminCriteriaNotification::create($criteria_data);
-                           
-                           }
+                        if($admin_event_notification->push_type == 1 || $admin_event_notification->sms_type == 1 || $admin_event_notification->email_type == 1){
+                            $save_email_sent_noti = new EventSentNotification();
+                            $save_email_sent_noti->event_id = $find_event->id;
+                            $save_email_sent_noti->user_id = $user_find->id;
+                            $save_email_sent_noti->save();
                         }
 
-                        if($user_find->device_type == 'Ios' && strlen($user_find->device_token) > 20){
-                            if($user_find->device_token){
+                        if($admin_event_notification->push_type == 1){
 
-                                $noti_record_find = NotiRecord::whereUserId($user_find->id)->first();
+                            if($user_find->device_type == 'Android'){
+                                if($user_find->device_token && strlen($user_find->device_token) > 20){
 
-                                if(empty($noti_record_find)){
-                                    $save_noti_record = new NotiRecord();
-                                    $save_noti_record->user_id = $user_find->id;
-                                    $save_noti_record->event = 1;
-                                    $save_noti_record->save();
+                                    $noti_record_find = NotiRecord::whereUserId($user_find->id)->first();
 
-                                }else{
-                                    $noti_record_find->event = $noti_record_find->event + 1;
-                                    $noti_record_find->update();
-                                }
+                                    if(empty($noti_record_find)){
+                                        $save_noti_record = new NotiRecord();
+                                        $save_noti_record->user_id = $user_find->id;
+                                        $save_noti_record->event = 1;
+                                        $save_noti_record->save();
+
+                                    }else{
+                                        $noti_record_find->event = $noti_record_find->event + 1;
+                                        $noti_record_find->update();
+                                    }
+
+                                   $android_notify =  $this->send_android_notification_new($user_find->device_token, "What's Happening Today: Enjoy ".$find_event->event_name." at ".$find_event->venu->venue_name."\n".$admin_event_notification->message,"Event Create Notification", $noti_type = 5, $event_id = $find_event->id);
+
+                                    $criteria_data = [
+                                        'user_id'   => $user_find->id,
+                                        'message'   => "What's Happening Today: Enjoy ".$find_event->event_name." at ".$find_event->venu->venue_name."\n".$admin_event_notification->message,
+                                        'noti_type' => 5,
+                                        'event_id'  => $find_event->id
+                                    ];
+                                    AdminCriteriaNotification::create($criteria_data);
+                               
+                               }
+                            }
+
+                            if($user_find->device_type == 'Ios' && strlen($user_find->device_token) > 20){
+                                if($user_find->device_token){
+
+                                    $noti_record_find = NotiRecord::whereUserId($user_find->id)->first();
+
+                                    if(empty($noti_record_find)){
+                                        $save_noti_record = new NotiRecord();
+                                        $save_noti_record->user_id = $user_find->id;
+                                        $save_noti_record->event = 1;
+                                        $save_noti_record->save();
+
+                                    }else{
+                                        $noti_record_find->event = $noti_record_find->event + 1;
+                                        $noti_record_find->update();
+                                    }
+                                    
+                                    $ios_notify =  $this->iphoneNotification($user_find->device_token, "What's Happening Today: Enjoy ".$find_event->event_name." at ".$find_event->venu->venue_name."\n".$admin_event_notification->message,"Event Create Notification", $noti_type = 5, $event_id = $find_event->id);
+
+                                    $criteria_data = [
+                                        'user_id'   => $user_find->id,
+                                        'message'   => "What's Happening Today: Enjoy ".$find_event->event_name." at ".$find_event->venu->venue_name."\n".$admin_event_notification->message,
+                                        'noti_type' => 5,
+                                        'event_id'  => $find_event->id
+                                    ];
+                                    AdminCriteriaNotification::create($criteria_data);
                                 
-                                $ios_notify =  $this->iphoneNotification($user_find->device_token, "What's Happening Today: Enjoy ".$find_event->event_name." at ".$find_event->venu->venue_name."\n".$admin_event_notification->message,"Event Create Notification", $noti_type = 5, $event_id = $find_event->id);
+                               }
+                            }
 
-                                $criteria_data = [
-                                    'user_id'   => $user_find->id,
-                                    'message'   => "What's Happening Today: Enjoy ".$find_event->event_name." at ".$find_event->venu->venue_name."\n".$admin_event_notification->message,
-                                    'noti_type' => 5,
-                                    'event_id'  => $find_event->id
-                                ];
-                                AdminCriteriaNotification::create($criteria_data);
-                            
-                           }
                         }
 
-                    }
-
-                    if($admin_event_notification->sms_type == 1){
-                        \SMSGlobal\Credentials::set(env('SMS_GLOBAL_API'),env('SMS_GLOBAL_SECERET'));
-                        $sms = new \SMSGlobal\Resource\Sms();
-                        $message = "What's Happening Today: Enjoy ".$find_event->event_name." at ".$find_event->venu->venue_name."\n".$admin_event_notification->message;
-                        try {
-                            $response = $sms->sendToOne($user_find->country_code.$user_find->mobile_number, $message,'AD-MSociety');
-                        } catch (\Exception $e) {
-                            continue;
+                        if($admin_event_notification->sms_type == 1){
+                            \SMSGlobal\Credentials::set(env('SMS_GLOBAL_API'),env('SMS_GLOBAL_SECERET'));
+                            $sms = new \SMSGlobal\Resource\Sms();
+                            $message = "What's Happening Today: Enjoy ".$find_event->event_name." at ".$find_event->venu->venue_name."\n".$admin_event_notification->message;
+                            try {
+                                $response = $sms->sendToOne($user_find->country_code.$user_find->mobile_number, $message,'AD-MSociety');
+                            } catch (\Exception $e) {
+                                continue;
+                            }
                         }
                     }
                     
@@ -624,9 +630,19 @@ class Controller extends BaseController
 
 
                 if($admin_event_notification->email_type == 1){
+                    if(count($events_getting) > 0){
 
-                    $notificationJob = (new MultipleEventsJobSendMail($admin_event_notification, $user_find, $events))->delay(Carbon::now()->addSeconds(3));
-                    dispatch($notificationJob);
+
+                        // try{
+                        //     \Mail::to($user_find->email)->send(new MultipleEventCroneMailSend($admin_event_notification, $user_find, $events_getting));
+                        // }catch(\Exception $ex){
+                        //     return $ex->getMessage();
+                        // }
+                        // return "W";
+
+                        $notificationJob = (new MultipleEventsJobSendMail($admin_event_notification, $user_find, $events_getting))->delay(Carbon::now()->addSeconds(3));
+                        dispatch($notificationJob);
+                    }
                 }
 
             }

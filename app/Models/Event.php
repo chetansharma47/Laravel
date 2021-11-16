@@ -51,8 +51,4 @@ class Event extends Model
     public function venu(){
        return $this->belongsTo(Venu::class);
     }
-
-    public function venueAll(){
-        return $this->hasMany(Venu::class,'admin_id','admin_id')->whereDeletedAt(null);
-    }
 }

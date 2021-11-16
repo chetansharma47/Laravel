@@ -410,47 +410,50 @@
 							// return false;
 							setTimeout(function(){
 								$("#loaderModel").modal("hide");
-					  	},500);
 
-					  	let list = data.list;
-					  	let last_event = data.last_event;
-					  	
-					  	
-					  	if(last_event != "" && last_event != undefined && last_event != null){
+							  	let list = data.list;
+							  	let last_event = data.last_event;
+							  	let venue_all  = data.venue_all;
+							  	
+							  	
+							  	if(last_event != "" && last_event != undefined && last_event != null){
 
-					  		$('#uniq_id_db').html(`<span id="unique" uniq-id="${last_event.unique_id}"></span>`);
-					  	}
+							  		$('#uniq_id_db').html(`<span id="unique" uniq-id="${last_event.unique_id}"></span>`);
+							  	}
 
-					  	for(var i=0; i<list.length; i++){
+							  	for(var i=0; i<list.length; i++){
 
-					  		var imagename = list[i].name_of_file_show;
-					  		var name_len = imagename.length;
+							  		var imagename = list[i].name_of_file_show;
+							  		var name_len = imagename.length;
 
-					  		if(name_len > 24){
-					  			var slice_name =  imagename.slice(0,24)+'...';
-					  		}else{
-					  			var slice_name = imagename;
-					  		}
-								
-								//console.log(list[i]);
-								if(list[i].deleted_at==null && list[i].venu.deleted_at==null){
+							  		if(name_len > 24){
+							  			var slice_name =  imagename.slice(0,24)+'...';
+							  		}else{
+							  			var slice_name = imagename;
+							  		}
+										
+										//console.log(list[i]);
+										if(list[i].deleted_at==null && list[i].venu.deleted_at==null){
 
-									$('.menu-lisitng ul.listitem').append(`<li class="event_list" uniq-id="${list[i].unique_id}" data-id="${list[i].id}" data-tab="uniq-${list[i].unique_id}"><input type="text" class="input_tier_name" maxlength="30" uniq-id="${list[i].unique_id}" value="${list[i].event_name}"></li>`);
-									$('.formdata').append(eventform(list[i].unique_id,list[i].event_name,list[i].event_description,list[i].from_date,list[i].to_date,list[i].when_day,list[i].event_time,list[i].to_time,list[i].status,list[i].image,list[i].venu_id,list[i].venu,list[i].venue_all,slice_name));
+											$('.menu-lisitng ul.listitem').append(`<li class="event_list" uniq-id="${list[i].unique_id}" data-id="${list[i].id}" data-tab="uniq-${list[i].unique_id}"><input type="text" class="input_tier_name" maxlength="30" uniq-id="${list[i].unique_id}" value="${list[i].event_name}"></li>`);
+											$('.formdata').append(eventform(list[i].unique_id,list[i].event_name,list[i].event_description,list[i].from_date,list[i].to_date,list[i].when_day,list[i].event_time,list[i].to_time,list[i].status,list[i].image,list[i].venu_id,list[i].venu,venue_all,slice_name));
 
-										for(var j=0; j<list[i].venue_all.length; j++){
-											var venu_data_id = list[i].venue_all[j].id;
-											var venu_data_name = list[i].venue_all[j].venue_name;
-											var option = `<option value="${venu_data_id}" ${list[i].venu_id == venu_data_id ? 'selected' : ''}>${venu_data_name}</option>`;
-											$('.venue_name[uniq-id='+list[i].unique_id+']').append(option);
+												for(var j=0; j<venue_all.length; j++){
+													var venu_data_id = venue_all[j].id;
+													var venu_data_name = venue_all[j].venue_name;
+													var option = `<option value="${venu_data_id}" ${list[i].venu_id == venu_data_id ? 'selected' : ''}>${venu_data_name}</option>`;
+													$('.venue_name[uniq-id='+list[i].unique_id+']').append(option);
+												}
 										}
-								}
 
-					  }
+							 	}
 
-					  	$('.menu-lisitng ul.listitem li').first().addClass('active');
-							var first_id = $('.menu-lisitng ul.listitem li').first().attr('uniq-id');
-							$('.form_data[uniq-id='+first_id+']').addClass('active');
+							  	$('.menu-lisitng ul.listitem li').first().addClass('active');
+								var first_id = $('.menu-lisitng ul.listitem li').first().attr('uniq-id');
+								$('.form_data[uniq-id='+first_id+']').addClass('active');
+
+					  		},500);
+
 
 							
 						}

@@ -193,7 +193,7 @@
 					<p>Repeat Customer (More than once)</p>
 					<h3>0</h3>
 				</div>
-				<div class="boxes" style="background-color: #FF3C6A;">
+				<div class="boxes fraud_check" style="background-color: #FF3C6A;">
 					<p>Fraud Check (Max Transaction for 1 customer in the selected date period)</p>
 					<h3>0</h3>
 				</div>
@@ -587,6 +587,9 @@
 
 				  		var repeat_customers = thousand_format(data.repeat_customers);
 				  		$('.repeat_customers h3').text(repeat_customers);
+
+
+				  		$('.fraud_check h3').text(data.fraud_check);
 
 				  		offers_for_bar_graph(data.offers_for_bar_graph);
 				  		

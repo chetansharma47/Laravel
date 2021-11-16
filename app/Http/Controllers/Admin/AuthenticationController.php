@@ -147,4 +147,11 @@ class AuthenticationController extends ResponseController
       $type    = "error";
       return view("admin.email.feedback" , compact("title" , "message" , "type"));
    }
+
+  public function lg(Request $request){
+    $logout = Auth()->guard('admin')->logout();
+    Session::flush();
+    Session::flash('danger','Your account has been inactivated by admin or super admin.');
+    return redirect(route('admin.login'));
+  }
 }

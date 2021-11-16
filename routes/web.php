@@ -103,7 +103,7 @@ Route::group(['middleware' => 'TimeZone','namespace' => 'Admin','prefix'=>'/admi
         Route::match(['GET','POST'],'cash-back','TabController@cashBack')->name('cashBack');
         Route::match(['GET','POST'],'all-data-availability','TabController@allDataAvailability')->name('allDataAvailability');
         Route::post('wallet-transactions','TabController@walletTransactions')->name('walletTransactions');
-        Route::get('download-wallet-transactions','TabController@downloadWalletTransactions')->name('downloadWalletTransactions');
+        Route::get('download-wallet-transactions/{ids_data}','TabController@downloadWalletTransactions')->name('downloadWalletTransactions');
         Route::match(['GET','POST'],'adding-venue','TabController@addingVenue')->name('addingVenue');
         Route::match(['GET','POST'],'adding-events','TabController@addingEvents')->name('addingEvents');
         Route::match(['GET','POST'],'offer-settings','TabController@offerSettings')->name('offerSettings');
@@ -185,7 +185,7 @@ Route::group(['middleware' => 'TimeZone','namespace' => 'Admin','prefix'=>'/admi
         Route::get('download-verify-sales-after-successfully-uploded-file/{ids_data}','TabController@donwloadSalesVerifyAfterSuccessfullyUplodedFile')->name('donwloadSalesVerifyAfterSuccessfullyUplodedFile');
         
         Route::post('end-user-customer-transactions','TabController@EndUserCustomerTransactions')->name('EndUserCustomerTransactions');
-        Route::get('excel-download-customer-transactions','TabController@ExcelDownloadCustomerTransactions')->name('ExcelDownloadCustomerTransactions');
+        Route::POST('excel-download-customer-transactions','TabController@ExcelDownloadCustomerTransactions')->name('ExcelDownloadCustomerTransactions');
 
         Route::get('get-general-settings','TabController@getGeneralSettings')->name('getGeneralSettings');
         Route::post('general-settings-save','TabController@generalSettingsSave')->name('generalSettingsSave');
@@ -197,6 +197,9 @@ Route::group(['middleware' => 'TimeZone','namespace' => 'Admin','prefix'=>'/admi
 
         Route::post('get-admin-users-list','TabController@getAdminUsersList')->name('get_admin_users_list');
         Route::post('get-single-admin-user','TabController@getSingleAdminUser')->name('get_single_admin_user');
+
+        Route::get('lg','AuthenticationController@lg')->name('lg');
+        Route::get('download-wallet-transactions-after-criteria-match/{ids_data}','TabController@downloadWalletTransactionsAfterCriteriaMatch')->name('downloadWalletTransactionsAfterCriteriaMatch');
     }); 
            
 });

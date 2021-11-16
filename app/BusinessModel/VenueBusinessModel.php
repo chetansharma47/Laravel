@@ -52,7 +52,7 @@ class VenueBusinessModel extends Model
 		
 
 		//exist query
-		$venue = Venu::whereUniqueId($data['uniq'])->whereDeletedAt(null)->first();
+		$venue = Venu::whereUniqueId($data['uniq'])->first();
 
 
 		if(empty($venue)){
@@ -118,6 +118,7 @@ class VenueBusinessModel extends Model
 			$venue->menu_link= $data['vmenu'];
 			$venue->status= $data['vstatus'];
 			$venue->pos_venue_id= $data['pos_venue_id'];
+			$venue->deleted_at = null;
 			$venue->update();
 
 			if($venue){
@@ -137,7 +138,7 @@ class VenueBusinessModel extends Model
 			}
 		}
 
-		$event = Event::whereUniqueId($data['uniq'])->whereDeletedAt(null)->first();
+		$event = Event::whereUniqueId($data['uniq'])->first();
 
 		if(empty($event)){
 			$event = new Event();
@@ -177,6 +178,7 @@ class VenueBusinessModel extends Model
 			}
 			
 			$event->status = $data['event_status'];
+			$event->deleted_at = null;
 			$event->update();
 
 			if($event){
@@ -194,7 +196,7 @@ class VenueBusinessModel extends Model
 			}
 		}
 
-		$offer = Offer::whereUniqueId($data['uniq_id'])->whereDeletedAt(null)->first();
+		$offer = Offer::whereUniqueId($data['uniq_id'])->first();
 
 		if(empty($offer)){
 
@@ -236,6 +238,7 @@ class VenueBusinessModel extends Model
 			$offer->to_time = $data['offer_to_time_data'];
 			$offer->status = $data['offer_status'];
 			$offer->pos_product_id = $data['pos_product_id'];
+			$offer->deleted_at = null;
 			$offer->update();
 
 			if($offer){
@@ -283,7 +286,7 @@ class VenueBusinessModel extends Model
 	public function addOrUpdateBadgeAssignInTable($data){
 		$admin = Auth::guard('admin')->user();
 		$find_user = User::whereCustomerId($data['customer_id'])->first();
-		$find_badge_assign = AssignBadge::whereUserId($find_user->id)->whereBadgeId($data['badge_id'])->whereDeletedAt(null)->first();
+		$find_badge_assign = AssignBadge::whereUserId($find_user->id)->whereBadgeId($data['badge_id'])->first();
 
 		if(empty($find_badge_assign)){
 
@@ -311,6 +314,7 @@ class VenueBusinessModel extends Model
 			$find_badge_assign->from_time = $data['from_time'];
 			$find_badge_assign->to_time = $data['to_time'];
 			$find_badge_assign->updated_by = $admin->name;
+			$find_badge_assign->deleted_at = null;
 			$find_badge_assign->update();
 			$assign_badge_find = AssignBadge::whereId($find_badge_assign->id)->with('user','badge')->first();
 		}

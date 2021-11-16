@@ -696,7 +696,7 @@ class TabController extends ResponseController
         }
 
 
-        $data = WalletDetail::select("id","description","cashback_earned","redeemed_amount","user_wallet_cash",DB::raw("DATE_FORMAT(date_and_time, '%d-%M-%Y %H:%i %p') AS date_and_time"),DB::raw("(select customer_id from users where id = wallet_details.user_id) AS customer_id"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where id = wallet_details.user_id) AS mobile_number"))->orderBy($column,$asc_desc);
+        $data = WalletDetail::select("id","description","cashback_earned","redeemed_amount","user_wallet_cash",DB::raw("DATE_FORMAT(date_and_time, '%d-%M-%Y %H:%i %p') AS date_and_time"),DB::raw("(select customer_id from users where id = wallet_details.user_id) AS customer_id"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where id = wallet_details.user_id) AS mobile_number"))->where('wallet_details.user_id',$request->selected_wallet_id)->orderBy($column,$asc_desc);
 
             
         $total = $data->get()->count();
@@ -771,8 +771,9 @@ class TabController extends ResponseController
 
     }
 
-    public function downloadWalletTransactions(Request $request){
-        $wallet_transactions = WalletTransaction::select(DB::raw("(select customer_id from users where id = wallet_transactions.user_id) AS 'Customer ID'"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where id = wallet_transactions.user_id) AS 'Mobile Number'"),"description AS Description","cashback_earned AS Cashback Earned",DB::raw("(select wallet_cash from users where id = wallet_transactions.user_id) AS 'Wallet Cash'"),DB::raw("DATE_FORMAT(date_and_time, '%d-%M-%Y %H:%i %p') AS 'Date Added'"))->where('venue_user_id','!=',null)->get()->toArray();
+    public function downloadWalletTransactions(Request $request,$ids_data){
+
+       $wallet_transactions = WalletDetail::select(DB::raw("(select customer_id from users where id = wallet_details.user_id) AS 'Customer ID'"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where id = wallet_details.user_id) AS 'Mobile Number'"),"description as Description","cashback_earned as Cashback Earn","user_wallet_cash as Wallet Cash",DB::raw("DATE_FORMAT(date_and_time, '%d-%M-%Y %H:%i %p') AS 'Date and Time Added'"),"id")->where('wallet_details.user_id',[$ids_data])->get()->toArray();
         return $download =  Excel::create('export-wallet-transactions', function($excel) use ($wallet_transactions){
 
             $excel->sheet('export-wallet-transactions', function($sheet) use ($wallet_transactions){
@@ -1235,24 +1236,22 @@ class TabController extends ResponseController
     public function venueRemove(Request $request){
         if($request->isMethod('POST')){
             $admin = Auth::guard('admin')->user();
-            $vlist = Venu::whereUniqueId($request->elem_id)->whereDeletedAt(null)->first();
-            if(!empty($vlist)){
+            $vlist = Venu::whereUniqueId($request->elem_id)->first();
 
-                $count_event = Event::whereVenuId($vlist->id)->whereDeletedAt(null)->count();
+            $count_event = Event::whereVenuId($vlist->id)->whereDeletedAt(null)->count();
 
-                $count_offer = Offer::whereVenuId($vlist->id)->where('offer_type','!=','BirthdayOffer')->whereDeletedAt(null)->count();
+            $count_offer = Offer::whereVenuId($vlist->id)->where('offer_type','!=','BirthdayOffer')->whereDeletedAt(null)->count();
 
-                if($count_event > 0 || $count_offer > 0){
-                    return response()->json(['remove_venue_err' => "You can not delete this venue because of some offers and events associated with it."],422);
-                }
-
-                $vlist->deleted_at = Carbon::now();
-                $vlist->update();
-
-                VenueUser::whereIn('venu_id',[$vlist->id])->update(['deleted_at' => Carbon::now()]);
-                LoginRequest::whereIn('venu_id',[$vlist->id])->update(['deleted_at' => Carbon::now()]);
-                return response()->json('Venue deleted successfully.');
+            if($count_event > 0 || $count_offer > 0){
+                return response()->json(['remove_venue_err' => "You can not delete this venue because of some offers and events associated with it."],422);
             }
+
+            $vlist->deleted_at = Carbon::now();
+            $vlist->update();
+
+            VenueUser::whereIn('venu_id',[$vlist->id])->update(['deleted_at' => Carbon::now()]);
+            LoginRequest::whereIn('venu_id',[$vlist->id])->update(['deleted_at' => Carbon::now()]);
+            return response()->json('Venue deleted successfully.');
         }
     }
 
@@ -1260,6 +1259,9 @@ class TabController extends ResponseController
         if($request->isMethod('POST')){
             $admin = Auth::guard('admin')->user();
             $data = $request->all();
+
+            $find_venue = Venu::where('unique_id','!=',$data['uniq'])->first();
+
 
             $check_venue = Venu::whereDeletedAt(null)->where('unique_id','!=',$data['uniq'])->whereVenueName($data['vname'])->first();
 
@@ -1413,8 +1415,8 @@ class TabController extends ResponseController
             $admin = Auth::guard('admin')->user();
             $venu_list = Venu::whereDeletedAt(null)->get();
             $last_event = Event::orderBy("unique_id","desc")->first();
-            $eventlist = Event::whereDeletedAt(null)->orderBy('unique_id','asc')->with('venu','venueAll')->get();
-            return response()->json(['list' => $eventlist,'last_event' => $last_event]);
+            $eventlist = Event::whereDeletedAt(null)->orderBy('unique_id','asc')->with('venu')->get();
+            return response()->json(['list' => $eventlist,'last_event' => $last_event, 'venue_all' => $venu_list]);
         }
     }
 
@@ -1835,6 +1837,9 @@ class TabController extends ResponseController
 
     public function AddNewBadge(Request $request){
         $admin = Auth::guard('admin')->user();
+        if($admin->role_type == 'Staff'){
+            return response()->json(['badge_name_error' => "Staff cannot be add new badge."],422);
+        }
         $data = $request->all();
 
         $badge_checkname_exists = Badge::whereBadgeName($data['badge_name'])->whereDeletedAt(null)->first();
@@ -1934,6 +1939,9 @@ class TabController extends ResponseController
     public function editBadges(Request $request){
         
         $admin = Auth::guard('admin')->user();
+        if($admin->role_type == 'Staff'){
+            return response()->json(['badge_name_error' => "Staff cannot be update badge."],422);
+        }
         $data = $request->all();
 
         $badge_checkname_exists = Badge::whereBadgeName($data['badge_name'])->where('id','!=', $data['badge_id'])->whereDeletedAt(null)->first();
@@ -2097,6 +2105,10 @@ class TabController extends ResponseController
     }
 
     public function deleteBadge(Request $request){
+        $admin = Auth::guard('admin')->user();
+        if($admin->role_type == 'Staff'){
+            return response()->json(['badge_name_error' => "Staff cannot be delete badge."],422);
+        }
         $ids = explode(",", $request->ids);
         Badge::whereIn("id", $ids)->update(['deleted_at' => Carbon::now()]);
         AssignBadge::whereIn('badge_id',$ids)->update(['deleted_at' => Carbon::now()]);
@@ -2547,6 +2559,8 @@ class TabController extends ResponseController
         $users = User::whereDate('created_at','>=',$request->from_date)
             ->whereDate('created_at','<=',$request->to_date);
         $get_all_customers = $users->pluck('id');
+
+
         $customer_dirhams_wallet = $users->sum('wallet_cash');
 
 
@@ -2566,7 +2580,11 @@ class TabController extends ResponseController
                 ->whereDate('created_at','<=',$request->to_date)->sum('redeemed_amount');
 
         $repeat_customers = WalletTransaction::select(DB::raw('COUNT(user_id) count'))->whereDate('created_at','>=',$request->from_date)->whereDate('created_at','<=',$request->to_date)->groupBy('user_id')->havingRaw('COUNT(user_id) > 1')->count();
-
+        $fraud_check = WalletTransaction::select(DB::raw('COUNT(user_id) count'))->whereDeletedAt(null)
+                                    ->whereDate('created_at','>=',$request->from_date)
+                                    ->whereDate('created_at','<=',$request->to_date)
+                                    ->where('is_cross_verify','=',2)
+                                    ->count();
         $wallet_transactions_offers = WalletTransaction::whereDeletedAt(null)
                                     ->whereDate('created_at','>=',$request->from_date)
                                     ->whereDate('created_at','<=',$request->to_date)
@@ -2593,6 +2611,7 @@ class TabController extends ResponseController
             'totalsales_amount_trends' => $totalsales_amount_trends,
             'redeemed_amount_trends' => $redeemed_amount_trends,
             'repeat_customers' => $repeat_customers,
+            'fraud_check' => $fraud_check,
             'customer_dirhams_wallet' => $customer_dirhams_wallet,
             'customer_dirshams_wallet_cash_trends' => $customer_dirshams_wallet_cash_trends,
             'offers_for_bar_graph' => $offers_for_bar_graph
@@ -3455,19 +3474,119 @@ class TabController extends ResponseController
 
      public function ExcelDownloadCustomerTransactions(Request $request){
 
-       $data = WalletTransaction::select(DB::raw("(select customer_id from users where id = wallet_transactions.user_id) AS 'Customer id'"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where users.id = wallet_transactions.user_id) AS 'Mobile Number'"),"wallet_transactions.invoice_number AS Invoice Number","wallet_transactions.total_bill_amount AS Check Amount","wallet_transactions.check_amount_pos AS Check Amount POS",DB::raw("CONCAT(case wallet_transactions.is_cross_verify when '0' then 'Not Verified' when '1' then 'Verified' else 'Mismatch' end) AS 'Transaction Status'"),"wallet_transactions.id","wallet_transactions.cashback_percentage AS Cashback Percentage",DB::raw("(select wallet_cash from users where id = wallet_transactions.user_id) AS 'Redeemed Wallet'"),"wallet_transactions.redeemed_amount AS Redemption From Loylaty","wallet_transactions.id",DB::raw("(select venue_name from venus where id = wallet_transactions.venu_id) AS 'Restaurant Name'"),DB::raw("(select username from venue_users where id = wallet_transactions.venue_user_id) AS 'Restaurant User'"),DB::raw("DATE_FORMAT(wallet_transactions.date_and_time, '%Y-%m-%d') AS Date"))->whereDeletedAt(null)->get()->toArray();
-                
-        foreach ($data as $key => $value) {
-            unset($value->id);
+
+        $offer_product_name = Offer::whereOfferName($request->offer_name)->first();
+
+        $data = WalletTransaction::select("wallet_transactions.*",DB::raw("(select customer_id from users where id = wallet_transactions.user_id) AS customer_id"),DB::raw("(select wallet_cash from users where id = wallet_transactions.user_id) AS wallet_cash"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where users.id = wallet_transactions.user_id) AS mobile_number"),DB::raw("CONCAT(case wallet_transactions.is_cross_verify when '0' then 'Not Verified' when '1' then 'Verified' else 'Mismatch' end) AS txn_status"),DB::raw("(select venue_name from venus where id = wallet_transactions.venu_id) AS venue_name"),DB::raw("(select username from venue_users where id = wallet_transactions.venue_user_id) AS username"),DB::raw("(select offer_redeem from user_assign_offers where id = wallet_transactions.offer_product_ids) AS offer_redeem"))
+        // ->whereUserId($user_id->id)
+        ->where(function($query) use ($request){
+
+                if($request->joined_from && $request->joined_to){
+                    $query->whereBetween(DB::raw('date(created_at)'),[$request->joined_from, $request->joined_to]);
+                }else if($request->joined_from){
+                    $query->where(DB::raw('date(created_at)'),'>=', $request->joined_from);
+                }else if($request->joined_to){
+                    $query->where(DB::raw('date(created_at)'),'<=', $request->joined_to);
+                }
+
+                if($request->venue_id_wallet){
+                    $query->where('wallet_transactions.venu_id',$request->venue_id_wallet);
+                }
+
+                if($request->txn_status_wallet == 'verified'){
+                    $query->where('wallet_transactions.is_cross_verify',1);
+                }else if($request->txn_status_wallet == 'not_verified'){
+                    $query->where('wallet_transactions.is_cross_verify',0);
+                }
+
+                if($request->mobile_number){
+                    $query->where(DB::raw("(select CONCAT(users.country_code, users.mobile_number) from users where users.id = wallet_transactions.user_id)"), 'Like', '%' . $request->mobile_number . '%');
+                }
+
+                if($request->email){
+                    $query->where(DB::raw("(select email from users where users.id = wallet_transactions.user_id)"), 'Like', '%' . $request->email . '%');
+                }
+
+                if($request->invoice_number_wallet){
+                    $query->where('invoice_number','=',$request->invoice_number_wallet);
+                }
+
+                if($request->venu_username_id_wallet){
+                    $query->where('wallet_transactions.venue_user_id',$request->venu_username_id_wallet);
+                }
+
+                if($request->offers_product_wallet_id){
+                    $query->whereRaw("FIND_IN_SET(?, offer_product_ids) > 0", [$request->offers_product_wallet_id]);
+                }
+        })
+        ->where('wallet_transactions.deleted_at',null)
+        ->with('offerProductIds');
+
+        if(!empty($request->search_txt)){
+            $search = $request->search_txt;
+            if($search){
+                 $data  = $data->where(function($query) use($search){
+                        $query->orWhere(DB::raw("(select customer_id from users where id = wallet_transactions.user_id)"), 'Like', '%' . $search . '%');
+                        $query->orWhere(DB::raw("(select wallet_cash from users where id = wallet_transactions.user_id)"), 'Like', '%' . $search . '%');
+                        $query->orWhere(DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where id = wallet_transactions.user_id)"), 'like', '%'.$search.'%');
+                        $query->orWhere("wallet_transactions.invoice_number", 'Like', '%' . $search . '%');
+                        $query->orWhere("wallet_transactions.total_bill_amount", 'Like', '%' . $search . '%');
+                        $query->orWhere("wallet_transactions.check_amount_pos", 'Like', '%' . $search . '%');
+                        $query->orWhere("wallet_transactions.redeemed_amount", 'Like', '%' . $search . '%');
+                        $query->orWhere(DB::raw("CONCAT(case wallet_transactions.is_cross_verify when '0' then 'Not Verified' else 'Mismatch' end)"), 'Like', '%' . $search . '%');
+                        $query->orWhere(DB::raw("(select users.customer_id from users where id = wallet_transactions.user_id)"), 'like', '%'.$search.'%');
+                        $query->orWhere(DB::raw("(select venue_users.username from venue_users where id = wallet_transactions.venue_user_id)"), 'like', '%'.$search.'%');
+                        $query->orWhere(DB::raw("(select venus.venue_name from venus where id = wallet_transactions.venu_id)"), 'like', '%'.$search.'%');
+                        $query->orWhere("wallet_transactions.created_at", 'Like', '%' . $search . '%');
+                        $query->orWhere("wallet_transactions.updated_at", 'Like', '%' . $search . '%');
+                        $query->orWhere("wallet_transactions.created_at", 'Like', '%' . $search . '%');
+                        $query->orWhere("wallet_transactions.updated_by", 'Like', '%' . $search . '%');
+                    });
+
+                 $data = $data->get()->pluck('id');
+
+            }
+        }else{
+             $data = $data->get()->pluck('id');
         }
 
-       $data = json_decode( json_encode($data), true);
-        return $download =  Excel::create('Customer Wallet Transations', function($excel) use ($data){
-            $excel->sheet('Customer Wallet Transations', function($sheet) use ($data){
-                $sheet->fromArray($data);
+        return response()->json(['ids_data' => $data]);
 
-            });
-        })->download('xlsx');
+
+       // $data = WalletTransaction::select(DB::raw("(select customer_id from users where id = wallet_transactions.user_id) AS 'Customer id'"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where users.id = wallet_transactions.user_id) AS 'Mobile Number'"),"wallet_transactions.invoice_number AS Invoice Number","wallet_transactions.total_bill_amount AS Check Amount","wallet_transactions.check_amount_pos AS Check Amount POS",DB::raw("CONCAT(case wallet_transactions.is_cross_verify when '0' then 'Not Verified' when '1' then 'Verified' else 'Mismatch' end) AS 'Transaction Status'"),"wallet_transactions.id","wallet_transactions.cashback_percentage AS Cashback Percentage",DB::raw("(select wallet_cash from users where id = wallet_transactions.user_id) AS 'Redeemed Wallet'"),"wallet_transactions.redeemed_amount AS Redemption From Loylaty","wallet_transactions.id",DB::raw("(select venue_name from venus where id = wallet_transactions.venu_id) AS 'Restaurant Name'"),DB::raw("(select username from venue_users where id = wallet_transactions.venue_user_id) AS 'Restaurant User'"),DB::raw("DATE_FORMAT(wallet_transactions.date_and_time, '%Y-%m-%d') AS Date"))->whereDeletedAt(null)->get()->toArray();
+                
+       //  foreach ($data as $key => $value) {
+       //      unset($value->id);
+       //  }
+
+       // $data = json_decode( json_encode($data), true);
+       //  return $download =  Excel::create('Customer Wallet Transations', function($excel) use ($data){
+       //      $excel->sheet('Customer Wallet Transations', function($sheet) use ($data){
+       //          $sheet->fromArray($data);
+
+       //      });
+       //  })->download('xlsx');
+    }
+
+
+    public function downloadWalletTransactionsAfterCriteriaMatch(Request $request, $ids_data){
+
+
+        $ids_data = explode(",", base64_decode($request->ids_data));
+        $data = WalletTransaction::select(DB::raw("(select customer_id from users where id = wallet_transactions.user_id) AS 'Customer id'"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where users.id = wallet_transactions.user_id) AS 'Mobile Number'"),"wallet_transactions.invoice_number AS Invoice Number","wallet_transactions.total_bill_amount AS Check Amount","wallet_transactions.check_amount_pos AS Check Amount POS",DB::raw("CONCAT(case wallet_transactions.is_cross_verify when '0' then 'Not Verified' when '1' then 'Verified' else 'Mismatch' end) AS 'Transaction Status'"),"wallet_transactions.id","wallet_transactions.cashback_percentage AS Cashback Percentage",DB::raw("(select wallet_cash from users where id = wallet_transactions.user_id) AS 'Redeemed Wallet'"),"wallet_transactions.redeemed_amount AS Redemption From Loylaty","wallet_transactions.id",DB::raw("(select venue_name from venus where id = wallet_transactions.venu_id) AS 'Restaurant Name'"),DB::raw("(select username from venue_users where id = wallet_transactions.venue_user_id) AS 'Restaurant User'"),DB::raw("DATE_FORMAT(wallet_transactions.date_and_time, '%Y-%m-%d') AS Date"))->whereIn('id',$ids_data)
+            ->get()->toArray();
+                    
+            foreach ($data as $key => $value) {
+                unset($value->id);
+            }
+
+           $data = json_decode( json_encode($data), true);
+            return $download =  Excel::create('Customer Wallet Transations', function($excel) use ($data){
+                $excel->sheet('Customer Wallet Transations', function($sheet) use ($data){
+                    $sheet->fromArray($data);
+
+                });
+            })->download('xlsx');
     }
 
     public function generalSettingsSave(Request $request){
@@ -3484,7 +3603,15 @@ class TabController extends ResponseController
             $find_setting->setting_type = $request->data_name;
             $find_setting->save();
 
-            return response()->json(['message' => ucfirst($request->data_name).' content added successfully.']);
+            if($request->uniq_id == 1){
+                return response()->json(['message' => 'Contact us email added successfully.']);
+            }else if($request->uniq_id == 2){
+                return response()->json(['message' => 'Contact us number added successfully.']);
+            }else if($request->uniq_id == 12){
+                return response()->json(['message' => "FAQ's added successfully."]);
+            }
+
+            return response()->json(['message' => ucfirst($request->data_name).' added successfully.']);
         }else{
 
             $find_setting->setting_content = $content;
@@ -3492,7 +3619,15 @@ class TabController extends ResponseController
             $find_setting->setting_type = $request->data_name;
             $find_setting->update();
 
-            return response()->json(['message' => ucfirst($request->data_name).' content updated successfully.']);
+            if($request->uniq_id == 1){
+                return response()->json(['message' => 'Contact us email updated successfully.']);
+            }else if($request->uniq_id == 2){
+                return response()->json(['message' => 'Contact us number updated successfully.']);
+            }else if($request->uniq_id == 12){
+                return response()->json(['message' => "FAQ's updated successfully."]);
+            }
+
+            return response()->json(['message' => ucfirst($request->data_name).' updated successfully.']);
 
         }
     }
@@ -3533,7 +3668,13 @@ class TabController extends ResponseController
             $find_application_image->image_type = $request->data_name;
             $find_application_image->save();
 
-            return response()->json(['message' => ucfirst($request->data_name).' content added successfully.']);
+            if($request->uniq_id == 3){
+                return response()->json(['message' => 'Offer screen image added successfully.']);
+            }
+
+            $lower_str = strtolower($request->data_name);
+
+            return response()->json(['message' => ucfirst($lower_str).' added successfully.']);
         }else{
             if($imageName != null || $request->name_of_file_show != null){
                 $find_application_image->image = $imageName;
@@ -3544,7 +3685,11 @@ class TabController extends ResponseController
                 $find_application_image->image_type = $request->data_name;
                 $find_application_image->update();
             }
-            return response()->json(['message' => ucfirst($request->data_name).' content updated successfully.']);
+            if($request->uniq_id == 3){
+                return response()->json(['message' => 'Offer screen image updated successfully.']);
+            }
+            $lower_str = strtolower($request->data_name);
+            return response()->json(['message' => ucfirst($lower_str).' updated successfully.']);
         }
 
 
@@ -3560,37 +3705,40 @@ class TabController extends ResponseController
                 if($extension=='png'){
                     $image1 = str_replace('data:image/png;base64,', '', $request->hidden_image);
                     $destinationPath = storage_path(). DIRECTORY_SEPARATOR . env('APPLICATION_DATA_STORAGE');
-                    // $imageName = date('mdYHis') . rand(10,100) . uniqid().'.png';
+                    $imageName = date('mdYHis') . rand(10,100) . uniqid().'.png';
                 }else{
                     $image1 = str_replace('data:image/jpeg;base64,', '', $request->hidden_image);
                     $destinationPath = storage_path(). DIRECTORY_SEPARATOR . env('APPLICATION_DATA_STORAGE');
-                    // $imageName = date('mdYHis') . rand(10,100) . uniqid().'.jpeg';
+                    $imageName = date('mdYHis') . rand(10,100) . uniqid().'.jpeg';
                 }
                 
                 $img_new = Image::make(base64_decode($image1))->stream($extension, 50);
-                file_put_contents($destinationPath. '/' . $request->name_of_file_show, $img_new);
+                file_put_contents($destinationPath. '/' . $imageName, $img_new);
                 
-                $application_data->logo = $request->name_of_file_show;
+                $application_data->logo = $imageName;
                 $application_data->name_of_file_show_logo = $request->name_of_file_show;
                 $application_data->update();
             }
 
-            return response()->json(['message' => 'Welcome logo updated successfully.']);
+            return response()->json(['message' => 'Welcome screen logo updated successfully.']);
         }
 
-        if($request->hasfile('img_upload')){
-            $file_original_name = $request->file('img_upload')->getClientOriginalName();
-            $extension = $request->file('img_upload')->getClientOriginalExtension();
+        if($request->data_name == "Launch animation"){
 
-            $file = $request->file('img_upload');
-            $destinationPath = $destinationPath = storage_path(). DIRECTORY_SEPARATOR . env('APPLICATION_DATA_STORAGE');
-            // $imageName = date('mdYHis') . rand(10,100) . uniqid(). '.' . $extension;
-            $file->move($destinationPath, $file_original_name);
+            if($request->hasfile('img_upload')){
+                $file_original_name = $request->file('img_upload')->getClientOriginalName();
+                $extension = $request->file('img_upload')->getClientOriginalExtension();
 
-            $application_data->video = $file_original_name;
-            $application_data->name_of_file_show_video = $file_original_name;
-            $application_data->update();
-            return response()->json(['message' => 'Launch animation video updated successfully.']);
+                $file = $request->file('img_upload');
+                $destinationPath = $destinationPath = storage_path(). DIRECTORY_SEPARATOR . env('APPLICATION_DATA_STORAGE');
+                $imageName = date('mdYHis') . rand(10,100) . uniqid(). '.' . $extension;
+                $file->move($destinationPath, $imageName);
+
+                $application_data->video = $imageName;
+                $application_data->name_of_file_show_video = $file_original_name;
+                $application_data->update();
+            }
+                return response()->json(['message' => 'Launch animation video updated successfully.']);
         }
 
         if($request->data_name == "App Theme Color"){
@@ -3613,7 +3761,7 @@ class TabController extends ResponseController
         $check_already_username = Admin::whereName($request->name)->first();
 
         if(!empty($check_already_username)){
-            return response()->json(['admin_name_err' => "Admin username already exists."],422);
+            return response()->json(['admin_name_err' => "Username already exists."],422);
         }
 
 
@@ -3636,26 +3784,43 @@ class TabController extends ResponseController
 
     public function adminUserUpdate(Request $request){
 
-        $check_already_username = Admin::whereName($request->name)->where('id','!=',$request->update_id)->first();
+        $check_first_user = Admin::whereId($request->update_id)->whereEmail(null)->first();
+        $str_to_lower = strtolower($request->role_type);
 
-        if(!empty($check_already_username)){
-            return response()->json(['admin_name_err' => "Admin username already exists."],422);
+        if(!empty($check_first_user)){
+
+            $check_already_username = Admin::whereName($request->name)->where('id','!=',$request->update_id)->first();
+
+            if(!empty($check_already_username)){
+                return response()->json(['admin_name_err' => "Username already exists."],422);
+            }
+
+            $update_user = Admin::whereId($request->update_id)->first();
+
+            $admin_user = Auth::guard('admin')->user();
+            $self_update = "false";
+
+            $hash_password = Hash::make($request->password);
+            $update_user->name = $request->name;
+            $update_user->password = $hash_password;
+            $update_user->status = $request->status;
+            $update_user->role_type = $request->role_type;
+            $update_user->updated_by = $admin_user->name;
+            $update_user->update();
+
+            if($admin_user->id == $request->update_id){
+                if($update_user->status == 'Inactive'){
+                    $self_update = "true";
+                }
+            }
+
+            if($update_user){
+                return response()->json(['message' => ucfirst($str_to_lower).' account details updated successfully.','self_update' => $self_update]);
+            }
+        }else{
+            return response()->json(['message' => ucfirst($str_to_lower).' cannot be updated.']);
         }
 
-        $update_user = Admin::whereId($request->update_id)->first();
-        $admin_user = Auth::guard('admin')->user();
-
-        $hash_password = Hash::make($request->password);
-        $update_user->name = $request->name;
-        $update_user->password = $hash_password;
-        $update_user->status = $request->status;
-        $update_user->role_type = $request->role_type;
-        $update_user->updated_by = $admin_user->name;
-        $update_user->update();
-
-        if($update_user){
-            return response()->json(['message' => $request->name.' has been updated successfully.']);
-        }
     }
     public function getSingleAdminUser(Request $request){
         $find_admin_user = Admin::whereId($request->data_id)->first();

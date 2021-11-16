@@ -95,7 +95,7 @@ class TabBusiness extends Model
         if(isset($data['image']) && $data['image'] != ""){
             $data['image'] = $this->uploadBase64Img($data['image'], $data['name_of_file_show']);
         }
-        $find_cashback = Cashback::where("unique_id_cashback","=", $data['unique_id_cashback'])->whereDeletedAt(null)->first();
+        $find_cashback = Cashback::where("unique_id_cashback","=", $data['unique_id_cashback'])->first();
         if(empty($find_cashback)){
             $find_cashback = new Cashback();
             $find_cashback->admin_id = $admin->id;
@@ -103,6 +103,7 @@ class TabBusiness extends Model
             $find_cashback->save();
         }else{
             $find_cashback->fill($data);
+            $find_cashback->deleted_at = null;
             $find_cashback->update();
             $update = "true";
         }

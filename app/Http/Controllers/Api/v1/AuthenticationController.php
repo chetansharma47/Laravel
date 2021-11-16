@@ -578,13 +578,15 @@ class AuthenticationController extends ResponseController
         $user = Auth::guard()->user();
         $active_venue_ids = Venu::where('status' , 'Active')->where('deleted_at' , null)->pluck('id');
         $today_days = Carbon::now()->format('l');
-        $events = Event::where(function($query) use ($user,$today_date, $active_venue_ids, $today_days){
+        $event_notification_ids = EventSentNotification::whereUserId($user->id)->pluck('event_id');
+        $events = Event::where(function($query) use ($user,$today_date, $active_venue_ids, $today_days, $event_notification_ids){
                         $query->whereDeletedAt(null);
                         $query->whereStatus('Active');
                         $query->whereDate('from_date', '<=', $today_date->toDateString());
                         $query->whereDate('to_date','>=', $today_date->toDateString());
                         $query->whereIn('venu_id', $active_venue_ids);
                         $query->whereRaw("FIND_IN_SET(?, when_day) > 0", $today_days);
+                        $query->whereIn("id", $event_notification_ids);
                     })->with('venu')->orderBy('event_time','asc')->get();
 
         // $tier = TierCondition::whereTierName($user->customer_tier)->orderBy('id','desc')->first();

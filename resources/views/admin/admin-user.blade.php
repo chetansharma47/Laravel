@@ -265,8 +265,8 @@
 						<label style="font-weight: 400;">
 							Select the Role
 						</label>
-						<select class="form-control form-group select_option select_role_option" style="position: relative;border-radius: 10px;">
-							<option value="">Select User</option>
+						<select class="form-control form-group select_option select_role_option" style="position: relative;border-radius: 10px; cursor: pointer;">
+							<option value="">Select Role</option>
 							<option value="Super Admin">Super Admin</option>
 							<option value="Admin">Admin</option>
 							<option value="Marketing">Marketing</option>
@@ -278,7 +278,7 @@
 						<label style="font-weight: 400;">
 							Status
 						</label>
-						<select class="form-control form-group select_option select_status_option" style="position: relative;border-radius: 10px;">
+						<select class="form-control form-group select_option select_status_option" style="position: relative;border-radius: 10px; cursor: pointer;">
 							<option value="">Select Status</option>
 							<option value="Active">Active</option>
 							<option value="Inactive">Inactive</option>
@@ -382,7 +382,7 @@
         <p id="success_alert_text">Info Text</p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary ok" style="background-color: #3ABD6F!important; border: none; border-radius: 50px; color: #fff;"  data-dismiss="modal">Ok</button>
+        <button type="button" class="btn btn-secondary ok s_ok" style="background-color: #3ABD6F!important; border: none; border-radius: 50px; color: #fff;" self-update="false"  data-dismiss="modal">Ok</button>
        <!--  <button type="button" class="btn btn-primary">Save changes</button> -->
       </div>
     </div>
@@ -456,6 +456,9 @@
 		$(".ok").on("click",function(){
 			$("#validationModel").modal("hide");
 			$("#successModel").modal("hide");
+			if($(this).attr('self-update') == "true"){
+				window.location.href = "{{route('admin.lg')}}";
+			}
 		});
 
 		$(document).on('keydown','.admin_username, .admin_password',function(e){
@@ -489,6 +492,13 @@
 				$("#validationModel").unbind("click");
 				return false;	
 			}
+			var regExp = /[a-zA-Z]/g;
+			if (!regExp.test($('.admin_username').val())) {
+			   	$("#alert_text").text("Please enter valid username.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;	
+			} 
 
 			if(name.length < 2){
 				$("#alert_text").text("Username should be at least 2 characters long.");
@@ -586,6 +596,14 @@
 				$("#validationModel").unbind("click");
 				return false;	
 			}
+			var regExp = /[a-zA-Z]/g;
+			if (!regExp.test($('.admin_username').val())) {
+			   	$("#alert_text").text("Please enter valid username.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;	
+			}
+			
 			if(name.length < 2){
 				$("#alert_text").text("Username should be at least 2 characters long.");
 				$("#validationModel").modal("show");
@@ -637,12 +655,17 @@
 					  	$("#successModel").modal("show");
 				  		$("#success_alert_text").text(data.message);
 				  		$("#successModel").unbind("click");
-				  		$('#basic-datatables').DataTable().ajax.reload();
 				  		$('.admin_username').val('');
 						$('.admin_password').val('');
 						$('.select_role_option').val('');
 						$('.select_status_option').val('');
 						$('.admin_user_id').val('');
+
+						if(data.self_update == "true"){
+							$(".s_ok").attr('self-update','true');
+							return false;
+						}
+				  		$('#basic-datatables').DataTable().ajax.reload();
 					},500);
 				},error: function(data, textStatus, xhr) {
 		            if(data.status == 422){

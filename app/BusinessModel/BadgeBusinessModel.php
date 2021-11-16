@@ -72,6 +72,7 @@ class BadgeBusinessModel extends Model
         }
         $find_badge->status = $data['badge_select'];
         $find_badge->updated_by = $admin->name;
+        $find_badge->deleted_at = null;
         $find_badge->update();
 
         if($find_badge){

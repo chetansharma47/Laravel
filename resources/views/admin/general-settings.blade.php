@@ -52,9 +52,9 @@
 			width: 100%;
 			position: relative;
 		}
-		/*#cke_58,#cke_23,#cke_33,#cke_37,#cke_73,#cke_86,#cke_87,#cke_108{
+		#cke_58,#cke_23,#cke_32,#cke_82,#cke_132,#cke_182,#cke_37,#cke_44,#cke_73,#cke_86,#cke_87,#cke_108,#cke_95,#cke_123,#cke_137,#cke_144,#cke_158,#cke_173,#cke_187,#cke_195,#cke_209{
 			display: none;
-		}*/
+		}
 		/*.cke_toolgroup #cke_21,#cke_22,#cke_23,#cke_25,#cke_34,#cke_35,#cke_36,#cke_40,#cke_38,#cke_39,#cke_41,#cke_45,#cke_59{
 			display: none;
 		}*/
@@ -357,6 +357,7 @@
 												<form type="POST" enctype="multipart/form-data" id="launch_animation_form">
 													@csrf
 													<div class="venue_inputs">
+														<input type="hidden" name="data_name" value="Launch animation">
 														<input type="text" data-name="Launch Animation" uniq_id="10" class="form-control form-control-user loading_animation" placeholder="Launch Animation" name="img_upload_visible" value="" style="border-radius: 10px;padding: 12px 22px !important; cursor: pointer;" readonly=""/>
 
 														<!-- <label style="position: relative; width: 100%;"> -->
@@ -516,7 +517,7 @@
 								<label style="color: #797676 !important">
 									Unique Invoice No Check From Past Entry
 								</label>
-								<input type="text"  uniq_id="15" data-name="Unique venue invoice no" class="form-control form-control-user venue_invoice_check" placeholder="Unique Invoice No Check From Past Entry" maxlength="3" style="font-size: 14px !important; border-radius: 10px !important; margin-bottom: 14px;"/>
+								<input type="text"  uniq_id="15" data-name="Unique venue invoice no" class="form-control form-control-user venue_invoice_check" maxlength="3" placeholder="Unique Invoice No Check From Past Entry" style="font-size: 14px !important; border-radius: 10px !important; margin-bottom: 14px;"/>
 							</div>
 							<div class="" style="margin-top: 32px;">
 								<a href="javascript:void(0);" uniq_id="15" data-name="Unique venue invoice no"  class="btn btn-primary btn-user general_setting_btn venue_invoice_check_btn btn-block common_btn" style="width: 100px;padding: 4px 0 !important;font-size: 17px;">
@@ -775,6 +776,14 @@
 					  		if(val.setting_enabled_disbaled == 'Enabled'){
 					  			$('.app_checkboxes input[uniq_id=17]').prop('checked',true);
 					  		}
+
+					  		if(val.uniq_id == 15){
+					  			if(val.setting_content > 1){
+					  				$('.form-control-user[uniq_id='+val.uniq_id+']').attr('value',val.setting_content+' days');
+					  			}else{
+					  				$('.form-control-user[uniq_id='+val.uniq_id+']').attr('value',val.setting_content+' day');
+					  			}
+					  		}
 					  		// $('.form-control-user[uniq_id='+val.uniq_id+']').attr('src',val.image);
 					  	});
 
@@ -804,46 +813,34 @@
 			// let text_ck_editor = $(".general_content_policy[uniq_id="+uniq_id+"]").children('textarea').find(".cke_wysiwyg_frame").contents().find('body p').html();
 			if(uniq_id == 11){
 				var editorText = CKEDITOR.instances.about_us.getData();
-				// if(editorText == ''){
-				// 	$("#alert_text").text("Please enter about our loyalty program.");
-				// 	$("#validationModel").modal("show");
-				// 	$("#validationModel").unbind("click");
-				// 	return false;
-				// }
 			}
 			if(uniq_id == 12){
 				var editorText = CKEDITOR.instances.faqs.getData();
-				// if(editorText == ''){
-				// 	$("#alert_text").text("Please enter faq's");
-				// 	$("#validationModel").modal("show");
-				// 	$("#validationModel").unbind("click");
-				// 	return false;
-				// }
+				if(editorText == ''){
+					$("#alert_text").text("Please enter FAQ's.");
+					$("#validationModel").modal("show");
+					$("#validationModel").unbind("click");
+					return false;
+				}
 			}
 			if(uniq_id == 13){
 				var editorText = CKEDITOR.instances.terms_conditions_loyalty.getData();
-				// if(editorText == ''){
-				// 	$("#alert_text").text("Please enter terms & conditions.");
-				// 	$("#validationModel").modal("show");
-				// 	$("#validationModel").unbind("click");
-				// 	return false;
-				// }
 			}
 			if(uniq_id == 14){
 				var editorText = CKEDITOR.instances.privacy_policy.getData();
-				// if(editorText == ''){
-				// 	$("#alert_text").text("Please enter privacy policy.");
-				// 	$("#validationModel").modal("show");
-				// 	$("#validationModel").unbind("click");
-				// 	return false;
-				// }
 			}
 
 			if($('.app_checkboxes input[uniq_id='+uniq_id+']').prop('checked')){
 				var setting_enabled_disabled = 'Enabled';
 			}
-			if(setting_content == ''){
-				$("#alert_text").text("Please enter "+data_name.toLowerCase()+".");
+			if(uniq_id == 1 && setting_content == ''){
+				$("#alert_text").text("Please enter contact us email.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
+			if(uniq_id == 2 && setting_content == ''){
+				$("#alert_text").text("Please enter contact us number.");
 				$("#validationModel").modal("show");
 				$("#validationModel").unbind("click");
 				return false;
@@ -856,6 +853,30 @@
 				return false;
 			}
 
+			if(setting_content == ''){
+				$("#alert_text").text("Please enter "+data_name.toLowerCase()+".");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
+			if(uniq_id == 15 && setting_content == 0){
+				$("#alert_text").text("Please enter valid "+data_name.toLowerCase()+" days.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
+			if(uniq_id == 16 && setting_content == 0){
+				$("#alert_text").text("Please enter valid "+data_name.toLowerCase()+".");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
+			if(uniq_id == 17 && setting_content == 0){
+				$("#alert_text").text("Please enter valid "+data_name.toLowerCase()+".");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
 			$.ajax({
 				url:'{{ route("admin.generalSettingsSave") }}',
 				type:'POST',
@@ -875,6 +896,7 @@
 				}
 			});
 		});
+		
 
 		$('.upload_icon').click(function(e){
 			var uniq_id = $(this).attr('uniq_id');
@@ -883,7 +905,7 @@
 
 			$('.img_upload[uniq_id='+uniq_id+']').on('change',function(){
 				var file = event.target.files[0];
-				console.log(file);
+				var reader = new FileReader();
 				var file_nameshow = file.name;
 
 				var valu = file_nameshow;
@@ -897,7 +919,8 @@
 				if(file){
 
 					if(data_name == "Launch Animation"){
-						if(file.type == "video/mp4" || file.type == "video/mp3"){
+						if(file.type == "video/mp4"){
+
 
 						var size = file.size;
 							if(size > 5242880){
@@ -918,7 +941,7 @@
 							$("#img_upload")[0].value = '';
 
 						}else{
-							$("#alert_text").text("Please upload .mp3 or .mp4 format file only.");
+							$("#alert_text").text("Please upload .mp4 format file only.");
 						    $("#validationModel").modal("show");
 						    $("#validationModel").unbind("click");
 						    return false;
@@ -983,8 +1006,15 @@
 			let name_of_file_show = $(".img_upload[uniq_id="+uniq_id+"]").attr('value');
 			let hidden_image = $(".img_upload[uniq_id="+uniq_id+"]").attr('src');
 
+			// if(uniq_id == 9){
+			// 	$("#alert_text").text("Please enter valid "+data_name.toLowerCase()+".");
+			// 	$("#validationModel").modal("show");
+			// 	$("#validationModel").unbind("click");
+			// 	return false;
+			// }
+
 			if(check_img == ''){
-				$("#alert_text").text("Please upload image");
+				$("#alert_text").text("Please upload image.");
 			    $("#validationModel").modal("show");
 			    $("#validationModel").unbind("click");
 			    return false;
@@ -1041,8 +1071,14 @@
 				let name_of_file_show = $(".img_upload[uniq_id="+uniq_id+"]").attr('value');
 				let hidden_image = $(".img_upload[uniq_id="+uniq_id+"]").attr('src');
 
+				if(uniq_id == 9 && check_img == ''){
+					$("#alert_text").text("Please select app theme color.");
+				    $("#validationModel").modal("show");
+				    $("#validationModel").unbind("click");
+				    return false;
+				}
 				if(check_img == ''){
-					$("#alert_text").text("Please upload image");
+					$("#alert_text").text("Please upload image.");
 				    $("#validationModel").modal("show");
 				    $("#validationModel").unbind("click");
 				    return false;
@@ -1099,11 +1135,23 @@
 
 		});
 		
-		$(document).on('keydown','.contact_us_phone, .contact_us_email, .venue_invoice_check, .qr_scan_timeout, .sms_otp_validity',function(e){
+		$(document).on('keydown','.contact_us_phone, .contact_us_email, .qr_scan_timeout, .sms_otp_validity',function(e){
 			if(e.which===32){
 				return false;
 			}
 		});
+
+		$(document).on("click",".venue_invoice_check",function(e){
+			$(this).val('');
+		});
+
+		$(document).on("keyup",".venue_invoice_check",function(){
+	        if($.trim($(this).val()).length == 0){
+	           $(this).val("");
+	        }else{
+	          $(this).val($(this).val().trimLeft(""));
+	        }
+      });
 
 		$(document).on('input','.contact_us_phone, .venue_invoice_check, .qr_scan_timeout, .sms_otp_validity',function(event){
 			return process(this);

@@ -1046,7 +1046,7 @@
 
 			let badge_id = $("#badge_id").val();
 			if(badge_id == ""){
-				$("#alert_text").text("Please select badge for update badge.");
+				$("#alert_text").text("Please select badge for delete badge.");
 				$("#validationModel").modal("show");
 				$("#validationModel").unbind("click");
 				return false;
@@ -1156,7 +1156,20 @@
 	          		// }
 	          		assignUserList();
 	          	},500);
-	          },
+	          },error: function(data, textStatus, xhr) {
+	                if(data.status == 422){
+	                  setTimeout(function(){
+	                  	$("#loaderModel").modal("hide");
+		                  	var result = data.responseJSON;
+		                  	if(result['badge_name_error'] && result['badge_name_error'].length > 0){
+			                  	$("#alert_text").text(result['badge_name_error']);
+								$("#validationModel").modal("show");
+								$("#validationModel").unbind("click");
+		                 	}
+		                  return false;
+	                  },500);
+	                } 
+	              }
 			});
     	});
 

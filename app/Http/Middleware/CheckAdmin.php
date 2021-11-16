@@ -21,6 +21,13 @@ class CheckAdmin
         if(!Auth::guard('admin')->check()){
             return redirect(route('admin.login'));
         }
+
+        if(Auth::guard('admin')->user()->status == 'Inactive'){
+            Auth::guard('admin')->logout();
+            Session::flush();
+            Session::flash('danger', 'Your account has been inactivated by admin or super admin.');
+            return redirect(route('admin.login'));
+        }
         
         return $next($request);
     }

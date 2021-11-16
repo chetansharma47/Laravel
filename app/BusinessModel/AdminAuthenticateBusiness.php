@@ -20,6 +20,10 @@ class AdminAuthenticateBusiness extends Model
 
     		if(Hash::check($data['password'], $admin_find->password)){
 
+                if($admin_find->status == "Inactive"){
+                    return ['status' => "2", 'error' => "Your account has been inactivated by admin or super admin."];
+                }
+
                 $remember_token = str_random(64);
 	    		$admin_find->remember_token = $remember_token;
 	    		$admin_find->update();
