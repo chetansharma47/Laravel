@@ -409,6 +409,10 @@
 		$(".ok").on("click",function(){
 			$("#validationModel").modal("hide");
 			$("#successModel").modal("hide");
+			$("#confirmationmodel").modal("hide");
+			$(".confirm_ok").removeClass("verify_select_txn_confirmOk");
+			$(".confirm_ok").removeClass("delete_select_txn_confirmOk");
+			$(".confirm_ok").removeClass("force_verify_all_sales");
 		});
 		function cross_verification_sales(){
 			let table = $("#basic-datatables").DataTable({
@@ -599,6 +603,7 @@
 					$('.confirm_ok').addClass('delete_select_txn_confirmOk');
 					$(".confirmation_alert_text").text("Are you sure, you want to delete selected transactions?");
 					$('#confirmationmodel').modal("show");
+					$("#confirmationmodel").unbind("click");
 				}
 			});
 
@@ -659,6 +664,7 @@
 					$('.confirm_ok').addClass('verify_select_txn_confirmOk');
 					$(".confirmation_alert_text").text("Are you sure, you want to forcefully verified selected transactions?");
 					$('#confirmationmodel').modal("show");	
+					$("#confirmationmodel").unbind("click");
 				}
 			});
 
@@ -714,6 +720,7 @@
 				$(".confirmation_alert_text").text("Are you sure, you want to forcefully verified all pending sales transactions?");
 				$('.confirm_ok').addClass('force_verify_all_sales');
 				$('#confirmationmodel').modal("show");
+				$("#confirmationmodel").unbind("click");
 			});
 
 			$(document).on('click','.force_verify_all_sales',function(){
