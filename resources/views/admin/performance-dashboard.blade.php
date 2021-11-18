@@ -578,7 +578,6 @@
 				  		$('.cashback_redeem h3').text(redeemed_amount);
 				  		$('.graph_text_dirham_redeemed h3 span.value').text(data.redeemed_amount);
 				  		redeemed_amount_trends(data.redeemed_amount_trends);
-
 				  		var cashback_earned = thousand_format(data.cashback_earned);
 				  		$('.cashback_earned h3').text(cashback_earned);
 

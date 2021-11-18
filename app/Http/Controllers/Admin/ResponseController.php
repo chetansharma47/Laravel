@@ -215,7 +215,7 @@ class ResponseController extends Controller
             $wallet_detail2->save();
 
             if(!empty($admin_cashback_notification_find)){
-                $admin_cashback_notification_find->message = "Congratulations you have cashback amount of ".$WalletTransaction->cashback_earned." AED. ".$admin_cashback_notification_find->message;
+                $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$WalletTransaction->cashback_earned." AED. ".$admin_cashback_notification_find->message;
                 $this->send_notifications_verified_users($admin_cashback_notification_find,$find_user);
             }
         }
@@ -245,7 +245,7 @@ class ResponseController extends Controller
 
         if(!empty($admin_cashback_notification_find)){
 
-            $admin_cashback_notification_find->message = "Congratulations you have cashback amount of ".$wallet_transaction_verified->cashback_earned." AED. ".$admin_cashback_notification_find->message;
+            $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$wallet_transaction_verified->cashback_earned." AED. ".$admin_cashback_notification_find->message;
             
             $this->send_notifications_verified_users($admin_cashback_notification_find,$find_user);
         }

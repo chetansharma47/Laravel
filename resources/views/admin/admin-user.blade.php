@@ -751,6 +751,10 @@
 			});
 		});
 
+		$(".admin_username").on("paste",function(e){
+			e.preventDefault();
+		});
+
 	</script>
 </body>
 </html>

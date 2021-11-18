@@ -80,7 +80,8 @@
 
           <tr>
             <td align="left" valign="top" style="font-family: 'Lato', sans-serif;
-     font-weight: 400; font-size:14px; color:#474747;">Thank you for signing up for our loyalty program. With Capital Society you can earn and redeem Dirhams whenever you do transactions in our restaurant chains.<br><br>Please click on the button below to verify your email address.</td>
+     font-weight: 400; font-size:14px; color:#474747;">You are about to change the email registered with Capital Society to this new email id.<br><br>Please click on the button below to verify your email address.
+            </td>
           </tr>
           <tr>
             <td height="10" align="left" valign="top"></td>

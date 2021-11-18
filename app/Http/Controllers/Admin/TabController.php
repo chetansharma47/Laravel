@@ -61,7 +61,7 @@ use App\Models\ApplicationImage;
 use App\Models\GeneralSetting;
 use Image;
 use App\Models\Admin;
-require_once $_SERVER['DOCUMENT_ROOT'].'/society_16_november/vendor/autoload.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
 
 class TabController extends ResponseController
 {
@@ -757,9 +757,96 @@ class TabController extends ResponseController
     }
 
     public function downloadUsers(Request $request){
-        $users = User::whereDeletedAt(null)->select('customer_id as Customer Id', 'mobile_number as Mobile Number','first_name as First Name','last_name as Last Name','email as Email Id','nationality as Nationality','dob as DOB', 'gender as Gender','is_active as Status',DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d') AS Join_On"),'customer_tier as Customer Tier','wallet_cash as Wallet Cash','reference_code as Customer Referral Code','reference_by as Referral By')->orderBy("id","desc")->get()->toArray();
+        $tier_find = TierCondition::whereId($request->tier)->first();
 
-        return $download =  Excel::create('export-users', function($excel) use ($users){
+        $data = User::select("*",DB::raw('CONCAT(users.first_name, " ", users.last_name) AS full_name'),DB::raw('CONCAT(users.country_code, " ", users.mobile_number) AS country_code_with_phone_number'),DB::raw("DATE_FORMAT(dob, '%d-%M-%Y') AS dob"),DB::raw("DATE_FORMAT(created_at, '%d-%M-%Y') AS join_date"))
+                ->where(function($query) use ($request, $tier_find){
+                    $query->whereDeletedAt(null);
+                    if($request->joined_from && $request->joined_to){
+                        $query->whereBetween(DB::raw('date(created_at)'),[$request->joined_from, $request->joined_to]);
+                    }else if($request->joined_from){
+                        $query->where(DB::raw('date(created_at)'),'>=', $request->joined_from);
+                    }else if($request->joined_to){
+                        $query->where(DB::raw('date(created_at)'),'<=', $request->joined_to);
+                    }
+
+                    if($request->gender){
+                        $query->whereGender($request->gender);
+                    }
+
+                    if($request->customer_status){
+                        $query->whereIsActive($request->customer_status);
+                    }
+
+                    if($tier_find){
+                        $query->whereCustomerTier($tier_find->tier_name);
+                    }
+
+                    if($request->email){
+                        $query->where('email', 'Like', '%' . $request->email . '%');
+                    }
+
+                    if($request->mobile_number){
+                        $query->where(DB::raw('CONCAT(users.country_code, " ", users.mobile_number)'), 'Like', '%' . $request->mobile_number . '%');
+    
+                    }
+                });
+
+
+        if(!empty($request->search_txt)){
+            $search = $request->search_txt;
+
+            if($search){
+                $data  = $data->where(function($query) use($search){
+                        $query->orWhere('customer_id', 'Like', '%'. $search . '%');
+                        $query->orWhere(DB::raw('CONCAT(users.country_code, " ", users.mobile_number)'), 'Like', '%' . $search . '%');
+                        $query->orWhere('first_name', 'Like', '%' . $search . '%');
+                        $query->orWhere('last_name', 'Like', '%' . $search . '%');
+                        $query->orWhere('email', 'Like', '%' . $search . '%');
+                        $query->orWhere('nationality', 'Like', '%' . $search . '%');
+                        $query->orWhereDate(DB::raw("DATE_FORMAT(dob, '%d-%M-%Y')"), 'Like', '%' . $search . '%');
+                        $query->orWhere('gender', 'Like', '%' . $search . '%');
+                        $query->orWhere('is_active', 'Like', '%' . $search . '%');
+                        $query->orWhereDate(DB::raw("DATE_FORMAT(created_at, '%d-%M-%Y')"), 'Like', '%' . $search . '%');
+                        $query->orWhere('customer_tier', 'Like', '%' . $search . '%');
+                        $query->orWhere('wallet_cash', 'Like', '%' . $search . '%');
+                        $query->orWhere('reference_code', 'Like', '%' . $search . '%');
+                        $query->orWhere('reference_by', 'Like', '%' . $search . '%');
+
+                            // ->orWhereHas('category', function($insideQuery) use ($search){
+                            //     return $insideQuery->where('category_name', 'like', '%'.$search.'%');
+                            // })
+                    });
+
+                $data = $data->get()->pluck('id');
+                                
+            }
+        }else{
+            $data = $data->get()->pluck('id');
+
+        }
+
+        return response()->json(['ids_data' => $data]);
+
+        // $users = User::whereDeletedAt(null)->select('customer_id as Customer Id', 'mobile_number as Mobile Number','first_name as First Name','last_name as Last Name','email as Email Id','nationality as Nationality','dob as DOB', 'gender as Gender','is_active as Status',DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d') AS Join_On"),'customer_tier as Customer Tier','wallet_cash as Wallet Cash','reference_code as Customer Referral Code','reference_by as Referral By')->orderBy("id","desc")->get()->toArray();
+
+        // return $download =  Excel::create('export-users', function($excel) use ($users){
+
+        //     $excel->sheet('export-users', function($sheet) use ($users){
+
+        //         $sheet->fromArray($users);
+
+        //     });
+
+        // })->download('csv');
+
+    }
+
+    public function downloadUserAfterCriteria(Request $request,$ids_data){
+        $ids_data = explode(",", base64_decode($request->ids_data));
+        $users = User::whereDeletedAt(null)->select('customer_id as Customer ID', 'mobile_number as Mobile Number','first_name as First Name','last_name as Last Name','email as Email ID','nationality as Nationality','dob as DOB', 'gender as Gender','is_active as Status',DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d') AS Join_On"),'customer_tier as Customer Tier',DB::raw("ROUND(wallet_cash,1) AS 'Wallet Cash'"),'reference_code as Customer Referral Code','reference_by as Referral By')->orderBy("id","desc")->whereIn('users.id',$ids_data)->get()->toArray();
+
+         return $download =  Excel::create('export-users', function($excel) use ($users){
 
             $excel->sheet('export-users', function($sheet) use ($users){
 
@@ -769,14 +856,49 @@ class TabController extends ResponseController
 
         })->download('csv');
 
+
     }
 
-    public function downloadWalletTransactions(Request $request,$ids_data){
+    public function downloadWalletTransactions(Request $request){
 
-       $wallet_transactions = WalletDetail::select(DB::raw("(select customer_id from users where id = wallet_details.user_id) AS 'Customer ID'"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where id = wallet_details.user_id) AS 'Mobile Number'"),"description as Description","cashback_earned as Cashback Earn","user_wallet_cash as Wallet Cash",DB::raw("DATE_FORMAT(date_and_time, '%d-%M-%Y %H:%i %p') AS 'Date and Time Added'"),"id")->where('wallet_details.user_id',[$ids_data])->get()->toArray();
-        return $download =  Excel::create('export-wallet-transactions', function($excel) use ($wallet_transactions){
+       $wallet_transactions = WalletDetail::select(DB::raw("(select customer_id from users where id = wallet_details.user_id) AS 'Customer ID'"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where id = wallet_details.user_id) AS 'Mobile Number'"),"description as Description","cashback_earned as Cashback Earn","user_wallet_cash as Wallet Cash",DB::raw("DATE_FORMAT(date_and_time, '%d-%M-%Y %H:%i %p') AS 'Date and Time Added'"),"id")->where('wallet_details.user_id',$request->selected_user);
+       
+       if(!empty($request->search_txt)){
+            $search = $request->search_txt;
 
-            $excel->sheet('export-wallet-transactions', function($sheet) use ($wallet_transactions){
+           if($search){
+                $wallet_transactions  = $wallet_transactions->where(function($query) use($search){
+                            $query->orWhere(DB::raw("(select customer_id from users where id = wallet_details.user_id)"), 'Like', '%'. $search . '%');
+                            $query->orWhere(DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where id = wallet_details.user_id)"), 'Like', '%' . $search . '%');
+                            $query->orWhere('description', 'Like', '%' . $search . '%');
+                            $query->orWhere('cashback_earned', 'Like', '%' . $search . '%');
+                            $query->orWhere('redeemed_amount', 'Like', '%' . $search . '%');
+                            $query->orWhere('user_wallet_cash', 'Like', '%' . $search . '%');
+                            $query->orWhere(DB::raw("DATE_FORMAT(date_and_time, '%d-%M-%Y %H:%i %p')"), 'Like', '%' . $search . '%');
+                        });
+
+                $wallet_transactions = $wallet_transactions->get()->pluck('id');               
+            }
+       }else{
+            $wallet_transactions = $wallet_transactions->get()->pluck('id');
+       }
+
+       return response()->json(['ids_data' => $wallet_transactions]);
+    }
+
+    public function downloadWalletTransactionsAfterSelectedUser(Request $request,$ids_data){
+        $ids_data = explode(",", base64_decode($request->ids_data));
+        $wallet_transactions = WalletDetail::select(DB::raw("(select customer_id from users where id = wallet_details.user_id) AS 'Customer ID'"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where id = wallet_details.user_id) AS 'Mobile Number'"),"description as Description","cashback_earned as Cashback Earn","user_wallet_cash as Wallet Cash",DB::raw("DATE_FORMAT(date_and_time, '%Y-%m-%d %h:%i %p') AS 'Date and Time Added'"))->orderBy("wallet_details.id","desc")->whereIn('wallet_details.id',$ids_data)->get()->toArray();
+
+        // foreach ($wallet_transactions as $value) {
+        //         unset($value['id']);
+        //     }
+
+            // return $wallet_transactions;
+
+        return $download =  Excel::create('selected-customer-transactions', function($excel) use ($wallet_transactions){
+
+            $excel->sheet('selected-customer-transactions', function($sheet) use ($wallet_transactions){
 
                 $sheet->fromArray($wallet_transactions);
 
@@ -2585,8 +2707,8 @@ class TabController extends ResponseController
 
         $total_sales = WalletTransaction::whereDate('created_at','>=',$request->from_date)
                 ->whereDate('created_at','<=',$request->to_date)->sum('pay_bill_amount');
-        $cashback_earned = WalletTransaction::whereDate('created_at','>=',$request->from_date)
-                ->whereDate('created_at','<=',$request->to_date)->sum('cashback_earned');
+        $cashback_earned = WalletTransaction::where('is_cross_verify','=',1)->whereDate('created_at','>=',$request->from_date)
+                ->whereDate('created_at','<=',$request->to_date)->sum(DB::raw('ROUND(cashback_earned,2)'));
         $redeemed_amount = WalletTransaction::whereDate('created_at','>=',$request->from_date)
                 ->whereDate('created_at','<=',$request->to_date)->sum('redeemed_amount');
 
@@ -2787,6 +2909,7 @@ class TabController extends ResponseController
     }
 
     public function ExcelVerifyTransaction(Request $request){
+        $admin_user = Auth::guard('admin')->user();
 
         if($request->hasFile('img_upload')){
             $file_original_name = $request->file('img_upload')->getClientOriginalName();
@@ -2837,6 +2960,7 @@ class TabController extends ResponseController
                                     $wallet_txn->is_cross_verify = 1;
                                     $wallet_txn->check_amount_pos = $val['check_total'];
                                     $wallet_txn->total_bill_amount = $val['check_total'];
+                                    $wallet_txn->updated_by = $admin_user->name;
                                     $wallet_txn->update();
                                     array_push($ids_data, $wallet_txn->id);
                                     $this->transferToWalletForUploadVerify($wallet_txn);
@@ -2961,6 +3085,7 @@ class TabController extends ResponseController
                                 }else{
                                     $wallet_txn->is_cross_verify = 2;
                                     $wallet_txn->check_amount_pos = $val['check_total'];
+                                    $wallet_txn->updated_by = $admin_user->name;
                                     $wallet_txn->update();
                                 } 
                             }
@@ -3029,7 +3154,7 @@ class TabController extends ResponseController
     }
 
     public function ForceVerifyAllPendingSales(Request $request){
-
+        $admin_user = Auth::guard('admin')->user();
         $wallet_txn_ids = WalletTransaction::whereIsCrossVerify(0)->whereDeletedAt(null)->get()->toArray();
         $wallet_arr_ids_pluck = Arr::pluck($wallet_txn_ids,'id');
         if(empty($wallet_arr_ids_pluck)){
@@ -3042,6 +3167,7 @@ class TabController extends ResponseController
                 $user_wallet_txn = WalletTransaction::whereId($value->id)->first();
                 $user_wallet_txn->is_cross_verify = 1;
                 $user_wallet_txn->check_amount_pos = $user_wallet_txn->total_bill_amount;
+                $user_wallet_txn->updated_by = $admin_user->name;
                 $user_wallet_txn->update();
 
 
@@ -3172,19 +3298,45 @@ class TabController extends ResponseController
     }
 
     public function DeleteSelectedTransactions(Request $request){
+        $admin_user = Auth::guard('admin')->user();
         $request_ids = explode(',',$request->delete_selected_checkboxes);
-        $wallet_transaction_delete = WalletTransaction::whereIn('id',$request_ids)->update(['deleted_at' => Carbon::now()]);
+
+        $check_deleted_or_verified_transactions = WalletTransaction::where(function($query) use ($request_ids){
+                                                        $query->whereIn("id", $request_ids);
+                                                        $query->where("is_cross_verify", "=", 1);
+                                                    })->orWhere(function($query) use ($request_ids){
+                                                        $query->whereIn("id", $request_ids);
+                                                        $query->where("deleted_at", "!=", null);
+                                                    })->first();
+
+        if(!empty($check_deleted_or_verified_transactions)){
+            return response()->json(['delete_txn_err' => 'Selected transactions has been deleted or already verified.'],422);
+        }
+
+        $wallet_transaction_delete = WalletTransaction::whereIn('id',$request_ids)->update(['deleted_at' => Carbon::now(), 'updated_by' => $admin_user->name]);
+       //$wallet_transaction_delete = WalletTransaction::whereIn('id',$request_ids)->whereDeletedAt(null)->update(['deleted_at' => Carbon::now(), 'updated_by' => $admin_user->name]);
 
         if(!empty($wallet_transaction_delete)){
             return response()->json(['msg' => 'Transactions has been deleted successfully.']);
-        }else{
-            return response()->json(['delete_txn_err' => "Something went wrong."],422);
         }
     }
 
     public function VerifySelectTransactions(Request $request){
+        $admin_user = Auth::guard('admin')->user();
 
         $request_ids = explode(',',$request->verify_selected_checkboxes);
+
+        $check_deleted_or_verified_transactions = WalletTransaction::where(function($query) use ($request_ids){
+                                                        $query->whereIn("id", $request_ids);
+                                                        $query->where("is_cross_verify", "=", 1);
+                                                    })->orWhere(function($query) use ($request_ids){
+                                                        $query->whereIn("id", $request_ids);
+                                                        $query->where("deleted_at", "!=", null);
+                                                    })->first();
+
+        if(!empty($check_deleted_or_verified_transactions)){
+            return response()->json(['verify_err' => 'Selected transactions has been deleted or already verified.'],422);
+        }
 
         $wallet_transaction_verify = WalletTransaction::whereIn('id',$request_ids)->get();
         $admin_refer_notification = AdminNotification::where("uniq_id","=",4)->first();
@@ -3194,11 +3346,13 @@ class TabController extends ResponseController
             if($user_wallet_txn->is_cross_verify == 2){
                 $user_wallet_txn->is_cross_verify = 1;
                 $user_wallet_txn->total_bill_amount = $user_wallet_txn->check_amount_pos;
+                $user_wallet_txn->updated_by = $admin_user->name;
                 $user_wallet_txn->update();
             }else{
                 $user_wallet_txn = WalletTransaction::whereId($value->id)->first();
                 $user_wallet_txn->is_cross_verify = 1;
                 $user_wallet_txn->check_amount_pos = $user_wallet_txn->total_bill_amount;
+                $user_wallet_txn->updated_by = $admin_user->name;
                 $user_wallet_txn->update();
             }
 
@@ -3348,7 +3502,7 @@ class TabController extends ResponseController
 
         $order = $request->get("order")[0]['column'];
 
-        $column = "customer_id";
+        $column = "id";
 
         $order = $request->get("order")[0]['column'];
 
@@ -3413,7 +3567,7 @@ class TabController extends ResponseController
                 }
 
                 if($request->invoice_number_wallet){
-                    $query->where('invoice_number','=',$request->invoice_number_wallet);
+                    $query->where('invoice_number','Like', '%' . $request->invoice_number_wallet . '%');
                 }
 
                 if($request->venu_username_id_wallet){
@@ -3476,6 +3630,7 @@ class TabController extends ResponseController
                 $da->offer_name = 'N/A';
                 $da->offer_redeem = 'N/A';
             }
+            $da->wallet_cash = round($da->wallet_cash,2);
         }
 
         $return_data = [
@@ -3525,7 +3680,7 @@ class TabController extends ResponseController
                 }
 
                 if($request->invoice_number_wallet){
-                    $query->where('invoice_number','=',$request->invoice_number_wallet);
+                    $query->where('invoice_number','Like', '%' . $request->invoice_number_wallet . '%');
                 }
 
                 if($request->venu_username_id_wallet){
@@ -3590,12 +3745,9 @@ class TabController extends ResponseController
 
 
         $ids_data = explode(",", base64_decode($request->ids_data));
-        $data = WalletTransaction::select(DB::raw("(select customer_id from users where id = wallet_transactions.user_id) AS 'Customer id'"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where users.id = wallet_transactions.user_id) AS 'Mobile Number'"),"wallet_transactions.invoice_number AS Invoice Number","wallet_transactions.total_bill_amount AS Check Amount","wallet_transactions.check_amount_pos AS Check Amount POS",DB::raw("CONCAT(case wallet_transactions.is_cross_verify when '0' then 'Not Verified' when '1' then 'Verified' else 'Mismatch' end) AS 'Transaction Status'"),"wallet_transactions.id","wallet_transactions.cashback_percentage AS Cashback Percentage",DB::raw("(select wallet_cash from users where id = wallet_transactions.user_id) AS 'Redeemed Wallet'"),"wallet_transactions.redeemed_amount AS Redemption From Loylaty","wallet_transactions.id",DB::raw("(select venue_name from venus where id = wallet_transactions.venu_id) AS 'Restaurant Name'"),DB::raw("(select username from venue_users where id = wallet_transactions.venue_user_id) AS 'Restaurant User'"),DB::raw("DATE_FORMAT(wallet_transactions.date_and_time, '%Y-%m-%d') AS Date"))->whereIn('id',$ids_data)
+        $data = WalletTransaction::select(DB::raw("(select customer_id from users where id = wallet_transactions.user_id) AS 'Customer ID'"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where users.id = wallet_transactions.user_id) AS 'Mobile Number'"),"wallet_transactions.invoice_number AS Invoice Number","wallet_transactions.total_bill_amount AS Check Amount","wallet_transactions.check_amount_pos AS Check Amount POS",DB::raw("CONCAT(case wallet_transactions.is_cross_verify when '0' then 'Not Verified' when '1' then 'Verified' else 'Mismatch' end) AS 'Transaction Status'"),"wallet_transactions.cashback_percentage AS Cashback Percentage",DB::raw("ROUND((select wallet_cash from users where id = wallet_transactions.user_id),1) AS 'Redeemed Wallet'"),"wallet_transactions.redeemed_amount AS Redemption From Loyalty",DB::raw("(select venue_name from venus where id = wallet_transactions.venu_id) AS 'Restaurant Name'"),DB::raw("(select username from venue_users where id = wallet_transactions.venue_user_id) AS 'Restaurant User'"),DB::raw("DATE_FORMAT(wallet_transactions.date_and_time, '%Y-%m-%d') AS Date"))->orderBy('wallet_transactions.id','desc')->whereIn('id',$ids_data)
             ->get()->toArray();
-                    
-            foreach ($data as $key => $value) {
-                unset($value->id);
-            }
+             
 
            $data = json_decode( json_encode($data), true);
             return $download =  Excel::create('Customer Wallet Transations', function($excel) use ($data){

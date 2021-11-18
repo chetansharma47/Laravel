@@ -79,7 +79,7 @@ Route::group(['middleware' => 'TimeZone','namespace' => 'Admin','prefix'=>'/admi
 
     Route::group(['middleware'=>['CheckAdmin']] , function() {
 
-        Route::get('download-users','TabController@downloadUsers')->name('downloadUsers');
+        Route::post('download-users','TabController@downloadUsers')->name('downloadUsers');
         Route::post('block-users','TabController@blockUsers')->name('blockUsers');
         Route::post('unblock-users','TabController@unBlockUsers')->name('unBlockUsers');
         Route::post('authorized-unauthorized','TabController@authorizedUnauthorized')->name('authorizedUnauthorized');
@@ -103,7 +103,7 @@ Route::group(['middleware' => 'TimeZone','namespace' => 'Admin','prefix'=>'/admi
         Route::match(['GET','POST'],'cash-back','TabController@cashBack')->name('cashBack');
         Route::match(['GET','POST'],'all-data-availability','TabController@allDataAvailability')->name('allDataAvailability');
         Route::post('wallet-transactions','TabController@walletTransactions')->name('walletTransactions');
-        Route::get('download-wallet-transactions/{ids_data}','TabController@downloadWalletTransactions')->name('downloadWalletTransactions');
+        Route::post('download-wallet-transactions','TabController@downloadWalletTransactions')->name('downloadWalletTransactions');
         Route::match(['GET','POST'],'adding-venue','TabController@addingVenue')->name('addingVenue');
         Route::match(['GET','POST'],'adding-events','TabController@addingEvents')->name('addingEvents');
         Route::match(['GET','POST'],'offer-settings','TabController@offerSettings')->name('offerSettings');
@@ -200,6 +200,8 @@ Route::group(['middleware' => 'TimeZone','namespace' => 'Admin','prefix'=>'/admi
 
         Route::get('lg','AuthenticationController@lg')->name('lg');
         Route::get('download-wallet-transactions-after-criteria-match/{ids_data}','TabController@downloadWalletTransactionsAfterCriteriaMatch')->name('downloadWalletTransactionsAfterCriteriaMatch');
+        Route::get('download-wallet-transactions-after-selected-user/{ids_data}','TabController@downloadWalletTransactionsAfterSelectedUser')->name('downloadWalletTransactionsAfterSelectedUser');
+        Route::get('download-user-after-criteria/{ids_data}','TabController@downloadUserAfterCriteria')->name('downloadUserAfterCriteria');
     }); 
            
 });

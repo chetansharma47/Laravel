@@ -809,6 +809,8 @@
 			var data_name = $(this).attr('data-name');
 			var setting_content = $('.form-control-user[uniq_id='+uniq_id+']').val();
 			let text_ck_editor = $(".general_content_policy[uniq_id="+uniq_id+"]").children('textarea').attr('name');
+			// let regex = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/; 
+			let regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/; 
 
 			// let text_ck_editor = $(".general_content_policy[uniq_id="+uniq_id+"]").children('textarea').find(".cke_wysiwyg_frame").contents().find('body p').html();
 			if(uniq_id == 11){
@@ -835,6 +837,13 @@
 			}
 			if(uniq_id == 1 && setting_content == ''){
 				$("#alert_text").text("Please enter contact us email.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
+
+			if(!regex.test(setting_content) && uniq_id == 1){
+				$("#alert_text").text("Please enter valid contact us email.");
 				$("#validationModel").modal("show");
 				$("#validationModel").unbind("click");
 				return false;
@@ -1189,6 +1198,22 @@
 				}
 			});
 		});
+
+		CKEDITOR.on('instanceReady', function( ev ) {
+			  var blockTags = ['div','h1','h2','h3','h4','h5','h6','p','pre','li','blockquote','ul','ol',
+			  'table','thead','tbody','tfoot','td','th',];
+
+			  for (var i = 0; i < blockTags.length; i++)
+			  {
+			     ev.editor.dataProcessor.writer.setRules( blockTags[i], {
+			        indent : false,
+			        breakBeforeOpen : true,
+			        breakAfterOpen : false,
+			        breakBeforeClose : false,
+			        breakAfterClose : true
+			     });
+			  }
+			});
 	</script>
 
 

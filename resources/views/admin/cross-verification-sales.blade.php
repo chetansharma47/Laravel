@@ -635,6 +635,10 @@
 				             		$("#alert_text").text(result['delete_txn_err']);
 									$("#validationModel").modal("show");
 									$("#validationModel").unbind("click");
+									$("#selected_checkboxes").val("");
+									$(this).removeClass('delete_select_txn_confirmOk');
+									$(".single_checkbox").prop("checked",false);
+				        			$('#basic-datatables').DataTable().ajax.reload();
 				             	}
 				              return false;
 				          },500);
@@ -684,7 +688,24 @@
 		              		$(this).removeClass('verify_select_txn_confirmOk');
 				        	$('#basic-datatables').DataTable().ajax.reload();
 		          		},500);
-		            }
+		            },error: function(data, textStatus, xhr) {
+				        if(data.status == 422){
+				          setTimeout(function(){
+				          	$("#loaderModel").modal("hide");
+				              	var result = data.responseJSON;
+				             	if(result['verify_err'] && result['verify_err'].length > 0){
+				             		$("#alert_text").text(result['verify_err']);
+									$("#validationModel").modal("show");
+									$("#validationModel").unbind("click");
+									$("#selected_checkboxes").val("");
+				              		$(".single_checkbox").prop("checked",false);
+				              		$(this).removeClass('verify_select_txn_confirmOk');
+						        	$('#basic-datatables').DataTable().ajax.reload();
+				             	}
+				              return false;
+				          },500);
+				        } 
+				  	}
 
 				});
 			});

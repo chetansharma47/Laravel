@@ -42,7 +42,7 @@ use App\Models\GeneralSetting;
 use App\Mail\ContactUsAdmin;
 use App\Models\EventSentNotification;
 
-require_once $_SERVER['DOCUMENT_ROOT'].'/society_16_november/vendor/autoload.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
 
 class AuthenticationController extends ResponseController
 {
@@ -283,11 +283,17 @@ class AuthenticationController extends ResponseController
             if(!empty($validator)){
                 return $validator;
             }
-            $user = $this->profileModel->reset($request,$token,$tokenData);
+            $reset_pp = $this->profileModel->reset($request,$token,$tokenData);
 
-            if($user == 0){
+            if($reset_pp == 0){
                 Session::flash('danger', "New password looks same as old password, Please try a different password.");
                 return redirect()->back();
+            }else if($reset_pp == 2){
+
+                DB::table('password_resets')->whereToken($token)->delete();
+                return redirect(route('passwordResetInvalid', $user_id));
+                // Session::flash('danger', "Email address has been changed.You can try again with new link.");
+                // return redirect()->back();
             }
             return redirect(route('passwordReset', $user_id));
         }
@@ -319,8 +325,14 @@ class AuthenticationController extends ResponseController
         $token = $request->verify_email_token;
         $user = User::whereVerifyEmailToken($token)->first();
         if($user){
+            if($user->is_verify == 2){
+                $user->email = $user->request_change_email;
+                $user->device_type = "None";
+                $user->device_token = null;
+            }
             $user->verify_email_token = null;
             $user->is_verify = 1;
+            $user->request_change_email = null;
             $user->update();
             $title = "Email verified";
             $message = "Your email has been verified.";
@@ -438,7 +450,7 @@ class AuthenticationController extends ResponseController
                     ->whereStatus('Active')
                     ->whereIn('venu_id', $active_venue_ids)
                     ->whereRaw("FIND_IN_SET(?, when_day) > 0", $today_days)
-                    ->whereDate('from_date', '<=', Carbon::now()->toDateString())
+                    //->whereDate('from_date', '<=', Carbon::now()->toDateString())
                     ->whereDate('to_date','>=', Carbon::now()->toDateString())
                     ->whereIn("id", $event_notification_ids)
                     ->with('venu')
@@ -586,7 +598,7 @@ class AuthenticationController extends ResponseController
         $events = Event::where(function($query) use ($user,$today_date, $active_venue_ids, $today_days, $event_notification_ids){
                         $query->whereDeletedAt(null);
                         $query->whereStatus('Active');
-                        $query->whereDate('from_date', '<=', $today_date->toDateString());
+                        //$query->whereDate('from_date', '<=', $today_date->toDateString());
                         $query->whereDate('to_date','>=', $today_date->toDateString());
                         $query->whereIn('venu_id', $active_venue_ids);
                         $query->whereRaw("FIND_IN_SET(?, when_day) > 0", $today_days);
@@ -620,7 +632,7 @@ class AuthenticationController extends ResponseController
         $events = Event::where(function($query) use ($user,$today_date, $active_venue_ids, $today_days, $event_notification_ids){
                         $query->whereDeletedAt(null);
                         $query->whereStatus('Active');
-                        $query->whereDate('from_date', '<=', $today_date->toDateString());
+                       // $query->whereDate('from_date', '<=', $today_date->toDateString());
                         $query->whereDate('to_date','>=', $today_date->toDateString());
                         $query->whereIn('venu_id', $active_venue_ids);
                         $query->whereRaw("FIND_IN_SET(?, when_day) > 0", $today_days);

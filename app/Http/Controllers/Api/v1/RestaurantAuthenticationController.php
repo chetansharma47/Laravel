@@ -47,7 +47,7 @@ use App\Models\LoginPose;
 use App\Models\WalletDetail;
 use App\Models\NotiRecord;
 use App\Models\GeneralSetting;
-require_once $_SERVER['DOCUMENT_ROOT'].'/society_16_november/vendor/autoload.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
 
 class RestaurantAuthenticationController extends ResponseController
 {
@@ -498,7 +498,7 @@ class RestaurantAuthenticationController extends ResponseController
 
         if(!empty($admin_transaction_notification)){
 
-            $admin_transaction_notification->message = "Congratulations you have redeemed amount of ".$data['redeemed_amount']." AED for your transaction. ".$admin_transaction_notification->message;
+           // $admin_transaction_notification->message = "Congratulations you have redeemed amount of ".$data['redeemed_amount']." AED for your transaction. ".$admin_transaction_notification->message;
 
             if($admin_transaction_notification->push_type == 1){
 
@@ -946,7 +946,7 @@ class RestaurantAuthenticationController extends ResponseController
 
         if(!empty($admin_transaction_notification)){
 
-            $admin_transaction_notification->message = "Congratulations you have redeemed amount of ".$data['redeemed_amount']." AED for your transaction. ".$admin_transaction_notification->message;
+            //$admin_transaction_notification->message = "Congratulations you have redeemed amount of ".$data['redeemed_amount']." AED for your transaction. ".$admin_transaction_notification->message;
 
             if($admin_transaction_notification->push_type == 1){
 
@@ -1149,7 +1149,7 @@ class RestaurantAuthenticationController extends ResponseController
 
         if(!empty($admin_cashback_notification)){
 
-            $admin_cashback_notification->message = "Congratulations you have cashback amount of ".$data['cashback_earned']." AED. ".$admin_cashback_notification->message;
+            $admin_cashback_notification->message = "Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. ".$admin_cashback_notification->message;
 
             if($admin_cashback_notification->push_type == 1){
 

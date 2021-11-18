@@ -11,6 +11,7 @@ use Mail;
 use DB;
 use Carbon\Carbon;
 use App\Mail\UserVerifyMail;
+use App\Mail\ChangeEmailAddress;
 use App\Mail\UserForgotPassword;
 use App\Models\TierCondition;
 use App\Models\LoginRequest;
@@ -78,12 +79,12 @@ class ProfileModel extends Model
             $token = str_random(64);
             try{
                 $link = url("confirm-account/$token");
-                \Mail::to($data['email'])->send(new UserVerifyMail($data, $link));
+                \Mail::to($data['email'])->send(new ChangeEmailAddress($data, $link));
             }catch(\Exception $ex){
                 return ["status" => 0, "data" => null, "error_msg" => "Something went wrong."];
             }
 
-            $update_user = $user->update(['email' => $data['email'],  'verify_email_token' => $token, 'is_verify' => 0]);
+            $update_user = $user->update(['request_change_email' => $data['email'],  'verify_email_token' => $token, 'is_verify' => 2]);
             return ["status" => 3, "success_msg" => "Email has been updated successfully."];
         }
 
@@ -331,6 +332,10 @@ class ProfileModel extends Model
     public function reset($request,$token, $tokenData){
         $data = [];
         $user = User::where(['email' => $tokenData->email])->first();
+
+        if(empty($user)){
+            return 2;
+        }
 
         if(Hash::check($request->password, $user->password)){
             return 0;

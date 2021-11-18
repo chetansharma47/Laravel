@@ -377,7 +377,7 @@
 							</a>
 						</div>
 						<div>
-							<a href="{{route('admin.downloadUsers')}}" target="_blank" class="btn btn-primary btn-user btn-block common_btn" style="     font-size: 18px; width: 154px; margin-right: 15px; text-transform: none; padding: 8px 0;">
+							<a href="javascript:void(0)" class="btn btn-primary btn-user btn-block download_users_details common_btn" style="     font-size: 18px; width: 154px; margin-right: 15px; text-transform: none; padding: 8px 0;">
 								Download
 							</a>
 						</div>
@@ -634,12 +634,12 @@
 							</label>
 							<input type="text" class="form-control mobile_number_wallet form-control-user" placeholder="Customer Mobile No" value="" style="border-radius: 0px;padding: 9px 14px 9px 12px !important;"/>
 						</div>
-						<div class="venue_inputs mb-3 px-2">
+						<!-- <div class="venue_inputs mb-3 px-2">
 							<label>
 								Email ID
 							</label>
-							<input type="text" class="form-control email_wallet form-control-user" placeholder="Email Id" value="" style="border-radius: 0px;padding: 9px 14px 9px 12px !important;"/>
-						</div>
+							<input type="text" class="form-control email_wallet form-control-user" placeholder="Enter Email ID" value="" style="border-radius: 0px;padding: 9px 14px 9px 12px !important;"/>
+						</div> -->
 						<div class="venue_inputs mb-3 px-2">
 							<label>
 							Check No
@@ -1787,14 +1787,14 @@ selected_customer_wallet_transactions();
 
 
     $(document).ready(function(){
-	    $(document).on('paste',".form-control",function (event) {
-	    	if($(this).attr("aria-controls") != "basic-datatables"){
+	 //    $(document).on('paste',".form-control",function (event) {
+	 //    	if(!$(this).attr("aria-controls","basic-datatables") || !$(this).attr("aria-controls","basic-datatables2") || !$(this).attr("aria-controls","basic-datatables4")){
 	    		
-			  	if (event.originalEvent.clipboardData.getData('Text').match(/[^\d]/)) {
-			    	event.preventDefault();
-			  	}
-	    	}
-		});
+		// 	  	if (event.originalEvent.clipboardData.getData('Text').match(/[^\d]/)) {
+		// 	    	event.preventDefault();
+		// 	  	}
+	 //    	}
+		// });
 
 		$(document).on('paste', '.td_click',function (event) {
 		  	if (event.originalEvent.clipboardData.getData('Text').match(/[^\d]/)) {
@@ -1944,8 +1944,61 @@ selected_customer_wallet_transactions();
 
 		$('.selected_download_transactions').click(function(){
 			let selected_user = $('#selected_id_input').val();
-			let hit_url = "{{url('admin/download-wallet-transactions')}}" + "/" + selected_user;
-			window.open(hit_url);
+			let search_txt = $(".form-control[type='search'][aria-controls='basic-datatables2']").val();
+			if(selected_user == ''){
+				$("#alert_text").text("Please select at least one customer from customer list.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
+			var data_value = {selected_user,search_txt,'_token':'{{csrf_token()}}'}
+			$.ajax({
+				url:"{{ route('admin.downloadWalletTransactions') }}",
+				type:"POST",
+				data:data_value,
+				data_type:'JSON',
+				success:function(data){
+					if(data.ids_data.length > 0){
+						let hit_url = "{{url('admin/download-wallet-transactions-after-selected-user')}}" + "/" + btoa(data.ids_data.toString());
+						window.open(hit_url);
+					}else{
+						$("#alert_text").text("Selected Customer wallet transactions not match with criteria.");
+						$("#validationModel").modal("show");
+						$("#validationModel").unbind("click");
+					}
+				}
+			})
+		});
+
+		$('.download_users_details').click(function(){
+			let joined_from = $("#joined_from").val();
+        	let joined_to = $("#joined_to").val();
+        	let gender = $("#gender").val();
+        	let status = $("#status").val();
+        	let tier = $("#tier").val();
+        	let email = $("#email").val();
+        	let mobile_number = $("#mobile_number").val();
+        	let search_txt = $(".form-control[type='search'][aria-controls='basic-datatables']").val();
+
+        	var data_value = {joined_from,joined_to,gender,status,tier,email,mobile_number,search_txt,'_token':'{{csrf_token()}}'}
+
+        	$.ajax({
+				url:"{{ route('admin.downloadUsers') }}",
+				type:"POST",
+				data:data_value,
+				data_type:'JSON',
+				success:function(data){
+					console.log(data);
+					if(data.ids_data.length > 0){
+						let hit_url = "{{url('admin/download-user-after-criteria')}}" + "/" + btoa(data.ids_data.toString());
+						window.open(hit_url);
+					}else{
+						$("#alert_text").text("Users details not match with criteria.");
+						$("#validationModel").modal("show");
+						$("#validationModel").unbind("click");
+					}
+				}
+			})
 		});
 
 </script>

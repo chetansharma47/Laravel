@@ -32,7 +32,7 @@ use App\Mail\OfferAssignMail;
 use App\Mail\MultipleEventCroneMailSend;
 use Illuminate\Support\Arr;
 date_default_timezone_set("Asia/Kolkata");
-require_once $_SERVER['DOCUMENT_ROOT'].'/society_16_november/vendor/autoload.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
 
 class Controller extends BaseController
 {
@@ -520,7 +520,7 @@ class Controller extends BaseController
         $admin_event_notification = AdminNotification::where("uniq_id","=",5)->first();
         $today_days = Carbon::now()->format('l');
         $events = Event::whereDeletedAt(null)
-                ->whereDate('from_date','<=',Carbon::now()->toDateString())
+                //->whereDate('from_date','<=',Carbon::now()->toDateString())
                 ->whereDate('to_date','>=',Carbon::now()->toDateString())
                 ->where('status','=','Active')
                 ->whereRaw("FIND_IN_SET(?, when_day) > 0", $today_days)
