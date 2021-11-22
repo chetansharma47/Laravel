@@ -912,11 +912,11 @@ class TabController extends ResponseController
         foreach ($data as $d) {
             $user_find = User::find($d['selected_data_id']);
             $user_find->update([ $d['selected_key_name'] => $d['text'] ]);
-
+            
             if(isset($d['selected_key_name']) && $d['selected_key_name'] == "first_name"){
-                User::whereIn('reference_code',array($user_find->customer_id))->update(['reference_by' => $user_find->first_name . " " . $user_find->last_name]);
+                User::whereIn('reference_code',array($user_find->self_reference_code))->update(['reference_by' => $user_find->first_name . " " . $user_find->last_name]);
             }else if(isset($d['selected_key_name']) && $d['selected_key_name'] == "last_name"){
-                User::whereIn('reference_code',array($user_find->customer_id))->update(['reference_by' => $user_find->first_name . " " . $user_find->last_name]);
+                User::whereIn('reference_code',array($user_find->self_reference_code))->update(['reference_by' => $user_find->first_name . " " . $user_find->last_name]);
             }
         }
 
