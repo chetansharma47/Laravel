@@ -452,7 +452,7 @@ class AuthenticationController extends ResponseController
                     ->whereRaw("FIND_IN_SET(?, when_day) > 0", $today_days)
                     //->whereDate('from_date', '<=', Carbon::now()->toDateString())
                     ->whereDate('to_date','>=', Carbon::now()->toDateString())
-                    ->whereIn("id", $event_notification_ids)
+                    //->whereIn("id", $event_notification_ids)
                     ->with('venu')
                     ->orderBy('created_at','desc')
                     ->get();
@@ -602,7 +602,7 @@ class AuthenticationController extends ResponseController
                         $query->whereDate('to_date','>=', $today_date->toDateString());
                         $query->whereIn('venu_id', $active_venue_ids);
                         $query->whereRaw("FIND_IN_SET(?, when_day) > 0", $today_days);
-                        $query->whereIn("id", $event_notification_ids);
+                        //$query->whereIn("id", $event_notification_ids);
                     })->with('venu')->orderBy('event_time','asc')->get();
 
         // $tier = TierCondition::whereTierName($user->customer_tier)->orderBy('id','desc')->first();
@@ -636,7 +636,7 @@ class AuthenticationController extends ResponseController
                         $query->whereDate('to_date','>=', $today_date->toDateString());
                         $query->whereIn('venu_id', $active_venue_ids);
                         $query->whereRaw("FIND_IN_SET(?, when_day) > 0", $today_days);
-                        $query->whereIn("id", $event_notification_ids);
+                        //$query->whereIn("id", $event_notification_ids);
                     })->with('venu')->orderBy('created_at','desc')->get();
 
         $promotion = Cashback::where(function($query) use ($user,$today_date, $active_venue_ids, $today_days){
