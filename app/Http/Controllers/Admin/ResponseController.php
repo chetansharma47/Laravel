@@ -23,37 +23,37 @@ use App\Models\NotiRecord;
 class ResponseController extends Controller
 {
     public function is_require($data, $field)
-	{
-		$response = [
-			'result'  => 'Failure1',
-			'message' => $field." field is required",
-		];
+    {
+        $response = [
+            'result'  => 'Failure1',
+            'message' => $field." field is required",
+        ];
 
-		if($data){
-			return $data;
-		}
-		http_response_code(400);
-		echo json_encode($response); exit;
+        if($data){
+            return $data;
+        }
+        http_response_code(400);
+        echo json_encode($response); exit;
     }
    
-	public function responseOk($message, $data = null)
-	{
-		$response = [
-			'result'  => 'Success',
-			'message' => $message,
-		];
+    public function responseOk($message, $data = null)
+    {
+        $response = [
+            'result'  => 'Success',
+            'message' => $message,
+        ];
 
-		$data ? $response['data'] = $data : null;
-		http_response_code(200);
-		echo json_encode($response); exit;
-	}
+        $data ? $response['data'] = $data : null;
+        http_response_code(200);
+        echo json_encode($response); exit;
+    }
    
-	public function responseWithError($message=null)
-	{
-	    http_response_code(400);
-	   	$message = $message ? $message : "Something went wrong. Please try again later!";
-	    echo json_encode(['result' => 'Failure', 'message' => $message]); exit;
-	}
+    public function responseWithError($message=null)
+    {
+        http_response_code(400);
+        $message = $message ? $message : "Something went wrong. Please try again later!";
+        echo json_encode(['result' => 'Failure', 'message' => $message]); exit;
+    }
 
     public function responseWithErrorValidation($message=null){
         http_response_code(406);
@@ -61,15 +61,15 @@ class ResponseController extends Controller
         echo json_encode(['result' => 'Failure', 'message' => $message]); exit;
     }
 
-	public function responseWithErrorCode($message=null, $code)
-	{
-	    http_response_code($code);
-	   	$message = $message ? $message : "Something went wrong. Please try again later!";
-	    echo json_encode(['result' => 'Failure', 'message' => $message]); exit;
-	}
+    public function responseWithErrorCode($message=null, $code)
+    {
+        http_response_code($code);
+        $message = $message ? $message : "Something went wrong. Please try again later!";
+        echo json_encode(['result' => 'Failure', 'message' => $message]); exit;
+    }
 
 
-	public function uploadImage($image, $destinationPath)
+    public function uploadImage($image, $destinationPath)
     {
         $imageName = date('mdYHis') . uniqid().'.'.$image->getClientOriginalExtension();
         $image->move($destinationPath, $imageName);
@@ -77,33 +77,33 @@ class ResponseController extends Controller
     }
 
     public function is_validationRule($data, $request){
-    	//return $data['validation'];
-    	$validator = Validator::make($request->all(),$data['validation'], $data['message']);
-    	if($validator->fails()){
+        //return $data['validation'];
+        $validator = Validator::make($request->all(),$data['validation'], $data['message']);
+        if($validator->fails()){
             return $this->responseWithErrorValidation($validator->errors()->first());
         }
     }
 
     public function is_validationRuleArray($data, $request){
-    	//return $data['validation'];
-    	$validator = Validator::make($request,$data['validation'], $data['message']);
-    	if($validator->fails()){
+        //return $data['validation'];
+        $validator = Validator::make($request,$data['validation'], $data['message']);
+        if($validator->fails()){
             return $this->responseWithError($validator->errors()->first());
         }
     }
 
     public function is_validationRuleWeb($data, $request){
-    	//return $data['validation'];
-    	$validator = Validator::make($request->all(),$data['validation'], $data['message']);
-    	if($validator->fails()){
+        //return $data['validation'];
+        $validator = Validator::make($request->all(),$data['validation'], $data['message']);
+        if($validator->fails()){
             return back()->withErrors($validator)->withInput();
         }
     }
 
     public function is_validationRuleWebAjax($data, $request){
-    	//return $data['validation'];
-    	$validator = Validator::make($request->all(),$data['validation'], $data['message']);
-    	$validator = $this->validate($request,$data['validation'], $data['message']);
+        //return $data['validation'];
+        $validator = Validator::make($request->all(),$data['validation'], $data['message']);
+        $validator = $this->validate($request,$data['validation'], $data['message']);
         return response()->json($validator, 422);
        
     }
@@ -278,8 +278,8 @@ class ResponseController extends Controller
                         $total_noti_record = NotiRecord::whereUserId($find_user->id)->sum(DB::raw('wallet + offer + event + normal'));
                         try{
                        $android_notify =  $this->send_android_notification_new($find_user->device_token, $admin_cashback_notification->message, $notmessage = "Cashback Notification", $noti_type = 2,null,null,$total_noti_record);
-                       }catch(/Exception $ex){
-                            continue;
+                       }catch(\Exception $ex){
+                            // continue;
                         }
                         $criteria_data = [
                             'user_id'   => $find_user->id,
@@ -313,8 +313,8 @@ class ResponseController extends Controller
                         $total_noti_record = NotiRecord::whereUserId($find_user->id)->sum(DB::raw('wallet + offer + event + normal'));
                         try{
                         $ios_notify =  $this->iphoneNotification($find_user->device_token, $admin_cashback_notification->message, $notmessage = "Cashback Notification", $noti_type = 2,null,null,$total_noti_record);
-                        }catch(/Exception $ex){
-                            continue;
+                        }catch(\Exception $ex){
+                            // continue;
                         }
                         $criteria_data = [
                             'user_id'   => $find_user->id,
