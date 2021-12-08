@@ -276,8 +276,11 @@ class ResponseController extends Controller
                         }
 
                         $total_noti_record = NotiRecord::whereUserId($find_user->id)->sum(DB::raw('wallet + offer + event + normal'));
-
+                        try{
                        $android_notify =  $this->send_android_notification_new($find_user->device_token, $admin_cashback_notification->message, $notmessage = "Cashback Notification", $noti_type = 2,null,null,$total_noti_record);
+                       }catch(/Exception $ex){
+                            continue;
+                        }
                         $criteria_data = [
                             'user_id'   => $find_user->id,
                             'message'   => $admin_cashback_notification->message,
@@ -308,8 +311,11 @@ class ResponseController extends Controller
 
 
                         $total_noti_record = NotiRecord::whereUserId($find_user->id)->sum(DB::raw('wallet + offer + event + normal'));
-
+                        try{
                         $ios_notify =  $this->iphoneNotification($find_user->device_token, $admin_cashback_notification->message, $notmessage = "Cashback Notification", $noti_type = 2,null,null,$total_noti_record);
+                        }catch(/Exception $ex){
+                            continue;
+                        }
                         $criteria_data = [
                             'user_id'   => $find_user->id,
                             'message'   => $admin_cashback_notification->message,

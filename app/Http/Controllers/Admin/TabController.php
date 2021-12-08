@@ -2478,7 +2478,11 @@ class TabController extends ResponseController
                                 $noti_record_find->update();
                             }
                             $total_noti_record = NotiRecord::whereUserId($user->id)->sum(DB::raw('wallet + offer + event + normal'));
+                            try{
                            $android_notify =  $this->send_android_notification_new($user->device_token, $request->specific_criteria_message, $notmessage = "Admin Send notification message", $noti_type = 7, null, null, $total_noti_record);
+                           } catch (\Exception $e) {
+                                continue;
+                            }
                            if($android_notify){
                               (!empty($wallet_transactions->user_id)) ? $data['user_id'] = $wallet_transactions->user_id : $data['user_id'] = $user->id;
                               $save_notification =  AdminCriteriaNotification::create($data);
@@ -2502,7 +2506,11 @@ class TabController extends ResponseController
                                 $noti_record_find->update();
                             }
                             $total_noti_record = NotiRecord::whereUserId($user->id)->sum(DB::raw('wallet + offer + event + normal'));
+                            try{
                             $ios_notify =  $this->iphoneNotification($user->device_token, $request->specific_criteria_message, $notmessage = "Admin Send notification message", $noti_type = 7, null , null , $total_noti_record);
+                            } catch (\Exception $e) {
+                                continue;
+                            }
                             if($ios_notify){
                                (!empty($wallet_transactions->user_id)) ? $data['user_id'] = $wallet_transactions->user_id : $data['user_id'] = $user->id;
                                 $save_notification = AdminCriteriaNotification::create($data);
