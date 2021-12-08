@@ -42,7 +42,7 @@ use App\Models\GeneralSetting;
 use App\Mail\ContactUsAdmin;
 use App\Models\EventSentNotification;
 
-require_once $_SERVER['DOCUMENT_ROOT'].'/society_05_december/vendor/autoload.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
 
 class AuthenticationController extends ResponseController
 {

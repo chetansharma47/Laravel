@@ -47,7 +47,7 @@ use App\Models\LoginPose;
 use App\Models\WalletDetail;
 use App\Models\NotiRecord;
 use App\Models\GeneralSetting;
-require_once $_SERVER['DOCUMENT_ROOT'].'/society_05_december/vendor/autoload.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
 
 class RestaurantAuthenticationController extends ResponseController
 {
