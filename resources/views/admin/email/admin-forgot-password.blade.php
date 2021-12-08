@@ -22,7 +22,7 @@
        </td>
     </tr>
   </table>
-  <table width="600" border="0" align="center" cellpadding="0" cellspacing="0">
+  <table width="400" border="0" align="center" cellpadding="0" cellspacing="0">
   <tr>
     <td width="20" align="left" valign="top">
 
@@ -135,27 +135,21 @@
      </td>
   </tr>
   <tr>
-     <td align="center" style="font-family: 'Lato', sans-serif;
-    font-weight: 400; font-size: 14px; color: #fff; padding: 12px 0 32px;">
-       Thank you for using Capital Motion Society App
-     </td>
-  </tr>
-  <tr>
     <td align="center" style="font-family: 'Lato', sans-serif;
     font-weight: 400; font-size: 12px; color: #fff; padding-bottom: 12px;">
-      Office SG3, Al Bandar, Al Raha Beach,<br/> Abudhabi, UAE - P O Box 130122
+      {{$general_setting[9]['setting_content']}}
     </td>
   </tr>
   <tr>
     <td align="center" style="font-family: 'Lato', sans-serif;
     font-weight: 400; font-size: 12px; color: #fff; padding-bottom: 12px;">
-      Phone: +971 2449 9036 / Toll Free 800 6996
+      Phone: {{$general_setting[1]['setting_content']}}
     </td>
   </tr>
   <tr>
     <td align="center" style="font-family: 'Lato', sans-serif;
     font-weight: 400; font-size: 12px; color: #fff; padding-bottom: 12px;">
-      Email: <span style="color: #fff;"><a href="javascript:void(0);" style="color: #fff!important">info@capitalmotion.com</a></span>
+      Email: <span style="color: #fff;"><a href="javascript:void(0);" style="color: #fff!important">{{$general_setting[0]['setting_content']}}</a></span>
     </td>
   </tr>
   <tr>

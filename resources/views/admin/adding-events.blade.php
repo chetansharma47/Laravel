@@ -265,7 +265,8 @@
 							</div>
 					</div>
 				</div>
-				<div class="col-md-9 padding-top formdata">
+				<div class="col-md-9 padding-top formdata align-items-center align-self-center">
+					<div class="col-md-12 text-center no_data_found"><p>No data found</p></div>
 				</div>
 			</div>
 			
@@ -421,40 +422,47 @@
 							  		$('#uniq_id_db').html(`<span id="unique" uniq-id="${last_event.unique_id}"></span>`);
 							  	}
 
-							  	for(var i=0; i<list.length; i++){
+							  	if(list.length > 0){
+								  	for(var i=0; i<list.length; i++){
 
-							  		var imagename = list[i].name_of_file_show;
-							  		var name_len = imagename.length;
+								  		var imagename = list[i].name_of_file_show;
+								  		var name_len = imagename.length;
 
-							  		if(name_len > 24){
-							  			var slice_name =  imagename.slice(0,24)+'...';
-							  		}else{
-							  			var slice_name = imagename;
-							  		}
-										
-										//console.log(list[i]);
-										if(list[i].deleted_at==null && list[i].venu.deleted_at==null){
+								  		if(name_len > 24){
+								  			var slice_name =  imagename.slice(0,24)+'...';
+								  		}else{
+								  			var slice_name = imagename;
+								  		}
+											
+											//console.log(list[i]);
+											if(list[i].deleted_at==null && list[i].venu.deleted_at==null){
 
-											$('.menu-lisitng ul.listitem').append(`<li class="event_list" uniq-id="${list[i].unique_id}" data-id="${list[i].id}" data-tab="uniq-${list[i].unique_id}"><input type="text" class="input_tier_name" maxlength="30" uniq-id="${list[i].unique_id}" value="${list[i].event_name}"></li>`);
-											$('.formdata').append(eventform(list[i].unique_id,list[i].event_name,list[i].event_description,list[i].from_date,list[i].to_date,list[i].when_day,list[i].event_time,list[i].to_time,list[i].status,list[i].image,list[i].venu_id,list[i].venu,venue_all,slice_name));
+												$('.menu-lisitng ul.listitem').append(`<li class="event_list" uniq-id="${list[i].unique_id}" data-id="${list[i].id}" data-tab="uniq-${list[i].unique_id}"><input type="text" class="input_tier_name" maxlength="30" uniq-id="${list[i].unique_id}" value="${list[i].event_name}"></li>`);
+												$('.formdata').append(eventform(list[i].unique_id,list[i].event_name,list[i].event_description,list[i].from_date,list[i].to_date,list[i].when_day,list[i].event_time,list[i].to_time,list[i].status,list[i].image,list[i].venu_id,list[i].venu,venue_all,slice_name));
 
-												for(var j=0; j<venue_all.length; j++){
-													var venu_data_id = venue_all[j].id;
-													var venu_data_name = venue_all[j].venue_name;
-													var option = `<option value="${venu_data_id}" ${list[i].venu_id == venu_data_id ? 'selected' : ''}>${venu_data_name}</option>`;
-													$('.venue_name[uniq-id='+list[i].unique_id+']').append(option);
-												}
-										}
+													for(var j=0; j<venue_all.length; j++){
+														var venu_data_id = venue_all[j].id;
+														var venu_data_name = venue_all[j].venue_name;
+														var option = `<option value="${venu_data_id}" ${list[i].venu_id == venu_data_id ? 'selected' : ''}>${venu_data_name}</option>`;
+														$('.venue_name[uniq-id='+list[i].unique_id+']').append(option);
+													}
+											}
 
-							 	}
+								 	}
 
-							  	$('.menu-lisitng ul.listitem li').first().addClass('active');
-								var first_id = $('.menu-lisitng ul.listitem li').first().attr('uniq-id');
-								$('.form_data[uniq-id='+first_id+']').addClass('active');
+								  	$('.menu-lisitng ul.listitem li').first().addClass('active');
+									var first_id = $('.menu-lisitng ul.listitem li').first().attr('uniq-id');
+									$('.form_data[uniq-id='+first_id+']').addClass('active');
+									$('.formdata .no_data_found').hide();
+									$('.formdata').removeClass('align-items-center');
+									$('.formdata').removeClass('align-self-center');
+							  	}else{
+							  		$('.formdata .no_data_found').show();
+									$('.formdata').addClass('align-items-center');
+									$('.formdata').addClass('align-self-center');
+							  	}
 
 					  		},500);
-
-
 							
 						}
 					});
@@ -596,7 +604,7 @@
 								Venue Name
 							</label>
 							<div class="selectdiv">
-								<select class="form-control venue_name form-group select_option" uniq-id="${id}" name="venue_name" style="padding: .6rem 1rem; position: relative; cursor:pointer;">
+								<select class="form-control venue_name form-group select_option" uniq-id="${id}" name="venue_name" style="padding: .6rem 1rem; position: relative; background-position: 97% 50%!important; cursor:pointer;">
 								<option value="">Select Venue name</option>
 								</select>
 							</div>
@@ -724,7 +732,7 @@
 								Status
 							</label>
 							<div class="selectdiv">
-								<select class="form-control event_status form-group select_option" uniq-id="${id}" style="padding: .6rem 1rem; position: relative; cursor:pointer;">
+								<select class="form-control event_status form-group select_option" uniq-id="${id}" style="padding: .6rem 1rem; position: relative; cursor:pointer; background-position: 97% 50%!important;">
 									<option value="">Select Status</option>
 									<option ${(status=='Active')?'selected':''} value="Active">Active</option>
 									<option ${(status=='Inactive')?'selected':''} value="Inactive">Inactive</option>
@@ -758,6 +766,9 @@
 
 
 		$('#plus_icon').click(function(){
+			$('.formdata .no_data_found').hide();
+			$('.formdata').removeClass('align-items-center');
+			$('.formdata').removeClass('align-self-center');
 			var last_id = $('#uniq_id_db #unique').attr('uniq-id');
 			var inc = 0;
 
@@ -809,10 +820,10 @@
 					},
 					success:function(data){
 						setTimeout(function(){
-	         		$("#loaderModel").modal("hide");
-	        		$("#successModel").modal("show");
-	        		$("#success_alert_text").text(data);
-	        		$("#successModel").unbind("click");
+			         		$("#loaderModel").modal("hide");
+			        		$("#successModel").modal("show");
+			        		$("#success_alert_text").text(data);
+			        		$("#successModel").unbind("click");
 							$('.form_data.active').remove();
 							$('.event_list.active').remove();
 							if(_next_venue > 0){
@@ -822,8 +833,27 @@
 								$('.event_list[uniq-id='+_prev_venue+']').addClass('active');
 								$('.form_data[uniq-id='+_prev_venue+']').addClass('active');
 							}
-	        	},500);
-					}
+
+							if($('.formdata .form_data.active').length == 0){
+								$('.formdata .no_data_found').show();
+								$('.formdata').addClass('align-items-center');
+								$('.formdata').addClass('align-self-center');
+							}
+			        	},500);
+					},error: function(data, textStatus, xhr) {
+			            if(data.status == 422){
+			              setTimeout(function(){
+			              	$("#loaderModel").modal("hide");
+			                  	var result = data.responseJSON;
+			                 	if(result['event_name_err'] && result['event_name_err'].length > 0){
+			                 		$("#alert_text").text(result['event_name_err']);
+									$("#validationModel").modal("show");
+									$("#validationModel").unbind("click");
+			                 	}
+			                  return false;
+			              },500);
+			            } 
+			      	}
 				});
 			}else{
 
@@ -837,9 +867,15 @@
 					$('.form_data[uniq-id='+_prev_venue+']').addClass('active');
 				}
 
-					$("#successModel").modal("show");
+				$("#successModel").modal("show");
 		  		$("#success_alert_text").text('Event deleted successfully.');
 		    	$("#successModel").unbind("click");
+
+		    	if($('.formdata .form_data.active').length == 0){
+					$('.formdata .no_data_found').show();
+					$('.formdata').addClass('align-items-center');
+					$('.formdata').addClass('align-self-center');
+				}
 			}
 		}
 
@@ -1091,6 +1127,7 @@ if(file){
 							$("#successModel").modal("show");
 				  		$("#success_alert_text").text(data.message);
 				  		$("#successModel").unbind("click");
+				  		$('.event_list.active').attr('data-id',data.data['id']);
 				  	},500);
 
 					},error: function(data, textStatus, xhr) {
@@ -1175,6 +1212,12 @@ if(file){
 				return false;
 			}
 		});
+
+		if($('.formdata .event_list').length > 0){
+			$('.formdata .no_data_found').hide();
+			$('.formdata').removeClass('align-items-center');
+			$('.formdata').removeClass('align-self-center');
+		}
 
 		// $(document).on('change','.event_time',function(){
 		// 	var select_time = $(this).attr('data-time');

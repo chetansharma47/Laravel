@@ -146,9 +146,9 @@
 		    margin-top: 250px;
 		}
 
-		.modal-footer {
+		/*.modal-footer {
 		    padding: 0.3rem;
-		}
+		}*/
 
 		.cmn {
 			background-color: #3ABD6F !important;

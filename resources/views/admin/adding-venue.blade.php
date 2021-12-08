@@ -256,8 +256,8 @@
 						</div>
 					</div>
 				</div>
-				<div class="col-md-9 padding-top venuregister_append">
-					
+				<div class="col-md-9 padding-top venuregister_append align-items-center align-self-center">
+					<div class="col-md-12 text-center no_data_found"><p>No data found</p></div>
 				</div>
 			</div>
 			
@@ -415,34 +415,42 @@
 
 						$('.uniqid_db').html('<span uniq-id="'+last_venue.unique_id+'"class="last_db_id"></span>');
 					}
+					if(list.length > 0){
+						for(let i=0; i<list.length; i++){
 
-					for(let i=0; i<list.length; i++){
+									var imgname = list[i].name_of_file_show;
+									if(imgname != null && imgname != "" && imgname != undefined){
 
-							var imgname = list[i].name_of_file_show;
-							if(imgname != null && imgname != "" && imgname != undefined){
+										var length = imgname.length;
 
-								var length = imgname.length;
+										if(length>24){
+											var slice = imgname.slice(0,24)+'...';
+										}else{
+											var slice = imgname;
+										}
+									}else{
+										var slice = "";
+									}
 
-								if(length>24){
-									var slice = imgname.slice(0,24)+'...';
-								}else{
-									var slice = imgname;
-								}
-							}else{
-								var slice = "";
+								
+
+								if(list[i].deleted_at==null){
+								$('.menu-lisitng ul.listitem').append(`<li class="venu_list" unique-id="${list[i].unique_id}" data-id="${list[i].id}" data-tab="uniq-${list[i].unique_id}"><input type="text" class="input_tier_name" maxlength="30" unique-id="${list[i].unique_id}" value="${list[i].venue_name}" placeholder="Enter Venue Name"></li>`);
+
+								$('.venuregister_append').append(venuform(list[i].unique_id,list[i].venue_name,list[i].address,list[i].venue_description,list[i].phone_number,list[i].google_map_location_link,list[i].book_now_link,slice,list[i].menu_link,list[i].status,list[i].id,list[i].image, list[i].pos_venue_id));
 							}
-
-						
-
-						if(list[i].deleted_at==null){
-						$('.menu-lisitng ul.listitem').append(`<li class="venu_list" unique-id="${list[i].unique_id}" data-id="${list[i].id}" data-tab="uniq-${list[i].unique_id}"><input type="text" class="input_tier_name" maxlength="30" unique-id="${list[i].unique_id}" value="${list[i].venue_name}" placeholder="Enter Venue Name"></li>`);
-
-						$('.venuregister_append').append(venuform(list[i].unique_id,list[i].venue_name,list[i].address,list[i].venue_description,list[i].phone_number,list[i].google_map_location_link,list[i].book_now_link,slice,list[i].menu_link,list[i].status,list[i].id,list[i].image, list[i].pos_venue_id));
+						}
+						$('.menu-lisitng ul.listitem li').first().addClass('tab-active');
+						var first_id = $('.menu-lisitng ul.listitem li').first().attr('unique-id');
+						$('.formdata_show[unique-id='+first_id+']').addClass('tab-active');
+						$('.venuregister_append .no_data_found').hide();
+						$('.venuregister_append').removeClass('align-items-center');
+						$('.venuregister_append').removeClass('align-self-center');
+					}else{
+						$('.venuregister_append .no_data_found').show();
+						$('.venuregister_append').addClass('align-items-center');
+						$('.venuregister_append').addClass('align-self-center');
 					}
-				}
-				$('.menu-lisitng ul.listitem li').first().addClass('tab-active');
-				var first_id = $('.menu-lisitng ul.listitem li').first().attr('unique-id');
-				$('.formdata_show[unique-id='+first_id+']').addClass('tab-active');
 
 				
 			}
@@ -477,6 +485,10 @@
 
 		//Plus icon add menu list or remove or active
 		$("#plus_icon").on('click',function(){
+
+				$('.venuregister_append .no_data_found').hide();
+				$('.venuregister_append').removeClass('align-items-center');
+				$('.venuregister_append').removeClass('align-self-center');
 				
 				var incattr = $('.last_db_id').attr('uniq-id');
 				var inc = 0;
@@ -540,6 +552,11 @@
 								$('.venu_list[unique-id='+_prev_venue+']').addClass('tab-active');
 								$('.formdata_show[unique-id='+_prev_venue+']').addClass('tab-active');
 							}
+							if($('.venuregister_append .formdata_show.tab-active').length == 0){
+								$('.venuregister_append .no_data_found').show();
+								$('.venuregister_append').addClass('align-items-center');
+								$('.venuregister_append').addClass('align-self-center');
+							}
 	        			},500);
 					},error: function(data, textStatus, xhr) {
 			            if(data.status == 422){
@@ -558,8 +575,8 @@
 				});
 			}else{
 
-					$('.formdata_show.tab-active').remove();
-					$('.venu_list.tab-active').remove();
+				$('.formdata_show.tab-active').remove();
+				$('.venu_list.tab-active').remove();
 				if(_next_venue > 0){
 					$('.venu_list[unique-id='+_next_venue+']').addClass('tab-active');
 					$('.formdata_show[unique-id='+_next_venue+']').addClass('tab-active');
@@ -568,9 +585,15 @@
 					$('.formdata_show[unique-id='+_prev_venue+']').addClass('tab-active');
 				}
 
-	      	$("#successModel").modal("show");
+		      	$("#successModel").modal("show");
 	    		$("#success_alert_text").text('Venue deleted successfully');
-        	$("#successModel").unbind("click");
+	        	$("#successModel").unbind("click");
+
+	        	if($('.venuregister_append .formdata_show.tab-active').length == 0){
+					$('.venuregister_append .no_data_found').show();
+					$('.venuregister_append').addClass('align-items-center');
+					$('.venuregister_append').addClass('align-self-center');
+				}
 			}
 		}
 
@@ -657,7 +680,7 @@ function venuform(uniqueid,vname,vaddr,vdesc,vphone,vmap,vbook,vimage,vmenu,vsta
 								Status
 							</label>
 							<div class="selectdiv">
-								<select class="form-control venu_status form-group select_option" name="venu_status" unique-id="${uniqueid}"  style="padding: .6rem 1rem; position: relative; cursor:pointer;">
+								<select class="form-control venu_status form-group select_option" name="venu_status" unique-id="${uniqueid}"  style="padding: .6rem 1rem; position: relative; cursor:pointer; background-position: 97% 50%!important;">
 									<option value="">Select Status</option>
 									<option ${(vstatus=='Active')?'selected':''} value="Active">Active</option>
 									<option ${(vstatus=='Inactive')?'selected':''} value="Inactive">Inactive</option>
@@ -921,7 +944,10 @@ $(document).on('click','.venuSave',function(){
 	    	$("#successModel").modal("show");
 	  		$("#success_alert_text").text(data.message);
 	  		$("#successModel").unbind("click");
-	  		$(".formdata_show.tab-active .common_btn").attr('src',data.data['id']);
+	  		if(data.data != null || data.data != undefined){
+	  			$(".formdata_show.tab-active .common_btn").attr('src',data.data['id']);
+	  			$('.venu_list.tab-active').attr('data-id',data.data['id']);
+	  		}
 	  	},500);
 		},error: function(data, textStatus, xhr) {
             if(data.status == 422){
@@ -959,6 +985,14 @@ function process(input){
   let numbers = value.replace(/[^0-9]/g, "");
   input.value = numbers;
 }
+
+// var price = '00045000';
+// var new_price = price.split('');;
+// for(let x=0; x < new_price.length(); x++){
+// 	if(new_price.charAt(x) == '0'){
+// 		console.log(new_price+'s');
+// 	}
+// }
 
 </script>
 		

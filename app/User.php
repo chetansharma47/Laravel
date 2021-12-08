@@ -48,7 +48,8 @@ class User extends Authenticatable
         'tier_update_date',
         'refer_amount',
         'refer_amount_used',
-        'request_change_email'
+        'request_change_email',
+        'id',
     ];
 
     /**

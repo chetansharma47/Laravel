@@ -267,7 +267,9 @@
 						</div>
 					</div>
 				</div>
-				<div class="col-md-7 padding-top formdata"></div>
+				<div class="col-md-7 padding-top formdata ">
+					<div class="col-md-12 text-center no_data_found"><p>No data found</p></div>
+				</div>
 			</div>
 		</div>
 		<!-- <div class="tab-content" id="pills-tabContent">
@@ -392,11 +394,21 @@
 	<!-- Atlantis DEMO methods, don't include it in your project! -->
 	<script src="{{url('public/admin/assets/js/setting-demo.js')}}"></script>
 	<script>
-
+		console.log($('.menu-lisitng .venu-list li.venu-tab-list').length);
 		if($('.menu-lisitng .venu-list li.venu-tab-list').length > 0){
 			$('.menu-lisitng .listitem').css('display','block');
+		 	$('.formdata .no_data_found').hide();
+		 	$('.formdata').removeClass('col-md-10');
+			$('.formdata').addClass('col-md-7');
+			$('.formdata').removeClass('align-items-center');
+			$('.formdata').removeClass('align-self-center');
 		}else{
 			$('#offer_new').css('display','none');
+		  	$('.formdata .no_data_found').show();
+			$('.formdata').removeClass('col-md-7');
+			$('.formdata').addClass('col-md-10');
+			$('.formdata').addClass('align-items-center');
+			$('.formdata').addClass('align-self-center');
 		}
 		
 		// offer form 
@@ -654,7 +666,7 @@
 								Status
 							</label>
 							<div class="selectdiv">
-								<select class="form-control form-group select_option offer_status" style="padding: .6rem 1rem; position: relative; cursor:pointer;" venu-id="${venuid}" uniq-id="${uniqid}">
+								<select class="form-control form-group select_option offer_status" style="padding: .6rem 1rem; position: relative; cursor:pointer; background-position: 96% 50%!important;" venu-id="${venuid}" uniq-id="${uniqid}">
 									<option value="">Select Status</option>
 									<option ${(status=='Active')?'selected':''} value="Active">Active</option>
 									<option ${(status=='Inactive')?'selected':''} value="Inactive">Inactive</option>
@@ -791,10 +803,10 @@ let venu_tab_id = $('.venu-tab-list.active').attr('venu-id');
 					},
 					success:function(data){
 						setTimeout(function(){
-	         		$("#loaderModel").modal("hide");
-	        		$("#successModel").modal("show");
-	        		$("#success_alert_text").text(data);
-	        		$("#successModel").unbind("click");
+			         		$("#loaderModel").modal("hide");
+			        		$("#successModel").modal("show");
+			        		$("#success_alert_text").text(data);
+			        		$("#successModel").unbind("click");
 							$('.offers_list.active').remove();
 							$('.offer_form_data.active').remove();
 							if(_next_offer > 0){
@@ -804,7 +816,7 @@ let venu_tab_id = $('.venu-tab-list.active').attr('venu-id');
 								$('.offers_list[uniq-id='+_prev_offer+']').addClass('active');
 								$('.offer_form_data[uniq-id='+_prev_offer+']').addClass('active');
 							}
-	        	},500);
+	        			},500);
 					}
 				});
 			}else{
@@ -819,14 +831,14 @@ let venu_tab_id = $('.venu-tab-list.active').attr('venu-id');
 				}
 
 				$("#successModel").modal("show");
-	  		$("#success_alert_text").text('Offer deleted successfully.');
-	    	$("#successModel").unbind("click");
+		  		$("#success_alert_text").text('Offer deleted successfully.');
+		    	$("#successModel").unbind("click");
 			}
-			}else{
-				$("#successModel").modal("show");
+		}else{
+			$("#successModel").modal("show");
 	  		$("#success_alert_text").text('Offer can not be deleted.');
 	    	$("#successModel").unbind("click");
-			}
+		}
 			
 }
 
@@ -839,8 +851,8 @@ let venu_tab_id = $('.venu-tab-list.active').attr('venu-id');
 			var file_nameshow = file.name;
 			var valu = file_nameshow;
 			var length = valu.length;
-			if(length>24){
-				var slice_name = valu.slice(0,24)+'...';
+			if(length>20){
+				var slice_name = valu.slice(0,20)+'...';
 			}else{
 				var slice_name = valu;
 			}
@@ -1209,8 +1221,11 @@ $.ajax({
 		$('.criteria_to_price[uniq-id='+uniq_id+']').attr('disabled',true);
   		
   	},500);
-  	$(this).attr('data-id',data.data.id);
-  	$('.offers_list[uniq-id='+uniq_id+']').attr('data-id',data.data.id);
+		if(data.data != null || data.data != undefined){
+		  	$(this).attr('data-id',data.data.id);
+		  	$('.offers_list[uniq-id='+uniq_id+']').attr('data-id',data.data.id);
+		  	$('.offers_list.active').attr('data-id',data.data.id);
+		}
 
 	},error: function(data, textStatus, xhr) {
         if(data.status == 422){
@@ -1300,12 +1315,13 @@ function alloffers(){
   			$('#uniqid').attr('uniq-id',last_offer.unique_id);
 	  	}
 	  	
-	  	for(var i=0; i < dataoffer.length; i++){
+	  	// if(dataoffer.length > 0){
+	  		for(var i=0; i < dataoffer.length; i++){
 
 	  		var imagename = dataoffer[i].name_of_file_show;
 	  		var name_len = imagename.length;
-	  		if(name_len > 24){
-	  			var slice_name =  imagename.slice(0,24)+'...';
+	  		if(name_len > 20){
+	  			var slice_name =  imagename.slice(0,20)+'...';
 	  		}else{
 	  			var slice_name = imagename;
 	  		}
@@ -1329,18 +1345,27 @@ function alloffers(){
 	  		
 	  	}
 	  	
-	  	var id_venu = $('.venu-tab-list.active').attr('venu-id');
-	  	var venu_link = $('.offers_list[venu-id='+id_venu+']').attr('venu-id');
-	  	var len = $('.offers_list').length;
-	  	for(var i=0; i<len; i++){
-	  		var offer_venu_id = $('.menu-lisitng .listitem .offers_list').eq(i).attr('venu-id');
-	  		if(id_venu == offer_venu_id){
-	  			$('.offers_list[venu-id='+offer_venu_id+']').first().addClass('active');
-	  			$('.offer_form_data[venu-id='+offer_venu_id+']').first().addClass('active');
-	  		}else{
-	  			$('.offers_list[venu-id='+offer_venu_id+']').addClass('in-active');
-	  		}
-	  	}
+		  	var id_venu = $('.venu-tab-list.active').attr('venu-id');
+		  	var venu_link = $('.offers_list[venu-id='+id_venu+']').attr('venu-id');
+		  	var len = $('.offers_list').length;
+		  	for(var i=0; i<len; i++){
+		  		var offer_venu_id = $('.menu-lisitng .listitem .offers_list').eq(i).attr('venu-id');
+		  		if(id_venu == offer_venu_id){
+		  			$('.offers_list[venu-id='+offer_venu_id+']').first().addClass('active');
+		  			$('.offer_form_data[venu-id='+offer_venu_id+']').first().addClass('active');
+		  		}else{
+		  			$('.offers_list[venu-id='+offer_venu_id+']').addClass('in-active');
+		  		}
+		  	}
+
+		 //  	$('.formdata .no_data_found').hide();
+			// $('.formdata').removeClass('align-items-center');
+			// $('.formdata').removeClass('align-self-center');
+		 //  }else{
+		 //  	$('.formdata .no_data_found').show();
+			// $('.formdata').addClass('align-items-center');
+			// $('.formdata').addClass('align-self-center');
+		 //  }
 		}
 	});
 }

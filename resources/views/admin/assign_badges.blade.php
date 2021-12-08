@@ -303,7 +303,7 @@ table#basic-datatables {
 						<label style="font-weight: 400;">
 							Badge Name
 						</label>
-						<select class="form-control form-group select_option" style="position: relative;border-radius: 10px; cursor: pointer;" id="exampleFormControlSelect1" name="badge_name">
+						<select class="form-control form-group select_option" style="position: relative;border-radius: 10px; cursor: pointer; background-position: 97% 50%!important;" id="exampleFormControlSelect1" name="badge_name">
 							<option value="">Select Badge Name</option>
 							@foreach($badges as $badge)
 							<option value="{{$badge->id}}">{{$badge->badge_name}}</option>
@@ -320,7 +320,7 @@ table#basic-datatables {
 						<label style="font-weight: 400;">
 							Status
 						</label>
-						<select class="form-control form-group select_option" style="position: relative;border-radius: 10px; cursor: pointer;" id="exampleFormControlSelect2" name="status">
+						<select class="form-control form-group select_option" style="position: relative;border-radius: 10px; cursor: pointer; background-position: 97% 50%!important;" id="exampleFormControlSelect2" name="status">
 							<option value="">Select Status</option>
 							<option value="Active">Active</option>
 							<option value="Inactive">Inactive</option>

@@ -6,6 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use App\Models\GeneralSetting;
 
 class SignupMail extends Mailable
 {
@@ -33,6 +34,8 @@ class SignupMail extends Mailable
      */
     public function build()
     {
+
+        $general_setting = GeneralSetting::all();
         return $this->from(env('MAIL_USERNAME'), 'Capital Motion')
         ->subject($this->admin_signup_notification_email->title)
         ->attach(storage_path("app/public/attachment_mail"."/".$this->file_name))
@@ -40,6 +43,7 @@ class SignupMail extends Mailable
         ->with([
             'admin_signup_notification_email'   => $this->admin_signup_notification_email,
             'user'   => $this->user,
+            'general_setting'   => $general_setting,
             'logo'   => public_path('admin/assets/email_img/CM-Logo-2.png'),
         ]);
     }

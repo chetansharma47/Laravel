@@ -6,6 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use App\Models\GeneralSetting;
 
 class OfferAssignMail extends Mailable
 {
@@ -38,6 +39,7 @@ class OfferAssignMail extends Mailable
 
         $url = $offer->image;
         $offer_image = substr(strrchr($url, '/'), 1);
+        $general_setting = GeneralSetting::all();
 
         if($offer->offer_type == "BirthdayOffer"){
             $path = public_path('/') . $offer_image;
@@ -51,6 +53,7 @@ class OfferAssignMail extends Mailable
         ->with([
             'admin_offer_notification'   => $this->admin_offer_notification,
             'user_find'   => $this->user_find,
+            'general_setting'   => $general_setting,
             'logo'   => public_path('admin/assets/email_img/CM-Logo-2.png'),
             'offer_image'   => $path,
             'offer' => $offer

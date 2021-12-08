@@ -108,7 +108,7 @@ class ResponseController extends Controller
        
     }
 
-    public  function iphoneNotification($device_token,$message,$notfy_message, $noti_type = "", $event_id = "", $offer_id = ""){
+    public  function iphoneNotification($device_token,$message,$notfy_message, $noti_type = "", $event_id = "", $offer_id = "", $total_noti_record = ""){
         $PATH = public_path('pemfile/user_push.pem');
         $deviceToken = $device_token;
         
@@ -120,6 +120,7 @@ class ResponseController extends Controller
         $body['offer_id'] = $offer_id;
         $body['aps'] =  array(
                           'alert' => $message,
+                          'badge' => (int)$total_noti_record,
                           'sound' => 'default',
                           'details'=>$body,
                         );
@@ -143,14 +144,14 @@ class ResponseController extends Controller
         return $result;
     }
 
-    public function send_android_notification_new($deviceToken,$message,$notfy_message='',$noti_type = "", $event_id = "", $offer_id = "") {
+    public function send_android_notification_new($deviceToken,$message,$notfy_message='',$noti_type = "", $event_id = "", $offer_id = "", $total_noti_record = "") {
         if (!defined('API_ACCESS_KEY')) {
           define('API_ACCESS_KEY' ,'AAAA_gAB8Yc:APA91bHy0nP46e5z6WNb4GDmSbmgDlLJhZvll1jOdPLUuJ57ypebWPynuk80IAF6rvRhO44rzVMbgFCFV_rVOxdTNHFQMEuKe2IG6nDMo9FbGM8fAUQlwBt7eik0NunvLAnKlsQGVMK1');
         }
         // print_r($type); die;
 
         $not_message = array('sound' =>1,
-                    'message'=>array("noti_type" => $noti_type, "event_id" => $event_id, "offer_id" => $offer_id, 'message' => $message),
+                    'message'=>array("noti_type" => $noti_type, "event_id" => $event_id, "offer_id" => $offer_id, 'message' => $message, 'badge_count' => (int)$total_noti_record),
                     'notifykey'=>"HOME_KEY",
                     //"title" => "SocietyApp",
                     'body'=>$message,
@@ -274,7 +275,9 @@ class ResponseController extends Controller
                             $noti_record_find->update();
                         }
 
-                       $android_notify =  $this->send_android_notification_new($find_user->device_token, $admin_cashback_notification->message, $notmessage = "Cashback Notification", $noti_type = 2);
+                        $total_noti_record = NotiRecord::whereUserId($find_user->id)->sum(DB::raw('wallet + offer + event + normal'));
+
+                       $android_notify =  $this->send_android_notification_new($find_user->device_token, $admin_cashback_notification->message, $notmessage = "Cashback Notification", $noti_type = 2,null,null,$total_noti_record);
                         $criteria_data = [
                             'user_id'   => $find_user->id,
                             'message'   => $admin_cashback_notification->message,
@@ -303,7 +306,10 @@ class ResponseController extends Controller
                             $noti_record_find->update();
                         }
 
-                        $ios_notify =  $this->iphoneNotification($find_user->device_token, $admin_cashback_notification->message, $notmessage = "Cashback Notification", $noti_type = 2);
+
+                        $total_noti_record = NotiRecord::whereUserId($find_user->id)->sum(DB::raw('wallet + offer + event + normal'));
+
+                        $ios_notify =  $this->iphoneNotification($find_user->device_token, $admin_cashback_notification->message, $notmessage = "Cashback Notification", $noti_type = 2,null,null,$total_noti_record);
                         $criteria_data = [
                             'user_id'   => $find_user->id,
                             'message'   => $admin_cashback_notification->message,
@@ -326,14 +332,13 @@ class ResponseController extends Controller
                     $response = $sms->sendToOne($find_user->country_code.$find_user->mobile_number, $message,'CM-Society');
                 } catch (\Exception $e) {
                     // return $e->getMessage();
-                    // continue;
                 }
             }
 
 
             if($admin_cashback_notification->email_type == 1){
-                $cashbackNotificationJob = (new CashbackEmailJob($admin_cashback_notification, $find_user))->delay(Carbon::now()->addSeconds(3));
-
+                $show_message_cashback = $admin_cashback_notification->message;
+                $cashbackNotificationJob = (new CashbackEmailJob($admin_cashback_notification, $find_user, $show_message_cashback))->delay(Carbon::now()->addSeconds(3));
                 dispatch($cashbackNotificationJob);
             }             
         }

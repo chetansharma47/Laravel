@@ -216,6 +216,21 @@
 							</div>
 							<div class="row mt-3">
 								<div class="col-md-12">
+									<div class="gernal_input_sec" uniq_id="18"  data-name="Address" >
+										<h5> Address</h5>
+										<div class="d-flex justify-content-between mt-2">
+											<div class="venue_inputs">
+												<input type="text"  data-name="Address" class="form-control form-control-user form-control-user-address address" placeholder="Address" value="" uniq_id="18" maxlength="250"  style="border-radius: 10px;padding: 12px 22px !important;"/>
+											</div>
+											<a href="javascript:void(0);"  data-name="Address" uniq_id="18" class="btn btn-primary btn-user btn-block common_btn ml-2 general_address general_setting_btn" style="width: 138px; padding-top: 12px;">
+			                      				Save
+			                    			</a>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row mt-3">
+								<div class="col-md-12">
 									<div class="gernal_input_sec" uniq_id="3" data-name="Offer Image">
 										<h5>Offer Screen Image</h5>
 										<div class="d-flex justify-content-between mt-2">
@@ -1045,7 +1060,20 @@
 				  		$("#success_alert_text").text(data.message);
 				  		$("#successModel").unbind("click");
 					},500);
-				}
+				},error: function(data, textStatus, xhr) {
+			        if(data.status == 422){
+			          setTimeout(function(){
+			          	$("#loaderModel").modal("hide");
+			              	var result = data.responseJSON;
+			             	if(result['image_name_err'] && result['image_name_err'].length > 0){
+			             		$("#alert_text").text(result['image_name_err']);
+								$("#validationModel").modal("show");
+								$("#validationModel").unbind("click");
+			             	}
+			              return false;
+			          },500);
+			        } 
+			  	}
 			});
 
 		});
@@ -1109,7 +1137,20 @@
 					  		$("#success_alert_text").text(data.message);
 					  		$("#successModel").unbind("click");
 						},500);
-					}
+					},error: function(data, textStatus, xhr) {
+				        if(data.status == 422){
+				          setTimeout(function(){
+				          	$("#loaderModel").modal("hide");
+				              	var result = data.responseJSON;
+				             	if(result['image_name_err'] && result['image_name_err'].length > 0){
+				             		$("#alert_text").text(result['image_name_err']);
+									$("#validationModel").modal("show");
+									$("#validationModel").unbind("click");
+				             	}
+				              return false;
+				          },500);
+				        } 
+				  	}
 				});
 			}
 
@@ -1154,7 +1195,7 @@
 			$(this).val('');
 		});
 
-		$(document).on("keyup",".venue_invoice_check",function(){
+		$(document).on("keyup",".venue_invoice_check, .form-control-user-address",function(){
 	        if($.trim($(this).val()).length == 0){
 	           $(this).val("");
 	        }else{

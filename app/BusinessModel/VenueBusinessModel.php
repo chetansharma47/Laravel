@@ -20,24 +20,28 @@ class VenueBusinessModel extends Model
 {
 	public function UploadBase64Data($data,$imgoriginalname){
 		$auth = Auth::guard('admin')->user();
-		$extension = pathinfo($imgoriginalname)['extension'];
-		if($extension=='png'){
-        	$image1 = str_replace('data:image/png;base64,', '', $data);
-        	$destinationPath = storage_path(). DIRECTORY_SEPARATOR . env('VENUE_STORAGE');
-        	$imageName = date('mdYHis') . rand(10,100) . uniqid().'.png';
-		}else{
-	        $image1 = str_replace('data:image/jpeg;base64,', '', $data);
-	        $destinationPath = storage_path(). DIRECTORY_SEPARATOR . env('VENUE_STORAGE');
-        	$imageName = date('mdYHis') . rand(10,100) . uniqid().'.jpeg';
-		}
-        
-        //file_put_contents($destinationPath. '/' . $imageName, base64_decode($image1));
+	    try {
+			$extension = pathinfo($imgoriginalname)['extension'];
+			if($extension=='png'){
+	        	$image1 = str_replace('data:image/png;base64,', '', $data);
+	        	$destinationPath = storage_path(). DIRECTORY_SEPARATOR . env('VENUE_STORAGE');
+	        	$imageName = date('mdYHis') . rand(10,100) . uniqid().'.png';
+			}else{
+		        $image1 = str_replace('data:image/jpeg;base64,', '', $data);
+		        $destinationPath = storage_path(). DIRECTORY_SEPARATOR . env('VENUE_STORAGE');
+	        	$imageName = date('mdYHis') . rand(10,100) . uniqid().'.jpeg';
+			}
+	        
+	        //file_put_contents($destinationPath. '/' . $imageName, base64_decode($image1));
 
-        $img_new = Image::make(base64_decode($image1))->stream($extension, 50);
+	        $img_new = Image::make(base64_decode($image1))->stream($extension, 50);
+	        
+	        file_put_contents($destinationPath. '/' . $imageName, $img_new);
         
-        file_put_contents($destinationPath. '/' . $imageName, $img_new);
-        
-        return $imageName;
+    		return $imageName;
+    	}catch(\Exception $e){
+    		return $e->getMessage();
+    	}
 	}
 
 
@@ -48,6 +52,10 @@ class VenueBusinessModel extends Model
 			if($data['vimg']){
 				$data['vimg'] = $this->UploadBase64Data($data['vimg'],$data['vimg_val']);
 			}
+		}
+
+		if($data['vimg'] == "Unable to init from given binary data."){
+			return ['message' => 'Please upload valid image.'];
 		}
 		
 
@@ -138,6 +146,10 @@ class VenueBusinessModel extends Model
 			}
 		}
 
+		if($data['eventimg'] == "Unable to init from given binary data."){
+			return ['data' => null, 'message' => 'Please upload valid image.'];
+		}
+
 		$event = Event::whereUniqueId($data['uniq'])->first();
 
 		if(empty($event)){
@@ -194,6 +206,10 @@ class VenueBusinessModel extends Model
 			if($data['offer_img_hidden_attr']){
 				$data['offer_img_hidden_attr'] = $this->UploadBase64Data($data['offer_img_hidden_attr'],$data['offer_img_hidden_value']);
 			}
+		}
+
+		if($data['offer_img_hidden_attr'] == "Unable to init from given binary data."){
+			return ['message' => 'Please upload valid image.'];
 		}
 
 		$offer = Offer::whereUniqueId($data['uniq_id'])->first();

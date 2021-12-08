@@ -286,7 +286,7 @@
 					</div>
 					<div class="d-flex justify-content-between mt-4">
 						<div>
-							<a href="javascript:void(0);" class="btn btn-primary btn-user btn-block common_btn add_new_btn" style="     font-size: 18px; text-transform: none;">
+							<a href="javascript:void(0);" id="addNewBtn" class="btn btn-primary btn-user btn-block common_btn add_new_btn" style="     font-size: 18px; text-transform: none;">
 								Add New
 							</a>
 						</div>
@@ -477,7 +477,7 @@
 				$('.select_role_option').val('');
 				$('.select_status_option').val('');
 				$('.admin_user_id').val('');
-				$(this).text('Admin');
+				$(this).text('Add New');
 				return false;
 			}
 
@@ -556,6 +556,8 @@
 						$('.select_role_option').val('');
 						$('.select_status_option').val('');
 						$('.admin_user_id').val('');
+						$(this).text('Add New');
+
 
 					},500);
 				},error: function(data, textStatus, xhr) {
@@ -660,6 +662,7 @@
 						$('.select_role_option').val('');
 						$('.select_status_option').val('');
 						$('.admin_user_id').val('');
+						$('#addNewBtn').text('Add New');
 
 						if(data.self_update == "true"){
 							$(".s_ok").attr('self-update','true');

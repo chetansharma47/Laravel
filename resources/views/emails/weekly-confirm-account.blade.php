@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>Referral Bonus Notification</title>
+<title>Weekly Verify Your Email</title>
 <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Signika:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 
@@ -31,7 +31,15 @@
         $img_third = public_path("admin/assets/email_img/CM-Logo-2.png");
         $iimg = public_path("admin/assets/email_img/curve-bg.png");
         $footer_img = public_path("admin/assets/email_img/footer-bg.png");
+
+        if(!empty($data['first_name'])){
+          $name = $data['first_name'] . ' ' . $data['last_name'];
+        }else{
+          $name = "User";
+        }
+
        ?>
+
 
       <table width="100%" border="0" cellspacing="0" cellpadding="0"  style="background-image: url('{{$message->embed($iimg)}}'); background-repeat: no-repeat; background-size: cover; border-top-left-radius: 30px;border-top-right-radius: 30px;     background-position: bottom;">
         
@@ -47,7 +55,7 @@
           <td width="20" align="left" valign="top">&nbsp;</td>
           <td align="center" valign="top" style="font-family: 'Lato', sans-serif;
      font-weight: 700; color: #fff; padding-bottom: 17px;">
-            Referral Bonus Notification
+           Weekly Verify Your Email
           </td>
           <td width="20" align="left" valign="top">&nbsp;</td>
         </tr>
@@ -64,7 +72,7 @@
         <td align="left" valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="0">
           <tr>
             <td align="left" valign="top" style="font-family: 'Lato', sans-serif;
-     font-weight: 700; font-size: 15px; color:#0D0D0D;">Hello, {{$refer_user_find->first_name}} {{$refer_user_find->last_name}}</b></td>
+     font-weight: 700; font-size: 15px; color:#0D0D0D;">Hello, {{$name}}</b></td>
           </tr>
           <tr>
             <td align="left" valign="top">&nbsp;</td>
@@ -72,10 +80,7 @@
 
           <tr>
             <td align="left" valign="top" style="font-family: 'Lato', sans-serif;
-     font-weight: 400; font-size:14px; color:#474747;">{{$show_message}}<br><br>
-
-            
-            </td>
+     font-weight: 400; font-size:14px; color:#474747;">Thank you for signing up for our loyalty program. With Capital Society you can earn and redeem Dirhams whenever you do transactions in our restaurant chains.<br><br>Please click on the button below to verify your email address.</td>
           </tr>
           <tr>
             <td height="10" align="left" valign="top"></td>
@@ -91,7 +96,22 @@
             <td align="left" valign="top">&nbsp;</td>
           </tr>
 
-          
+          <tr>
+            <td align="center" valign="top"> <a href="{{$link}}"; style="    font-family: 'Lato', sans-serif;
+    font-weight: 600;
+    font-size: 25px;
+    color: #474747;
+    background-color: #0B68AC;
+    padding: 12px 9px;
+    max-width: 300px;
+    display: block;
+    text-align: center;
+    margin: 0 auto;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 50px;
+    margin-bottom: 41px;">Verify Your Email</a></td>
+          </tr>
         </table></td>
       </tr>
       <!-- <tr>

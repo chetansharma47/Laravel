@@ -22,11 +22,12 @@ class CashbackEmailJob implements ShouldQueue
      *
      * @return void
      */
-    protected $admin_cashback_notification, $find_user;
-    public function __construct($admin_cashback_notification, $find_user)
+    protected $admin_cashback_notification, $find_user, $show_message_cashback;
+    public function __construct($admin_cashback_notification, $find_user, $show_message_cashback)
     {
         $this->admin_cashback_notification = $admin_cashback_notification;
         $this->find_user = $find_user;
+        $this->show_message_cashback = $show_message_cashback;
     }
 
     /**
@@ -38,9 +39,9 @@ class CashbackEmailJob implements ShouldQueue
     {
         if($this->admin_cashback_notification->email_type == 1){
             try{
-                \Mail::to($this->find_user->email)->send(new CashbackEmail($this->admin_cashback_notification, $this->find_user));
+                \Mail::to($this->find_user->email)->send(new CashbackEmail($this->admin_cashback_notification, $this->find_user, $this->show_message_cashback));
             }catch(\Exception $ex){
-                //return $ex->getMessage();
+                // return $ex->getMessage();
             }
         }
     }

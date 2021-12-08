@@ -20,6 +20,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request){
 Route::get('transfer-to-wallet','Controller@transferToWallet');   
 Route::get('offer-assign-user-cron-job','Controller@OfferAssignUserCronJob');
 Route::get('evenet-notification-cron-job','Controller@eventNotificationCronJob');
+Route::get('user-verify-email-cron-job','Controller@UserVerifyEmailCronJob');
   
 Route::group(['namespace' => 'Api\v1','prefix'=>'v1'], function() {
 

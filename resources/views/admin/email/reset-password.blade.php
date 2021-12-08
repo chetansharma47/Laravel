@@ -150,21 +150,9 @@
     z-index: 99;
         margin-top: 15px;
     margin-left: 16px;" />
-              <input type="password" class="form-control form-control-user" name="confirm_password" id="confirm_password" placeholder="Confirm Password" onkeypress="return AvoidSpace(event)"  style="    padding: 13px 45px 13px 49px;
-    border: 0 !important;
-    background-color: #EBEBEB !important;
-    border-radius: 12px;
-    font-family: 'Signika', sans-serif;
-    font-weight: 700;
-    font-size: 20px !important;
-    outline: 0;
-    position: relative;
-    z-index: 9;">
-              <img src="{{url('public/admin/assets/email_img/eye.png')}}" id="eye" alt="eye" style="position: absolute;
-                      width: 20px;
-                      z-index: 99;
-                      margin-top: 20px;
-                      margin-left: -32px;" />
+              <input type="password" class="form-control form-control-user" name="confirm_password" id="confirm_password" placeholder="Confirm Password" onkeypress="return AvoidSpace(event)"  style=" padding: 13px 45px 13px 49px;border: 0 !important;background-color: #EBEBEB !important;border-radius: 12px;font-family: 'Signika', sans-serif;font-weight: 700;font-size: 20px !important;outline: 0;position: relative;z-index: 9;">
+              <img src="{{url('public/admin/assets/email_img/eye.png')}}" id="eye" alt="eye" style="position: absolute; width: 20px; z-index: 99; margin-top: 20px; margin-left: -32px;" />
+              <img src="{{url('public/admin/assets/email_img/eye-hide.png')}}" id="eye_hide" alt="eye_hide" style="position: absolute; width: 20px; z-index: 99; margin-top: 20px; margin-left: -32px; display: none;" />
 
 
             <label id="confirm_password-error" style="display: none;" class="error err" for="confirm_password"></label>
@@ -250,19 +238,19 @@
   <tr>
     <td align="center" style="font-family: 'Lato', sans-serif;
     font-weight: 400; font-size: 12px; color: #fff; padding-bottom: 12px;">
-      Office SG3, Al Bandar, Al Raha Beach,<br/> Abudhabi, UAE - P O Box 130122
+      {{$general_setting[9]['setting_content']}}
     </td>
   </tr>
   <tr>
     <td align="center" style="font-family: 'Lato', sans-serif;
     font-weight: 400; font-size: 12px; color: #fff; padding-bottom: 12px;">
-      Phone: +971 2449 9036 / Toll Free 800 6996
+      Phone: {{$general_setting[1]['setting_content']}}
     </td>
   </tr>
   <tr>
     <td align="center" style="font-family: 'Lato', sans-serif;
     font-weight: 400; font-size: 12px; color: #fff; padding-bottom: 12px;">
-      Email: info@capitalmotion.com
+      Email: <span style="color: #fff;"><a href="javascript:void(0);" style="color: #fff!important">{{$general_setting[0]['setting_content']}}</a></span>
     </td>
   </tr>
   <tr>
@@ -394,8 +382,10 @@
         if(check_type == "password"){
 
           $(this).parent().children("#confirm_password").attr("type","text");
+          
         }else{
           $(this).parent().children("#confirm_password").attr("type","password");
+          
         }
       });
     });

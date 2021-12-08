@@ -255,7 +255,9 @@
 									<tr style=" background-color: #193358; color: #fff;">
 										<th>Sr.No.</th>
 										<th style="min-width: 128px;">Customer ID</th>
+										<th style="min-width: 128px;">Customer Name</th>
 										<th style="min-width: 128px;">Customer No.</th>
+										<th style="min-width: 128px;">Email ID</th>
 										<th style="min-width: 100px;">Check No.</th>
 										<th style="min-width: 128px;">Check Amount</th>
 										<th style="min-width: 128px;">Check Amount POS</th>
@@ -459,7 +461,9 @@
 				columns:[
 					{data:'DT_RowIndex',name:'DT_RowIndex'},
 					{data:'customer_id', name:'customer_id'},
+					{data:'full_name', name:'full_name'},
 					{data:'mobile_number', name:'mobile_number'},
+					{data:'email', name:'email'},
 					{data:'invoice_number', name:'invoice_number'},
 					{data:'total_bill_amount', name:'total_bill_amount'},
 					{data:'check_amount_pos', name:'check_amount_pos'},

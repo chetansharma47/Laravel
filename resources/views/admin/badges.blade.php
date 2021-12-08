@@ -77,8 +77,8 @@
 		img.upload_icon {
 		position: absolute;
 		width: 30px;
-		top: -47px;
-		right: 0px;
+		top: -46px;
+		right: 4px;
 		cursor: pointer;
 		}
 		.form-control:disabled, .form-control[readonly] {
@@ -207,6 +207,9 @@
 		table#basic-datatables2 {
 		    margin-bottom: 0px!important;
 		}
+		section select.select_option {
+		    background-position: 96% 50%!important;
+		}
 	</style>
 
 	<!-- CSS Files -->
@@ -316,13 +319,13 @@
 						</label>
 
 						<input type="file" src="" id="img_upload" class="img_upload" hidden  autocomplete="off" accept="image/*" />
-						<input type="text" value="" id="hidden_img2" hidden  autocomplete="off" />
+						<input type="text" id="hidden_img2" hidden  autocomplete="off" />
 					</div>
 					<div class="venue_inputs mb-3 px-2 pl-3" style="margin-bottom: 0px!important;">
 						<label style="font-weight: 400;">
 							Status
 						</label>
-						<select class="form-control select-status form-group select_option" style="position: relative;border-radius: 10px; cursor: pointer;">
+						<select class="form-control select-status form-group select_option" style="position: relative;border-radius: 10px; cursor: pointer; background-position: 96% 50%!important;">
 							<option value="">Select Status</option>
 							<option value="Active">Active</option>
 							<option value="Inactive">Inactive</option>
@@ -404,7 +407,7 @@
 						<div class="col-md-3">
 							<div class="venue_inputs mb-3 px-2 pl-3">
 							
-								<select class="form-control  form-group select_option" id="assign_search" style="position: relative;border-radius: 0px; cursor: pointer;">
+								<select class="form-control  form-group select_option" id="assign_search" style="position: relative;border-radius: 0px; cursor: pointer; background-position: 97% 50%!important;">
 									<option value="">Select Badge Name</option>
 									@foreach($badges as $badge)
 									<option value="{{$badge->id}}" data-id="{{$badge->id}}" class="multiple_delete">{{$badge->badge_name}}</option>
@@ -649,13 +652,13 @@
 						$('.badge-image').attr('src','');
 						$('.badge-name').val('');
 						$('.select-status').val('');
-						$("#hidden_img2").attr('value','');
+						$("#hidden_img2").val('');
 			        	$('#basic-datatables').DataTable().ajax.reload();
 			        	$("#selected_checkboxes").val("");
 			        	$(".select_all_checkbox").prop("checked",false);
 			        	$(".single_checkbox").prop("checked",false);
 			        	$("#badge_id").val("");
-			        	$("#add_new_btn").text("Add New");
+			        	$(".add_new_btn").text("Add New");
 			        	
 					},500);
 				},error: function(data, textStatus, xhr) {
@@ -695,8 +698,8 @@
 
 			var valu = file_nameshow;
 			var length = valu.length;
-			if(length>20){
-				var slice_name = valu.slice(0,20)+'...';
+			if(length>16){
+				var slice_name = valu.slice(0,16)+'...';
 			}else{
 				var slice_name = valu;
 			}
@@ -722,6 +725,7 @@
 						}
 					}
 					reader.readAsDataURL(file);
+					$("#img_upload")[0].value = '';
 				}else{
 					$("#alert_text").text("Please upload .jpg, .jpeg or .png format file only.");
 			    	$("#validationModel").modal("show");
@@ -846,8 +850,8 @@
 
 						var fileName = data.name_of_file_show;
 						let slice_name = "";
-						if(fileName != "" && fileName.length > 20){
-							slice_name = fileName.slice(0,20)+'...';
+						if(fileName != "" && fileName.length > 16){
+							slice_name = fileName.slice(0,16)+'...';
 						}else{
 							slice_name = fileName;
 						}
@@ -855,6 +859,7 @@
 						$("#loaderModel").modal("hide");
 					  	$(".badge-name").val(data.badge_name);
 					  	$(".badge-image").attr("value",slice_name).attr("src", data.image);
+					  	$("#hidden_img2").val(data.name_of_file_show);
 					  	$("#img_upload").attr("src", data.image);
 					  	$(".select-status").val(data.status);
 					  	$(".add_new_btn").text("Cancel");
@@ -958,6 +963,7 @@
 			let badge_select = $('.select-status').val();
 			let hidden_img2 = $("#hidden_img2").val();
 			let badge_image_hidden_imgname = $('#img_upload').attr('data-name');
+			// let valid_string_regex = /^([a-z0-9]|[a-z0-9\s-]){1,}[^-\s]+$/gm
 
 			if(badge_name == '' ){
 				$("#alert_text").text("Please enter badge name.");
@@ -1016,13 +1022,13 @@
 						$('.badge-image').attr('src','');
 						$('.badge-name').val('');
 						$('.select-status').val('');
-						$("#hidden_img2").attr('value','');
+						$("#hidden_img2").val('');
 			        	$('#basic-datatables').DataTable().ajax.reload();
 			        	$("#selected_checkboxes").val("");
 			        	$(".select_all_checkbox").prop("checked",false);
 			        	$(".single_checkbox").prop("checked",false);
 			        	$("#badge_id").val("");
-			        	$("#add_new_btn").text("Add New");
+			        	$(".add_new_btn").text("Add New");
 					},500);
 				},error: function(data, textStatus, xhr) {
 	                if(data.status == 422){
@@ -1053,48 +1059,48 @@
 			}
 
 
-			let badge_name = $('.badge-name').val();
-			let badge_image_hidden_val = $('#img_upload').val();
-			let badge_image_hidden_src = $('#img_upload').attr('src');
-			let badge_image_val = $('.badge-image').val();
-			let badge_image_src = $('.badge-image').attr('src');
-			let badge_select = $('.select-status').val();
-			let hidden_img2 = $("#hidden_img2").val();
-			let badge_image_hidden_imgname = $('#img_upload').attr('data-name');
+			// let badge_name = $('.badge-name').val();
+			// let badge_image_hidden_val = $('#img_upload').val();
+			// let badge_image_hidden_src = $('#img_upload').attr('src');
+			// let badge_image_val = $('.badge-image').val();
+			// let badge_image_src = $('.badge-image').attr('src');
+			// let badge_select = $('.select-status').val();
+			// let hidden_img2 = $("#hidden_img2").val();
+			// let badge_image_hidden_imgname = $('#img_upload').attr('data-name');
 
-			if(badge_name == '' ){
-				$("#alert_text").text("Please enter badge name.");
-				$("#validationModel").modal("show");
-				$("#validationModel").unbind("click");
-				return false;
-			}
+			// if(badge_name == '' ){
+			// 	$("#alert_text").text("Please enter badge name.");
+			// 	$("#validationModel").modal("show");
+			// 	$("#validationModel").unbind("click");
+			// 	return false;
+			// }
 
-			if(badge_name.length < 2 ){
-				$("#alert_text").text("Badge name should be at least 2 characters long.");
-				$("#validationModel").modal("show");
-				$("#validationModel").unbind("click");
-				return false;
-			}
+			// if(badge_name.length < 2 ){
+			// 	$("#alert_text").text("Badge name should be at least 2 characters long.");
+			// 	$("#validationModel").modal("show");
+			// 	$("#validationModel").unbind("click");
+			// 	return false;
+			// }
 
-			if(badge_image_src == ''){
-				$("#alert_text").text("Please upload badge image.");
-				$("#validationModel").modal("show");
-				$("#validationModel").unbind("click");
-				return false;
-			}
-			if(badge_image_hidden_src == ''){
-				$("#alert_text").text("Please upload badge image.");
-				$("#validationModel").modal("show");
-				$("#validationModel").unbind("click");
-				return false;
-			}
+			// if(badge_image_src == ''){
+			// 	$("#alert_text").text("Please upload badge image.");
+			// 	$("#validationModel").modal("show");
+			// 	$("#validationModel").unbind("click");
+			// 	return false;
+			// }
+			// if(badge_image_hidden_src == ''){
+			// 	$("#alert_text").text("Please upload badge image.");
+			// 	$("#validationModel").modal("show");
+			// 	$("#validationModel").unbind("click");
+			// 	return false;
+			// }
 
-			if(badge_select == ''){
-				$("#alert_text").text("Please select badge status.");
-				$("#validationModel").modal("show");
-				$("#validationModel").unbind("click");
-				return false;
-			}
+			// if(badge_select == ''){
+			// 	$("#alert_text").text("Please select badge status.");
+			// 	$("#validationModel").modal("show");
+			// 	$("#validationModel").unbind("click");
+			// 	return false;
+			// }
 
 			$("#confirmation_alert_text").text("Are you sure, you want to delete this badge?");
 			$('#confirmationModel').modal("show");
@@ -1142,13 +1148,13 @@
 						$('.badge-image').attr('src','');
 						$('.badge-name').val('');
 						$('.select-status').val('');
-						$("#hidden_img2").attr('value','');
+						$("#hidden_img2").val('');
 			        	$('#basic-datatables').DataTable().ajax.reload();
 			        	$("#selected_checkboxes").val("");
 			        	$(".select_all_checkbox").prop("checked",false);
 			        	$(".single_checkbox").prop("checked",false);
 			        	$("#badge_id").val("");
-			        	$("#add_new_btn").text("Add New");
+			        	$(".add_new_btn").text("Add New");
 
 	          		// for(let p=0; __split_ids.length > p; p++){
 

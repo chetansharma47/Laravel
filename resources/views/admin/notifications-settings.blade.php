@@ -1150,8 +1150,8 @@
 				  				if(val.image_type){
 					  				var valu = val.name_of_file_show;
 									var length = valu.length;
-									if(length>35){
-										var slice_name = valu.slice(0,35)+'...';
+									if(length>25){
+										var slice_name = valu.slice(0,25)+'...';
 									}else{
 										var slice_name = valu;
 									}
@@ -1203,8 +1203,8 @@
 
 			var valu = file_nameshow;
 			var length = valu.length;
-			if(length>35){
-				var slice_name = valu.slice(0,35)+'...';
+			if(length>25){
+				var slice_name = valu.slice(0,25)+'...';
 			}else{
 				var slice_name = valu;
 			}

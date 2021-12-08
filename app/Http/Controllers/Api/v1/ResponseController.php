@@ -99,7 +99,7 @@ class ResponseController extends Controller
        
     }
 
-    public  function iphoneNotification($device_token,$message,$notfy_message, $noti_type = "", $event_id = "", $offer_id = ""){
+    public  function iphoneNotification($device_token,$message,$notfy_message, $noti_type = "", $event_id = "", $offer_id = "", $total_noti_record = ""){
         $PATH = public_path('pemfile/user_push.pem');
         $deviceToken = $device_token;
         
@@ -111,6 +111,7 @@ class ResponseController extends Controller
         $body['offer_id'] = $offer_id;
         $body['aps'] =  array(
                           'alert' => $message,
+                          'badge' => (int)$total_noti_record,
                           'sound' => 'default',
                           'details'=>$body,
                         );
@@ -134,14 +135,14 @@ class ResponseController extends Controller
         return $result;
     }
 
-    public function send_android_notification_new($deviceToken,$message,$notfy_message='',$noti_type = "", $event_id = "", $offer_id = "") {
+    public function send_android_notification_new($deviceToken,$message,$notfy_message='',$noti_type = "", $event_id = "", $offer_id = "",$total_noti_record = "") {
         if (!defined('API_ACCESS_KEY')) {
           define('API_ACCESS_KEY' ,'AAAA_gAB8Yc:APA91bHy0nP46e5z6WNb4GDmSbmgDlLJhZvll1jOdPLUuJ57ypebWPynuk80IAF6rvRhO44rzVMbgFCFV_rVOxdTNHFQMEuKe2IG6nDMo9FbGM8fAUQlwBt7eik0NunvLAnKlsQGVMK1');
         }
         // print_r($type); die;
 
         $not_message = array('sound' =>1,
-                    'message'=>array("noti_type" => $noti_type, "event_id" => $event_id, "offer_id" => $offer_id, 'message' => $message),
+                    'message'=>array("noti_type" => $noti_type,"badge_count" => (int)$total_noti_record, "event_id" => $event_id, "offer_id" => $offer_id, 'message' => $message),
                     'notifykey'=>"HOME_KEY",
                     //"title" => "SocietyApp",
                     'body'=>$message,

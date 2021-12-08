@@ -49,6 +49,7 @@ use App\Models\AdminCriteriaNotification;
 use App\Models\Country;
 use Illuminate\Support\Arr;
 use App\Jobs\EventNotificationJob;
+use App\Jobs\CashbackEmailJob;
 use App\Jobs\ReferMailSend;
 use App\Mail\NewEventCreateMail;
 use App\Mail\OfferAssignMail;
@@ -61,7 +62,7 @@ use App\Models\ApplicationImage;
 use App\Models\GeneralSetting;
 use Image;
 use App\Models\Admin;
-require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/society_05_december/vendor/autoload.php';
 
 class TabController extends ResponseController
 {
@@ -79,13 +80,14 @@ class TabController extends ResponseController
     }
 
     public function adminTabs(Request $request){
-    	if($request->isMethod('GET')){
-    		return view('admin.admin_tabs');
-    	}
+        if($request->isMethod('GET')){
+            // return WalletDetail::all();
+            return view('admin.admin_tabs');
+        }
     }
 
     public function customerTierSettings(Request $request){
-    	if($request->isMethod('GET')){
+        if($request->isMethod('GET')){
             $admin = Auth()->guard('admin')->user();
 
             if($admin->role_type == "Marketing" || $admin->role_type == "Managment" || $admin->role_type == "Staff"){
@@ -107,8 +109,8 @@ class TabController extends ResponseController
             }else{
                 $last_tier_cond_unique_id = 0;
             }
-    		return view('admin.cust_tier_settings',compact('last_tier_cond_unique_id','tier_settings','first_tier_unique_id'));
-    	}
+            return view('admin.cust_tier_settings',compact('last_tier_cond_unique_id','tier_settings','first_tier_unique_id'));
+        }
     }
 
     public function customerTierSettingsAjax(Request $request){
@@ -129,10 +131,7 @@ class TabController extends ResponseController
 
                 $tier_cond_find->deleted_at = Carbon::now();
                 $tier_cond_find->update();
-
-
-                
-
+             
                 $transaction_amount_check_last_days = 30;
                 $customer_tier_validity_check = 30;
                 $tier_setting = TierSetting::first();
@@ -163,29 +162,21 @@ class TabController extends ResponseController
                             //preveious tier found according to total amount transaction
                             $amount_between_tier_find = TierCondition::whereDeletedAt(null)->where('to_amount','<=', $total_amount_transaction)->orderBy('to_amount','desc')->first();
 
-
-                            
                             if(!empty($amount_between_tier_find)){
-
                                 $user_find->customer_tier = $amount_between_tier_find->tier_name;
                                 $user_find->tier_update_date = Carbon::now()->toDateString();
                                 $user_find->update();
                             }
-                            
 
                             if(empty($amount_between_tier_find)){
-
                                 //next tier found according to transaction amount total
                                 $amount_between_tier_find = TierCondition::whereDeletedAt(null)->where('to_amount','>=', $total_amount_transaction)->orderBy('to_amount','asc')->first();
-
                                 if(!empty($amount_between_tier_find)){
-
                                     $user_find->customer_tier = $amount_between_tier_find->tier_name;
                                     $user_find->tier_update_date = Carbon::now()->toDateString();
                                     $user_find->update();
                                 }
                             }
-
 
                         }else{
                             $user_find->customer_tier = $amount_between_tier_find->tier_name;
@@ -272,25 +263,25 @@ class TabController extends ResponseController
     }
 
     public function customerTierSettingsGold(Request $request){
-    	if($request->isMethod('GET')){
-    		return view('admin.cust_tier_settings2');
-    	}
+        if($request->isMethod('GET')){
+            return view('admin.cust_tier_settings2');
+        }
     }
 
     public function customerTierSettingsDimond(Request $request){
-    	if($request->isMethod('GET')){
-    		return view('admin.cust_tier_settings3');
-    	}
+        if($request->isMethod('GET')){
+            return view('admin.cust_tier_settings3');
+        }
     }
 
     public function addingVenueTable(Request $request){
-    	if($request->isMethod('GET')){
+        if($request->isMethod('GET')){
             $admin = Auth::guard('admin')->user();
             if($admin->role_type == "Marketing" || $admin->role_type == "Managment" || $admin->role_type == "Staff"){
                 return redirect()->route('admin.adminTabs');
             }
-    		return view('admin.adding_venue_table');
-    	}
+            return view('admin.adding_venue_table');
+        }
 
         if ($request->isMethod('POST')) {
             $column = "id";
@@ -399,7 +390,7 @@ class TabController extends ResponseController
     }
 
     public function cashBack(Request $request){
-    	if($request->isMethod('GET')){
+        if($request->isMethod('GET')){
             $admin = Auth::guard('admin')->user();
             if($admin->role_type == "Marketing" || $admin->role_type == "Managment" || $admin->role_type == "Staff"){
                 return redirect()->route('admin.adminTabs');
@@ -413,8 +404,8 @@ class TabController extends ResponseController
             }else{
                 $last_id = 0;
             }
-    		return view('admin.cash-back', compact('tier','wallet_cashback','venues','last_id','cashback_last'));
-    	}
+            return view('admin.cash-back', compact('tier','wallet_cashback','venues','last_id','cashback_last'));
+        }
 
         if($request->isMethod('POST')){
             $data = $request->all();
@@ -433,6 +424,9 @@ class TabController extends ResponseController
         $data = $request->all();
         $admin = Auth::guard('admin')->user();
         $save_cashback = $this->tabBusiness()->saveCashback($data, $admin);
+        if($save_cashback['message'] == 'Please upload valid image.'){
+            return response()->json(['image_name_err' => 'Please upload valid image.'],422);
+        }
         return $save_cashback;
     }
 
@@ -448,7 +442,7 @@ class TabController extends ResponseController
     }
 
     public function allDataAvailability(Request $request){
-    	if($request->isMethod('GET')){
+        if($request->isMethod('GET')){
             // $data = DB::table("wallet_transactions")
             //     ->select(DB::raw("(select customer_id from users where id = wallet_transactions.user_id) AS 'Customer id'"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where users.id = wallet_transactions.user_id) AS 'Mobile Number'"),"wallet_transactions.invoice_number AS Invoice Number","wallet_transactions.total_bill_amount AS Check Amount","wallet_transactions.check_amount_pos AS Check Amount POS",DB::raw("CONCAT(case wallet_transactions.is_cross_verify when '0' then 'Not Verified' when '1' then 'Verified' else 'Mismatch' end) AS 'Transaction Status'"),"wallet_transactions.id","wallet_transactions.cashback_percentage AS Cashback Percentage",DB::raw("(select wallet_cash from users where id = wallet_transactions.user_id) AS 'Redeemed Wallet'"),"wallet_transactions.redeemed_amount AS Redemption From Loylty",DB::raw("GROUP_CONCAT(offers.offer_name) AS 'Offers Product Name'"),DB::raw("(select venue_name from venus where id = wallet_transactions.venu_id) AS 'Restaurant Name'"),DB::raw("(select username from venue_users where id = wallet_transactions.venue_user_id) AS 'Restaurant User'"),DB::raw("DATE_FORMAT(wallet_transactions.date_and_time, '%Y-%m-%d') AS Date"))
             //     ->join("offers",DB::raw("FIND_IN_SET(offers.id,wallet_transactions.offer_product_ids)"),">",DB::raw("'0'"))
@@ -473,8 +467,8 @@ class TabController extends ResponseController
             $offers = Offer::whereDeletedAt(null)->get();
             $venue_users = VenueUser::whereDeletedAt(null)->get();
 
-    		return view('admin.all-data-availability',compact('tiers','venues','offers','venue_users'));
-    	}
+            return view('admin.all-data-availability',compact('tiers','venues','offers','venue_users'));
+        }
 
         if ($request->isMethod('POST')) {
             $admin = Auth()->guard('admin')->user();
@@ -682,21 +676,25 @@ class TabController extends ResponseController
         }elseif($order == 1){
             $column = "customer_id";
         }elseif($order == 2){
+            $column = "full_name";
+        }elseif($order == 3){
             $column = "mobile_number";
-        }elseif ($order == 3) {
-            $column = "description";
-        }elseif ($order == 4) {
-            $column = "cashback_earned";
+        }elseif($order == 4){
+            $column = "email";
         }elseif ($order == 5) {
-            $column = "redeemed_amount";
+            $column = "description";
         }elseif ($order == 6) {
+            $column = "cashback_earned";
+        }elseif ($order == 7) {
+            $column = "redeemed_amount";
+        }elseif ($order == 8) {
             $column = "user_wallet_cash";
         }else {
             $column = "date_and_time";
         }
 
 
-        $data = WalletDetail::select("id","description","cashback_earned","redeemed_amount","user_wallet_cash",DB::raw("DATE_FORMAT(date_and_time, '%d-%M-%Y %H:%i %p') AS date_and_time"),DB::raw("(select customer_id from users where id = wallet_details.user_id) AS customer_id"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where id = wallet_details.user_id) AS mobile_number"))->where('wallet_details.user_id',$request->selected_wallet_id)->orderBy($column,$asc_desc);
+        $data = WalletDetail::select("id","description","cashback_earned","redeemed_amount","user_wallet_cash",DB::raw("DATE_FORMAT(date_and_time, '%d-%M-%Y %H:%i %p') AS date_and_time"),DB::raw("(select customer_id from users where id = wallet_details.user_id) AS customer_id"),DB::raw("(select email from users where id = wallet_details.user_id) AS email"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where id = wallet_details.user_id) AS mobile_number"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where id = wallet_details.user_id) AS full_name"))->where('wallet_details.user_id',$request->selected_wallet_id)->orderBy($column,$asc_desc);
 
             
         $total = $data->get()->count();
@@ -712,7 +710,9 @@ class TabController extends ResponseController
         if($search){
             $data  = $data->where(function($query) use($search){
                         $query->orWhere(DB::raw("(select customer_id from users where id = wallet_details.user_id)"), 'Like', '%'. $search . '%');
+                        $query->orWhere(DB::raw("(select email from users where id = wallet_details.user_id)"), 'Like', '%'. $search . '%');
                         $query->orWhere(DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where id = wallet_details.user_id)"), 'Like', '%' . $search . '%');
+                        $query->orWhere(DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where id = wallet_details.user_id)"), 'Like', '%' . $search . '%');
                         $query->orWhere('description', 'Like', '%' . $search . '%');
                         $query->orWhere('cashback_earned', 'Like', '%' . $search . '%');
                         $query->orWhere('redeemed_amount', 'Like', '%' . $search . '%');
@@ -743,6 +743,7 @@ class TabController extends ResponseController
             $user_select->DT_RowIndex = $start_from++;
 
             $user_select->user_wallet_cash = round($user_select->user_wallet_cash,2);
+            $user_select->cashback_earned = round($user_select->cashback_earned,2);
         }
 
 
@@ -861,7 +862,7 @@ class TabController extends ResponseController
 
     public function downloadWalletTransactions(Request $request){
 
-       $wallet_transactions = WalletDetail::select(DB::raw("(select customer_id from users where id = wallet_details.user_id) AS 'Customer ID'"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where id = wallet_details.user_id) AS 'Mobile Number'"),"description as Description","cashback_earned as Cashback Earn","user_wallet_cash as Wallet Cash",DB::raw("DATE_FORMAT(date_and_time, '%d-%M-%Y %H:%i %p') AS 'Date and Time Added'"),"id")->where('wallet_details.user_id',$request->selected_user);
+       $wallet_transactions = WalletDetail::select(DB::raw("(select customer_id from users where id = wallet_details.user_id) AS 'Customer ID'"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where id = wallet_details.user_id) AS 'Customer Name'"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where id = wallet_details.user_id) AS 'Mobile Number'"),DB::raw("(select email from users where id = wallet_details.user_id) AS 'Email'"),"description as Description","cashback_earned as Cashback Earn","user_wallet_cash as Wallet Cash",DB::raw("DATE_FORMAT(date_and_time, '%d-%M-%Y %H:%i %p') AS 'Date and Time Added'"),"id")->where('wallet_details.user_id',$request->selected_user);
        
        if(!empty($request->search_txt)){
             $search = $request->search_txt;
@@ -869,7 +870,9 @@ class TabController extends ResponseController
            if($search){
                 $wallet_transactions  = $wallet_transactions->where(function($query) use($search){
                             $query->orWhere(DB::raw("(select customer_id from users where id = wallet_details.user_id)"), 'Like', '%'. $search . '%');
+                            $query->orWhere(DB::raw("(select email from users where id = wallet_details.user_id)"), 'Like', '%'. $search . '%');
                             $query->orWhere(DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where id = wallet_details.user_id)"), 'Like', '%' . $search . '%');
+                            $query->orWhere(DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where id = wallet_details.user_id)"), 'Like', '%' . $search . '%');
                             $query->orWhere('description', 'Like', '%' . $search . '%');
                             $query->orWhere('cashback_earned', 'Like', '%' . $search . '%');
                             $query->orWhere('redeemed_amount', 'Like', '%' . $search . '%');
@@ -888,7 +891,7 @@ class TabController extends ResponseController
 
     public function downloadWalletTransactionsAfterSelectedUser(Request $request,$ids_data){
         $ids_data = explode(",", base64_decode($request->ids_data));
-        $wallet_transactions = WalletDetail::select(DB::raw("(select customer_id from users where id = wallet_details.user_id) AS 'Customer ID'"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where id = wallet_details.user_id) AS 'Mobile Number'"),"description as Description","cashback_earned as Cashback Earn","user_wallet_cash as Wallet Cash",DB::raw("DATE_FORMAT(date_and_time, '%Y-%m-%d %h:%i %p') AS 'Date and Time Added'"))->orderBy("wallet_details.id","desc")->whereIn('wallet_details.id',$ids_data)->get()->toArray();
+        $wallet_transactions = WalletDetail::select(DB::raw("(select customer_id from users where id = wallet_details.user_id) AS 'Customer ID'"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where id = wallet_details.user_id) AS 'Customer Name'"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where id = wallet_details.user_id) AS 'Mobile Number'"),DB::raw("(select email from users where id = wallet_details.user_id) AS 'Email ID'"),"description as Description",DB::raw("ROUND(cashback_earned,2) AS 'Cashback Earned'"),DB::raw("ROUND(redeemed_amount,2) AS 'Redeemed Amount'"),"user_wallet_cash as Wallet Cash",DB::raw("DATE_FORMAT(date_and_time, '%Y-%m-%d %h:%i %p') AS 'Date and Time Added'"))->orderBy("wallet_details.id","desc")->whereIn('wallet_details.id',$ids_data)->get()->toArray();
 
         // foreach ($wallet_transactions as $value) {
         //         unset($value['id']);
@@ -1406,6 +1409,9 @@ class TabController extends ResponseController
                 return response()->json(['venue_name_err' => "Venue name already exists."],422);
             }
             $saveVenu = $this->venueBusinessModel()->VenueCreate($data,$admin);
+            if($saveVenu['message'] == "Please upload valid image."){
+                return response()->json(['venue_name_err' => $saveVenu['message'] ],422);
+            }
             return response()->json($saveVenu);
         }
     }
@@ -1445,88 +1451,11 @@ class TabController extends ResponseController
             }
 
             $saveEvent = $this->venueBusinessModel()->eventCreate($data,$admin);
-            if($saveEvent['data']){
-
-                /*$admin_event_notification = AdminNotification::where("uniq_id","=",5)->first();
-
-                $find_event = Event::whereId($saveEvent['data']['id'])->first();
-
-                if(!empty($admin_event_notification)){
-
-
-                    $today_day = Carbon::now()->format("l");
-                    $array_event_days = explode(",", $saveEvent['data']['when_day']);
-                    if($saveEvent['message'] == "Event added successfully."){
-                        if($saveEvent['data']['from_date'] <= Carbon::now()->toDateString() && $saveEvent['data']['to_date'] >= Carbon::now()->toDateString() && $saveEvent['data']['status'] == "Active" && in_array($today_day, $array_event_days)){
-
-                            $users = User::whereDeletedAt(null)->where('is_block','=',0)->get();
-
-                            foreach ($users as $user_find) {
-
-
-                                //Push Notification
-
-                                if($admin_event_notification->push_type == 1){
-
-                                    if($user_find->device_type == 'Android'){
-                                        if($user_find->device_token && strlen($user_find->device_token) > 20){
-                                           $android_notify =  $this->send_android_notification_new($user_find->device_token, "What's Happening Today: Enjoy ".$find_event->event_name." at ".$find_event->venu->venue_name."\n".$admin_event_notification->message,"Event Create Notification", $noti_type = 5, $event_id = $find_event->id);
-
-                                            $criteria_data = [
-                                                'user_id'   => $user_find->id,
-                                                'message'   => "What's Happening Today: Enjoy ".$find_event->event_name." at ".$find_event->venu->venue_name."\n".$admin_event_notification->message,
-                                                'noti_type' => 5,
-                                                'event_id'  => $find_event->id
-                                            ];
-                                            AdminCriteriaNotification::create($criteria_data);
-                                       
-                                       }
-                                    }
-
-                                    if($user_find->device_type == 'Ios' && strlen($user_find->device_token) > 20){
-                                        if($user_find->device_token){
-                                            $ios_notify =  $this->iphoneNotification($user_find->device_token, "What's Happening Today: Enjoy ".$find_event->event_name." at ".$find_event->venu->venue_name."\n".$admin_event_notification->message,"Event Create Notification", $noti_type = 5, $event_id = $find_event->id);
-
-                                            $criteria_data = [
-                                                'user_id'   => $user_find->id,
-                                                'message'   => "What's Happening Today: Enjoy ".$find_event->event_name." at ".$find_event->venu->venue_name."\n".$admin_event_notification->message,
-                                                'noti_type' => 5,
-                                                'event_id'  => $find_event->id
-                                            ];
-                                            AdminCriteriaNotification::create($criteria_data);
-                                        
-                                       }
-                                    }
-
-                                }
-
-                                if($admin_event_notification->sms_type == 1){
-                                    \SMSGlobal\Credentials::set(env('SMS_GLOBAL_API'),env('SMS_GLOBAL_SECERET'));
-                                    $sms = new \SMSGlobal\Resource\Sms();
-                                    $message = "What's Happening Today: Enjoy ".$find_event->event_name." at ".$find_event->venu->venue_name."\n".$admin_event_notification->message;
-                                    try {
-                                        $response = $sms->sendToOne($user_find->country_code.$user_find->mobile_number, $message,'AD-MSociety');
-                                    } catch (\Exception $e) {
-                                        continue;
-                                    }
-                                }
-
-
-                                if($admin_event_notification->email_type == 1){
-
-                                    $notificationJob = (new EventNotificationJob($admin_event_notification, $user_find, $find_event))->delay(Carbon::now()->addSeconds(3));
-                                    dispatch($notificationJob);
-                                }
-                            }
-                            
-                        }
-                    }
-
-
-                    
-                }*/
-
+            if(!empty($saveEvent['data'])){
                 return response()->json($saveEvent);
+            }
+            if($saveEvent['message'] == "Please upload valid image."){
+                return response()->json(['event_name_err' => $saveEvent['message']],422);
             }
             return response()->json(['message' => 404]);
         }
@@ -1592,6 +1521,9 @@ class TabController extends ResponseController
                 }
 
             $saveOffer = $this->venueBusinessModel()->offersCreate($data,$admin);
+            if($saveOffer['message'] == "Please upload valid image."){
+                return response()->json(['offer_name_err' => $saveOffer['message']],422);
+            }
             if($saveOffer){
                 return response()->json($saveOffer);
             }
@@ -1633,12 +1565,23 @@ class TabController extends ResponseController
 
     public function activateUsers(Request $request){
         $ids = explode(",", $request->ids);
+        $check_activated_user = User::whereIn("id", $ids)->where("is_active", "=", 'Active')->where("is_block", "=", 0)->first();
+
+        if(!empty($check_activated_user)){
+            return response()->json(['user_action_err' => 'Selected user has been already activated.'],422);
+        }
         User::whereIn("id", $ids)->update(['is_active' => "Active",'is_block' => 0]);
         return ['status' => "success","ids" => $ids];
     }
 
     public function deactivateUsers(Request $request){
         $ids = explode(",", $request->ids);
+
+        $check_deactivated_user = User::whereIn("id", $ids)->where("is_active", "=", 'Inactive')->where("is_block", "=", 1)->first();
+
+        if(!empty($check_deactivated_user)){
+            return response()->json(['user_action_err' => 'Selected user has been already deactivated.'],422);
+        }
         User::whereIn("id", $ids)->update(['is_active' => "Inactive", 'is_block' => 1]);
         return ['status' => "success","ids" => $ids];
     }
@@ -1660,6 +1603,10 @@ class TabController extends ResponseController
     }
 
     public function badges(Request $request){
+
+        // $general_setting = GeneralSetting::all();
+
+        // return $general_setting[1];
 
         $admin = Auth()->guard('admin')->user();
         if($admin->role_type == "Marketing" || $admin->role_type == "Managment"){
@@ -1905,6 +1852,12 @@ class TabController extends ResponseController
     }
 
     public function addOrUpdateBadgeAssign(Request $request){
+
+        $check_badge_deleted = Badge::whereId($request->badge_id)->where('deleted_at','!=',null)->first();
+
+        if(!empty($check_badge_deleted)){
+            return response()->json(['badge_found_err' => 'Selected badge has been deleted by admin or super admin.'],422);
+        }
         $data = $request->all();
         $data['from_time'] = date("H:i:s", strtotime($data['from_time']));
         $data['to_time'] = date("H:i:s", strtotime($data['to_time']));
@@ -1972,6 +1925,9 @@ class TabController extends ResponseController
 
         $add_badge = $this->badgeBusinessModel()->addBadge($data,$admin);
 
+        if($add_badge['message'] == "Please upload valid image."){
+            return response()->json(['badge_name_error' => $add_badge['message']],422);
+        }
         if($add_badge){
             return response()->json($add_badge);
         }
@@ -2073,7 +2029,9 @@ class TabController extends ResponseController
         }
 
         $update_badge = $this->badgeBusinessModel()->updateBadge($data,$admin);
-
+        if($update_badge['message'] == "Please upload valid image."){
+            return response()->json(['badge_name_error' => $update_badge['message']],422);
+        }
         if($update_badge){
             return response()->json($update_badge);
         }
@@ -2325,16 +2283,20 @@ class TabController extends ResponseController
         if(empty($request->img_upload2)){
 
             if($request->hasfile('img_upload')){
-                $file_original_name = $request->file('img_upload')->getClientOriginalName();
-                $extension = $request->file('img_upload')->getClientOriginalExtension();
-                $file = $request->file('img_upload');
-                $destinationPath = storage_path(). DIRECTORY_SEPARATOR . env('ATTACHMENT_MAIL_STORAGE');
-                $imageName = date('mdYHis') . rand(10,100) . uniqid(). '.' . $extension;
-                $img_new = Image::make($file)->stream($extension, 50);
-        
-                file_put_contents($destinationPath. '/' . $imageName, $img_new);
-                
-                //$file->move($destinationPath, $imageName);
+                try{
+                    $file_original_name = $request->file('img_upload')->getClientOriginalName();
+                    $extension = $request->file('img_upload')->getClientOriginalExtension();
+                    $file = $request->file('img_upload');
+                    $destinationPath = storage_path(). DIRECTORY_SEPARATOR . env('ATTACHMENT_MAIL_STORAGE');
+                    $imageName = date('mdYHis') . rand(10,100) . uniqid(). '.' . $extension;
+                    $img_new = Image::make($file)->stream($extension, 50);
+            
+                    file_put_contents($destinationPath. '/' . $imageName, $img_new);
+                    
+                    //$file->move($destinationPath, $imageName);
+                }catch(\Exception $ex){
+                    return response()->json(['message' => 'Please upload valid file.']);
+                }
             }
 
         }else{
@@ -2425,17 +2387,28 @@ class TabController extends ResponseController
 
         if($request->gender == "All"){
 
-            if(!empty($request->city_name)){
+            if(!empty($request->nationality) && !empty($request->city_name)){
 
+                $users_notify = User::whereCityOfResidence($request->city_name)->whereNationality($request->nationality)->where('is_block','=',0)->get();
+                
+            }else if(!empty($request->city_name)){
                 $users_notify = User::whereCityOfResidence($request->city_name)->where('is_block','=',0)->get();
+            }else if(!empty($request->nationality)){
+                $users_notify = User::whereNationality($request->nationality)->where('is_block','=',0)->get();
             }else{
                 $users_notify = User::where('is_block','=',0)->get();
             }
         }else{
 
-            if(!empty($request->city_name)){
+            if(!empty($request->nationality) && !empty($request->city_name)){
+
+                $users_notify = User::whereCityOfResidence($request->city_name)->whereGender($request->gender)->whereNationality($request->nationality)->where('is_block','=',0)->get();
+
+            }else if(!empty($request->city_name)){
 
                 $users_notify = User::whereCityOfResidence($request->city_name)->whereGender($request->gender)->where('is_block','=',0)->get();
+            }else if(!empty($request->nationality)){
+                $users_notify = User::whereNationality($request->nationality)->whereGender($request->gender)->where('is_block','=',0)->get();
             }else{
                 $users_notify = User::whereGender($request->gender)->where('is_block','=',0)->get();
             }
@@ -2504,8 +2477,8 @@ class TabController extends ResponseController
                                 $noti_record_find->normal = $noti_record_find->normal + 1;
                                 $noti_record_find->update();
                             }
-
-                           $android_notify =  $this->send_android_notification_new($user->device_token, $request->specific_criteria_message, $notmessage = "Admin Send notification message", $noti_type = 7);
+                            $total_noti_record = NotiRecord::whereUserId($user->id)->sum(DB::raw('wallet + offer + event + normal'));
+                           $android_notify =  $this->send_android_notification_new($user->device_token, $request->specific_criteria_message, $notmessage = "Admin Send notification message", $noti_type = 7, null, null, $total_noti_record);
                            if($android_notify){
                               (!empty($wallet_transactions->user_id)) ? $data['user_id'] = $wallet_transactions->user_id : $data['user_id'] = $user->id;
                               $save_notification =  AdminCriteriaNotification::create($data);
@@ -2528,8 +2501,8 @@ class TabController extends ResponseController
                                 $noti_record_find->normal = $noti_record_find->normal + 1;
                                 $noti_record_find->update();
                             }
-
-                            $ios_notify =  $this->iphoneNotification($user->device_token, $request->specific_criteria_message, $notmessage = "Admin Send notification message", $noti_type = 7);
+                            $total_noti_record = NotiRecord::whereUserId($user->id)->sum(DB::raw('wallet + offer + event + normal'));
+                            $ios_notify =  $this->iphoneNotification($user->device_token, $request->specific_criteria_message, $notmessage = "Admin Send notification message", $noti_type = 7, null , null , $total_noti_record);
                             if($ios_notify){
                                (!empty($wallet_transactions->user_id)) ? $data['user_id'] = $wallet_transactions->user_id : $data['user_id'] = $user->id;
                                 $save_notification = AdminCriteriaNotification::create($data);
@@ -2713,7 +2686,7 @@ class TabController extends ResponseController
                 ->whereDate('created_at','<=',$request->to_date)->sum('redeemed_amount');
 
         $repeat_customers = WalletTransaction::select(DB::raw('COUNT(user_id) count'))->whereDate('created_at','>=',$request->from_date)->whereDate('created_at','<=',$request->to_date)->groupBy('user_id')->havingRaw('COUNT(user_id) > 1')->count();
-        $fraud_check = WalletTransaction::select(DB::raw('COUNT(user_id) count'))->whereDeletedAt(null)
+        $fraud_check = WalletTransaction::whereDeletedAt(null)
                                     ->whereDate('created_at','>=',$request->from_date)
                                     ->whereDate('created_at','<=',$request->to_date)
                                     ->where('is_cross_verify','=',2)
@@ -2766,6 +2739,13 @@ class TabController extends ResponseController
         $admin = auth()->guard('admin')->user();
 
         $venue_selection = explode(",", $request->v_name);
+
+        $checkUser = VenueUser::where('id','!=',$request->v_updateid)->whereUsername($request->v_user)->first();
+
+        if(!empty($checkUser)){
+            return response()->json(['username_err' => 'Username already exists.'],422);
+        }
+        
         $delete_assign_user_venue = AssignUserVenue::whereVenueUserId($request->v_updateid)->delete();
         $find_venue_user = VenueUser::whereId($request->v_updateid)->first();
         $find_venue_user->username = $request->v_user ? $request->v_user : $find_venue_user->username;
@@ -2809,34 +2789,38 @@ class TabController extends ResponseController
         if($order == 1){
             $column = "customer_id";
         }elseif($order == 2){
+            $column = "full_name";
+        }elseif($order == 3){
             $column = "mobile_number";
-        }elseif ($order == 3) {
-            $column = "wallet_transactions.invoice_number";
-        }elseif ($order == 4) {
-            $column = "wallet_transactions.total_bill_amount";
+        }elseif($order == 4){
+            $column = "email";
         }elseif ($order == 5) {
-            $column = "wallet_transactions.check_amount_pos";
+            $column = "wallet_transactions.invoice_number";
         }elseif ($order == 6) {
-            $column = "wallet_transactions.txn_status";
+            $column = "wallet_transactions.total_bill_amount";
         }elseif ($order == 7) {
-            $column = "wallet_transactions.cashback_percentage";
+            $column = "wallet_transactions.check_amount_pos";
         }elseif ($order == 8) {
-            $column = "wallet_cash";
+            $column = "wallet_transactions.txn_status";
         }elseif ($order == 9) {
-            $column = "wallet_transactions.redeemed_amount";
+            $column = "wallet_transactions.cashback_percentage";
         }elseif ($order == 10) {
-            $column = "venue_name";
+            $column = "wallet_cash";
+        }elseif ($order == 11) {
+            $column = "wallet_transactions.redeemed_amount";
         }elseif ($order == 12) {
-            $column = "wallet_transactions.date_and_time";
-        }elseif ($order == 13) {
-            $column = "wallet_transactions.updated_at";
+            $column = "venue_name";
         }elseif ($order == 14) {
-            $column = "wallet_transactions.updated_by";
+            $column = "wallet_transactions.date_and_time";
         }elseif ($order == 15) {
+            $column = "wallet_transactions.updated_at";
+        }elseif ($order == 16) {
+            $column = "wallet_transactions.updated_by";
+        }elseif ($order == 17) {
             $column = "username";
         }
 
-        $data = WalletTransaction::select("wallet_transactions.*",DB::raw("(select customer_id from users where id = wallet_transactions.user_id) AS customer_id"),DB::raw("(select wallet_cash from users where id = wallet_transactions.user_id) AS wallet_cash"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where users.id = wallet_transactions.user_id) AS mobile_number"),DB::raw("CONCAT(case wallet_transactions.is_cross_verify when '0' then 'Not Verified' else 'Mismatch' end) AS txn_status"),DB::raw("(select venue_name from venus where id = wallet_transactions.venu_id) AS venue_name"),DB::raw("(select username from venue_users where id = wallet_transactions.venue_user_id) AS username"),DB::raw("(select offer_redeem from user_assign_offers where id = wallet_transactions.offer_product_ids) AS offer_redeem"))
+        $data = WalletTransaction::select("wallet_transactions.*",DB::raw("(select customer_id from users where id = wallet_transactions.user_id) AS customer_id"),DB::raw("(select email from users where id = wallet_transactions.user_id) AS email"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where id = wallet_transactions.user_id) AS full_name"),DB::raw("(select wallet_cash from users where id = wallet_transactions.user_id) AS wallet_cash"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where users.id = wallet_transactions.user_id) AS mobile_number"),DB::raw("CONCAT(case wallet_transactions.is_cross_verify when '0' then 'Not Verified' else 'Mismatch' end) AS txn_status"),DB::raw("(select venue_name from venus where id = wallet_transactions.venu_id) AS venue_name"),DB::raw("(select username from venue_users where id = wallet_transactions.venue_user_id) AS username"),DB::raw("(select offer_redeem from user_assign_offers where id = wallet_transactions.offer_product_ids) AS offer_redeem"))
         ->where('wallet_transactions.is_cross_verify','!=',1)
         ->where('wallet_transactions.deleted_at','=',null)
         ->with('offerProductIds')->orderBy($column,$asc_desc);
@@ -2847,6 +2831,8 @@ class TabController extends ResponseController
         if($search){
              $data  = $data->where(function($query) use($search){
                     $query->orWhere(DB::raw("(select customer_id from users where id = wallet_transactions.user_id)"), 'Like', '%' . $search . '%');
+                    $query->orWhere(DB::raw("(select email from users where id = wallet_transactions.user_id)"), 'Like', '%' . $search . '%');
+                    $query->orWhere(DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where id = wallet_transactions.user_id)"), 'like', '%'.$search.'%');
                     $query->orWhere(DB::raw("(select wallet_cash from users where id = wallet_transactions.user_id)"), 'Like', '%' . $search . '%');
                     $query->orWhere(DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where id = wallet_transactions.user_id)"), 'like', '%'.$search.'%');
                     $query->orWhere("wallet_transactions.invoice_number", 'Like', '%' . $search . '%');
@@ -2952,7 +2938,8 @@ class TabController extends ResponseController
                     $wallet_txn = WalletTransaction::where('is_cross_verify','!=',1)->whereInvoiceNumber($val['check_no'])->WhereDate('date_and_time','=',$val['date'])->whereDeletedAt(null)->whereVenuId($outlet_id->id)->first();
 
                     if(!empty($wallet_txn)){
-                        $users = User::select('customer_id')->whereId($wallet_txn->user_id)->first();
+                        // $users = User::select('customer_id')->whereId($wallet_txn->user_id)->first();
+                        $users = User::whereId($wallet_txn->user_id)->first();
                         $user_find = $users;
                         // if($outlet_name->venue_name === $val['outlet_name']){
                             if(!empty($val['check_total'])){
@@ -2963,16 +2950,123 @@ class TabController extends ResponseController
                                     $wallet_txn->updated_by = $admin_user->name;
                                     $wallet_txn->update();
                                     array_push($ids_data, $wallet_txn->id);
-                                    $this->transferToWalletForUploadVerify($wallet_txn);
 
+                                    $admin_cashback_notification_find = AdminNotification::where("uniq_id","=",2)->first();
+
+                                    if(!empty($admin_cashback_notification_find)){
+                                        // $find_user = User::whereId($val->user_id)->where('is_block','=',0)->first();
+                                        $user_find->wallet_cash = $user_find->wallet_cash + $wallet_txn->cashback_earned;
+                                        $user_find->update();
+
+                                        $wallet_detail2 = new WalletDetail();
+                                        $wallet_detail2->user_id = $user_find->id;
+                                        $wallet_detail2->description = "Cash Back Earnings";
+                                        $wallet_detail2->cashback_earned = $wallet_txn->cashback_earned;
+                                        $wallet_detail2->date_and_time = Carbon::now()->toDateString(). " ". Carbon::now()->toTimeString();
+                                        $wallet_detail2->type_of_transaction = "Cashback";
+                                        $wallet_detail2->user_wallet_cash = $user_find->wallet_cash;
+                                        $wallet_detail2->save();
+
+                                        $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$wallet_txn->cashback_earned." AED. ".$admin_cashback_notification_find->message;
+
+                                        if($admin_cashback_notification_find->push_type == 1){
+
+                                            if($user_find->device_type == 'Android'){
+                                                if($user_find->device_token && strlen($user_find->device_token) > 20){
+
+                                                    $noti_record_find = NotiRecord::whereUserId($user_find->id)->first();
+
+                                                    if(empty($noti_record_find)){
+                                                        $save_noti_record = new NotiRecord();
+                                                        $save_noti_record->user_id = $user_find->id;
+                                                        $save_noti_record->wallet = 1;
+                                                        $save_noti_record->save();
+
+                                                    }else{
+                                                        $noti_record_find->wallet = $noti_record_find->wallet + 1;
+                                                        $noti_record_find->update();
+                                                    }
+
+                                                    $total_noti_record = NotiRecord::whereUserId($user_find->id)->sum(DB::raw('wallet + offer + event + normal'));
+                                                    try{
+                                                       $android_notify =  $this->send_android_notification_new($user_find->device_token, $admin_cashback_notification_find->message, $notmessage = "Cashback Notification", $noti_type = 2,null,null,$total_noti_record);
+                                                    } catch (\Exception $e) {
+                                                        continue;
+                                                    }
+                                                    $criteria_data = [
+                                                        'user_id'   => $user_find->id,
+                                                        'message'   => $admin_cashback_notification_find->message,
+                                                        'noti_type' => 2,
+                                                        'created_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString(),
+                                                        'updated_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString(),
+                                                    ];
+                                                    AdminCriteriaNotification::create($criteria_data);
+                                               
+                                               }
+                                            }
+
+                                            if($user_find->device_type == 'Ios' && strlen($user_find->device_token) > 20){
+                                                if($user_find->device_token){
+
+                                                    $noti_record_find = NotiRecord::whereUserId($user_find->id)->first();
+
+                                                    if(empty($noti_record_find)){
+                                                        $save_noti_record = new NotiRecord();
+                                                        $save_noti_record->user_id = $user_find->id;
+                                                        $save_noti_record->wallet = 1;
+                                                        $save_noti_record->save();
+
+                                                    }else{
+                                                        $noti_record_find->wallet = $noti_record_find->wallet + 1;
+                                                        $noti_record_find->update();
+                                                    }
+
+
+                                                    $total_noti_record = NotiRecord::whereUserId($user_find->id)->sum(DB::raw('wallet + offer + event + normal'));
+                                                    try{
+                                                    $ios_notify =  $this->iphoneNotification($user_find->device_token, $admin_cashback_notification_find->message, $notmessage = "Cashback Notification", $noti_type = 2,null,null,$total_noti_record);
+                                                    } catch (\Exception $e) {
+                                                        continue;
+                                                    }
+                                                    $criteria_data = [
+                                                        'user_id'   => $user_find->id,
+                                                        'message'   => $admin_cashback_notification_find->message,
+                                                        'noti_type' => 2,
+                                                        'created_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString(),
+                                                        'updated_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString()
+                                                    ];
+                                                    AdminCriteriaNotification::create($criteria_data);
+                                                
+                                               }
+                                            }
+
+                                        }
+
+                                        if($admin_cashback_notification_find->email_type == 1){
+                                            $show_message_cashback  = $admin_cashback_notification_find->message;
+                                            $cashbackNotificationJob = (new CashbackEmailJob($admin_cashback_notification_find, $user_find, $show_message_cashback))->delay(Carbon::now()->addSeconds(3));
+                                            dispatch($cashbackNotificationJob);
+                                        }
+
+                                        if($admin_cashback_notification_find->sms_type == 1){
+                                            \SMSGlobal\Credentials::set(env('SMS_GLOBAL_API'),env('SMS_GLOBAL_SECERET'));
+                                            $sms = new \SMSGlobal\Resource\Sms();
+                                            $message = $admin_cashback_notification_find->message;
+                                            try {
+                                                $response = $sms->sendToOne($user_find->country_code.$user_find->mobile_number, $message,'CM-Society');
+                                            } catch (\Exception $e) {
+                                                // return $e->getMessage();
+                                            }
+                                        }
+                                    }
+
+                                    // $this->transferToWalletForUploadVerify($wallet_txn);
 
                                     $refer_user_find = null;
                                     if(!empty($user_find->reference_code) && $user_find->refer_amount_used == 0){
-
                                         $refer_user_find = User::whereSelfReferenceCode($user_find->reference_code)->whereDeletedAt(null)->where('is_block','=',0)->first();
-
-
                                     }
+
                                     if(!empty($admin_refer_notification) && !empty($refer_user_find)){
 
                                         $admin_refer_notification->message = "Congratulations you have earned referral bonus of ".$user_find->refer_amount." AED. ".$admin_refer_notification->message;
@@ -2983,14 +3077,16 @@ class TabController extends ResponseController
                                         $refer_user_find->wallet_cash = $refer_user_find->wallet_cash + $user_find->refer_amount;
                                         $refer_user_find->update();
 
-                                        $wallet_detail3 = new WalletDetail();
-                                        $wallet_detail3->user_id = $refer_user_find->id;
-                                        $wallet_detail3->description = "Referral Earnings";
-                                        $wallet_detail3->cashback_earned = $user_find->refer_amount;
-                                        $wallet_detail3->date_and_time = Carbon::now()->toDateString(). " ". Carbon::now()->toTimeString();
-                                        $wallet_detail3->type_of_transaction = "Refer";
-                                        $wallet_detail3->user_wallet_cash = $refer_user_find->wallet_cash;
-                                        $wallet_detail3->save();
+                                        if($user_find->refer_amount > 0){
+                                            $wallet_detail3 = new WalletDetail();
+                                            $wallet_detail3->user_id = $refer_user_find->id;
+                                            $wallet_detail3->description = "Referral Earnings";
+                                            $wallet_detail3->cashback_earned = $user_find->refer_amount;
+                                            $wallet_detail3->date_and_time = Carbon::now()->toDateString(). " ". Carbon::now()->toTimeString();
+                                            $wallet_detail3->type_of_transaction = "Refer";
+                                            $wallet_detail3->user_wallet_cash = $refer_user_find->wallet_cash;
+                                            $wallet_detail3->save();
+                                        }
 
 
                                         if($admin_refer_notification->push_type == 1){
@@ -3010,8 +3106,12 @@ class TabController extends ResponseController
                                                         $noti_record_find->wallet = $noti_record_find->wallet + 1;
                                                         $noti_record_find->update();
                                                     }
-
-                                                   $android_notify =  $this->send_android_notification_new($refer_user_find->device_token, $admin_refer_notification->message, $notmessage = "Referral Bonus Notification", $noti_type = 4);
+                                                    $total_noti_record = NotiRecord::whereUserId($refer_user_find->id)->sum(DB::raw('wallet + offer + event + normal'));
+                                                    try{
+                                                   $android_notify =  $this->send_android_notification_new($refer_user_find->device_token, $admin_refer_notification->message, $notmessage = "Referral Bonus Notification", $noti_type = 4, null, null, $total_noti_record);
+                                                   } catch (\Exception $e) {
+                                                        continue;
+                                                    }
 
                                                    $criteria_data = [
                                                         'user_id'   => $refer_user_find->id,
@@ -3038,8 +3138,12 @@ class TabController extends ResponseController
                                                         $noti_record_find->wallet = $noti_record_find->wallet + 1;
                                                         $noti_record_find->update();
                                                     }
-
-                                                    $ios_notify =  $this->iphoneNotification($refer_user_find->device_token, $admin_refer_notification->message, $notmessage = "Referral Bonus Notification", $noti_type = 4);
+                                                    $total_noti_record = NotiRecord::whereUserId($refer_user_find->id)->sum(DB::raw('wallet + offer + event + normal'));
+                                                    try{
+                                                    $ios_notify =  $this->iphoneNotification($refer_user_find->device_token, $admin_refer_notification->message, $notmessage = "Referral Bonus Notification", $noti_type = 4, null, null, $total_noti_record);
+                                                    } catch (\Exception $e) {
+                                                        continue;
+                                                    }
 
                                                     $criteria_data = [
                                                         'user_id'   => $refer_user_find->id,
@@ -3047,10 +3151,14 @@ class TabController extends ResponseController
                                                         'noti_type' => 4
                                                     ];
                                                     AdminCriteriaNotification::create($criteria_data);
-                                                
                                                }
                                             }
+                                        }
 
+                                        if($admin_refer_notification->email_type == 1){
+                                            $message = $admin_refer_notification->message;
+                                            $notificationJobR = (new ReferMailSend($admin_refer_notification, $refer_user_find, $message))->delay(Carbon::now()->addSeconds(3));
+                                            dispatch($notificationJobR);
                                         }
 
                                         if($admin_refer_notification->sms_type == 1){
@@ -3060,25 +3168,9 @@ class TabController extends ResponseController
                                             try {
                                                 $response = $sms->sendToOne($refer_user_find->country_code.$refer_user_find->mobile_number, $message,'CM-Society');
                                             } catch (\Exception $e) {
-                                                
+                                                continue;
                                             }
-
                                         }
-
-                                        if($admin_refer_notification->email_type == 1){
-                                            // try{
-                                            //     \Mail::to($refer_user_find->email)->send(new ReferralEmail($admin_refer_notification, $refer_user_find));
-                                            // }catch(\Exception $ex){
-                                            //     //return $ex->getMessage();
-                                            // }
-
-
-                                            $notificationJobR = (new ReferMailSend($admin_refer_notification, $refer_user_find))->delay(Carbon::now()->addSeconds(3));
-                                            dispatch($notificationJobR);
-
-                                        }
-
-                                        
                                     }
 
 
@@ -3162,8 +3254,12 @@ class TabController extends ResponseController
         }else{
             $wallet_txn = WalletTransaction::whereIn('id',$wallet_arr_ids_pluck)->get();
 
-            $admin_refer_notification = AdminNotification::where("uniq_id","=",4)->first();
+
             foreach ($wallet_txn as $key => $value) {
+                $admin_refer_notification = AdminNotification::where("uniq_id","=",4)->first();
+
+                $admin_cashback_notification_find = AdminNotification::where("uniq_id","=",2)->first();
+                
                 $user_wallet_txn = WalletTransaction::whereId($value->id)->first();
                 $user_wallet_txn->is_cross_verify = 1;
                 $user_wallet_txn->check_amount_pos = $user_wallet_txn->total_bill_amount;
@@ -3189,14 +3285,16 @@ class TabController extends ResponseController
                     $refer_user_find->wallet_cash = $refer_user_find->wallet_cash + $user_find->refer_amount;
                     $refer_user_find->update();
 
-                    $wallet_detail3 = new WalletDetail();
-                    $wallet_detail3->user_id = $refer_user_find->id;
-                    $wallet_detail3->description = "Referral Earnings";
-                    $wallet_detail3->cashback_earned = $user_find->refer_amount;
-                    $wallet_detail3->date_and_time = Carbon::now()->toDateString(). " ". Carbon::now()->toTimeString();
-                    $wallet_detail3->type_of_transaction = "Refer";
-                    $wallet_detail3->user_wallet_cash = $refer_user_find->wallet_cash;
-                    $wallet_detail3->save();
+                    if($user_find->refer_amount > 0){
+                        $wallet_detail3 = new WalletDetail();
+                        $wallet_detail3->user_id = $refer_user_find->id;
+                        $wallet_detail3->description = "Referral Earnings";
+                        $wallet_detail3->cashback_earned = $user_find->refer_amount;
+                        $wallet_detail3->date_and_time = Carbon::now()->toDateString(). " ". Carbon::now()->toTimeString();
+                        $wallet_detail3->type_of_transaction = "Refer";
+                        $wallet_detail3->user_wallet_cash = $refer_user_find->wallet_cash;
+                        $wallet_detail3->save();
+                    }
 
 
                     if($admin_refer_notification->push_type == 1){
@@ -3216,8 +3314,12 @@ class TabController extends ResponseController
                                     $noti_record_find->wallet = $noti_record_find->wallet + 1;
                                     $noti_record_find->update();
                                 }
-
-                               $android_notify =  $this->send_android_notification_new($refer_user_find->device_token, $admin_refer_notification->message, $notmessage = "Referral Bonus Notification", $noti_type = 4);
+                                $total_noti_record = NotiRecord::whereUserId($refer_user_find->id)->sum(DB::raw('wallet + offer + event + normal'));
+                                try{
+                               $android_notify =  $this->send_android_notification_new($refer_user_find->device_token, $admin_refer_notification->message, $notmessage = "Referral Bonus Notification", $noti_type = 4,null,null,$total_noti_record);
+                               } catch (\Exception $e) {
+                                continue;
+                            }
 
                                $criteria_data = [
                                     'user_id'   => $refer_user_find->id,
@@ -3244,8 +3346,12 @@ class TabController extends ResponseController
                                     $noti_record_find->wallet = $noti_record_find->wallet + 1;
                                     $noti_record_find->update();
                                 }
-
-                                $ios_notify =  $this->iphoneNotification($refer_user_find->device_token, $admin_refer_notification->message, $notmessage = "Referral Bonus Notification", $noti_type = 4);
+                                $total_noti_record = NotiRecord::whereUserId($refer_user_find->id)->sum(DB::raw('wallet + offer + event + normal'));
+                                try{
+                                $ios_notify =  $this->iphoneNotification($refer_user_find->device_token, $admin_refer_notification->message, $notmessage = "Referral Bonus Notification", $noti_type = 4, null, null,$total_noti_record );
+                                } catch (\Exception $e) {
+                                continue;
+                            }
 
                                 $criteria_data = [
                                     'user_id'   => $refer_user_find->id,
@@ -3272,28 +3378,130 @@ class TabController extends ResponseController
                     }
 
                     if($admin_refer_notification->email_type == 1){
-                        // try{
-                        //     \Mail::to($refer_user_find->email)->send(new ReferralEmail($admin_refer_notification, $refer_user_find));
-                        // }catch(\Exception $ex){
-                        //     //return $ex->getMessage();
-                        // }
-
-                        $notificationJobR = (new ReferMailSend($admin_refer_notification, $refer_user_find))->delay(Carbon::now()->addSeconds(3));
+                        $message = $admin_refer_notification->message;
+                        $notificationJobR = (new ReferMailSend($admin_refer_notification, $refer_user_find, $message))->delay(Carbon::now()->addSeconds(3));
                         dispatch($notificationJobR);
 
                     }
 
                     
                 }
+
+                if(!empty($admin_cashback_notification_find)){
+                    $find_user = User::whereId($value->user_id)->where('is_block','=',0)->first();
+                    $find_user->wallet_cash = $find_user->wallet_cash + $value->cashback_earned;
+                    $find_user->update();
+
+                    $wallet_detail2 = new WalletDetail();
+                    $wallet_detail2->user_id = $find_user->id;
+                    $wallet_detail2->description = "Cash Back Earnings";
+                    $wallet_detail2->cashback_earned = $value->cashback_earned;
+                    $wallet_detail2->date_and_time = Carbon::now()->toDateString(). " ". Carbon::now()->toTimeString();
+                    $wallet_detail2->type_of_transaction = "Cashback";
+                    $wallet_detail2->user_wallet_cash = $find_user->wallet_cash;
+                    $wallet_detail2->save();
+
+                    $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$value->cashback_earned." AED. ".$admin_cashback_notification_find->message;
+
+                    if($admin_cashback_notification_find->push_type == 1){
+
+                        if($find_user->device_type == 'Android'){
+                            if($find_user->device_token && strlen($find_user->device_token) > 20){
+
+                                $noti_record_find = NotiRecord::whereUserId($find_user->id)->first();
+
+                                if(empty($noti_record_find)){
+                                    $save_noti_record = new NotiRecord();
+                                    $save_noti_record->user_id = $find_user->id;
+                                    $save_noti_record->wallet = 1;
+                                    $save_noti_record->save();
+
+                                }else{
+                                    $noti_record_find->wallet = $noti_record_find->wallet + 1;
+                                    $noti_record_find->update();
+                                }
+
+                                $total_noti_record = NotiRecord::whereUserId($find_user->id)->sum(DB::raw('wallet + offer + event + normal'));
+                                try{
+                                   $android_notify =  $this->send_android_notification_new($find_user->device_token, $admin_cashback_notification_find->message, $notmessage = "Cashback Notification", $noti_type = 2,null,null,$total_noti_record);
+                                } catch (\Exception $e) {
+                                    continue;
+                                }
+                                $criteria_data = [
+                                    'user_id'   => $find_user->id,
+                                    'message'   => $admin_cashback_notification_find->message,
+                                    'noti_type' => 2,
+                                    'created_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString(),
+                                    'updated_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString(),
+                                ];
+                                AdminCriteriaNotification::create($criteria_data);
+                           
+                           }
+                        }
+
+                        if($find_user->device_type == 'Ios' && strlen($find_user->device_token) > 20){
+                            if($find_user->device_token){
+
+                                $noti_record_find = NotiRecord::whereUserId($find_user->id)->first();
+
+                                if(empty($noti_record_find)){
+                                    $save_noti_record = new NotiRecord();
+                                    $save_noti_record->user_id = $find_user->id;
+                                    $save_noti_record->wallet = 1;
+                                    $save_noti_record->save();
+
+                                }else{
+                                    $noti_record_find->wallet = $noti_record_find->wallet + 1;
+                                    $noti_record_find->update();
+                                }
+
+
+                                $total_noti_record = NotiRecord::whereUserId($find_user->id)->sum(DB::raw('wallet + offer + event + normal'));
+                                try{
+                                $ios_notify =  $this->iphoneNotification($find_user->device_token, $admin_cashback_notification_find->message, $notmessage = "Cashback Notification", $noti_type = 2,null,null,$total_noti_record);
+                                } catch (\Exception $e) {
+                                    continue;
+                                }
+                                $criteria_data = [
+                                    'user_id'   => $find_user->id,
+                                    'message'   => $admin_cashback_notification_find->message,
+                                    'noti_type' => 2,
+                                    'created_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString(),
+                                    'updated_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString()
+                                ];
+                                AdminCriteriaNotification::create($criteria_data);
+                            
+                           }
+                        }
+
+                    }
+
+                    if($admin_cashback_notification_find->email_type == 1){
+                        $show_message_cashback  = $admin_cashback_notification_find->message;
+                        $cashbackNotificationJob = (new CashbackEmailJob($admin_cashback_notification_find, $find_user, $show_message_cashback))->delay(Carbon::now()->addSeconds(3));
+                        dispatch($cashbackNotificationJob);
+                    }
+
+                    if($admin_cashback_notification_find->sms_type == 1){
+                        \SMSGlobal\Credentials::set(env('SMS_GLOBAL_API'),env('SMS_GLOBAL_SECERET'));
+                        $sms = new \SMSGlobal\Resource\Sms();
+                        $message = $admin_cashback_notification_find->message;
+                        try {
+                            $response = $sms->sendToOne($find_user->country_code.$find_user->mobile_number, $message,'CM-Society');
+                        } catch (\Exception $e) {
+                            // return $e->getMessage();
+                        }
+                    }
+                }
             }
 
-            $wallet_transaction_verified = WalletTransaction::whereIn('id',$wallet_arr_ids_pluck)->whereIsCrossVerify(1)->get();
+            // $wallet_transaction_verified = WalletTransaction::whereIn('id',$wallet_arr_ids_pluck)->whereIsCrossVerify(1)->get();
 
-            if(!empty($wallet_transaction_verified)){
-                $this->transferToWallet($wallet_transaction_verified);
+            // if(!empty($wallet_transaction_verified)){
+            //     $this->transferToWallet($wallet_transaction_verified);
 
                 return response()->json(['msg' => 'Force verified the all pending sales transaction successfully.']);
-            }
+            // }
         }  
     }
 
@@ -3339,9 +3547,11 @@ class TabController extends ResponseController
         }
 
         $wallet_transaction_verify = WalletTransaction::whereIn('id',$request_ids)->get();
-        $admin_refer_notification = AdminNotification::where("uniq_id","=",4)->first();
 
         foreach ($wallet_transaction_verify as $key => $value) {
+        $admin_refer_notification = AdminNotification::where("uniq_id","=",4)->first();
+        $admin_cashback_notification_find = AdminNotification::where("uniq_id","=",2)->first();
+
             $user_wallet_txn = WalletTransaction::whereId($value->id)->first();
             if($user_wallet_txn->is_cross_verify == 2){
                 $user_wallet_txn->is_cross_verify = 1;
@@ -3375,14 +3585,16 @@ class TabController extends ResponseController
                 $refer_user_find->wallet_cash = $refer_user_find->wallet_cash + $user_find->refer_amount;
                 $refer_user_find->update();
 
-                $wallet_detail3 = new WalletDetail();
-                $wallet_detail3->user_id = $refer_user_find->id;
-                $wallet_detail3->description = "Referral Earnings";
-                $wallet_detail3->cashback_earned = $user_find->refer_amount;
-                $wallet_detail3->date_and_time = Carbon::now()->toDateString(). " ". Carbon::now()->toTimeString();
-                $wallet_detail3->type_of_transaction = "Refer";
-                $wallet_detail3->user_wallet_cash = $refer_user_find->wallet_cash;
-                $wallet_detail3->save();
+                if($user_find->refer_amount > 0){
+                    $wallet_detail3 = new WalletDetail();
+                    $wallet_detail3->user_id = $refer_user_find->id;
+                    $wallet_detail3->description = "Referral Earnings";
+                    $wallet_detail3->cashback_earned = $user_find->refer_amount;
+                    $wallet_detail3->date_and_time = Carbon::now()->toDateString(). " ". Carbon::now()->toTimeString();
+                    $wallet_detail3->type_of_transaction = "Refer";
+                    $wallet_detail3->user_wallet_cash = $refer_user_find->wallet_cash;
+                    $wallet_detail3->save();
+                }
 
 
                 if($admin_refer_notification->push_type == 1){
@@ -3402,8 +3614,12 @@ class TabController extends ResponseController
                                 $noti_record_find->wallet = $noti_record_find->wallet + 1;
                                 $noti_record_find->update();
                             }
-
-                           $android_notify =  $this->send_android_notification_new($refer_user_find->device_token, $admin_refer_notification->message, $notmessage = "Referral Bonus Notification", $noti_type = 4);
+                            $total_noti_record = NotiRecord::whereUserId($refer_user_find->id)->sum(DB::raw('wallet + offer + event + normal'));
+                            try{
+                                $android_notify =  $this->send_android_notification_new($refer_user_find->device_token, $admin_refer_notification->message, $notmessage = "Referral Bonus Notification", $noti_type = 4,null,null,$total_noti_record);
+                            } catch (\Exception $e) {
+                                continue;
+                            }
 
                            $criteria_data = [
                                 'user_id'   => $refer_user_find->id,
@@ -3430,7 +3646,12 @@ class TabController extends ResponseController
                                 $noti_record_find->wallet = $noti_record_find->wallet + 1;
                                 $noti_record_find->update();
                             }
-                            $ios_notify =  $this->iphoneNotification($refer_user_find->device_token, $admin_refer_notification->message, $notmessage = "Referral Bonus Notification", $noti_type = 4);
+                            $total_noti_record = NotiRecord::whereUserId($refer_user_find->id)->sum(DB::raw('wallet + offer + event + normal'));
+                            try{
+                                $ios_notify =  $this->iphoneNotification($refer_user_find->device_token, $admin_refer_notification->message, $notmessage = "Referral Bonus Notification", $noti_type = 4,null,null,$total_noti_record);
+                            } catch (\Exception $e) {
+                                continue;
+                            }
 
                             $criteria_data = [
                                 'user_id'   => $refer_user_find->id,
@@ -3457,30 +3678,126 @@ class TabController extends ResponseController
                 }
 
                 if($admin_refer_notification->email_type == 1){
-                    // try{
-                    //     \Mail::to($refer_user_find->email)->send(new ReferralEmail($admin_refer_notification, $refer_user_find));
-                    // }catch(\Exception $ex){
-                    //     //return $ex->getMessage();
-                    // }
 
-                    $notificationJobR = (new ReferMailSend($admin_refer_notification, $refer_user_find))->delay(Carbon::now()->addSeconds(3));
+                    $show_message = $admin_refer_notification->message;
+
+                    $notificationJobR = (new ReferMailSend($admin_refer_notification, $refer_user_find,$show_message))->delay(Carbon::now()->addSeconds(3));
                     dispatch($notificationJobR);
                         
                 }
-
                 
+            }
+
+            if(!empty($admin_cashback_notification_find)){
+                $find_user = User::whereId($user_wallet_txn->user_id)->where('is_block','=',0)->first();
+                $find_user->wallet_cash = $find_user->wallet_cash + $user_wallet_txn->cashback_earned;
+                $find_user->update();
+
+                $wallet_detail2 = new WalletDetail();
+                $wallet_detail2->user_id = $find_user->id;
+                $wallet_detail2->description = "Cash Back Earnings";
+                $wallet_detail2->cashback_earned = $user_wallet_txn->cashback_earned;
+                $wallet_detail2->date_and_time = Carbon::now()->toDateString(). " ". Carbon::now()->toTimeString();
+                $wallet_detail2->type_of_transaction = "Cashback";
+                $wallet_detail2->user_wallet_cash = $find_user->wallet_cash;
+                $wallet_detail2->save();
+
+                $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$user_wallet_txn->cashback_earned." AED. ".$admin_cashback_notification_find->message;
+                // $this->send_notifications_verified_users($admin_cashback_notification_find,$find_user);
+
+                if($admin_cashback_notification_find->push_type == 1){
+
+                    if($find_user->device_type == 'Android'){
+                        if($find_user->device_token && strlen($find_user->device_token) > 20){
+
+                            $noti_record_find = NotiRecord::whereUserId($find_user->id)->first();
+
+                            if(empty($noti_record_find)){
+                                $save_noti_record = new NotiRecord();
+                                $save_noti_record->user_id = $find_user->id;
+                                $save_noti_record->wallet = 1;
+                                $save_noti_record->save();
+
+                            }else{
+                                $noti_record_find->wallet = $noti_record_find->wallet + 1;
+                                $noti_record_find->update();
+                            }
+
+                            $total_noti_record = NotiRecord::whereUserId($find_user->id)->sum(DB::raw('wallet + offer + event + normal'));
+                            try{
+                               $android_notify =  $this->send_android_notification_new($find_user->device_token, $admin_cashback_notification_find->message, $notmessage = "Cashback Notification", $noti_type = 2,null,null,$total_noti_record);
+                            } catch (\Exception $e) {
+                                continue;
+                            }
+                            $criteria_data = [
+                                'user_id'   => $find_user->id,
+                                'message'   => $admin_cashback_notification_find->message,
+                                'noti_type' => 2,
+                                'created_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString(),
+                                'updated_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString(),
+                            ];
+                            AdminCriteriaNotification::create($criteria_data);
+                       
+                       }
+                    }
+
+                    if($find_user->device_type == 'Ios' && strlen($find_user->device_token) > 20){
+                        if($find_user->device_token){
+
+                            $noti_record_find = NotiRecord::whereUserId($find_user->id)->first();
+
+                            if(empty($noti_record_find)){
+                                $save_noti_record = new NotiRecord();
+                                $save_noti_record->user_id = $find_user->id;
+                                $save_noti_record->wallet = 1;
+                                $save_noti_record->save();
+
+                            }else{
+                                $noti_record_find->wallet = $noti_record_find->wallet + 1;
+                                $noti_record_find->update();
+                            }
+
+
+                            $total_noti_record = NotiRecord::whereUserId($find_user->id)->sum(DB::raw('wallet + offer + event + normal'));
+                            try{
+                            $ios_notify =  $this->iphoneNotification($find_user->device_token, $admin_cashback_notification_find->message, $notmessage = "Cashback Notification", $noti_type = 2,null,null,$total_noti_record);
+                            } catch (\Exception $e) {
+                                continue;
+                            }
+                            $criteria_data = [
+                                'user_id'   => $find_user->id,
+                                'message'   => $admin_cashback_notification_find->message,
+                                'noti_type' => 2,
+                                'created_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString(),
+                                'updated_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString()
+                            ];
+                            AdminCriteriaNotification::create($criteria_data);
+                        
+                       }
+                    }
+
+                }
+
+                if($admin_cashback_notification_find->email_type == 1){
+                    $show_message_cashback  = $admin_cashback_notification_find->message;
+                    $cashbackNotificationJob = (new CashbackEmailJob($admin_cashback_notification_find, $find_user, $show_message_cashback))->delay(Carbon::now()->addSeconds(3));
+                    dispatch($cashbackNotificationJob);
+                }
+
+                if($admin_cashback_notification_find->sms_type == 1){
+                    \SMSGlobal\Credentials::set(env('SMS_GLOBAL_API'),env('SMS_GLOBAL_SECERET'));
+                    $sms = new \SMSGlobal\Resource\Sms();
+                    $message = $admin_cashback_notification_find->message;
+                    try {
+                        $response = $sms->sendToOne($find_user->country_code.$find_user->mobile_number, $message,'CM-Society');
+                    } catch (\Exception $e) {
+                        // return $e->getMessage();
+                    }
+                }
             }
         }
 
-        $wallet_transaction_verified = WalletTransaction::whereIn('id',$request_ids)->whereIsCrossVerify(1)->get();
-
-        $cashback_transferToWallet = $this->transferToWallet($wallet_transaction_verified);
-
-        if(!empty($cashback_transferToWallet)){
-            return response()->json(['msg' => 'Transactions has been verified successfully.']);
-        }else{
-            return response()->json(['msg' => 'Something went wrong.']);
-        }
+        return response()->json(['msg' => 'Transactions has been verified successfully.']);
     }
 
 
@@ -3507,36 +3824,40 @@ class TabController extends ResponseController
         $order = $request->get("order")[0]['column'];
 
         if($order == 1){
+            $column = "full_name";
+        }elseif($order == 2){
             $column = "mobile_number";
-        }elseif ($order == 2) {
-            $column = "wallet_transactions.invoice_number";
-        }elseif ($order == 3) {
-            $column = "wallet_transactions.total_bill_amount";
+        }elseif($order == 3){
+            $column = "email";
         }elseif ($order == 4) {
-            $column = "wallet_transactions.check_amount_pos";
+            $column = "wallet_transactions.invoice_number";
         }elseif ($order == 5) {
-            $column = "wallet_transactions.txn_status";
+            $column = "wallet_transactions.total_bill_amount";
         }elseif ($order == 6) {
-            $column = "wallet_transactions.cashback_percentage";
+            $column = "wallet_transactions.check_amount_pos";
         }elseif ($order == 7) {
-            $column = "wallet_cash";
+            $column = "wallet_transactions.txn_status";
         }elseif ($order == 8) {
-            $column = "wallet_transactions.redeemed_amount";
+            $column = "wallet_transactions.cashback_percentage";
         }elseif ($order == 9) {
-            $column = "venue_name";
+            $column = "wallet_cash";
+        }elseif ($order == 10) {
+            $column = "wallet_transactions.redeemed_amount";
         }elseif ($order == 11) {
-            $column = "wallet_transactions.date_and_time";
-        }elseif ($order == 12) {
-            $column = "wallet_transactions.updated_at";
+            $column = "venue_name";
         }elseif ($order == 13) {
-            $column = "wallet_transactions.updated_by";
+            $column = "wallet_transactions.date_and_time";
         }elseif ($order == 14) {
+            $column = "wallet_transactions.updated_at";
+        }elseif ($order == 15) {
+            $column = "wallet_transactions.updated_by";
+        }elseif ($order == 16) {
             $column = "username";
         }
 
         $offer_product_name = Offer::whereOfferName($request->offer_name)->first();
 
-        $data = WalletTransaction::select("wallet_transactions.*",DB::raw("(select customer_id from users where id = wallet_transactions.user_id) AS customer_id"),DB::raw("(select wallet_cash from users where id = wallet_transactions.user_id) AS wallet_cash"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where users.id = wallet_transactions.user_id) AS mobile_number"),DB::raw("CONCAT(case wallet_transactions.is_cross_verify when '0' then 'Not Verified' when '1' then 'Verified' else 'Mismatch' end) AS txn_status"),DB::raw("(select venue_name from venus where id = wallet_transactions.venu_id) AS venue_name"),DB::raw("(select username from venue_users where id = wallet_transactions.venue_user_id) AS username"),DB::raw("(select offer_redeem from user_assign_offers where id = wallet_transactions.offer_product_ids) AS offer_redeem"))
+        $data = WalletTransaction::select("wallet_transactions.*",DB::raw("(select customer_id from users where id = wallet_transactions.user_id) AS customer_id"),DB::raw("(select email from users where id = wallet_transactions.user_id) AS email"),DB::raw("(select wallet_cash from users where id = wallet_transactions.user_id) AS wallet_cash"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where users.id = wallet_transactions.user_id) AS full_name"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where users.id = wallet_transactions.user_id) AS mobile_number"),DB::raw("CONCAT(case wallet_transactions.is_cross_verify when '0' then 'Not Verified' when '1' then 'Verified' else 'Mismatch' end) AS txn_status"),DB::raw("(select venue_name from venus where id = wallet_transactions.venu_id) AS venue_name"),DB::raw("(select username from venue_users where id = wallet_transactions.venue_user_id) AS username"),DB::raw("(select offer_redeem from user_assign_offers where id = wallet_transactions.offer_product_ids) AS offer_redeem"))
         // ->whereUserId($user_id->id)
         ->where(function($query) use ($request){
 
@@ -3560,6 +3881,10 @@ class TabController extends ResponseController
 
                 if($request->mobile_number){
                     $query->where(DB::raw("(select CONCAT(users.country_code, users.mobile_number) from users where users.id = wallet_transactions.user_id)"), 'Like', '%' . $request->mobile_number . '%');
+                }
+
+                if($request->customer_name_wallet){
+                    $query->where(DB::raw("(select CONCAT(users.first_name,' ',users.last_name) from users where users.id = wallet_transactions.user_id)"), 'Like', '%' . $request->customer_name_wallet . '%');
                 }
 
                 if($request->email){
@@ -3589,8 +3914,10 @@ class TabController extends ResponseController
         if($search){
              $data  = $data->where(function($query) use($search){
                     $query->orWhere(DB::raw("(select customer_id from users where id = wallet_transactions.user_id)"), 'Like', '%' . $search . '%');
+                    $query->orWhere(DB::raw("(select email from users where id = wallet_transactions.user_id)"), 'Like', '%' . $search . '%');
                     $query->orWhere(DB::raw("(select wallet_cash from users where id = wallet_transactions.user_id)"), 'Like', '%' . $search . '%');
                     $query->orWhere(DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where id = wallet_transactions.user_id)"), 'like', '%'.$search.'%');
+                    $query->orWhere(DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where id = wallet_transactions.user_id)"), 'like', '%'.$search.'%');
                     $query->orWhere("wallet_transactions.invoice_number", 'Like', '%' . $search . '%');
                     $query->orWhere("wallet_transactions.total_bill_amount", 'Like', '%' . $search . '%');
                     $query->orWhere("wallet_transactions.check_amount_pos", 'Like', '%' . $search . '%');
@@ -3649,7 +3976,7 @@ class TabController extends ResponseController
 
         $offer_product_name = Offer::whereOfferName($request->offer_name)->first();
 
-        $data = WalletTransaction::select("wallet_transactions.*",DB::raw("(select customer_id from users where id = wallet_transactions.user_id) AS customer_id"),DB::raw("(select wallet_cash from users where id = wallet_transactions.user_id) AS wallet_cash"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where users.id = wallet_transactions.user_id) AS mobile_number"),DB::raw("CONCAT(case wallet_transactions.is_cross_verify when '0' then 'Not Verified' when '1' then 'Verified' else 'Mismatch' end) AS txn_status"),DB::raw("(select venue_name from venus where id = wallet_transactions.venu_id) AS venue_name"),DB::raw("(select username from venue_users where id = wallet_transactions.venue_user_id) AS username"),DB::raw("(select offer_redeem from user_assign_offers where id = wallet_transactions.offer_product_ids) AS offer_redeem"))
+        $data = WalletTransaction::select("wallet_transactions.*",DB::raw("(select customer_id from users where id = wallet_transactions.user_id) AS customer_id"),DB::raw("(select email from users where id = wallet_transactions.user_id) AS email"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where users.id = wallet_transactions.user_id) AS full_name"),DB::raw("(select wallet_cash from users where id = wallet_transactions.user_id) AS wallet_cash"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where users.id = wallet_transactions.user_id) AS mobile_number"),DB::raw("CONCAT(case wallet_transactions.is_cross_verify when '0' then 'Not Verified' when '1' then 'Verified' else 'Mismatch' end) AS txn_status"),DB::raw("(select venue_name from venus where id = wallet_transactions.venu_id) AS venue_name"),DB::raw("(select username from venue_users where id = wallet_transactions.venue_user_id) AS username"),DB::raw("(select offer_redeem from user_assign_offers where id = wallet_transactions.offer_product_ids) AS offer_redeem"))
         // ->whereUserId($user_id->id)
         ->where(function($query) use ($request){
 
@@ -3669,6 +3996,10 @@ class TabController extends ResponseController
                     $query->where('wallet_transactions.is_cross_verify',1);
                 }else if($request->txn_status_wallet == 'not_verified'){
                     $query->where('wallet_transactions.is_cross_verify',0);
+                }
+                
+                if($request->customer_name_wallet){
+                    $query->where(DB::raw("(select CONCAT(users.first_name,' ',users.last_name) from users where users.id = wallet_transactions.user_id)"), 'Like', '%' . $request->customer_name_wallet . '%');
                 }
 
                 if($request->mobile_number){
@@ -3699,8 +4030,10 @@ class TabController extends ResponseController
             if($search){
                  $data  = $data->where(function($query) use($search){
                         $query->orWhere(DB::raw("(select customer_id from users where id = wallet_transactions.user_id)"), 'Like', '%' . $search . '%');
+                        $query->orWhere(DB::raw("(select email from users where id = wallet_transactions.user_id)"), 'Like', '%' . $search . '%');
                         $query->orWhere(DB::raw("(select wallet_cash from users where id = wallet_transactions.user_id)"), 'Like', '%' . $search . '%');
                         $query->orWhere(DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where id = wallet_transactions.user_id)"), 'like', '%'.$search.'%');
+                        $query->orWhere(DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where id = wallet_transactions.user_id)"), 'like', '%'.$search.'%');
                         $query->orWhere("wallet_transactions.invoice_number", 'Like', '%' . $search . '%');
                         $query->orWhere("wallet_transactions.total_bill_amount", 'Like', '%' . $search . '%');
                         $query->orWhere("wallet_transactions.check_amount_pos", 'Like', '%' . $search . '%');
@@ -3745,7 +4078,7 @@ class TabController extends ResponseController
 
 
         $ids_data = explode(",", base64_decode($request->ids_data));
-        $data = WalletTransaction::select(DB::raw("(select customer_id from users where id = wallet_transactions.user_id) AS 'Customer ID'"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where users.id = wallet_transactions.user_id) AS 'Mobile Number'"),"wallet_transactions.invoice_number AS Invoice Number","wallet_transactions.total_bill_amount AS Check Amount","wallet_transactions.check_amount_pos AS Check Amount POS",DB::raw("CONCAT(case wallet_transactions.is_cross_verify when '0' then 'Not Verified' when '1' then 'Verified' else 'Mismatch' end) AS 'Transaction Status'"),"wallet_transactions.cashback_percentage AS Cashback Percentage",DB::raw("ROUND((select wallet_cash from users where id = wallet_transactions.user_id),1) AS 'Redeemed Wallet'"),"wallet_transactions.redeemed_amount AS Redemption From Loyalty",DB::raw("(select venue_name from venus where id = wallet_transactions.venu_id) AS 'Restaurant Name'"),DB::raw("(select username from venue_users where id = wallet_transactions.venue_user_id) AS 'Restaurant User'"),DB::raw("DATE_FORMAT(wallet_transactions.date_and_time, '%Y-%m-%d') AS Date"))->orderBy('wallet_transactions.id','desc')->whereIn('id',$ids_data)
+        $data = WalletTransaction::select(DB::raw("(select customer_id from users where id = wallet_transactions.user_id) AS 'Customer ID'"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where users.id = wallet_transactions.user_id) AS 'Customer Name'"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where users.id = wallet_transactions.user_id) AS 'Mobile Number'"),DB::raw("(select email from users where id = wallet_transactions.user_id) AS 'Email ID'"),"wallet_transactions.invoice_number AS Invoice Number","wallet_transactions.total_bill_amount AS Check Amount","wallet_transactions.check_amount_pos AS Check Amount POS",DB::raw("CONCAT(case wallet_transactions.is_cross_verify when '0' then 'Not Verified' when '1' then 'Verified' else 'Mismatch' end) AS 'Transaction Status'"),"wallet_transactions.cashback_percentage AS Cashback Percentage",DB::raw("ROUND((select wallet_cash from users where id = wallet_transactions.user_id),1) AS 'Redeemed Wallet'"),"wallet_transactions.redeemed_amount AS Redemption From Loyalty",DB::raw("(select venue_name from venus where id = wallet_transactions.venu_id) AS 'Restaurant Name'"),DB::raw("(select username from venue_users where id = wallet_transactions.venue_user_id) AS 'Restaurant User'"),DB::raw("DATE_FORMAT(wallet_transactions.date_and_time, '%Y-%m-%d') AS Date"))->orderBy('wallet_transactions.id','desc')->whereIn('id',$ids_data)
             ->get()->toArray();
              
 
@@ -3807,6 +4140,7 @@ class TabController extends ResponseController
 
         if(!empty($request->name_of_file_show)){
            $extension = pathinfo($request->name_of_file_show)['extension'];
+           try{
             if($extension=='png'){
                 $image1 = str_replace('data:image/png;base64,', '', $request->hidden_image);
                 $destinationPath = storage_path(). DIRECTORY_SEPARATOR . env('APPLICATION_DATA_STORAGE');
@@ -3821,7 +4155,12 @@ class TabController extends ResponseController
             $img_new = Image::make(base64_decode($image1))->stream($extension, 50);
             
             file_put_contents($destinationPath. '/' . $imageName, $img_new);
+            }catch(\Exception $ex){
+                return response()->json(['image_name_err' => "Please upload valid image." ],422);
+            }
         }
+
+
 
         
         $application_data = ApplicationData::first();
@@ -3870,6 +4209,7 @@ class TabController extends ResponseController
 
         if($request->data_name == "Welcome Screen Logo"){
             if(!empty($request->name_of_file_show)){
+                try{
                 $extension = pathinfo($request->name_of_file_show)['extension'];
                 if($extension=='png'){
                     $image1 = str_replace('data:image/png;base64,', '', $request->hidden_image);
@@ -3883,6 +4223,9 @@ class TabController extends ResponseController
                 
                 $img_new = Image::make(base64_decode($image1))->stream($extension, 50);
                 file_put_contents($destinationPath. '/' . $imageName, $img_new);
+            }catch(\Exception $ex){
+               return response()->json(['image_name_err' => 'Please upload valid image.'],422);
+            }
                 
                 $application_data->logo = $imageName;
                 $application_data->name_of_file_show_logo = $request->name_of_file_show;

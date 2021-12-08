@@ -45,14 +45,19 @@ class ProfileModel extends Model
     */
 
     public static function uploadImage($image, $destinationPath){
-        $imageName = date('mdYHis') . uniqid() . '.' . str_replace(" ", "_", $image->getClientOriginalExtension());
-        //$image->move($destinationPath, $imageName);
 
-        $img_new = Image::make($image)->stream($image->getClientOriginalExtension(), 50);
-        
-        file_put_contents($destinationPath. '/' . $imageName, $img_new);
-        
-        return $imageName;
+        try{
+            $imageName = date('mdYHis') . uniqid() . '.' . str_replace(" ", "_", $image->getClientOriginalExtension());
+            //$image->move($destinationPath, $imageName);
+
+            $img_new = Image::make($image)->stream($image->getClientOriginalExtension(), 50);
+            
+            file_put_contents($destinationPath. '/' . $imageName, $img_new);
+            
+            return $imageName;
+        }catch(\Exception $ex){
+            return $ex->getMessage();
+        }
     }
 
     public static function createUser($data){
@@ -104,9 +109,14 @@ class ProfileModel extends Model
         }*/
 
         if(!empty($data['password']) && !empty($data['confirm_password'])){
-            $data['password'] = Hash::make($data['password']);
-            $update_user = $user->update(['password' => $data['password']]);
-            return ["status" => 5, "success_msg" => "Password has been updated successfully."];
+
+            if(Hash::check($data['password'],$user->password)){
+                return ["status" => 6, "error_msg" => "New password looks same as old password, Please try a different password."];
+            }else{
+                $data['password'] = Hash::make($data['password']);
+                $update_user = $user->update(['password' => $data['password']]);
+                return ["status" => 5, "success_msg" => "Password has been updated successfully."];
+            }
         }
         
         return User::find($id);
@@ -118,6 +128,10 @@ class ProfileModel extends Model
         if(isset($data['image'])){
             $destinationPath = storage_path() . DIRECTORY_SEPARATOR . env('IMG_STORAGE');
             $image_name = self::uploadImage($data['image'], $destinationPath);
+
+            if($image_name == "Unable to init from given binary data."){
+                return ["status" => 0, "data" => null, "error_msg" => "Please upload valid image."];
+            }
             $data['image'] = $image_name;
         }
 
@@ -188,6 +202,9 @@ class ProfileModel extends Model
         if($request->file('image')){
             $destinationPath = storage_path() . DIRECTORY_SEPARATOR . env('IMG_STORAGE');
             $image_name = self::uploadImage($data['image'], $destinationPath);
+            if($image_name == "Unable to init from given binary data."){
+                return ["status" => 0, "data" => null, "error_msg" => "Please upload valid image."];
+            }
             $data['image'] = $image_name;
         }
 
@@ -199,14 +216,16 @@ class ProfileModel extends Model
         $noti_record->user_id = $save_user->id;
         $noti_record->save();
 
-        $wallet_detail = new WalletDetail();
-        $wallet_detail->user_id = $save_user->id;
-        $wallet_detail->description = "Bonus Earnings";
-        $wallet_detail->cashback_earned = $bonus;
-        $wallet_detail->date_and_time = Carbon::now()->toDateString(). " ". Carbon::now()->toTimeString();
-        $wallet_detail->type_of_transaction = "Bonus";
-        $wallet_detail->user_wallet_cash = $save_user->wallet_cash;
-        $wallet_detail->save();
+        if($bonus > 0){
+            $wallet_detail = new WalletDetail();
+            $wallet_detail->user_id = $save_user->id;
+            $wallet_detail->description = "Bonus Earnings";
+            $wallet_detail->cashback_earned = $bonus;
+            $wallet_detail->date_and_time = Carbon::now()->toDateString(). " ". Carbon::now()->toTimeString();
+            $wallet_detail->type_of_transaction = "Bonus";
+            $wallet_detail->user_wallet_cash = $save_user->wallet_cash;
+            $wallet_detail->save();
+        }
 
 
         $generator = new Picqer\Barcode\BarcodeGeneratorPNG();

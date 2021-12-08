@@ -163,7 +163,13 @@
                       width: 20px;
                       z-index: 99;
                       margin-top: 20px;
-                      margin-left: -32px;" />
+                      margin-left: -32px; cursor: pointer;"/>
+
+                <img src="{{url('public/admin/assets/email_img/eye-hide.png')}}" id="eye_hide" alt="eye_hide" style="position: absolute;
+                width: 20px;
+                z-index: 99;
+                margin-top: 17px;
+                margin-left: -32px; display: none; cursor: pointer;"/>
 
 
             <label id="confirm_password-error" style="display: none;" class="error err" for="confirm_password"></label>
@@ -249,19 +255,19 @@
   <tr>
     <td align="center" style="font-family: 'Lato', sans-serif;
     font-weight: 400; font-size: 12px; color: #fff; padding-bottom: 12px;">
-      Office SG3, Al Bandar, Al Raha Beach,<br/> Abudhabi, UAE - P O Box 130122
+      {{$general_setting[9]['setting_content']}}
     </td>
   </tr>
   <tr>
     <td align="center" style="font-family: 'Lato', sans-serif;
     font-weight: 400; font-size: 12px; color: #fff; padding-bottom: 12px;">
-      Phone: +971 2449 9036 / Toll Free 800 6996
+      Phone: {{$general_setting[1]['setting_content']}}
     </td>
   </tr>
   <tr>
     <td align="center" style="font-family: 'Lato', sans-serif;
     font-weight: 400; font-size: 12px; color: #fff; padding-bottom: 12px;">
-      Email: info@capitalmotion.com
+      Email: <span style="color: #fff;"><a href="javascript:void(0);" style="color: #fff!important">{{$general_setting[0]['setting_content']}}</a></span>
     </td>
   </tr>
   <tr>
@@ -392,8 +398,27 @@
         if(check_type == "password"){
 
           $(this).parent().children("#confirm_password").attr("type","text");
+          $('#eye_hide').show();
+          $('#eye').hide();
         }else{
           $(this).parent().children("#confirm_password").attr("type","password");
+          $('#eye_hide').hide();
+          $('#eye').show();
+        }
+      });
+
+      $("#eye_hide").on("click",function(){
+        let check_type = $(this).parent().children("#confirm_password").attr("type");
+
+        if(check_type == "password"){
+
+          $(this).parent().children("#confirm_password").attr("type","text");
+          $('#eye_hide').show();
+          $('#eye').hide();
+        }else{
+          $(this).parent().children("#confirm_password").attr("type","password");
+          $('#eye_hide').hide();
+          $('#eye').show();
         }
       });
     });

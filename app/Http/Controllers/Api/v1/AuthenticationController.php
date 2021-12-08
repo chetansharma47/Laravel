@@ -42,7 +42,7 @@ use App\Models\GeneralSetting;
 use App\Mail\ContactUsAdmin;
 use App\Models\EventSentNotification;
 
-require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/society_05_december/vendor/autoload.php';
 
 class AuthenticationController extends ResponseController
 {
@@ -135,7 +135,9 @@ class AuthenticationController extends ResponseController
                             $noti_record_find->update();
                         }
 
-                       $android_notify =  $this->send_android_notification_new($register['data']['device_token'], $admin_notification_find->message, $notmessage = "Bonus Notification", $noti_type = 3);
+                        $total_noti_record = NotiRecord::whereUserId($user->id)->sum(DB::raw('wallet + offer + event + normal'));
+
+                       $android_notify =  $this->send_android_notification_new($register['data']['device_token'], $admin_notification_find->message, $notmessage = "Bonus Notification", $noti_type = 3,null,null,$total_noti_record);
 
                        $criteria_data = [
                             'user_id'   => $register['data']['id'],
@@ -162,8 +164,8 @@ class AuthenticationController extends ResponseController
                             $noti_record_find->wallet = $noti_record_find->wallet + 1;
                             $noti_record_find->update();
                         }
-
-                        $ios_notify =  $this->iphoneNotification($register['data']['device_token'], $admin_notification_find->message, $notmessage = "Bonus Notification", $noti_type = 3);
+                        $total_noti_record = NotiRecord::whereUserId($user->id)->sum(DB::raw('wallet + offer + event + normal'));
+                        $ios_notify =  $this->iphoneNotification($register['data']['device_token'], $admin_notification_find->message, $notmessage = "Bonus Notification", $noti_type = 3,null,null,$total_noti_record);
 
                         $criteria_data = [
                             'user_id'   => $register['data']['id'],
@@ -216,12 +218,11 @@ class AuthenticationController extends ResponseController
             return $this->responseOk($update_user['success_msg']);
         }else if($update_user['status'] == 5){
             return $this->responseOk($update_user['success_msg']);
-        }/*else if($update_user['status'] == 6){
-            return $this->responseOk($update_user['error_msg']);
-        }*/else{
+        }else if($update_user['status'] == 6){
+            return $this->responseWithErrorCode($update_user['error_msg'],406);
+        }else{
             return $this->responseOk('User has been updated successfully.', ['update_user' => $update_user]);
         }
-        // return $this->responseWithErrorCode("Please enter valid OTP.",406);
     }
 
     public function getProfile(Request $request){
@@ -266,7 +267,9 @@ class AuthenticationController extends ResponseController
             if(Carbon::now() > Carbon::parse($tokenData->created_at)->addMinutes(10)){
                 return redirect(route('passwordResetInvalid', $user_id));
             }
-            return view('emails.reset-password', compact('token'));
+
+            $general_setting = GeneralSetting::all();
+            return view('emails.reset-password', compact('token','general_setting'));
         }
         if($request->isMethod('post')) {
             $token = $request->reset_password_token;
@@ -309,7 +312,8 @@ class AuthenticationController extends ResponseController
         $message = "Your password has been succesfully updated.";
         $type = "success";
         $link = "";
-        return view('emails.feedback', compact('title', 'message', 'type','user'));
+        $general_setting = GeneralSetting::all();
+        return view('emails.feedback', compact('title', 'message', 'type','user','general_setting'));
     }
 
     public function viewMessageResetPasswordInvalid(Request $request){
@@ -318,17 +322,19 @@ class AuthenticationController extends ResponseController
         $title = "Invalid link";
         $message = "Your forgot password link is either expired or invalid.";
         $type = "danger";
-        return view('emails.feedback', compact('title', 'message', 'type','user'));
+        $general_setting = GeneralSetting::all();
+        return view('emails.feedback', compact('title', 'message', 'type','user','general_setting'));
     }
 
     public function confirmAccount(Request $request){
         $token = $request->verify_email_token;
         $user = User::whereVerifyEmailToken($token)->first();
+        $general_setting = GeneralSetting::all();
         if($user){
             if($user->is_verify == 2){
                 $user->email = $user->request_change_email;
-                $user->device_type = "None";
-                $user->device_token = null;
+                // $user->device_type = "None";
+                // $user->device_token = null;
             }
             $user->verify_email_token = null;
             $user->is_verify = 1;
@@ -338,12 +344,12 @@ class AuthenticationController extends ResponseController
             $message = "Your email has been verified.";
             $type = "success";
             $link = "";
-            return view('emails.feedback', compact('title', 'message', 'type','user'));
+            return view('emails.feedback', compact('title', 'message', 'type','user', 'general_setting'));
         }else{
             $title = "Invalid link";
             $message = "Your verification link is either expired or invalid.";
             $type = "danger";
-            return view('emails.feedback', compact('title', 'message', 'type','user'));
+            return view('emails.feedback', compact('title', 'message', 'type','user', 'general_setting'));
         }
     }
 
@@ -602,7 +608,7 @@ class AuthenticationController extends ResponseController
                         $query->whereDate('to_date','>=', $today_date->toDateString());
                         $query->whereIn('venu_id', $active_venue_ids);
                         $query->whereRaw("FIND_IN_SET(?, when_day) > 0", $today_days);
-                        //$query->whereIn("id", $event_notification_ids);
+                        // $query->whereIn("id", $event_notification_ids);
                     })->with('venu')->orderBy('event_time','asc')->get();
 
         // $tier = TierCondition::whereTierName($user->customer_tier)->orderBy('id','desc')->first();

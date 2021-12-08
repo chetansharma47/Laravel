@@ -72,19 +72,23 @@ class TabBusiness extends Model
     }
 
     public function uploadBase64Img($data,$name_of_file_show){
-        $extension = pathinfo($name_of_file_show)['extension'];
-        $destinationPath = storage_path(). DIRECTORY_SEPARATOR . env('CASHBACK_STORAGE');
-        $image1 = str_replace('data:image/jpeg;base64,', '', $data);
-        $image1 = str_replace('data:image/png;base64,', '', $image1);
-        $image1 = str_replace(' ', '+', $image1);
-        $imageName = date('mdYHis') . '1' . uniqid().'.png';
+        try{
+            $extension = pathinfo($name_of_file_show)['extension'];
+            $destinationPath = storage_path(). DIRECTORY_SEPARATOR . env('CASHBACK_STORAGE');
+            $image1 = str_replace('data:image/jpeg;base64,', '', $data);
+            $image1 = str_replace('data:image/png;base64,', '', $image1);
+            $image1 = str_replace(' ', '+', $image1);
+            $imageName = date('mdYHis') . '1' . uniqid().'.png';
 
-        $img_new = Image::make(base64_decode($image1))->stream($extension, 50);
-        file_put_contents($destinationPath. '/' . $imageName, $img_new);
+            $img_new = Image::make(base64_decode($image1))->stream($extension, 50);
+            file_put_contents($destinationPath. '/' . $imageName, $img_new);
 
-        // file_put_contents($destinationPath. '/' . $imageName, base64_decode($image1));
-        //\File::put($destinationPath. '/' . $imageName, base64_decode($image1));
-        return $imageName;
+            // file_put_contents($destinationPath. '/' . $imageName, base64_decode($image1));
+            //\File::put($destinationPath. '/' . $imageName, base64_decode($image1));
+            return $imageName;
+        }catch(\Exception $ex){
+            return $ex->getMessage();
+        }
     }
 
 
@@ -94,7 +98,12 @@ class TabBusiness extends Model
         $data['to_time'] = Carbon::parse(Carbon::now()->toDateString()." ".$data['to_time'])->toTimeString();
         if(isset($data['image']) && $data['image'] != ""){
             $data['image'] = $this->uploadBase64Img($data['image'], $data['name_of_file_show']);
+            if(!empty($data['image'] == "Unable to init from given binary data.")){
+                return ['data' => null, 'update' => null, 'message' => "Please upload valid image."];
+            }
         }
+        // dd($data['image']);
+
         $find_cashback = Cashback::where("unique_id_cashback","=", $data['unique_id_cashback'])->first();
         if(empty($find_cashback)){
             $find_cashback = new Cashback();
@@ -108,6 +117,6 @@ class TabBusiness extends Model
             $update = "true";
         }
 
-        return ['data' => $find_cashback, 'update' => $update];
+        return ['data' => $find_cashback, 'update' => $update, 'message' => null];
     }
 }

@@ -8,17 +8,16 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Models\GeneralSetting;
 
-class ChangeEmailAddress extends Mailable
+class WeeklyVerifyEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    protected $data, $link;
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($data, $link)
+     public function __construct($data, $link)
     {
         $this->data = $data;
         $this->link = $link;
@@ -31,11 +30,11 @@ class ChangeEmailAddress extends Mailable
      */
     public function build()
     {
-      $general_setting = GeneralSetting::all();
 
+          $general_setting = GeneralSetting::all();
             return $this->from(env('MAIL_USERNAME'), 'Capital Motion')
-               ->subject('Verify Email Link')
-               ->view('emails.change-email-address')
+               ->subject('Weekly Verify Email Link')
+               ->view('emails.weekly-confirm-account')
                ->with([
                    'data'   => $this->data,
                    'link'   => $this->link,

@@ -6,6 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use App\Models\GeneralSetting;
 
 class BonusEmail extends Mailable
 {
@@ -31,12 +32,14 @@ class BonusEmail extends Mailable
      */
     public function build()
     {
+        $general_setting = GeneralSetting::all();
         return $this->from(env('MAIL_USERNAME'), 'Capital Motion')
         ->subject('Welcome Bonus Notification')
         ->view('admin.email.bonus-email')
         ->with([
             'admin_notification_find'   => $this->admin_notification_find,
             'register'   => $this->register,
+            'general_setting'   => $general_setting,
             'logo'   => public_path('admin/assets/email_img/CM-Logo-2.png'),
         ]);
     }

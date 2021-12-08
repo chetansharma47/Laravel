@@ -6,6 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use App\Models\GeneralSetting;
 
 class UserVerifyMail extends Mailable
 {
@@ -31,12 +32,14 @@ class UserVerifyMail extends Mailable
     public function build()
     {
 
+          $general_setting = GeneralSetting::all();
             return $this->from(env('MAIL_USERNAME'), 'Capital Motion')
                ->subject('Verify Email Link')
                ->view('emails.confirm-account')
                ->with([
                    'data'   => $this->data,
                    'link'   => $this->link,
+                   'general_setting'   => $general_setting,
                    'logo'   => public_path('admin/assets/email_img/CM-Logo-2.png')
            ]);
 

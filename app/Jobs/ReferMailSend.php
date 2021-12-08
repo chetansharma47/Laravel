@@ -20,11 +20,12 @@ class ReferMailSend implements ShouldQueue
      * @return void
      */
 
-    protected $admin_refer_notification, $refer_user_find; 
-    public function __construct($admin_refer_notification, $refer_user_find)
+    protected $admin_refer_notification, $refer_user_find, $show_message; 
+    public function __construct($admin_refer_notification, $refer_user_find, $show_message)
     {
         $this->admin_refer_notification = $admin_refer_notification;
         $this->refer_user_find = $refer_user_find;
+        $this->show_message = $show_message;
     }
 
     /**
@@ -34,11 +35,10 @@ class ReferMailSend implements ShouldQueue
      */
     public function handle()
     {
-        
         try{
-            \Mail::to($this->refer_user_find->email)->send(new ReferralEmail($this->admin_refer_notification, $this->refer_user_find));
+            \Mail::to($this->refer_user_find->email)->send(new ReferralEmail($this->admin_refer_notification, $this->refer_user_find, $this->show_message));
         }catch(\Exception $ex){
-            //return $ex->getMessage();
+            // return $ex->getMessage();
         }
 
     }

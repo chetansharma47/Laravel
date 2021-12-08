@@ -155,9 +155,9 @@
 		    width: 100%;
 		}
 
-		.modal-footer {
+		/*.modal-footer {
 		    padding: 0.3rem;
-		}
+		}*/
 
 		.d-flex {
 		    margin-bottom: 5px;
@@ -1128,7 +1128,7 @@
 								Status
 							</label>
 							<div class="selectdiv">
-								<select class="form-control form-group select_option cashback_status" unique_id="`+unique_id+`" style="padding: .6rem 1rem; position: relative;" id="exampleFormControlSelect1">
+								<select class="form-control form-group select_option cashback_status" unique_id="`+unique_id+`" style="padding: .6rem 1rem; position: relative; background-position: 97% 50%!important;" id="exampleFormControlSelect1">
 									<option value="">Select Status</option>
 									<option value="Active">Active</option>
 									<option value="Inactive">Inactive</option>
@@ -1159,9 +1159,9 @@
 				var file = event.target.files[0];
 				let file_name = file.name;
 				let slice_file_name;
-				if(file_name.length > 24){
+				if(file_name.length > 20){
 
-					slice_file_name = file_name.slice(0,24) + "...";
+					slice_file_name = file_name.slice(0,20) + "...";
 				}else{
 					slice_file_name = file_name;
 				}
@@ -1489,11 +1489,20 @@
 		          },
 		          error: function(data, textStatus, xhr) {
 		            if(data.status == 422){
-		              var result = data.responseJSON;
-		              alert('Something went worng.');
-		              window.location.href = "";
-		              $("#loaderModel").modal("hide");
-		              return false;
+		              setTimeout(function(){
+		              	$("#loaderModel").modal("hide");
+	              		var result = data.responseJSON;
+			             if(result['image_name_err'] && result['image_name_err'].length > 0){
+		             		$("#alert_text").text(result['image_name_err']);
+							$("#validationModel").modal("show");
+							$("#validationModel").unbind("click");
+							return false;
+		             	}
+		              },200);
+		              // alert('Something went worng.');
+		              // window.location.href = "";
+		              // $("#loaderModel").modal("hide");
+		              // return false;
 		            } 
 		      	}
 		    });
@@ -1556,9 +1565,9 @@
 						let have_img = "false";
 						if(file_name != "" && file_name != null && file_name != "null" && file_name != "NULL"){
 
-							if(file_name.length > 24){
+							if(file_name.length > 20){
 
-								slice_file_name = file_name.slice(0,24) + "...";
+								slice_file_name = file_name.slice(0,20) + "...";
 							}else{
 								slice_file_name = file_name;
 							}
@@ -1773,7 +1782,7 @@
 												Status
 											</label>
 											<div class="selectdiv">
-												<select class="form-control form-group select_option cashback_status" unique_id="`+unique_id+`" style="padding: .6rem 1rem; position: relative;" id="exampleFormControlSelect1">
+												<select class="form-control form-group select_option cashback_status" unique_id="`+unique_id+`" style="padding: .6rem 1rem; position: relative; background-position: 97% 50%!important;" id="exampleFormControlSelect1">
 													<option value="">Select Status</option>
 													<option value="Active" `+select_active+`>Active</option>
 													<option value="Inactive" `+select_inactive+`>Inactive</option>

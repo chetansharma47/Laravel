@@ -187,11 +187,17 @@
 		    top: -15px;
 		}
 
-		.modal-footer {
+		/*.modal-footer {
 		    padding: 0.3rem;
-		}
+		}*/
 
 		table#basic-datatables {
+		    overflow: auto;
+		    width: 100%!important;
+		    display: inline-block;
+		}
+
+		table#basic-datatables2 {
 		    overflow: auto;
 		    width: 100%!important;
 		    display: inline-block;
@@ -486,56 +492,18 @@
 							<thead>
 								<tr style="background-color: #193358;    color: #fff;">
 									<th>Sr. No.</th>
-									<th>Customer ID</th>
-									<th>Customer Mobile No.</th>
-									<th>Description</th>
-									<th>Cashback Earned</th>
-									<th>Redeemed Amount</th>
-									<th>Wallet Cash</th>
-									<th>Date and Time Added</th>
+									<th style="min-width: 128px;">Customer ID</th>
+									<th style="min-width: 128px;">Customer Name</th>
+									<th style="min-width: 150px;">Customer Mobile No.</th>
+									<th style="min-width: 128px;">Email ID</th>
+									<th style="min-width: 128px;">Description</th>
+									<th style="min-width: 128px;">Cashback Earned</th>
+									<th style="min-width: 128px;">Redeemed Amount</th>
+									<th style="min-width: 128px;">Wallet Cash</th>
+									<th style="min-width: 200px;">Date and Time Added</th>
 								</tr>
 							</thead>
 							<tbody>
-								<tr>
-									<td>558897462</td>
-									<td>58958462256</td>
-									<td>Cash Back Earnings</td>
-									<td>20 AED</td>
-									<td>20 AED</td>
-									<td>13/07/2021 21:00</td>
-								</tr>
-								<tr>
-									<td>558897462</td>
-									<td>58958462256</td>
-									<td>Cash Back Earnings</td>
-									<td>20 AED</td>
-									<td>20 AED</td>
-									<td>13/07/2021 21:00</td>
-								</tr>
-								<tr>
-									<td>558897462</td>
-									<td>58958462256</td>
-									<td>Cash Back Earnings</td>
-									<td>20 AED</td>
-									<td>20 AED</td>
-									<td>13/07/2021 21:00</td>
-								</tr>
-								<tr>
-									<td>558897462</td>
-									<td>58958462256</td>
-									<td>Cash Back Earnings</td>
-									<td>20 AED</td>
-									<td>20 AED</td>
-									<td>13/07/2021 21:00</td>
-								</tr>
-								<tr>
-									<td>558897462</td>
-									<td>58958462256</td>
-									<td>Cash Back Earnings</td>
-									<td>20 AED</td>
-									<td>20 AED</td>
-									<td>13/07/2021 21:00</td>
-								</tr>
 							</tbody>
 						</table>
 					</div>
@@ -570,7 +538,7 @@
 							<label>
 								Venue Name
 							</label>
-							<select class="form-control form-group venue_name_wallet select_option" style="position: relative;border-radius: 0px; padding: 9px 28px 9px 12px !important;" id="exampleFormControlSelect1">
+							<select class="form-control form-group venue_name_wallet select_option" style="position: relative;border-radius: 0px; padding: 9px 28px 9px 12px !important; background-position: 96% 50%!important;" id="exampleFormControlSelect1">
 								<option value="">Select Venue</option>
 								@if(count($venues) > 0)
 									@foreach($venues as $venu)
@@ -583,7 +551,7 @@
 							<label>
 								Transaction Verification
 							</label>
-							<select class="form-control txn_status_wallet form-group select_option" style="position: relative;border-radius: 0px; padding: 9px 36px 9px 12px !important;" id="exampleFormControlSelect1">
+							<select class="form-control txn_status_wallet form-group select_option" style="position: relative;border-radius: 0px; padding: 9px 36px 9px 12px !important; background-position: 96% 50%!important;" id="exampleFormControlSelect1">
 								<option value="">Select Transaction Verification</option>
 								<option value="verified">Verified</option>
 								<option value="not_verified">Not Verified</option>
@@ -619,7 +587,7 @@
 							<label>
 								Offer Products
 							</label>
-							<select class="form-control offers_product_wallet form-group select_option" style="position: relative;border-radius: 0px; padding: 9px 28px 9px 12px !important;" id="exampleFormControlSelect1">
+							<select class="form-control offers_product_wallet form-group select_option" style="position: relative;border-radius: 0px; padding: 9px 28px 9px 12px !important; background-position: 96% 50%!important;" id="exampleFormControlSelect1">
 								<option value="">Select Offer Products</option>
 								@if(count($offers) > 0)
 									@foreach($offers as $offer)
@@ -634,12 +602,12 @@
 							</label>
 							<input type="text" class="form-control mobile_number_wallet form-control-user" placeholder="Customer Mobile No" value="" style="border-radius: 0px;padding: 9px 14px 9px 12px !important;"/>
 						</div>
-						<!-- <div class="venue_inputs mb-3 px-2">
+						<div class="venue_inputs mb-3 px-2">
 							<label>
 								Email ID
 							</label>
 							<input type="text" class="form-control email_wallet form-control-user" placeholder="Enter Email ID" value="" style="border-radius: 0px;padding: 9px 14px 9px 12px !important;"/>
-						</div> -->
+						</div>
 						<div class="venue_inputs mb-3 px-2">
 							<label>
 							Check No
@@ -650,7 +618,7 @@
 							<label>
 								Venue User
 							</label>
-							<select class="form-control venu_username_wallet form-group select_option" style="position: relative;border-radius: 0px; padding: 9px 28px 9px 12px !important;" id="exampleFormControlSelect1">
+							<select class="form-control venu_username_wallet form-group select_option" style="position: relative;border-radius: 0px; padding: 9px 28px 9px 12px !important; background-position: 96% 50%!important;" id="exampleFormControlSelect1">
 								<option value="">Select Venue User</option>
 
 								@if(count($venue_users) > 0)
@@ -660,6 +628,14 @@
 								@endif
 								
 							</select>
+						</div>
+					</div>
+					<div class="d-flex">
+						<div class="venue_inputs mb-3 px-2 w-25">
+							<label>
+								Customer Name
+							</label>
+							<input type="text" class="form-control customer_name_wallet form-control-user" placeholder="Customer Name" value="" style="border-radius: 0px;padding: 9px 14px 9px 12px !important;"/>
 						</div>
 					</div>
 					<div class="d-flex px-2" style="margin-top: 35px;">
@@ -713,7 +689,9 @@
 										<th>Updated By</th>
 										<th>Restaurant Logged In User</th> -->
 										<th style="min-width: 128px;">Customer ID</th>
+										<th style="min-width: 128px;">Customer Name</th>
 										<th style="min-width: 128px;">Customer No.</th>
+										<th style="min-width: 128px;">Email ID</th>
 										<th style="min-width: 100px;">Check No.</th>
 										<th style="min-width: 128px;">Check Amount</th>
 										<th style="min-width: 128px;">Check Amount POS</th>
@@ -1167,7 +1145,9 @@
             "columns": [
              	{data: 'DT_RowIndex', name: 'DT_RowIndex'},
                 {data: 'customer_id', name: 'customer_id'},
+                {data: 'full_name', name: 'full_name'},
 	            {data: 'mobile_number', name: 'mobile_number'},
+	            {data: 'email', name: 'email'},
 	            {data: 'description', name: 'description'},
 	            {data: 'cashback_earned', name: 'cashback_earned'},
 	            {data: 'redeemed_amount', name: 'redeemed_amount'},
@@ -1700,10 +1680,16 @@ selected_customer_wallet_transactions();
 		              },
 		              error: function(data, textStatus, xhr) {
 		                if(data.status == 422){
-		                  var result = data.responseJSON;
-		                  alert('Something went worng.');
-		                  window.location.href = "";
-		                  return false;
+		                  setTimeout(function(){
+			              	$("#loaderModel").modal("hide");
+		                  	var result = data.responseJSON;
+			              	if(result['user_action_err'] && result['user_action_err'].length > 0){
+			             		$("#alert_text").text(result['user_action_err']);
+								$("#validationModel").modal("show");
+								$("#validationModel").unbind("click");
+		             		}
+							return false;
+			              },500);
 		                } 
 	              	}
 	            });
@@ -1753,12 +1739,23 @@ selected_customer_wallet_transactions();
 		              },
 		              error: function(data, textStatus, xhr) {
 		                if(data.status == 422){
-		                  var result = data.responseJSON;
-		                  alert('Something went worng.');
-		                  window.location.href = "";
-		                  return false;
+		                  setTimeout(function(){
+			              	$("#loaderModel").modal("hide");
+		                  	var result = data.responseJSON;
+			              	if(result['user_action_err'] && result['user_action_err'].length > 0){
+			             		$("#alert_text").text(result['user_action_err']);
+								$("#validationModel").modal("show");
+								$("#validationModel").unbind("click");
+		             		}
+							return false;
+			              },500);
+			              
+		                  // window.location.href = "";
+		                  // return false;
 		                } 
 	              	}
+
+
 	            });
 
 			});
@@ -1821,6 +1818,7 @@ selected_customer_wallet_transactions();
     	let txn_status_wallet = $(".txn_status_wallet").val();
     	let offers_product_wallet_id = $(".offers_product_wallet").val();
     	let mobile_number = $(".mobile_number_wallet").val();
+    	let customer_name_wallet = $(".customer_name_wallet").val();
     	let email = $(".email_wallet").val();
     	let invoice_number_wallet = $(".invoice_number_wallet").val();
     	let venu_username_id_wallet = $(".venu_username_wallet").val();
@@ -1831,7 +1829,7 @@ selected_customer_wallet_transactions();
 			$("#validationModel").unbind("click");
 			return false;
 		}
-    	cross_verification_sales(joined_from,joined_to,venue_id_wallet,txn_status_wallet,offers_product_wallet_id,email,mobile_number,invoice_number_wallet,venu_username_id_wallet);
+    	cross_verification_sales(joined_from,joined_to,venue_id_wallet,txn_status_wallet,offers_product_wallet_id,email,mobile_number,customer_name_wallet,invoice_number_wallet,venu_username_id_wallet);
 	});
 
 	$('.reset_wallet_txn').click(function(){
@@ -1841,13 +1839,14 @@ selected_customer_wallet_transactions();
     	$(".txn_status_wallet").val('');
     	$(".offers_product_wallet").val('');
     	$(".mobile_number_wallet").val('');
+    	$(".customer_name_wallet").val('');
     	$(".email_wallet").val('');
     	$(".invoice_number_wallet").val('');
     	$(".venu_username_wallet").val('');
     	cross_verification_sales();
 	});
 	
-	function cross_verification_sales(joined_from="",joined_to="",venue_id_wallet="",txn_status_wallet="",offers_product_wallet_id="",email="",mobile_number="",invoice_number_wallet="",venu_username_id_wallet=""){
+	function cross_verification_sales(joined_from="",joined_to="",venue_id_wallet="",txn_status_wallet="",offers_product_wallet_id="",email="",mobile_number="",customer_name_wallet="",invoice_number_wallet="",venu_username_id_wallet=""){
 
     		$("#basic-datatables4").dataTable().fnDestroy();
 			let table = $("#basic-datatables4").DataTable({
@@ -1860,11 +1859,13 @@ selected_customer_wallet_transactions();
 				ajax:{
 					url:"{{ route('admin.EndUserCustomerTransactions') }}",
 					type:"POST",
-					data:{'_token':'{{csrf_token()}}',joined_from,joined_to,venue_id_wallet,txn_status_wallet,offers_product_wallet_id,email,mobile_number,invoice_number_wallet,venu_username_id_wallet},
+					data:{'_token':'{{csrf_token()}}',joined_from,joined_to,venue_id_wallet,txn_status_wallet,offers_product_wallet_id,email,mobile_number,customer_name_wallet,invoice_number_wallet,venu_username_id_wallet},
 				},
 				columns:[
 					{data:'customer_id', name:'customer_id'},
+					{data:'full_name', name:'full_name'},
 					{data:'mobile_number', name:'mobile_number'},
+					{data:'email', name:'email'},
 					{data:'invoice_number', name:'invoice_number'},
 					{data:'total_bill_amount', name:'total_bill_amount'},
 					{data:'check_amount_pos', name:'check_amount_pos'},
@@ -1908,6 +1909,7 @@ selected_customer_wallet_transactions();
 	    	let txn_status_wallet = $(".txn_status_wallet").val();
 	    	let offers_product_wallet_id = $(".offers_product_wallet").val();
 	    	let mobile_number = $(".mobile_number_wallet").val();
+	    	let customer_name_wallet = $(".customer_name_wallet").val();
 	    	let email = $(".email_wallet").val();
 	    	let invoice_number_wallet = $(".invoice_number_wallet").val();
 	    	let venu_username_id_wallet = $(".venu_username_wallet").val();
@@ -1920,7 +1922,7 @@ selected_customer_wallet_transactions();
 				return false;
 			}
 			
-			var data_value = {joined_from,joined_to,venue_id_wallet,txn_status_wallet,offers_product_wallet_id,email,invoice_number_wallet,venu_username_id_wallet,search_txt,'_token':'{{csrf_token()}}'}
+			var data_value = {joined_from,joined_to,venue_id_wallet,txn_status_wallet,offers_product_wallet_id,email,invoice_number_wallet,venu_username_id_wallet,customer_name_wallet,mobile_number,search_txt,'_token':'{{csrf_token()}}'}
 
 			$.ajax({
 				url:"{{ route('admin.ExcelDownloadCustomerTransactions') }}",
@@ -2000,6 +2002,14 @@ selected_customer_wallet_transactions();
 				}
 			})
 		});
+
+		$(document).on("keyup",".customer_name_wallet",function(){
+	        if($.trim($(this).val()).length == 0){
+	           $(this).val("");
+	        }else{
+	          $(this).val($(this).val().trimLeft(""));
+	        }
+      });
 
 </script>
 
