@@ -138,8 +138,17 @@ class ResponseController extends Controller
         curl_setopt($ch, CURLOPT_HTTPHEADER, array("apns-topic: $apns_topic"));
         curl_setopt($ch, CURLOPT_SSLCERT, $pem_file);
         curl_setopt($ch, CURLOPT_SSLCERTPASSWD, $pem_secret);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $response = curl_exec($ch);
         $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+        // if($httpcode == 410){
+        //     die('Curl failed: ' . curl_error($ch));
+        // }
+        // $httpcode = curl_getinfo($ch);
+        // $curl_errno= curl_errno($ch);
+
+        curl_close($ch);
         $result = "success";
         return $result;
     }
