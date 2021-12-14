@@ -153,13 +153,13 @@
             <td align="left" valign="top" style="font-family: 'Lato', sans-serif;
      font-weight: 600; font-size:14px; color:#ccc; text-align: center;">
      <a href="javascript:void(0)" style="color: #fff!important">
-      <img src="{{$message->embed($call)}}">
+      <img src="{{$message->embed($call)}}" style="width: 50px;">
      </a>
      <a href="{{$offer->venu->google_map_location_link}}" style="color: #fff!important">
-      <img src="{{$message->embed($location)}}">
+      <img src="{{$message->embed($location)}}" style="width: 50px;">
     </a>
     <a href="{{$offer->venu->book_now_link}}" style="color: #fff!important">
-      <img src="{{$message->embed($bag)}}">
+      <img src="{{$message->embed($bag)}}" style="width: 50px;">
     </a>
       <a href="https://gozl8.test-app.link/RN3Hfsykbkb" style="color: #fff!important">
         <img src="{{$message->embed($open_app)}}" style="width: 50px;">

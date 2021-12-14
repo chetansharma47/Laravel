@@ -20,7 +20,7 @@
        </td>
     </tr>
   </table>
-  <table width="600" border="0" align="center" cellpadding="0" cellspacing="0">
+  <table width="400" border="0" align="center" cellpadding="0" cellspacing="0">
   <tr>
     <td width="20" align="left" valign="top">
       <table width="100%" border="0" cellspacing="0" cellpadding="0"  style="background-image: url('{{url('public/admin/assets/email_img/curve-bg.png')}}'); background-repeat: no-repeat; background-size: cover; border-top-left-radius: 30px;border-top-right-radius: 30px;     background-position: bottom; cursor: unset">
