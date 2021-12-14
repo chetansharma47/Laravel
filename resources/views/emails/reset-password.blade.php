@@ -54,7 +54,7 @@
     @include('admin.notification')
   <table width="600" border="0" align="center" cellpadding="0" cellspacing="0" style="margin-top: 48px;">
     <tr>
-       <td align="center" style="padding-bottom: 15px;">
+       <td align="center" style="padding: 23px 0px 12px;">
          <a href="javascript:void(0);" style="border:0; outline:0; cursor: unset;"><img src="{{url('public/admin/assets/email_img/CM-Logo-2.png')}}" alt="" width="100"/></a>
        </td>
     </tr>

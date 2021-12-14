@@ -17,7 +17,7 @@
     margin: 0;">
   <table width="600" border="0" align="center" cellpadding="0" cellspacing="0" style="margin-top: 48px;">
     <tr>
-       <td align="center" style="padding-bottom: 15px;">
+       <td align="center" style="padding: 23px 0px 12px;">
          <a href="javascript:void(0);" style="border:0; outline:0;"><img src="{{$message->embed($logo)}}" alt="" style="width: 100px;" /></a>
        </td>
     </tr>
@@ -38,8 +38,9 @@
         <tr>
           <td width="20" align="left" valign="top">&nbsp;</td>
           <td align="center" valign="top" style="padding:5px 0;">
-             
+             <div style="width: 300px">
               <img src="{{$message->embed($img_second)}}" alt="CR-Logo" style="width: 100px;" width="100"/>
+            </div>
           </td>
           <td width="20" align="left" valign="top">&nbsp;</td>
         </tr>
@@ -75,7 +76,7 @@
      font-weight: 400; font-size:14px; color:#474747;">We have received a request to reset your Capital Motion account password associate with this email address.
             If you have not made this request, you can ignore this email and we assure you that your account is completely secure.<br><br>
 
-            If you do need to reset your Capital Motion password, click the button given below.
+            <div style="width: 300px;">If you do need to reset your Capital Motion password, click the button given below.</div>
             </td>
           </tr>
           <tr>

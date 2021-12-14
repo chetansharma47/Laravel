@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>Contact us</title>
+<title>Contact Us</title>
 <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Signika:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 
@@ -17,7 +17,7 @@
     margin: 0;">
   <table width="600" border="0" align="center" cellpadding="0" cellspacing="0" style="margin-top: 48px;">
     <tr>
-       <td align="center" style="padding-bottom: 15px;">
+       <td align="center" style="padding: 23px 0px 12px;">
          <a href="javascript:void(0);" style="border:0; outline:0;"><img src="{{$message->embed($logo)}}" alt="" style="width: 100px;" /></a>
        </td>
     </tr>
@@ -38,8 +38,9 @@
         <tr>
           <td width="20" align="left" valign="top">&nbsp;</td>
           <td align="center" valign="top" style="padding:5px 0;">
-             
+             <div style="width: 300px">
               <img src="{{$message->embed($img_second)}}" alt="CR-Logo" style="width: 100px;" width="100"/>
+            </div>
           </td>
           <td width="20" align="left" valign="top">&nbsp;</td>
         </tr>
@@ -47,7 +48,7 @@
           <td width="20" align="left" valign="top">&nbsp;</td>
           <td align="center" valign="top" style="font-family: 'Lato', sans-serif;
      font-weight: 700; color: #fff; padding-bottom: 17px;">
-            Contact us
+            Contact Us
           </td>
           <td width="20" align="left" valign="top">&nbsp;</td>
         </tr>

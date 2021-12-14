@@ -17,7 +17,7 @@
     margin: 0;">
   <table width="600" border="0" align="center" cellpadding="0" cellspacing="0" style="margin-top: 48px;">
     <tr>
-       <td align="center" style="padding-bottom: 15px;">
+       <td align="center" style="padding: 23px 0px 12px;">
          <a href="javascript:void(0);" style="border:0; outline:0;"><img src="{{$message->embed($logo)}}" alt="" style="width: 100px;" /></a>
        </td>
     </tr>
@@ -53,7 +53,10 @@
         <tr>
           <td width="20" align="left" valign="top">&nbsp;</td>
           <td align="center" valign="top" style="padding:5px 0;">
+            <!-- <div style="width: 300px">
              
+              <img src="{{$message->embed($img_second)}}" alt="CR-Logo" style="width: 100px;" width="100"/>
+            </div>  -->
             <!--   <img src="{{$message->embed($img_second)}}" alt="CR-Logo" style="width: 100px;" width="100"/> -->
           </td>
           <td width="20" align="left" valign="top">&nbsp;</td>
@@ -74,10 +77,10 @@
   </tr> -->
   <tr>
     <td align="left" valign="top" style="background:#fff; padding:30px 20px;border-bottom-left-radius: 30px;border-bottom-right-radius: 30px;">
-      <table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <table width="400" border="0" cellspacing="0" cellpadding="0" style="width: 400px;">
       <tr>
         <td align="left" valign="top">
-          <table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <table width="400" border="0" cellspacing="0" cellpadding="0">
           <tr>
             <td align="left" valign="top" style="font-family: 'Lato', sans-serif;
      font-weight: 700; font-size: 15px; color:#0D0D0D;">Hello, {{$user_find->first_name}} {{$user_find->last_name}}</b></td>
@@ -138,7 +141,7 @@
 
           <tr>
             <td align="left" valign="top" style="font-family: 'Lato', sans-serif;
-     font-weight: 600; font-size:14px; color:#ccc;">{{$event->when_day}}
+     font-weight: 600; font-size:14px; color:#ccc;width: 300px;"><div style="width: 300px;"> {{$event->when_day}}</div>
             </td>
           </tr>
 

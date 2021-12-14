@@ -17,7 +17,7 @@
     margin: 0;">
   <table width="600" border="0" align="center" cellpadding="0" cellspacing="0" style="margin-top: 48px;">
     <tr>
-       <td align="center" style="padding-bottom: 15px;">
+       <td align="center" style="padding: 23px 0px 12px;">
          <a href="javascript:void(0);" style="border:0; outline:0;"><img src="{{$message->embed($logo)}}" alt="" style="width: 100px;" /></a>
        </td>
     </tr>
@@ -46,7 +46,10 @@
         <tr>
           <td width="20" align="left" valign="top">&nbsp;</td>
           <td align="center" valign="top" style="padding:5px 0;">
+             <!-- <div style="width: 300px">
              
+              <img src="{{$message->embed($img_second)}}" alt="CR-Logo" style="width: 100px;" width="100"/>
+            </div> -->
             <!--   <img src="{{$message->embed($img_second)}}" alt="CR-Logo" style="width: 100px;" width="100"/> -->
           </td>
           <td width="20" align="left" valign="top">&nbsp;</td>
@@ -137,7 +140,7 @@
 
           <tr>
             <td align="left" valign="top" style="font-family: 'Lato', sans-serif;
-     font-weight: 400; font-size:14px; color:#000;">{{$admin_offer_notification->message}}<br><br>
+     font-weight: 400; font-size:14px; color:#000;"><div style="width: 300px">{{$admin_offer_notification->message}}</div><br><br>
 
             
             </td>
