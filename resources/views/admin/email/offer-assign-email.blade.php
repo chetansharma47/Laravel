@@ -41,7 +41,7 @@
         $offer_image = $offer_image;
        ?>
 
-      <table width="100%" border="0" cellspacing="0" cellpadding="0"  style="background-image: url('{{$message->embed($offer_image)}}'); background-repeat: no-repeat; background-size: cover; border-top-left-radius: 30px;border-top-right-radius: 30px;background-position: bottom;height: 200px;">
+      <table width="400" border="0" cellspacing="0" cellpadding="0"  style="background-image: url('{{$message->embed($offer_image)}}'); background-repeat: no-repeat; background-size: cover; border-top-left-radius: 30px;border-top-right-radius: 30px;background-position: bottom;height: 200px;">
         
         <tr>
           <td width="20" align="left" valign="top">&nbsp;</td>
@@ -69,13 +69,14 @@
     <td height="1" align="left" valign="top" bgcolor="#d9d9d9"></td>
   </tr> -->
   <tr>
-    <td align="left" valign="top" style="background:#fff; padding:30px 20px;border-bottom-left-radius: 30px;border-bottom-right-radius: 30px;">
-      <table width="100%" border="0" cellspacing="0" cellpadding="0">
+    <td align="left" valign="top" style="background:#fff; padding:0px;border-bottom-left-radius: 30px;border-bottom-right-radius: 30px;">
+      <table width="400" border="0" cellspacing="0" cellpadding="0">
       <tr>
-        <td align="left" valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+        <td align="left" valign="top">
+          <table width="400" border="0" cellspacing="0" cellpadding="0" style="padding: 30px 23px;">
           <tr>
             <td align="left" valign="top" style="font-family: 'Lato', sans-serif;
-     font-weight: 700; font-size: 15px; color:#0D0D0D;">Hello, {{$user_find->first_name}} {{$user_find->last_name}}</b></td>
+     font-weight: 700; font-size: 15px; color:#0D0D0D;">Hello, {{$user_find->first_name}} {{$user_find->last_name}}</td>
           </tr>
           <tr>
             <td align="left" valign="top">&nbsp;</td>
