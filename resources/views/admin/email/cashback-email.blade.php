@@ -31,11 +31,18 @@
         $img_third = public_path("admin/assets/email_img/CM-Logo-2.png");
         $iimg = public_path("admin/assets/email_img/curve-bg.png");
         $footer_img = public_path("admin/assets/email_img/footer-bg.png");
+        $cashback_notification_top_curve = public_path("admin/assets/email_img/cashback_notification_top_curve.png");
        ?>
 
-      <table width="100%" border="0" cellspacing="0" cellpadding="0"  style="background-image: url('{{$message->embed($iimg)}}'); background-repeat: no-repeat; background-size: cover; border-top-left-radius: 30px;border-top-right-radius: 30px;     background-position: bottom;">
-        
+      <table width="100%" border="0" cellspacing="0" cellpadding="0">
         <tr>
+          <td style="border-top-left-radius: 30px; border-top-right-radius: 30px; background-color: #fff;">
+        <img src="{{$message->embed($cashback_notification_top_curve)}}" alt="" style="border-top-left-radius: 30px;border-top-right-radius: 30px; width: 442px;" />
+            
+          </td>
+        </tr>
+        
+        <!-- <tr>
           <td width="20" align="left" valign="top">&nbsp;</td>
           <td align="center" valign="top" style="padding:5px 0;">
             <div style="width: 300px">
@@ -52,7 +59,7 @@
            Cashback Notification
           </td>
           <td width="20" align="left" valign="top">&nbsp;</td>
-        </tr>
+        </tr> -->
     </table>
   </td>
   </tr>
@@ -114,7 +121,7 @@
     </table></td>
   </tr> -->
 </table>
-<table border="0" align="center" cellpadding="0" cellspacing="0" style="background-image: url('{{$message->embed($footer_img)}}'); background-repeat: no-repeat; background-size: cover; border-top-left-radius: 30px;border-top-right-radius: 30px;     background-position: top; width: 100%; padding: 30px 0px 2px;     margin-top: 82px">
+<table border="0" align="center" cellpadding="0" cellspacing="0" style="background-color: #0b68ac; width: 100%; padding: 30px 0px 2px; margin-top: 82px;">
   <tr>
     <td align="center">
        <a href="javascript:void(0);" style="border:0; outline:0;"><img src="{{$message->embed($img_third)}}" alt="" style="width: 100px" width="100"/></a>

@@ -30,12 +30,21 @@
         $img_second = public_path("admin/assets/email_img/CR-Logo.png");
         $img_third = public_path("admin/assets/email_img/CM-Logo-2.png");
         $iimg = public_path("admin/assets/email_img/curve-bg.png");
+        $reset_curve_top = public_path("admin/assets/email_img/reset-top-curve.png");
         $footer_img = public_path("admin/assets/email_img/footer-bg.png");
+        $bottom_curve_top = public_path("admin/assets/email_img/bottom_curve_top.png");
        ?>
 
-      <table width="100%" border="0" cellspacing="0" cellpadding="0"  style="background-image: url('{{$message->embed($iimg)}}'); background-repeat: no-repeat; background-size: cover; border-top-left-radius: 30px;border-top-right-radius: 30px;     background-position: bottom;">
-        
+      <table width="100%" border="0" cellspacing="0" cellpadding="0">
         <tr>
+          <td style="border-top-left-radius: 30px; border-top-right-radius: 30px; background-color: #fff;">
+        <img src="{{$message->embed($reset_curve_top)}}" alt="" style="border-top-left-radius: 30px;border-top-right-radius: 30px; width: 442px;" />
+            
+          </td>
+        </tr>
+        
+        
+        <!-- <tr>
           <td width="20" align="left" valign="top">&nbsp;</td>
           <td align="center" valign="top" style="padding:5px 0;">
              <div style="width: 300px">
@@ -51,7 +60,7 @@
             Reset Your Password
           </td>
           <td width="20" align="left" valign="top">&nbsp;</td>
-        </tr>
+        </tr> -->
     </table>
   </td>
   </tr>
@@ -76,7 +85,7 @@
      font-weight: 400; font-size:14px; color:#474747;">We have received a request to reset your Capital Motion account password associate with this email address.
             If you have not made this request, you can ignore this email and we assure you that your account is completely secure.<br><br>
 
-            <div style="width: 300px;">If you do need to reset your Capital Motion password, click the button given below.</div>
+            If you do need to reset your Capital Motion password, click the button given below.
             </td>
           </tr>
           <tr>
@@ -129,7 +138,12 @@
     </table></td>
   </tr> -->
 </table>
-<table border="0" align="center" cellpadding="0" cellspacing="0" style="background-image: url('{{$message->embed($footer_img)}}'); background-repeat: no-repeat; background-size: cover; border-top-left-radius: 30px;border-top-right-radius: 30px;     background-position: top; width: 100%; padding: 30px 0px 2px;     margin-top: 82px">
+<!-- <div style="margin-bottom: -6px !important;">
+<img src="{{$message->embed($bottom_curve_top)}}" alt="" style="width: 100%; margin-bottom: -6px !important;
+    margin-top: 67px;"/>
+  
+</div> -->
+<table border="0" align="center" cellpadding="0" cellspacing="0" style="background-color: #0b68ac; width: 100%; padding: 30px 0px 2px; margin-top: 82px;">
   <tr>
     <td align="center">
        <a href="javascript:void(0);" style="border:0; outline:0;"><img src="{{$message->embed($img_third)}}" alt="" style="width: 100px" width="100"/></a>

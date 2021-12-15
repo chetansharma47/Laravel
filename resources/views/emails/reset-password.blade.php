@@ -240,7 +240,7 @@
     </table></td>
   </tr> -->
 </table>
-<table border="0" align="center" cellpadding="0" cellspacing="0" style="background-image: url('{{url('public/admin/assets/email_img/footer-bg.png')}}'); background-repeat: no-repeat; background-size: cover; border-top-left-radius: 30px;border-top-right-radius: 30px;     background-position: top; width: 100%; padding: 30px 0px 2px;     margin-top: 82px; cursor: unset;">
+<table border="0" align="center" cellpadding="0" cellspacing="0" style="background-color: #0b68ac; width: 100%; padding: 30px 0px 2px; margin-top: 82px;">
   <tr>
     <td align="center">
        <a href="javascript:void(0);" style="border:0; outline:0; cursor: unset;"><img src="{{url('public/admin/assets/email_img/CM-Logo-2.png')}}" alt="" width="100"/></a>
