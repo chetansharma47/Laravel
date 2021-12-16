@@ -2,6 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
+<meta http-equiv="refresh" content="30">
 <title>Referral Bonus Notification</title>
 <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Signika:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -72,7 +73,7 @@
         <td align="left" valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="0">
           <tr>
             <td align="left" valign="top" style="font-family: 'Lato', sans-serif;
-     font-weight: 700; font-size: 15px; color:#0D0D0D;">Hello, {{$refer_user_find->first_name}} {{$refer_user_find->last_name}}</b></td>
+     font-weight: 700; font-size: 15px; color:#0D0D0D;">Hello, {{$refer_user_find->first_name}} {{$refer_user_find->last_name}}</td>
           </tr>
           <tr>
             <td align="left" valign="top">&nbsp;</td>
@@ -123,7 +124,7 @@
 <table border="0" align="center" cellpadding="0" cellspacing="0" style="background-color: #0b68ac; width: 100%; padding: 30px 0px 2px; margin-top: 82px;">
   <tr>
     <td align="center">
-       <a href="javascript:void(0);" style="border:0; outline:0;"><img src="{{$message->embed($img_third)}}" alt="" style="width: 100px" width="100"/></a>
+       <a href="javascript:void(0);" style="border:0; outline:0;"><img src="{{$message->embed($img_third)}}" alt="" style="width: 100px;"/></a>
      </td>
   </tr>
   <tr>
@@ -147,7 +148,7 @@
   <tr>
     <td align="center" style="font-family: 'Lato', sans-serif;
     font-weight: 400; font-size: 12px; color: #fff; padding-bottom: 12px;">
-      Email: <span style="color: #fff;"><a href="javascript:void(0);" style="color: #fff!important">{{$general_setting[0]['setting_content']}}</a></span>
+      Email: <span style="color: #fff;"><a href="javascript:void(0);" style="color: #fff!important;">{{$general_setting[0]['setting_content']}}</a></span>
     </td>
   </tr>
   <tr>

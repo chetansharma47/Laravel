@@ -2,6 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
+<meta http-equiv="refresh" content="30">
 <title>{{$title}}</title>
 <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
   <link rel="icon" href="{{url('public/admin/assets/img/logo-approved.png')}}" type="image/x-icon"/>
@@ -16,14 +17,14 @@
   <table width="600" border="0" align="center" cellpadding="0" cellspacing="0" style="margin-top: 48px;">
     <tr>
        <td align="center" style="padding: 23px 0px 12px;">
-         <a href="javascript:void(0);" style="border:0; outline:0; cursor: unset"><img src="{{url('public/admin/assets/email_img/CM-Logo-2.png')}}" alt="" width="100"/></a>
+         <a href="javascript:void(0);" style="border:0; outline:0; cursor: unset;"><img src="{{url('public/admin/assets/email_img/CM-Logo-2.png')}}" alt="" width="100"/></a>
        </td>
     </tr>
   </table>
   <table width="600" border="0" align="center" cellpadding="0" cellspacing="0">
   <tr>
     <td width="20" align="left" valign="top">
-      <table width="100%" border="0" cellspacing="0" cellpadding="0"  style="background-image: url('{{url('public/admin/assets/email_img/curve-bg.png')}}'); background-repeat: no-repeat; background-size: cover; border-top-left-radius: 30px;border-top-right-radius: 30px;     background-position: bottom; cursor: unset">
+      <table width="400" border="0" cellspacing="0" cellpadding="0"  style="background-image: url('{{url('public/admin/assets/email_img/curve-bg.png')}}'); background-repeat: no-repeat; background-size: cover; border-top-left-radius: 30px;border-top-right-radius: 30px;     background-position: bottom; cursor: unset;">
         
         <tr>
           <td width="20" align="left" valign="top">&nbsp;</td>
@@ -143,7 +144,7 @@
   <tr>
     <td align="center" style="font-family: 'Lato', sans-serif;
     font-weight: 400; font-size: 12px; color: #fff; padding-bottom: 12px;">
-      Email: <span style="color: #fff;"><a href="javascript:void(0);" style="color: #fff!important">{{$general_setting[0]['setting_content']}}</a></span>
+      Email: <span style="color: #fff;"><a href="javascript:void(0);" style="color: #fff!important;">{{$general_setting[0]['setting_content']}}</a></span>
     </td>
   </tr>
   <tr>
