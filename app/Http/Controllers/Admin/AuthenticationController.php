@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Input;
 use Mail;
 use App\BusinessModel\AdminAuthenticateBusiness;
 use App\Http\Controllers\Admin\ResponseController;
+use App\Models\GeneralSetting;
 
 class AuthenticationController extends ResponseController
 {
@@ -97,19 +98,20 @@ class AuthenticationController extends ResponseController
     }
 
 
-    public function resetPassword(Request $request){
+    public function resetPassword(Request $request , $token){
       if ($request->isMethod("GET")){
-              $token = $request->token;
+              // return $token; 
               $tokenData = DB::table('password_resets')
-                          ->whereToken($token)->first();
-  
+                          ->where('token' ,$token)->first();
+
               if(!$tokenData) {
                   return redirect("admin/link-expired");
               }
               if(Carbon::now() > Carbon::parse($tokenData->created_at)->addMinutes(10)){
                   return redirect("admin/link-expired")->with("error","Invalid token");
-              }      
-              return view("admin.email.reset-password");
+              } 
+              $general_setting = GeneralSetting::all();
+              return view("admin.email.reset-password",  compact('general_setting'));
           }
       if($request->isMethod("POST")){
         
@@ -136,16 +138,18 @@ class AuthenticationController extends ResponseController
 
     public function feedbackReset(Request $request){
       $title   = "Reset Your Password";
-      $message = "Your password has been succesfully updated.";
+      $message = "Your password has been successfully updated.";
       $type    = "success";
-      return view("admin.email.feedback" , compact("title" , "message" , "type"));
+      $general_setting = GeneralSetting::all();
+      return view("admin.email.feedback" , compact("title" , "message" , "type", "general_setting"));
     }
 
    public function linkExpired(Request $request){
       $title   = "Link Expired";
       $message = "Link has been expired.";
       $type    = "error";
-      return view("admin.email.feedback" , compact("title" , "message" , "type"));
+      $general_setting = GeneralSetting::all();
+      return view("admin.email.feedback" , compact("title" , "message" , "type", "general_setting"));
    }
 
   public function lg(Request $request){

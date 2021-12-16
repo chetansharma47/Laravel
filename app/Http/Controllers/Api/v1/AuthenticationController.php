@@ -309,7 +309,7 @@ class AuthenticationController extends ResponseController
         $user_id = base64_decode($request->user_id);
         $user = User::whereId($user_id)->first();
         $title = "Reset Your Password";
-        $message = "Your password has been succesfully updated.";
+        $message = "Your password has been successfully updated.";
         $type = "success";
         $link = "";
         $general_setting = GeneralSetting::all();

@@ -166,34 +166,49 @@
           <tr>
             <td height="10" align="left" valign="top">&nbsp;</td>
           </tr>
-
+          <table width="400" border="0" cellspacing="0" cellpadding="0">
            <tr>
             <td align="left" valign="top" style="font-family: 'Lato', sans-serif;
      font-weight: 600; font-size:14px; color:#ccc; text-align: center;">
-               <a href="javascript:void(0)" style="color: #fff!important;">
-                <img src="{{$message->embed($call)}}" style="width: 50px;"/>
-              </a>
-               <a href="{{$event->venu->google_map_location_link}}" style="color: #fff!important;">
-                <img src="{{$message->embed($location)}}" style="width: 50px;"/>
-              </a>
-              <a href="{{$event->venu->book_now_link}}" style="color: #fff!important;">
-                <img src="{{$message->embed($bag)}}" style="width: 50px;"/>
-              </a>
-              <a href="https://gozl8.test-app.link/RN3Hfsykbkb" style="color: #fff!important;">
-                <img src="{{$message->embed($open_app)}}" style="width: 50px;"/>
-              </a>
+              <tr>
+                <td style="text-align: center;">
+                   <a href="javascript:void(0)" style="color: #fff!important;">
+                    <img src="{{$message->embed($call)}}" style="width: 50px;"/>
+                    <span style="display: block; padding: 0px 0px 0px 0px; color: #ccc; font-size: 11px;">Call Us</span>
+                  </a>
+                </td>
+                <td style="text-align: center;">
+                  <a href="{{$event->venu->google_map_location_link}}" style="color: #fff!important;">
+                    <img src="{{$message->embed($location)}}" style="width: 50px;"/>
+                    <span style="display: block; padding: 0px 0px 0px 0px; color: #ccc; font-size: 11px;">Location</span>
+                  </a>
+                </td>
+                <td style="text-align: center;">
+                  <a href="{{$event->venu->book_now_link}}" style="color: #fff!important;">
+                    <img src="{{$message->embed($bag)}}" style="width: 50px;"/>
+                    <span style="display: block; padding: 0px 0px 0px 0px; color: #ccc; font-size: 11px;">Book Now</span>
+                  </a>
+                </td>
+                <td style="text-align: center;">
+                  <a href="https://gozl8.test-app.link/RN3Hfsykbkb" style="color: #fff!important;">
+                    <img src="{{$message->embed($open_app)}}" style="width: 50px;"/>
+                    <span style="display: block; padding: 0px 0px 0px 0px; color: #ccc; font-size: 11px;">Open App</span>
+                  </a>
+                </td>
+              </tr>
             </td>
           </tr>
+        </table>
 
 
-          <tr>
+          <!-- <tr>
             <td height="10" align="left" valign="top" style="text-align: center; color: #ccc; padding-left: 16px; font-size: 11px;">
               <span style="padding: 0px 8px 0px 0px;">Call Us</span>
               <span style="padding: 0px 8px 0px 0px;">Location</span>
               <span style="padding: 0px 8px 0px 0px;">Book Now</span>
               <span style="padding: 0px 8px 0px 0px;">Open App</span>
             </td>
-          </tr>
+          </tr> -->
 
           <tr>
             <td height="10" align="left" valign="top">&nbsp;</td>

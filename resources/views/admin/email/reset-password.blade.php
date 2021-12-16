@@ -159,7 +159,11 @@
     margin-left: 16px;" />
               <input type="password" class="form-control form-control-user" name="confirm_password" id="confirm_password" placeholder="Confirm Password" onkeypress="return AvoidSpace(event)"  style=" padding: 13px 45px 13px 49px;border: 0 !important;background-color: #EBEBEB !important;border-radius: 12px;font-family: 'Signika', sans-serif;font-weight: 700;font-size: 20px !important;outline: 0;position: relative;z-index: 9;">
               <img src="{{url('public/admin/assets/email_img/eye.png')}}" id="eye" alt="eye" style="position: absolute; width: 20px; z-index: 99; margin-top: 20px; margin-left: -32px;" />
-              <img src="{{url('public/admin/assets/email_img/eye-hide.png')}}" id="eye_hide" alt="eye_hide" style="position: absolute; width: 20px; z-index: 99; margin-top: 20px; margin-left: -32px; display: none;" />
+             <img src="{{url('public/admin/assets/email_img/eye-hide.png')}}" id="eye_hide" alt="eye_hide" style="position: absolute;
+                width: 20px;
+                z-index: 99;
+                margin-top: 17px;
+                margin-left: -32px; display: none; cursor: pointer;"/>
 
 
             <label id="confirm_password-error" style="display: none;" class="error err" for="confirm_password"></label>
@@ -389,10 +393,27 @@
         if(check_type == "password"){
 
           $(this).parent().children("#confirm_password").attr("type","text");
-          
+          $('#eye_hide').show();
+          $('#eye').hide();
         }else{
           $(this).parent().children("#confirm_password").attr("type","password");
-          
+          $('#eye_hide').hide();
+          $('#eye').show();
+        }
+      });
+
+      $("#eye_hide").on("click",function(){
+        let check_type = $(this).parent().children("#confirm_password").attr("type");
+
+        if(check_type == "password"){
+
+          $(this).parent().children("#confirm_password").attr("type","text");
+          $('#eye_hide').show();
+          $('#eye').hide();
+        }else{
+          $(this).parent().children("#confirm_password").attr("type","password");
+          $('#eye_hide').hide();
+          $('#eye').show();
         }
       });
     });

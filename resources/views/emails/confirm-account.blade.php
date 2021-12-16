@@ -43,7 +43,7 @@
        ?>
 
 
-      <table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <table width="400" border="0" cellspacing="0" cellpadding="0">
         <tr>
           <td style="border-top-left-radius: 30px; border-top-right-radius: 30px; background-color: #fff;">
         <img src="{{$message->embed($verify_email_top_curve)}}" alt="" style="border-top-left-radius: 30px;border-top-right-radius: 30px; width: 442px;" />
@@ -75,9 +75,9 @@
   </tr> -->
   <tr>
     <td align="left" valign="top" style="background:#fff; padding:30px 20px;border-bottom-left-radius: 30px;border-bottom-right-radius: 30px;">
-      <table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <table width="400" border="0" cellspacing="0" cellpadding="0">
       <tr>
-        <td align="left" valign="top"><table width="100" border="0" cellspacing="0" cellpadding="0">
+        <td align="left" valign="top"><table width="400" border="0" cellspacing="0" cellpadding="0">
           <tr>
             <td align="left" valign="top" style="font-family: 'Lato', sans-serif;
      font-weight: 700; font-size: 15px; color:#0D0D0D;">Hello, {{$name}}</td>
