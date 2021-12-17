@@ -143,6 +143,12 @@
      </td>
   </tr>
   <tr>
+     <td align="center" style="font-family: 'Lato', sans-serif;
+    font-weight: 400; font-size: 14px; color: #fff; padding: 12px 0 32px;">
+       Thank you for using Capital Motion Society App
+     </td>
+  </tr>
+  <tr>
     <td align="center" style="font-family: 'Lato', sans-serif;
     font-weight: 400; font-size: 12px; color: #fff; padding-bottom: 12px;">
       {{$general_setting[9]['setting_content']}}
