@@ -244,7 +244,7 @@
 </table>
 <br><br>
 @endforeach()
-<table border="0" align="center" cellpadding="0" cellspacing="0" style="background-color: #0b68ac; width: 100%; padding: 30px 0px 2px; margin-top: 82px;">
+<table border="0" align="center" cellpadding="0" cellspacing="0" style="background-color: #0b68ac; width: 100%; padding: 30px 50px 2px; margin-top: 82px;">
   <tr>
     <td align="center">
        <a href="javascript:void(0);" style="border:0; outline:0;"><img src="{{$message->embed($img_third)}}" alt="" style="width: 100px;"/></a>
