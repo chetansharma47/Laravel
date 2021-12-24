@@ -33,7 +33,7 @@ class TimeZone
             date_default_timezone_set("UTC");
         }
 
-        date_default_timezone_set("Asia/Kolkata");
+        // date_default_timezone_set("Asia/Kolkata");
         return $next($request);
     }
 }

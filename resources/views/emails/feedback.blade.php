@@ -9,18 +9,25 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Signika:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    @media (max-width: 480px) {
+      .main_table {
+        width: 290px !important;
+      }
+    }
+  </style>
 </head>
 
 <body style="background-color: #f9fafb; padding: 0;
     margin: 0;">
-  <table width="600" border="0" align="center" cellpadding="0" cellspacing="0" style="margin-top: 48px;">
+  <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" style="margin-top: 48px;">
     <tr>
        <td align="center" style="padding: 23px 0px 12px;">
          <a href="javascript:void(0);" style="border:0; outline:0; cursor: unset;"><img src="{{url('public/admin/assets/email_img/CM-Logo-2.png')}}" alt="" width="100"/></a>
        </td>
     </tr>
   </table>
-  <table width="400" border="0" align="center" cellpadding="0" cellspacing="0">
+  <table style="width: 400px" class="main_table" border="0" align="center" cellpadding="0" cellspacing="0">
   <tr>
     <td width="20" align="left" valign="top">
       <table width="100%" border="0" cellspacing="0" cellpadding="0"  style="background-image: url('{{url('public/admin/assets/email_img/curve-bg.png')}}'); background-repeat: no-repeat; background-size: cover; border-top-left-radius: 30px;border-top-right-radius: 30px;     background-position: bottom; cursor: unset">
