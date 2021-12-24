@@ -49,12 +49,20 @@
   :focus {
     outline: -webkit-focus-ring-color auto 0px;
   }
+  @media (max-width: 480px) {
+      .main_table {
+        width: 300px !important;
+      }
+      .input-feild {
+        width: 160px;
+      }
+    }
 </style>
 
 <body style="background-color: #f9fafb; padding: 0;
     margin: 0;">
     @include('admin.notification')
-  <table width="600" border="0" align="center" cellpadding="0" cellspacing="0" style="margin-top: 48px;">
+  <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" style="margin-top: 48px;">
     <tr>
        <td align="center" style="padding: 23px 0px 12px;">
          <a href="javascript:void(0);" style="border:0; outline:0; cursor: unset;"><img src="{{url('public/admin/assets/email_img/CM-Logo-2.png')}}" alt="" width="100"/></a>
@@ -62,18 +70,18 @@
     </tr>
   </table>
 
-  <table width="400" border="0" align="center" cellpadding="0" cellspacing="0">
+  <table style="width: 400px" class="main_table" border="0" align="center" cellpadding="0" cellspacing="0">
     <form method="POST" class="user" id="validate_form">
     {{csrf_field()}}
   <tr>
     <td width="20" align="left" valign="top">
-        <table width="100%" border="0" cellspacing="0" cellpadding="0">
-        <tr>
+       <table width="100%" border="0" cellspacing="0" cellpadding="0"  style="background-image: url('{{url('public/admin/assets/email_img/curve-bg.png')}}'); background-repeat: no-repeat; background-size: cover; border-top-left-radius: 30px;border-top-right-radius: 30px;     background-position: bottom; cursor: unset;">
+        <!-- <tr>
           <td style="border-top-left-radius: 30px; border-top-right-radius: 30px; background-color: #fff;">
         <img src="{{url('public/admin/assets/email_img/reset-top-curve.png')}}" alt="" style="border-top-left-radius: 30px;border-top-right-radius: 30px; width: 442px;" />
             
           </td>
-        </tr>
+        </tr> -->
         
         <!-- <tr>
           <td width="20" align="left" valign="top">&nbsp;</td>
@@ -92,6 +100,24 @@
           </td>
           <td width="20" align="left" valign="top">&nbsp;</td>
         </tr> -->
+
+        <tr>
+          <td width="20" align="left" valign="top">&nbsp;</td>
+          <td align="center" valign="top" style="padding:5px 0;">
+            <a href="javascript:void(0);" style="border:0; outline:0;cursor: unset;">
+              <img src="{{url('public/admin/assets/email_img/CR-Logo.png')}}" alt="CR-Logo" width="100"/>
+            </a>
+          </td>
+          <td width="20" align="left" valign="top">&nbsp;</td>
+        </tr>
+        <tr>
+          <td width="20" align="left" valign="top">&nbsp;</td>
+          <td align="center" valign="top" style="font-family: 'Lato', sans-serif;
+     font-weight: 700; color: #fff; padding-bottom: 17px;">
+            Reset Your Password
+          </td>
+          <td width="20" align="left" valign="top">&nbsp;</td>
+        </tr>
     </table>
   </td>
   </tr>
@@ -130,7 +156,7 @@
     z-index: 99;
         margin-top: 15px;
     margin-left: 16px;" />
-              <input type="password" class="form-control form-control-user" id="new_password" name="new_password" maxlength="100" placeholder="New Password" onkeypress="return AvoidSpace(event)" style="padding: 13px 45px 13px 49px;
+              <input type="password" class="form-control form-control-user input-feild" id="new_password" name="new_password" maxlength="100" placeholder="New Password" onkeypress="return AvoidSpace(event)" style="padding: 13px 45px 13px 49px;
     border: 0 !important;
     background-color: #EBEBEB !important;
     border-radius: 12px;
@@ -157,7 +183,7 @@
     z-index: 99;
         margin-top: 15px;
     margin-left: 16px;" />
-              <input type="password" class="form-control form-control-user" name="confirm_password" id="confirm_password" placeholder="Confirm Password" onkeypress="return AvoidSpace(event)"  style=" padding: 13px 45px 13px 49px;border: 0 !important;background-color: #EBEBEB !important;border-radius: 12px;font-family: 'Signika', sans-serif;font-weight: 700;font-size: 20px !important;outline: 0;position: relative;z-index: 9;">
+              <input type="password" class="form-control form-control-user input-feild" name="confirm_password" id="confirm_password" placeholder="Confirm Password" onkeypress="return AvoidSpace(event)"  style=" padding: 13px 45px 13px 49px;border: 0 !important;background-color: #EBEBEB !important;border-radius: 12px;font-family: 'Signika', sans-serif;font-weight: 700;font-size: 20px !important;outline: 0;position: relative;z-index: 9;">
               <img src="{{url('public/admin/assets/email_img/eye.png')}}" id="eye" alt="eye" style="position: absolute; width: 20px; z-index: 99; margin-top: 20px; margin-left: -32px;" />
              <img src="{{url('public/admin/assets/email_img/eye-hide.png')}}" id="eye_hide" alt="eye_hide" style="position: absolute;
                 width: 20px;

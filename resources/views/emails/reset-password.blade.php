@@ -47,12 +47,20 @@
   :focus {
     outline: -webkit-focus-ring-color auto 0px;
   }
+  @media (max-width: 480px) {
+      .main_table {
+        width: 300px !important;
+      }
+      .input-feild {
+        width: 160px;
+      }
+    }
 </style>
 
 <body style="background-color: #f9fafb; padding: 0;
     margin: 0;">
     @include('admin.notification')
-  <table width="600" border="0" align="center" cellpadding="0" cellspacing="0" style="margin-top: 48px;">
+  <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" style="margin-top: 48px;">
     <tr>
        <td align="center" style="padding: 23px 0px 12px;">
          <a href="javascript:void(0);" style="border:0; outline:0; cursor: unset;"><img src="{{url('public/admin/assets/email_img/CM-Logo-2.png')}}" alt="" width="100"/></a>
@@ -60,7 +68,7 @@
     </tr>
   </table>
 
-  <table width="400" border="0" align="center" cellpadding="0" cellspacing="0">
+  <table style="width: 400px" class="main_table" border="0" align="center" cellpadding="0" cellspacing="0">
     <form method="POST" class="user" id="validate_form">
     {{csrf_field()}}
   <tr>
@@ -122,7 +130,7 @@
     z-index: 99;
         margin-top: 15px;
     margin-left: 16px;" />
-              <input type="password" class="form-control form-control-user" id="password" name="password" maxlength="100" placeholder="New Password" onkeypress="return AvoidSpace(event)" style="padding: 13px 45px 13px 49px;
+              <input type="password" class="form-control form-control-user input-feild" id="password" name="password" maxlength="100" placeholder="New Password" onkeypress="return AvoidSpace(event)" style="padding: 13px 45px 13px 49px;
     border: 0 !important;
     background-color: #EBEBEB !important;
     border-radius: 12px;
@@ -131,13 +139,8 @@
     font-size: 20px !important;
     outline: 0;
     position: relative;
-    z-index: 9;">
+    z-index: 9;" />
 
-             <!--  <img src="assets/eye.png" alt="eye" style="position: absolute;
-    width: 20px;
-    z-index: 99;
-        margin-top: 20px;
-        margin-left: -32px;" /> -->
             <label id="password-error" style="display: none;" class="error err" for="password"></label>
             </td>
           </tr>
@@ -149,7 +152,7 @@
     z-index: 99;
         margin-top: 15px;
     margin-left: 16px;" />
-              <input type="password" class="form-control form-control-user" name="confirm_password" id="confirm_password" placeholder="Confirm Password" onkeypress="return AvoidSpace(event)"  style="    padding: 13px 45px 13px 49px;
+              <input type="password" class="form-control form-control-user input-feild" name="confirm_password" id="confirm_password" placeholder="Confirm Password" onkeypress="return AvoidSpace(event)"  style="    padding: 13px 45px 13px 49px;
     border: 0 !important;
     background-color: #EBEBEB !important;
     border-radius: 12px;
@@ -158,7 +161,7 @@
     font-size: 20px !important;
     outline: 0;
     position: relative;
-    z-index: 9;">
+    z-index: 9;" />
               <img src="{{url('public/admin/assets/email_img/eye.png')}}" id="eye" alt="eye" style="position: absolute;
                       width: 20px;
                       z-index: 99;
