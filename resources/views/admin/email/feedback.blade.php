@@ -13,7 +13,7 @@
   <style>
     @media (max-width: 480px) {
       .main_table {
-        width: 290px !important;
+        width: 300px !important;
       }
     }
   </style>
