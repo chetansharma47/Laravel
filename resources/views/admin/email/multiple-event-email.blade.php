@@ -172,7 +172,7 @@
      font-weight: 600; font-size:14px; color:#ccc; text-align: center;">
               <tr>
                 <td style="text-align: center;">
-                   <a href="javascript:void(0)" style="color: #fff!important;">
+                   <a href="tel:{{$general_setting[1]['setting_content']}}" style="color: #fff!important;">
                     <img src="{{$message->embed($call)}}" style="width: 50px;"/>
                     <span style="display: block; padding: 0px 0px 0px 0px; color: #ccc; font-size: 11px;">Call Us</span>
                   </a>
