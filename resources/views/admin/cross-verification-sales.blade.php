@@ -263,7 +263,7 @@
 										<th style="min-width: 128px;">Check Amount POS</th>
 										<th style="min-width: 128px;">Transaction Status</th>
 										<th style="min-width: 128px;">Cash Back %</th>
-										<th style="min-width: 128px;">Redeemed Wallet</th>
+										<th style="min-width: 128px;">Wallet Cash</th>
 										<th style="min-width: 165px;">Redemption from Loyalty</th>
 										<th style="min-width: 128px;">Restaurant Name</th>
 										<th style="min-width: 128px;">Offer Products</th>

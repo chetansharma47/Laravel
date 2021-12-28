@@ -383,9 +383,11 @@ class RestaurantAuthenticationController extends ResponseController
                                         $query->whereUserId($user_find->id);
                                         $query->whereDate('created_at','<=',Carbon::now()->toDateString());
                                         $query->whereDate('created_at','>=',$last_30_days_transaction_amount->toDateString());
+                                        $query->whereIsCrossVerify(1);
                                     })->sum('total_bill_amount');
 
-        $total_amount_transaction = $total_amount_transaction + $data['total_bill_amount'];
+        // $total_amount_transaction = $total_amount_transaction + $data['total_bill_amount'];
+        $total_amount_transaction = $total_amount_transaction;
 
         $amount_between_tier_find = TierCondition::whereDeletedAt(null)->where('from_amount', '<=', $total_amount_transaction)->where('to_amount', '>=', $total_amount_transaction)->first();
         if(empty($amount_between_tier_find)){
