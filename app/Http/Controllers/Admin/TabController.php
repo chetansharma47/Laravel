@@ -2382,6 +2382,8 @@ class TabController extends ResponseController
 
         $admin = Auth()->guard('admin')->user();
 
+         date_default_timezone_set("UTC");
+         
         ($request->msg_type == "Push") ? $push_type = 1 : $push_type = 0;  
         ($request->msg_type == "Sms") ? $sms_type = 1 : $sms_type = 0;  
 

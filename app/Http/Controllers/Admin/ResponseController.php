@@ -207,6 +207,7 @@ class ResponseController extends Controller
      public function transferToWallet($wallet_transaction_verified){
         
         // date_default_timezone_set("Asia/Kolkata");
+         date_default_timezone_set("UTC");
             
         $admin_cashback_notification_find = AdminNotification::where("uniq_id","=",2)->first();
 
@@ -236,6 +237,7 @@ class ResponseController extends Controller
     public function transferToWalletForUploadVerify($wallet_transaction_verified){
             
         // date_default_timezone_set("Asia/Kolkata");
+         date_default_timezone_set("UTC");
             
         $admin_cashback_notification_find = AdminNotification::where("uniq_id","=",2)->first();
 

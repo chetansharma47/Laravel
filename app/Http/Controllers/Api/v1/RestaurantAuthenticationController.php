@@ -305,7 +305,8 @@ class RestaurantAuthenticationController extends ResponseController
         $this->is_validationRule(Validation::PayAmount($Validation = "", $message = "") , $request);
         $data = $request->all();
         $active_venue_ids = Venu::where('status' , 'Active')->where('deleted_at' , null)->pluck('id');
-        date_default_timezone_set($data['timezone']);
+        // date_default_timezone_set($data['timezone']);
+         date_default_timezone_set("UTC");
 
         $user_find = User::whereId($data['user_id'])->first();
         $tier_find = TierCondition::whereTierName($user_find->customer_tier)->whereDeletedAt(null)->first();
@@ -714,7 +715,8 @@ class RestaurantAuthenticationController extends ResponseController
         $user->offers = $offers;
 
 
-        date_default_timezone_set($timezone);
+        // date_default_timezone_set($timezone);
+         date_default_timezone_set("UTC");
         $today_days = Carbon::now()->format('l');
 
         $active_badges = Badge::whereDeletedAt(null)->whereStatus('Active')->pluck('id');
@@ -751,7 +753,8 @@ class RestaurantAuthenticationController extends ResponseController
 
         $data = $request->all();
         $active_venue_ids = Venu::where('status' , 'Active')->where('deleted_at' , null)->pluck('id');
-        date_default_timezone_set($data['timezone']);
+        // date_default_timezone_set($data['timezone']);
+         date_default_timezone_set("UTC");
 
         
         $tier_find = TierCondition::whereTierName($user_find->customer_tier)->whereDeletedAt(null)->first();

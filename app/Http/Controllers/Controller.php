@@ -36,6 +36,7 @@ use App\Mail\MultipleEventCroneMailSend;
 use App\Mail\UserVerifyMail;
 use Illuminate\Support\Arr;
 // date_default_timezone_set("Asia/Kolkata");
+ date_default_timezone_set("UTC");
 require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
 
 class Controller extends BaseController
