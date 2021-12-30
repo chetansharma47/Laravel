@@ -220,6 +220,14 @@ class AuthenticationController extends ResponseController
             return $this->responseOk($update_user['success_msg']);
         }else if($update_user['status'] == 6){
             return $this->responseWithErrorCode($update_user['error_msg'],406);
+        }else if($update_user['status'] == 7){
+            return $this->responseOk($update_user['success_msg']);
+        }else if($update_user['status'] == 8){
+            return $this->responseOk($update_user['success_msg']);
+        }else if($update_user['status'] == 9){
+            return $this->responseOk($update_user['success_msg']);
+        }else if($update_user['status'] == 10){
+            return $this->responseOk($update_user['success_msg']);
         }else{
             return $this->responseOk('User has been updated successfully.', ['update_user' => $update_user]);
         }

@@ -118,6 +118,26 @@ class ProfileModel extends Model
                 return ["status" => 5, "success_msg" => "Password has been updated successfully."];
             }
         }
+
+        if(!empty($data['first_name'])){
+            $update_user = $user->update(['first_name' => $data['first_name']]);
+            return ["status" => 7, "success_msg" => "First name has been updated successfully."];
+        }
+
+        if(!empty($data['last_name'])){
+            $update_user = $user->update(['last_name' => $data['last_name']]);
+            return ["status" => 10, "success_msg" => "Last name has been updated successfully."];
+        }
+
+        if(!empty($data['nationality'])){
+            $update_user = $user->update(['nationality' => $data['nationality']]);
+            return ["status" => 8, "success_msg" => "Nationality has been updated successfully."];
+        }
+
+        if(!empty($data['gender'])){
+            $update_user = $user->update(['gender' => $data['gender']]);
+            return ["status" => 9, "success_msg" => "Gender has been updated successfully."];
+        }
         
         return User::find($id);
     }

@@ -139,7 +139,7 @@ class Validation extends Model
 
     }
 
-    public static function userAppUpdateUser($validation = null, $message = null){
+  public static function userAppUpdateUser($validation = null, $message = null){
 
 
       $validation = [
@@ -150,6 +150,11 @@ class Validation extends Model
             'password'  => ['sometimes','nullable','max:100','min:6'],
             'confirm_password'  => 'sometimes|required|same:password',
             'otp'  => 'sometimes|nullable|min:4',
+            'first_name'        => 'sometimes|max:50',
+            'last_name'         => 'sometimes|max:50',
+            'nationality'       => 'sometimes|max:50',
+            'dob'               => 'sometimes|date_format:Y-m-d',
+            'gender'            => 'sometimes|in:Male,Female,Other',
 
 
       ];
@@ -171,6 +176,14 @@ class Validation extends Model
               'password.max'                  => 'The new password may not be greater than 100 characters.',
               'otp.required'                  =>  "Please enter OTP.",
               'otp.min'                  =>  "Please enter valid OTP.",
+              'first_name.required'         =>  "Please enter first name.",
+              'last_name.required'          =>  "Please enter last name.",
+              'nationality.required'        =>  "Please enter nationality.",
+              'nationality.max'             =>  "Nationality should be less than 50 characters.",
+              'dob.required'                =>  "Please enter DOB.",
+              'dob.date_format'             =>  "DOB should be Y-m-d format only.",
+              'gender.required'             =>  "Please enter gender.",
+              'gender.in'                   =>  "Gender should be male,female,other only.",
               
       ];
 
