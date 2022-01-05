@@ -16,6 +16,15 @@
 </style>
 <body style="background-color: #f9fafb; padding: 0;
     margin: 0;">
+  <table width="400" border="0" align="center" cellpadding="0" cellspacing="0"  style="margin-top: 48px;">
+    <tr>
+      <td align="left" valign="top" style="font-family: 'Lato', sans-serif; font-weight: 700; font-size: 15px; color:#0D0D0D; padding: 23px 0px 12px;">Hello, {{$user_find->first_name}} {{$user_find->last_name}}
+      </td>
+    </tr>
+    <tr>
+      <td align="left" valign="top">&nbsp;</td>
+    </tr>
+  </table>
   <table width="600" border="0" align="center" cellpadding="0" cellspacing="0" style="margin-top: 48px;">
     <tr>
        <td align="center" style="padding: 23px 0px 12px;">
@@ -87,13 +96,13 @@
       <tr>
         <td align="left" valign="top">
           <table width="400" border="0" cellspacing="0" cellpadding="0">
-          <tr>
+          <!-- <tr>
             <td align="left" valign="top" style="font-family: 'Lato', sans-serif;
      font-weight: 700; font-size: 15px; color:#0D0D0D;">Hello, {{$user_find->first_name}} {{$user_find->last_name}}</td>
-          </tr>
-          <tr>
+          </tr> -->
+          <!-- <tr>
             <td align="left" valign="top">&nbsp;</td>
-          </tr>
+          </tr> -->
 
           <tr>
             <td align="left" valign="top" style="font-family: 'Lato', sans-serif;
@@ -262,12 +271,12 @@
       {{$general_setting[9]['setting_content']}}
     </td>
   </tr>
-  <tr>
+ <!--  <tr>
     <td align="center" style="font-family: 'Lato', sans-serif;
     font-weight: 400; font-size: 12px; color: #fff; padding-bottom: 12px;">
       Phone: {{$general_setting[1]['setting_content']}}
     </td>
-  </tr>
+  </tr> -->
   <tr>
     <td align="center" style="font-family: 'Lato', sans-serif;
     font-weight: 400; font-size: 12px; color: #fff; padding-bottom: 12px;">

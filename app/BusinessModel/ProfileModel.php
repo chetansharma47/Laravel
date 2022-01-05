@@ -212,12 +212,12 @@ class ProfileModel extends Model
             $data['tier_update_date'] = Carbon::now()->toDateString();
         }
         $token = str_random(64);
-        try{
-            $link = url("confirm-account/$token");
-            \Mail::to($data['email'])->send(new UserVerifyMail($data, $link));
-        }catch(\Exception $ex){
-            return ["status" => 0, "data" => null, "error_msg" => "Something went wrong."];
-        }
+        // try{
+        //     $link = url("confirm-account/$token");
+        //     \Mail::to($data['email'])->send(new UserVerifyMail($data, $link));
+        // }catch(\Exception $ex){
+        //     return ["status" => 0, "data" => null, "error_msg" => "Something went wrong."];
+        // }
 
         if($request->file('image')){
             $destinationPath = storage_path() . DIRECTORY_SEPARATOR . env('IMG_STORAGE');
@@ -271,17 +271,35 @@ class ProfileModel extends Model
         $save_user->update();
 
         $admin_signup_notification_email = AdminNotification::where("uniq_id","=",7)->first();
+        $admin_notification_find = AdminNotification::where("uniq_id","=",3)->first();
         if(!empty($admin_signup_notification_email)){
 
             if(!empty($admin_signup_notification_email->title) && !empty($admin_signup_notification_email->message) && !empty($admin_signup_notification_email->image)){
+
+
+                if(!empty($admin_notification_find)){
+                    $admin_notification_find->message = "Congratulations you have earned welcome bonus of ".$save_user->wallet_cash." AED. ".$admin_notification_find->message;
+                }else{
+                    $admin_notification_find = '';
+                }
+                if($save_user->wallet_cash > 0){
+
+                    if(!empty($admin_notification_find) && $admin_notification_find->email_type == 1){
+                        $admin_notification_find = $admin_notification_find;
+                    }else{
+                        $admin_notification_find = '';
+                    }
+
+                }
                
                 $prefix = "attachment_mail/";
                 $index = strpos($admin_signup_notification_email->image, $prefix) + strlen($prefix);
                 $file_name = substr($admin_signup_notification_email->image, $index);
+                $link = url("confirm-account/$token");
                 try{
-                    \Mail::to($save_user->email)->send(new SignupMail($admin_signup_notification_email, $save_user, $file_name));
+                    \Mail::to($save_user->email)->send(new SignupMail($admin_signup_notification_email, $save_user, $file_name, $data ,$link, $admin_notification_find));
                 }catch(\Exception $ex){
-                    //return $ex->getMessage();
+                    return $ex->getMessage();
                 }
             }
         }

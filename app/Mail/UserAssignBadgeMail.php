@@ -8,7 +8,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Models\GeneralSetting;
 
-class MultipleEventCroneMailSend extends Mailable
+class UserAssignBadgeMail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -17,12 +17,12 @@ class MultipleEventCroneMailSend extends Mailable
      *
      * @return void
      */
-    protected $admin_event_notification, $user_find, $events;
-    public function __construct($admin_event_notification, $user_find, $events)
+    protected $user_find, $find_badge ,$value;
+    public function __construct($user_find, $find_badge ,$value)
     {
-        $this->admin_event_notification = $admin_event_notification;
         $this->user_find = $user_find;
-        $this->events = $events;
+        $this->find_badge = $find_badge;
+        $this->value = $value;
     }
 
     /**
@@ -33,16 +33,22 @@ class MultipleEventCroneMailSend extends Mailable
     public function build()
     {
 
-$general_setting = GeneralSetting::all();
+        $url = $find_badge->image;
+        $badge_image = substr(strrchr($url, '/'), 1);
+        $general_setting = GeneralSetting::all();
+        $path = public_path('/storage/badge') . "/" . $badge_image;
+
+        $general_setting = GeneralSetting::all();
         return $this->from(env('MAIL_USERNAME'), 'Capital Motion')
-        ->subject("Upcoming Events at Capital Motion Venues")
-        ->view('admin.email.multiple-event-email')
+        ->subject('Assign Badge')
+        ->view('admin.email.assign-badge-email')
         ->with([
-            'admin_event_notification'   => $this->admin_event_notification,
             'user_find'   => $this->user_find,
+            'find_badge'   => $this->find_badge,
+            'value'   => $this->value,
+            'badge_image'   => $badge_image,
             'general_setting'   => $general_setting,
             'logo'   => public_path('admin/assets/email_img/CM-Logo-2.png'),
-            'events' => $this->events
         ]);
     }
 }

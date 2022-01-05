@@ -154,12 +154,12 @@
       {{$general_setting[9]['setting_content']}}
     </td>
   </tr>
-  <tr>
+  <!-- <tr>
     <td align="center" style="font-family: 'Lato', sans-serif;
     font-weight: 400; font-size: 12px; color: #fff; padding-bottom: 12px;">
       Phone: {{$general_setting[1]['setting_content']}}
     </td>
-  </tr>
+  </tr> -->
   <tr>
     <td align="center" style="font-family: 'Lato', sans-serif;
     font-weight: 400; font-size: 12px; color: #fff; padding-bottom: 12px;">

@@ -26,14 +26,18 @@ use App\Models\WalletDetail;
 use App\Models\Event;
 use App\Models\EventSentNotification;
 use App\Models\NotiRecord;
+use App\Models\AssignBadge;
+use App\Models\Badge;
 use App\Mail\CashbackEmail;
 use App\Jobs\OfferNotificationJob;
 use App\Jobs\MultipleEventsJobSendMail;
 use App\Jobs\WeeklyVerifyMail;
+use App\Jobs\UserAssignBadgeJob;
 use App\Mail\OfferAssignMail;
 use App\Mail\ChangeEmailAddress;
 use App\Mail\MultipleEventCroneMailSend;
 use App\Mail\UserVerifyMail;
+use App\Mail\AssignBadgeMail;
 use Illuminate\Support\Arr;
 // date_default_timezone_set("Asia/Kolkata");
  date_default_timezone_set("UTC");
@@ -94,12 +98,25 @@ class Controller extends BaseController
                 $user_match_with_offers = User::select('id','email','dob','first_name','last_name','device_type','device_token','country_code','mobile_number')->whereDeletedAt(null)->where('is_block','=',0)->get();
             }
 
-          //  return $user_match_with_offers;
+
+           // return $user_match_with_offers;
 
             foreach ($user_match_with_offers as $user_match_with_offer){
 
                 //return $user_match_with_offer;
-                $user_assign_offers = UserAssignOffer::whereUserId($user_match_with_offer->id)->whereOfferId($offer->id)->whereAssignAt(Carbon::now()->toDateString())->first();
+
+                $user_assign_offers = UserAssignOffer::where(function($query) use ($user_match_with_offer, $offer){
+                                            $query->where('user_id',$user_match_with_offer->id);
+                                            $query->where('offer_id',$offer->id);
+                                            $query->where('offer_redeem',1);
+                                        })->orWhere(function($query) use ($user_match_with_offer, $offer){
+                                            $query->where('user_id',$user_match_with_offer->id);
+                                            $query->where('offer_id',$offer->id);
+                                            $query->where('assign_at', Carbon::now()->toDateString());
+                                        })->first();
+
+
+                // $user_assign_offers = UserAssignOffer::whereUserId($user_match_with_offer->id)->whereOfferId($offer->id)->whereAssignAt(Carbon::now()->toDateString())->first();
 
                 if($offer->offer_type == "BirthdayOffer"){
                     $dob_month = Carbon::parse($user_match_with_offer->dob)->format('m');
@@ -155,11 +172,11 @@ class Controller extends BaseController
                                             $noti_record_find->update();
                                         }
                                         $total_noti_record = NotiRecord::whereUserId($user_match_with_offer->id)->sum(DB::raw('wallet + offer + event + normal'));
-                                       $android_notify =  $this->send_android_notification_new($user_match_with_offer->device_token, "What's Happening Today: Enjoy ".$offer->offer_name." at ".$offer->venu->venue_name."\n".$admin_offer_notification->message,"Offer Assign Notification", $noti_type = 6, null,$offer_id = $offer_assign->offer_id,$total_noti_record);
+                                       $android_notify =  $this->send_android_notification_new($user_match_with_offer->device_token, "Special Offer: ".$offer->offer_name." at ".$offer->venu->venue_name."\n".$admin_offer_notification->message,"Offer Assign Notification", $noti_type = 6, null,$offer_id = $offer_assign->offer_id,$total_noti_record);
 
                                         $criteria_data = [
                                             'user_id'   => $user_match_with_offer->id,
-                                            'message'   => "What's Happening Today: Enjoy ".$offer->offer_name." at ".$offer->venu->venue_name."\n".$admin_offer_notification->message,
+                                            'message'   => "Special Offer: ".$offer->offer_name." at ".$offer->venu->venue_name."\n".$admin_offer_notification->message,
                                             'noti_type' => 6,
                                             'offer_id'  => $offer_assign->offer_id
                                         ];
@@ -184,11 +201,11 @@ class Controller extends BaseController
                                             $noti_record_find->update();
                                         }
                                         $total_noti_record = NotiRecord::whereUserId($user_match_with_offer->id)->sum(DB::raw('wallet + offer + event + normal'));
-                                        $ios_notify =  $this->iphoneNotification($user_match_with_offer->device_token, "What's Happening Today: Enjoy ".$offer->offer_name." at ".$offer->venu->venue_name."\n".$admin_offer_notification->message,"Offer Assign Notification", $noti_type = 6, null,$offer_id = $offer_assign->offer_id,$total_noti_record);
+                                        $ios_notify =  $this->iphoneNotification($user_match_with_offer->device_token, "Special Offer: ".$offer->offer_name." at ".$offer->venu->venue_name."\n".$admin_offer_notification->message,"Offer Assign Notification", $noti_type = 6, null,$offer_id = $offer_assign->offer_id,$total_noti_record);
 
                                         $criteria_data = [
                                             'user_id'   => $user_match_with_offer->id,
-                                            'message'   => "What's Happening Today: Enjoy ".$offer->offer_name." at ".$offer->venu->venue_name."\n".$admin_offer_notification->message,
+                                            'message'   => "Special Offer: ".$offer->offer_name." at ".$offer->venu->venue_name."\n".$admin_offer_notification->message,
                                             'noti_type' => 6,
                                             'offer_id'  => $offer_assign->offer_id
                                         ];
@@ -202,7 +219,7 @@ class Controller extends BaseController
                             if($admin_offer_notification->sms_type == 1){
                                 \SMSGlobal\Credentials::set(env('SMS_GLOBAL_API'),env('SMS_GLOBAL_SECERET'));
                                 $sms = new \SMSGlobal\Resource\Sms();
-                                $message = "What's Happening Today: Enjoy ".$offer->offer_name." at ".$offer->venu->venue_name."\n".$admin_offer_notification->message;
+                                $message = "Special Offer: ".$offer->offer_name." at ".$offer->venu->venue_name."\n".$admin_offer_notification->message;
                                 try {
                                     $response = $sms->sendToOne($user_match_with_offer->country_code.$user_match_with_offer->mobile_number, $message,'AD-MSociety');
                                 } catch (\Exception $e) {
@@ -293,11 +310,11 @@ class Controller extends BaseController
                                                 $noti_record_find->update();
                                             }
                                             $total_noti_record = NotiRecord::whereUserId($user_match_with_offer->id)->sum(DB::raw('wallet + offer + event + normal'));
-                                           $android_notify =  $this->send_android_notification_new($user_match_with_offer->device_token, "What's Happening Today: Enjoy ".$offer->offer_name." at ".$offer->venu->venue_name."\n".$admin_offer_notification->message,"Offer Assign Notification", $noti_type = 6, null,$offer_id = $offer_assign->offer_id,$total_noti_record);
+                                           $android_notify =  $this->send_android_notification_new($user_match_with_offer->device_token, "Special Offer: ".$offer->offer_name." at ".$offer->venu->venue_name."\n".$admin_offer_notification->message,"Offer Assign Notification", $noti_type = 6, null,$offer_id = $offer_assign->offer_id,$total_noti_record);
 
                                             $criteria_data = [
                                                 'user_id'   => $user_match_with_offer->id,
-                                                'message'   => "What's Happening Today: Enjoy ".$offer->offer_name." at ".$offer->venu->venue_name."\n".$admin_offer_notification->message,
+                                                'message'   => "Special Offer: ".$offer->offer_name." at ".$offer->venu->venue_name."\n".$admin_offer_notification->message,
                                                 'noti_type' => 6,
                                                 'offer_id'  => $offer_assign->offer_id
                                             ];
@@ -322,11 +339,11 @@ class Controller extends BaseController
                                                 $noti_record_find->update();
                                             }
                                             $total_noti_record = NotiRecord::whereUserId($user_match_with_offer->id)->sum(DB::raw('wallet + offer + event + normal'));
-                                            $ios_notify =  $this->iphoneNotification($user_match_with_offer->device_token, "What's Happening Today: Enjoy ".$offer->offer_name." at ".$offer->venu->venue_name."\n".$admin_offer_notification->message,"Offer Assign Notification", $noti_type = 6, null,$offer_id = $offer_assign->offer_id,$total_noti_record);
+                                            $ios_notify =  $this->iphoneNotification($user_match_with_offer->device_token, "Special Offer: ".$offer->offer_name." at ".$offer->venu->venue_name."\n".$admin_offer_notification->message,"Offer Assign Notification", $noti_type = 6, null,$offer_id = $offer_assign->offer_id,$total_noti_record);
 
                                             $criteria_data = [
                                                 'user_id'   => $user_match_with_offer->id,
-                                                'message'   => "What's Happening Today: Enjoy ".$offer->offer_name." at ".$offer->venu->venue_name."\n".$admin_offer_notification->message,
+                                                'message'   => "Special Offer: ".$offer->offer_name." at ".$offer->venu->venue_name."\n".$admin_offer_notification->message,
                                                 'noti_type' => 6,
                                                 'offer_id'  => $offer_assign->offer_id
                                             ];
@@ -340,7 +357,7 @@ class Controller extends BaseController
                                 if($admin_offer_notification->sms_type == 1){
                                     \SMSGlobal\Credentials::set(env('SMS_GLOBAL_API'),env('SMS_GLOBAL_SECERET'));
                                     $sms = new \SMSGlobal\Resource\Sms();
-                                    $message = "What's Happening Today: Enjoy ".$offer->offer_name." at ".$offer->venu->venue_name."\n".$admin_offer_notification->message;
+                                    $message = "Special Offer: ".$offer->offer_name." at ".$offer->venu->venue_name."\n".$admin_offer_notification->message;
                                     try {
                                         $response = $sms->sendToOne($user_match_with_offer->country_code.$user_match_with_offer->mobile_number, $message,'AD-MSociety');
                                     } catch (\Exception $e) {
@@ -585,11 +602,11 @@ class Controller extends BaseController
                                         $noti_record_find->update();
                                     }
                                     $total_noti_record = NotiRecord::whereUserId($user_find->id)->sum(DB::raw('wallet + offer + event + normal'));
-                                   $android_notify =  $this->send_android_notification_new($user_find->device_token, "What's Happening Today: Enjoy ".$find_event->event_name." at ".$find_event->venu->venue_name."\n".$admin_event_notification->message,"Event Create Notification", $noti_type = 5, $event_id = $find_event->id,null,$total_noti_record);
+                                   $android_notify =  $this->send_android_notification_new($user_find->device_token, "Upcoming Events: ".$find_event->event_name." at ".$find_event->venu->venue_name."\n".$admin_event_notification->message,"Event Create Notification", $noti_type = 5, $event_id = $find_event->id,null,$total_noti_record);
 
                                     $criteria_data = [
                                         'user_id'   => $user_find->id,
-                                        'message'   => "What's Happening Today: Enjoy ".$find_event->event_name." at ".$find_event->venu->venue_name."\n".$admin_event_notification->message,
+                                        'message'   => "Upcoming Events: ".$find_event->event_name." at ".$find_event->venu->venue_name."\n".$admin_event_notification->message,
                                         'noti_type' => 5,
                                         'event_id'  => $find_event->id
                                     ];
@@ -614,11 +631,11 @@ class Controller extends BaseController
                                         $noti_record_find->update();
                                     }
                                     $total_noti_record = NotiRecord::whereUserId($user_find->id)->sum(DB::raw('wallet + offer + event + normal'));
-                                    $ios_notify =  $this->iphoneNotification($user_find->device_token, "What's Happening Today: Enjoy ".$find_event->event_name." at ".$find_event->venu->venue_name."\n".$admin_event_notification->message,"Event Create Notification", $noti_type = 5, $event_id = $find_event->id,null,$total_noti_record);
+                                    $ios_notify =  $this->iphoneNotification($user_find->device_token, "Upcoming Events: ".$find_event->event_name." at ".$find_event->venu->venue_name."\n".$admin_event_notification->message,"Event Create Notification", $noti_type = 5, $event_id = $find_event->id,null,$total_noti_record);
 
                                     $criteria_data = [
                                         'user_id'   => $user_find->id,
-                                        'message'   => "What's Happening Today: Enjoy ".$find_event->event_name." at ".$find_event->venu->venue_name."\n".$admin_event_notification->message,
+                                        'message'   => "Upcoming Events: ".$find_event->event_name." at ".$find_event->venu->venue_name."\n".$admin_event_notification->message,
                                         'noti_type' => 5,
                                         'event_id'  => $find_event->id
                                     ];
@@ -632,7 +649,7 @@ class Controller extends BaseController
                         if($admin_event_notification->sms_type == 1){
                             \SMSGlobal\Credentials::set(env('SMS_GLOBAL_API'),env('SMS_GLOBAL_SECERET'));
                             $sms = new \SMSGlobal\Resource\Sms();
-                            $message = "What's Happening Today: Enjoy ".$find_event->event_name." at ".$find_event->venu->venue_name."\n".$admin_event_notification->message;
+                            $message = "Upcoming Events: ".$find_event->event_name." at ".$find_event->venu->venue_name."\n".$admin_event_notification->message;
                             try {
                                 $response = $sms->sendToOne($user_find->country_code.$user_find->mobile_number, $message,'AD-MSociety');
                             } catch (\Exception $e) {
@@ -682,5 +699,30 @@ class Controller extends BaseController
         }
 
         return 'success';
+    }
+
+    /*For Assign Badge Cron job*/
+
+    public function AssignBadgesEmailCronJob(Request $request){
+        $today_day = Carbon::now()->format('l');
+        $find_today_badges = AssignBadge::whereDate('to_date', '>=',Carbon::now()->toDateString())->where('status','=','Active')->whereRaw("FIND_IN_SET(?, when_day) > 0", $today_day)->whereDeletedAt(null)->get();
+
+        foreach ($find_today_badges as $value) {
+            $user_find = User::whereDeletedAt(null)->where('is_block','=',0)->whereId($value->user_id)->first()->toArray();
+            $find_badge = Badge::whereId($value->badge_id)->whereStatus('Active')->whereDeletedAt(null)->first();
+
+            $assign_badge_mail = (new UserAssignBadgeJob($user_find, $find_badge, $value))->delay(Carbon::now()->addSeconds(3));
+            dispatch($assign_badge_mail);
+
+            // try{
+            //     \Mail::to($user_find['email'])->send(new AssignBadgeMail($user_find, $find_badge, $value));
+            // }catch(\Exception $ex){
+            //     return $ex->getMessage();
+            // }
+            
+        }
+
+        return "success";
+
     }
 }

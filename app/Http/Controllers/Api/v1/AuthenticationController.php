@@ -85,7 +85,7 @@ class AuthenticationController extends ResponseController
         }
 
         
-        $register = $this->profileModel->register($request, $id = null);
+        return $register = $this->profileModel->register($request, $id = null);
         if($register['status'] == 0){
             return $this->responseWithErrorCode($register['error_msg'], 400);
         }
@@ -109,13 +109,13 @@ class AuthenticationController extends ResponseController
                 }
             }
 
-            if(!empty($admin_notification_find) && $admin_notification_find->email_type == 1){
-                try{
-                    \Mail::to($register['data']['email'])->send(new BonusEmail($admin_notification_find, $register['data']));
-                }catch(\Exception $ex){
-                  //  return $ex->getMessage();
-                }
-            }
+            // if(!empty($admin_notification_find) && $admin_notification_find->email_type == 1){
+            //     try{
+            //         \Mail::to($register['data']['email'])->send(new BonusEmail($admin_notification_find, $register['data']));
+            //     }catch(\Exception $ex){
+            //       //  return $ex->getMessage();
+            //     }
+            // }
 
             if(!empty($admin_notification_find) && $admin_notification_find->push_type == 1){
 

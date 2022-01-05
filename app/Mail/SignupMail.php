@@ -18,12 +18,15 @@ class SignupMail extends Mailable
      * @return void
      */
 
-    protected $admin_signup_notification_email, $user, $file_name;
-    public function __construct($admin_signup_notification_email, $user, $file_name)
+    protected $admin_signup_notification_email, $user, $file_name, $data ,$link, $admin_notification_find;
+    public function __construct($admin_signup_notification_email, $user, $file_name, $data, $link, $admin_notification_find)
     {
         $this->admin_signup_notification_email = $admin_signup_notification_email;
         $this->user = $user;
         $this->file_name = $file_name;
+        $this->data = $data;
+        $this->link = $link;
+        $this->admin_notification_find = $admin_notification_find;
 
     }
 
@@ -43,6 +46,9 @@ class SignupMail extends Mailable
         ->with([
             'admin_signup_notification_email'   => $this->admin_signup_notification_email,
             'user'   => $this->user,
+            'data'   => $this->data,
+            'link'   => $this->link,
+            'admin_notification_find'   => $this->admin_notification_find,
             'general_setting'   => $general_setting,
             'logo'   => public_path('admin/assets/email_img/CM-Logo-2.png'),
         ]);

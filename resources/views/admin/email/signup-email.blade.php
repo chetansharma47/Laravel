@@ -81,11 +81,8 @@
 
           <tr>
             <td align="left" valign="top" style="font-family: 'Lato', sans-serif;
-     font-weight: 400; font-size:14px; color:#474747;">{{$admin_signup_notification_email->message}}<br><br>
-
-
-            
-            </td>
+     font-weight: 400; font-size:14px; color:#474747;">{{$admin_signup_notification_email->message}}<br><br>{{$admin_notification_find->message ?? ''}} @if($admin_notification_find != null)<br><br>@endif
+     Please click on the button below to verify your email address.</td>
           </tr>
           <tr>
             <td height="10" align="left" valign="top"></td>
@@ -100,7 +97,22 @@
           <tr>
             <td align="left" valign="top">&nbsp;</td>
           </tr>
-
+          <tr>
+            <td align="center" valign="top"> <a href="{{$link}}" style="font-family: 'Lato', sans-serif;
+    font-weight: 600;
+    font-size: 25px;
+    color: #474747;
+    background-color: #0B68AC;
+    padding: 12px 9px;
+    max-width: 300px;
+    display: block;
+    text-align: center;
+    margin: 0 auto;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 50px;
+    margin-bottom: 41px;">Verify Your Email</a></td>
+          </tr>
           
         </table></td>
       </tr>
@@ -140,12 +152,12 @@
       {{$general_setting[9]['setting_content']}}
     </td>
   </tr>
-  <tr>
+  <!-- <tr>
     <td align="center" style="font-family: 'Lato', sans-serif;
     font-weight: 400; font-size: 12px; color: #fff; padding-bottom: 12px;">
       Phone: {{$general_setting[1]['setting_content']}}
     </td>
-  </tr>
+  </tr> -->
   <tr>
     <td align="center" style="font-family: 'Lato', sans-serif;
     font-weight: 400; font-size: 12px; color: #fff; padding-bottom: 12px;">
