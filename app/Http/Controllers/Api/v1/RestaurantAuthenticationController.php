@@ -478,6 +478,10 @@ class RestaurantAuthenticationController extends ResponseController
         $user_find->wallet_cash = $user_find->wallet_cash - $data['redeemed_amount'];
         $user_find->update();
 
+        if($data['total_bill_amount'] == 0){
+            $data['is_cross_verify'] = 1;
+        }
+
         $data['description'] = "Cash Back Earnings";
 
         $wallet_transaction = new WalletTransaction();
@@ -933,6 +937,9 @@ class RestaurantAuthenticationController extends ResponseController
         }
 
 
+        if($data['total_bill_amount'] == 0){
+            $data['is_cross_verify'] = 1;
+        }
         
         $data['description'] = "Cash Back Earnings";
         $wallet_transaction = new WalletTransaction();

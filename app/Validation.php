@@ -353,7 +353,7 @@ class Validation extends Model
             'description'   => 'sometimes||nullable|max:500',
             'invoice_number' => 'required|max:50',
             'redeemed_amount'  => 'sometimes|nullable|numeric|min:0|max:10000000',
-            'total_bill_amount'    => 'required|numeric|min:0.5|max:10000000'
+            'total_bill_amount'    => 'required|numeric|max:10000000'
       ];
 
       $message = [
@@ -526,7 +526,7 @@ class Validation extends Model
           'description'   => 'sometimes||nullable|max:500',
           'invoice_number' => 'required|max:50',
           'redeemed_amount'  => 'sometimes|nullable|numeric|min:0|max:10000000',
-          'total_bill_amount'    => 'required|numeric|min:0.5|max:10000000'
+          'total_bill_amount'    => 'required|numeric|max:10000000'
          
       ];
       

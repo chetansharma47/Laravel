@@ -76,6 +76,29 @@ label.error {
 .alert.alert-danger.alert-dismissible.text-center.alertz.alert_mesg.alert_msg_red {
     margin-bottom: 10px;
 }
+.user{
+	position: relative;
+}
+#eye{
+	position: absolute;
+    width: 22px;
+    right: 20px;
+    top: 183px;
+    cursor: pointer;
+    display: block;
+}
+.exampleInputPassword{
+	position: relative;
+}
+
+#eye_hide{
+	display: none;
+	position: absolute;
+    width: 22px;
+    right: 20px;
+    top: 180px;
+    cursor: pointer;
+}	
 
 
 	</style>
@@ -189,11 +212,13 @@ label.error {
                   	{{@csrf_field()}}
                     <div class="form-group" style="padding-right: 0; padding-left: 0">
                     	<label>Login</label>
-                      <input type="text" class="form-control form-control-user" id="exampleInputEmail" onkeypress="return AvoidSpace(event)" aria-describedby="emailHelp" name="email" placeholder="Email Address">
+                      <input type="text" onpaste="return false" class="form-control form-control-user" id="exampleInputEmail" onkeypress="return AvoidSpace(event)" aria-describedby="emailHelp" name="email" placeholder="Email Address">
                     </div>
                     <div class="form-group" style="padding-right: 0; padding-left: 0">
                     	<label>Password</label>
-                      <input type="password" class="form-control form-control-user" id="exampleInputPassword" onkeypress="return AvoidSpace(event)" placeholder="Password" name="password" style="font-family: 'Lato', sans-serif !important;">
+                    	 <img src="{{url('public/admin/assets/img/eye.png')}}" id="eye" alt="eye"/>
+                    	 <img src="{{url('public/admin/assets/img/eye-hide.png')}}" id="eye_hide" alt="eye_hide"/>
+                      <input type="password" class="form-control form-control-user" id="exampleInputPassword" onkeypress="return AvoidSpace(event)" placeholder="Password" name="password" style="font-family: 'Lato', sans-serif !important; padding-right: 50px;">
                     </div>
                     <div class="text-right">
                     	<a href="{{route('admin.forgotPassword')}}" style="color:#3ABD6F">Forgot Password?</a>
@@ -362,6 +387,38 @@ label.error {
 			$('.alert-success').hide();
 		},5000);
 	});
+
+	$(document).ready(function(){
+      $("#eye").on("click",function(){
+        let check_type = $("#exampleInputPassword").attr("type");
+
+        if(check_type == "password"){
+
+          $("#exampleInputPassword").attr("type","text");
+          $('#eye_hide').show();
+          $('#eye').hide();
+        }else{
+          $("#exampleInputPassword").attr("type","password");
+          $('#eye_hide').hide();
+          $('#eye').show();
+        }
+      });
+
+      $("#eye_hide").on("click",function(){
+        let check_type = $("#exampleInputPassword").attr("type");
+
+        if(check_type == "password"){
+
+          $("#exampleInputPassword").attr("type","text");
+          $('#eye_hide').show();
+          $('#eye').hide();
+        }else{
+          $("#exampleInputPassword").attr("type","password");
+          $('#eye_hide').hide();
+          $('#eye').show();
+        }
+      });
+    });
 </script>
 
 
