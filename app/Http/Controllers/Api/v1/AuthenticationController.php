@@ -85,7 +85,7 @@ class AuthenticationController extends ResponseController
         }
 
         
-        return $register = $this->profileModel->register($request, $id = null);
+        $register = $this->profileModel->register($request, $id = null);
         if($register['status'] == 0){
             return $this->responseWithErrorCode($register['error_msg'], 400);
         }
