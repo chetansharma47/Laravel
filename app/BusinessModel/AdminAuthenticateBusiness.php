@@ -14,30 +14,30 @@ class AdminAuthenticateBusiness extends Model
 {
     public function login($data){
 
-        $admin_find = Admin::whereEmail($data['email'])->orWhere('name','=', $data['email'])->first();
+    	$admin_find = Admin::whereEmail($data['email'])->orWhere('name','=', $data['email'])->first();
 
-        if(!empty($admin_find)){
+    	if(!empty($admin_find)){
 
-            if(Hash::check($data['password'], $admin_find->password)){
+    		if(Hash::check($data['password'], $admin_find->password)){
 
                 if($admin_find->status == "Inactive"){
                     return ['status' => "2", 'error' => "Your account has been inactivated by admin or super admin."];
                 }
 
                 $remember_token = str_random(64);
-                $admin_find->remember_token = $remember_token;
-                $admin_find->update();
+	    		$admin_find->remember_token = $remember_token;
+	    		$admin_find->update();
                 Auth::guard('admin')->loginUsingId($admin_find->id, true);
-                return ['status' => "1", 'success' => "Admin logged in successfully."]; 
+	    		return ['status' => "1", 'success' => "Admin logged in successfully."]; 
 
-            }else{
-                return ['status' => "2", 'error' => "Please enter valid email address or password."];
-            }
+			}else{
+				return ['status' => "2", 'error' => "Please enter valid email address or password."];
+			}
 
-        }else{
+    	}else{
 
-            return ['status' => "2", 'error' => "Please enter valid email address or username."];
-        }
+    		return ['status' => "2", 'error' => "Please enter valid email address or username."];
+    	}
     }
 
     public function forgotPassword($data){

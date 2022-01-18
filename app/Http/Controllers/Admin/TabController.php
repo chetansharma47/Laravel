@@ -50,6 +50,7 @@ use App\Models\Country;
 use Illuminate\Support\Arr;
 use App\Jobs\EventNotificationJob;
 use App\Jobs\CashbackEmailJob;
+use App\Jobs\UserAssignBadgeJob;
 use App\Jobs\ReferMailSend;
 use App\Mail\NewEventCreateMail;
 use App\Mail\OfferAssignMail;
@@ -1023,7 +1024,7 @@ class TabController extends ResponseController
     public function notificationSetting(Request $request){
         if($request->isMethod('GET')){
             $admin = Auth::guard('admin')->user();
-            if($admin->role_type == "Managment" || $admin->role_type == "Staff"){
+            if($admin->role_type == "Managment" || $admin->role_type == "Staff" || $admin->role_type == "Marketing"){
                 return redirect()->route('admin.adminTabs');
             }
             $city = City::get();
@@ -1864,6 +1865,8 @@ class TabController extends ResponseController
 
     public function addOrUpdateBadgeAssign(Request $request){
 
+        $admin = Auth::guard('admin')->user();
+
         $check_badge_deleted = Badge::whereId($request->badge_id)->where('deleted_at','!=',null)->first();
 
         if(!empty($check_badge_deleted)){
@@ -1886,7 +1889,129 @@ class TabController extends ResponseController
                 return response()->json(['badge_not_found_err' => "Badge not found for selected Customer ID & Badge Name."],422);
             }
         }
-        $addOrUpdate = $this->venueBusinessModel()->addOrUpdateBadgeAssignInTable($data);
+
+        $find_user = User::whereCustomerId($data['customer_id'])->first();
+        $find_badge = Badge::whereId($request->badge_id)->first();
+        $find_badge_assign = AssignBadge::whereUserId($find_user->id)->whereBadgeId($data['badge_id'])->first();
+
+        if(empty($find_badge_assign)){
+
+            $assign_badge = new AssignBadge();
+            $assign_badge->user_id = $find_user->id;
+            $assign_badge->badge_id = $data['badge_id'];
+            $assign_badge->comment = $data['comment'];
+            $assign_badge->status = $data['status'];
+            $assign_badge->when_day = $data['when'];
+            $assign_badge->from_date = $data['from_date'];
+            $assign_badge->to_date = $data['to_date'];
+            $assign_badge->from_time = $data['from_time'];
+            $assign_badge->to_time = $data['to_time'];
+            $assign_badge->created_by = $admin->name;
+            $assign_badge->updated_by = $admin->name;
+            $assign_badge->save();
+            $assign_badge_find = AssignBadge::whereId($assign_badge->id)->with('user','badge')->first();
+            $find_assign_badge = AssignBadge::whereId($assign_badge->id)->first();
+
+            $assign_badge_mail = (new UserAssignBadgeJob($find_assign_badge, $find_user, $find_badge))->delay(Carbon::now()->addSeconds(3));
+            dispatch($assign_badge_mail);
+
+            // if($admin_cashback_notification_find->push_type == 1){
+
+                if($find_user->device_type == 'Android'){
+                    if($find_user->device_token && strlen($find_user->device_token) > 20){
+
+                        $noti_record_find = NotiRecord::whereUserId($find_user->id)->first();
+
+                        if(empty($noti_record_find)){
+                            $save_noti_record = new NotiRecord();
+                            $save_noti_record->user_id = $find_user->id;
+                            $save_noti_record->normal = 1;
+                            $save_noti_record->save();
+
+                        }else{
+                            $noti_record_find->normal = $noti_record_find->normal + 1;
+                            $noti_record_find->update();
+                        }
+
+                        $total_noti_record = NotiRecord::whereUserId($find_user->id)->sum(DB::raw('wallet + offer + event + normal'));
+
+                        $message = "The ".$find_badge->badge_name." badge has been assigned to you.";
+                        try{
+                           $android_notify =  $this->send_android_notification_new($find_user->device_token, $message, $notmessage = "Assign Badge Notification", $noti_type = 1,null,null,$total_noti_record);
+                        } catch (\Exception $e) {
+                            // continue;
+                        }
+
+                        $criteria_data = [
+                            'user_id'   => $find_user->id,
+                            'message'   => $message,
+                            'noti_type' => 1,
+                            'created_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString(),
+                            'updated_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString(),
+                        ];
+                        AdminCriteriaNotification::create($criteria_data);
+                   
+                   }
+                }
+
+                if($find_user->device_type == 'Ios' && strlen($find_user->device_token) > 20){
+                    if($find_user->device_token){
+
+                        $noti_record_find = NotiRecord::whereUserId($find_user->id)->first();
+
+                        if(empty($noti_record_find)){
+                            $save_noti_record = new NotiRecord();
+                            $save_noti_record->user_id = $find_user->id;
+                            $save_noti_record->normal = 1;
+                            $save_noti_record->save();
+
+                        }else{
+                            $noti_record_find->normal = $noti_record_find->normal + 1;
+                            $noti_record_find->update();
+                        }
+
+
+                        $total_noti_record = NotiRecord::whereUserId($find_user->id)->sum(DB::raw('wallet + offer + event + normal'));
+                        $message = "The ".$find_badge->badge_name." badge has been assigned to you.";
+                        try{
+                        $ios_notify =  $this->iphoneNotification($find_user->device_token, $message, $notmessage = "Assign Badge Notification", $noti_type = 1,null,null,$total_noti_record);
+                        } catch (\Exception $e) {
+                            // continue;
+                        }
+                        $criteria_data = [
+                            'user_id'   => $find_user->id,
+                            'message'   => $message,
+                            'noti_type' => 1,
+                            'created_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString(),
+                            'updated_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString(),
+                        ];
+                        AdminCriteriaNotification::create($criteria_data);
+                    
+                   }
+                }
+
+                // }
+
+
+
+        }else{
+            $find_badge_assign->badge_id = $data['badge_id'];
+            $find_badge_assign->comment = $data['comment'];
+            $find_badge_assign->status = $data['status'];
+            $find_badge_assign->when_day = $data['when'];
+            $find_badge_assign->from_date = $data['from_date'];
+            $find_badge_assign->to_date = $data['to_date'];
+            $find_badge_assign->from_time = $data['from_time'];
+            $find_badge_assign->to_time = $data['to_time'];
+            $find_badge_assign->updated_by = $admin->name;
+            $find_badge_assign->deleted_at = null;
+            $find_badge_assign->update();
+            $assign_badge_find = AssignBadge::whereId($find_badge_assign->id)->with('user','badge')->first();
+        }
+
+        $addOrUpdate = $assign_badge_find;
+
+        // $addOrUpdate = $this->venueBusinessModel()->addOrUpdateBadgeAssignInTable($data);
         $addOrUpdate->from_time = Carbon::parse(Carbon::now()->toDateString()." ".$addOrUpdate->from_time)->format('g:i A');
         $addOrUpdate->to_time = Carbon::parse(Carbon::now()->toDateString(). " " . $addOrUpdate->to_time)->format("g:i A");
         return ['status' => 'true','action_type' => $data['action_type'],'assigned_badge' => $addOrUpdate];
@@ -4242,6 +4367,9 @@ class TabController extends ResponseController
                 $da->offer_name = 'N/A';
                 $da->offer_redeem = 'N/A';
             }
+            if(empty($da->username)){
+                $da->username = $da->cashier_name;
+            }
             $da->wallet_cash = round($da->wallet_cash,2);
         }
 
@@ -4366,9 +4494,11 @@ class TabController extends ResponseController
         // $data = WalletTransaction::select(DB::raw("(select customer_id from users where id = wallet_transactions.user_id) AS 'Customer ID'"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where users.id = wallet_transactions.user_id) AS 'Customer Name'"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where users.id = wallet_transactions.user_id) AS 'Mobile Number'"),DB::raw("(select email from users where id = wallet_transactions.user_id) AS 'Email ID'"),"wallet_transactions.invoice_number AS Invoice Number","wallet_transactions.total_bill_amount AS Check Amount","wallet_transactions.check_amount_pos AS Check Amount POS",DB::raw("CONCAT(case wallet_transactions.is_cross_verify when '0' then 'Not Verified' when '1' then 'Verified' else 'Mismatch' end) AS 'Transaction Status'"),"wallet_transactions.cashback_percentage AS Cashback Percentage",DB::raw("ROUND((select wallet_cash from users where id = wallet_transactions.user_id),1) AS 'Redeemed Wallet'"),"wallet_transactions.redeemed_amount AS Redemption From Loyalty",DB::raw("(select venue_name from venus where id = wallet_transactions.venu_id) AS 'Restaurant Name'"),DB::raw("(select username from venue_users where id = wallet_transactions.venue_user_id) AS 'Restaurant User'"),DB::raw("DATE_FORMAT(wallet_transactions.date_and_time, '%Y-%m-%d') AS Date"))->orderBy('wallet_transactions.id','desc')->whereIn('id',$ids_data)
         //     ->get()->toArray();
 
-        $data = WalletTransaction::select(DB::raw("(select customer_id from users where id = wallet_transactions.user_id) AS 'Customer ID'"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where id = wallet_transactions.user_id) AS 'Customer Name'"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where users.id = wallet_transactions.user_id) AS 'Customer No.'"),DB::raw("(select email from users where id = wallet_transactions.user_id) AS 'Email ID'"),'wallet_transactions.invoice_number as Check No.','wallet_transactions.total_bill_amount as Check Amount','check_amount_pos as Check Amount POS',DB::raw("CONCAT(case wallet_transactions.is_cross_verify when '0' then 'Not Verified' when '1' then 'Verified' else 'Mismatch' end) AS 'Transaction Status'"),'wallet_transactions.cashback_percentage as Cash Back %',DB::raw("(select wallet_cash from users where id = wallet_transactions.user_id) AS 'Wallet Cash'"),'wallet_transactions.redeemed_amount as Redemption from Loyalty',DB::raw("(select venue_name from venus where id = wallet_transactions.venu_id) AS 'Restaurant Name'"),'wallet_transactions.offer_product_ids',DB::raw("DATE_FORMAT(wallet_transactions.date_and_time, '%Y-%m-%d') AS Date"),DB::raw("(select username from venue_users where id = wallet_transactions.venue_user_id) AS 'Restaurant Logged In User'"))
+        $data = WalletTransaction::select('cashier_name',DB::raw("(select customer_id from users where id = wallet_transactions.user_id) AS 'Customer ID'"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where id = wallet_transactions.user_id) AS 'Customer Name'"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where users.id = wallet_transactions.user_id) AS 'Customer No.'"),DB::raw("(select email from users where id = wallet_transactions.user_id) AS 'Email ID'"),'wallet_transactions.invoice_number as Check No.','wallet_transactions.total_bill_amount as Check Amount','check_amount_pos as Check Amount POS',DB::raw("CONCAT(case wallet_transactions.is_cross_verify when '0' then 'Not Verified' when '1' then 'Verified' else 'Mismatch' end) AS 'Transaction Status'"),'wallet_transactions.cashback_percentage as Cash Back %',DB::raw("(select wallet_cash from users where id = wallet_transactions.user_id) AS 'Wallet Cash'"),'wallet_transactions.redeemed_amount as Redemption from Loyalty',DB::raw("(select venue_name from venus where id = wallet_transactions.venu_id) AS 'Restaurant Name'"),'wallet_transactions.offer_product_ids',DB::raw("DATE_FORMAT(wallet_transactions.date_and_time, '%Y-%m-%d') AS Date"),DB::raw("(select username from venue_users where id = wallet_transactions.venue_user_id) AS 'Restaurant Logged In User'"))
         ->whereIn('wallet_transactions.id',$ids_data)
         ->orderBy('wallet_transactions.id','desc')->get();
+
+        // return $data;
 
 
         foreach($data as $da){
@@ -4380,6 +4510,12 @@ class TabController extends ResponseController
                 $da->OfferProducts = 'N/A';
             }
 
+
+            if(empty($da['Restaurant Logged In User'])){
+                $da['Restaurant Logged In User'] = $da['cashier_name'];
+            }
+
+            unset($da->cashier_name);
             unset($da->offer_product_ids);
         }
              

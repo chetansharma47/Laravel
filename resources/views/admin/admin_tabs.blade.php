@@ -296,11 +296,11 @@
 						</div>
 					</a> -->
 
-					<a href="{{route('admin.notificationSetting')}}">
+					<!-- <a href="{{route('admin.notificationSetting')}}">
 						<div class="grey_btn">
 							Notification Management
 						</div>
-					</a>
+					</a> -->
 					<!-- <a href="{{route('admin.adminUser')}}">
 						<div class="grey_btn">
 							Admin User Management

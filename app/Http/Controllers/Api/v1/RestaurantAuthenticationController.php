@@ -793,9 +793,9 @@ class RestaurantAuthenticationController extends ResponseController
             return $this->responseWithErrorCode("User has been blocked by admin.",404);
         }
 
-        $check_days_for_repeat_invoice = GeneralSetting::whereUniqId(15)->first();
 
         /*Check for duplicate  invoice number*/
+        /*$check_days_for_repeat_invoice = GeneralSetting::whereUniqId(15)->first();
 
         if(empty($check_days_for_repeat_invoice)){
 
@@ -816,7 +816,7 @@ class RestaurantAuthenticationController extends ResponseController
 
         if(!empty($check_exists_invoice_number)){
             return $this->responseWithErrorCode("Invoice number already exists.",406); 
-        }
+        }*/
 
         /*End*/
 
@@ -937,10 +937,9 @@ class RestaurantAuthenticationController extends ResponseController
         }
 
 
-        if($data['total_bill_amount'] == 0){
+        // if($data['total_bill_amount'] == 0){
             $data['is_cross_verify'] = 1;
-        }
-        
+        // }
         $data['description'] = "Cash Back Earnings";
         $wallet_transaction = new WalletTransaction();
         $data['user_id'] = $user_find->id;
@@ -974,11 +973,15 @@ class RestaurantAuthenticationController extends ResponseController
         $admin_refer_notification = AdminNotification::where("uniq_id","=",4)->first();
         $admin_cashback_notification = AdminNotification::where("uniq_id","=",2)->first();
 
-        if(!empty($admin_transaction_notification)){
+        if(!empty($admin_transaction_notification) && !empty($admin_cashback_notification)){
 
             //$admin_transaction_notification->message = "Congratulations you have redeemed amount of ".$data['redeemed_amount']." AED for your transaction. ".$admin_transaction_notification->message;
 
+            $admin_cashback_notification->message = "Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. ".$admin_cashback_notification->message;
+
             if($admin_transaction_notification->push_type == 1){
+
+                $admin_transaction_notification->message = $admin_transaction_notification->message." ".$admin_cashback_notification->message;
 
                 if($user_find->device_type == 'Android'){
                     if($user_find->device_token && strlen($user_find->device_token) > 20){
@@ -1002,8 +1005,8 @@ class RestaurantAuthenticationController extends ResponseController
                             'user_id'   => $user_find->id,
                             'message'   => $admin_transaction_notification->message,
                             'noti_type' => 1
-                       ];
-                       AdminCriteriaNotification::create($criteria_data);
+                        ];
+                        AdminCriteriaNotification::create($criteria_data);
                    
                    }
                 }
@@ -1032,16 +1035,23 @@ class RestaurantAuthenticationController extends ResponseController
                             'noti_type' => 1
                         ];
                         AdminCriteriaNotification::create($criteria_data);
+
+                        /*$criteria_data = [
+                            'user_id'   => $user_find->id,
+                            'message'   => $admin_cashback_notification->message,
+                            'noti_type' => 1
+                       ];
+                       AdminCriteriaNotification::create($criteria_data);*/
                     
                    }
                 }
 
             }
 
-            if($admin_transaction_notification->sms_type == 1){
+            if($admin_transaction_notification->sms_type == 1 && $admin_cashback_notification->sms_type == 1){
                 \SMSGlobal\Credentials::set(env('SMS_GLOBAL_API'),env('SMS_GLOBAL_SECERET'));
                 $sms = new \SMSGlobal\Resource\Sms();
-                $message = $admin_transaction_notification->message;
+                $message = $admin_transaction_notification->message." ".$admin_cashback_notification->message;
                 try {
                     $response = $sms->sendToOne($user_find->country_code.$user_find->mobile_number, $message,'CM-Society');
                 } catch (\Exception $e) {
@@ -1049,13 +1059,34 @@ class RestaurantAuthenticationController extends ResponseController
                 }
             }
 
-            if($admin_transaction_notification->email_type == 1){
+            if($admin_transaction_notification->email_type == 1 && $admin_cashback_notification->email_type == 1){
+                $admin_transaction_notification->message = $admin_transaction_notification->message." ".$admin_cashback_notification->message;
                 try{
                     \Mail::to($user_find->email)->send(new TransactionEmail($admin_transaction_notification, $user_find));
                 }catch(\Exception $ex){
-                    //return $ex->getMessage();
+                    return $ex->getMessage();
                 }
             }
+
+            /*if($admin_cashback_notification->sms_type == 1){
+                \SMSGlobal\Credentials::set(env('SMS_GLOBAL_API'),env('SMS_GLOBAL_SECERET'));
+                $sms = new \SMSGlobal\Resource\Sms();
+                $message = $admin_cashback_notification->message;
+                try {
+                    $response = $sms->sendToOne($user_find->country_code.$user_find->mobile_number, $message,'CM-Society');
+                } catch (\Exception $e) {
+                    
+                }
+            }*/
+
+            /*if($admin_cashback_notification->email_type == 1){
+                $message = $admin_cashback_notification->message;
+                try{
+                    \Mail::to($user_find->email)->send(new CashbackEmail($admin_cashback_notification, $user_find, $admin_cashback_notification->message));
+                }catch(\Exception $ex){
+                    //return $ex->getMessage();
+                }
+            }*/
         }
 
         $refer_user_find = null;
@@ -1177,7 +1208,7 @@ class RestaurantAuthenticationController extends ResponseController
 
 
 
-        if(!empty($admin_cashback_notification)){
+        /*if(!empty($admin_cashback_notification)){
 
             $admin_cashback_notification->message = "Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. ".$admin_cashback_notification->message;
 
@@ -1260,7 +1291,7 @@ class RestaurantAuthenticationController extends ResponseController
                     //return $ex->getMessage();
                 }
             }
-        }
+        }*/
 
         return $this->responseOk("Payment has been successfully processed.");
 

@@ -138,6 +138,22 @@ class ProfileModel extends Model
             $update_user = $user->update(['gender' => $data['gender']]);
             return ["status" => 9, "success_msg" => "Gender has been updated successfully."];
         }
+
+        if(!empty($data['dob'])){
+            $update_user = $user->update(['dob' => $data['dob']]);
+            return ["status" => 11, "success_msg" => "DOB has been updated successfully."];
+        }
+
+        if($data['image']){
+            $destinationPath = storage_path() . DIRECTORY_SEPARATOR . env('IMG_STORAGE');
+            $image_name = self::uploadImage($data['image'], $destinationPath);
+            if($image_name == "Unable to init from given binary data."){
+                return ["status" => 0, "data" => null, "error_msg" => "Please upload valid image."];
+            }
+            $update_user = $user->update(['image' => $image_name]);
+            return ["status" => 12, "success_msg" => "Profile image has been updated successfully."];
+            // $data['image'] = $image_name;
+        }
         
         return User::find($id);
     }

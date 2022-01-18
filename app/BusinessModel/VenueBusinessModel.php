@@ -299,7 +299,7 @@ class VenueBusinessModel extends Model
 		return ['data' => $offer, 'message' => $message];
 	}
 
-	public function addOrUpdateBadgeAssignInTable($data){
+	/*public function addOrUpdateBadgeAssignInTable($data){
 		$admin = Auth::guard('admin')->user();
 		$find_user = User::whereCustomerId($data['customer_id'])->first();
 		$find_badge_assign = AssignBadge::whereUserId($find_user->id)->whereBadgeId($data['badge_id'])->first();
@@ -336,7 +336,7 @@ class VenueBusinessModel extends Model
 		}
 		return $assign_badge_find;
 
-	}
+	}*/
 
 }
 

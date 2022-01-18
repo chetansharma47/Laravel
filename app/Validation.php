@@ -155,6 +155,7 @@ class Validation extends Model
             'nationality'       => 'sometimes|max:50',
             'dob'               => 'sometimes|date_format:Y-m-d',
             'gender'            => 'sometimes|in:Male,Female,Other',
+            'image'             => 'sometimes|nullable',
 
 
       ];
@@ -184,6 +185,8 @@ class Validation extends Model
               'dob.date_format'             =>  "DOB should be Y-m-d format only.",
               'gender.required'             =>  "Please enter gender.",
               'gender.in'                   =>  "Gender should be male,female,other only.",
+              'image.required'              =>  "Please enter image.",
+
               
       ];
 
@@ -472,7 +475,7 @@ class Validation extends Model
     public static function adminValidationForForgotPassword($validation = null, $message = null){
 
         $validation = [
-          'email'  =>  'required',  
+          'email'  =>  'required',
         ];
         $message = [
           'email.required'  => '* Please enter email address.',  
@@ -554,6 +557,8 @@ class Validation extends Model
 
       return $data = ['validation' => $validation, 'message' => $message];
     }
+
+    
 
 }
 

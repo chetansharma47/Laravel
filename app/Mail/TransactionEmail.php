@@ -31,7 +31,7 @@ class TransactionEmail extends Mailable
      * @return $this
      */
     public function build()
-    {
+    {   
         $general_setting = GeneralSetting::all();
         return $this->from(env('MAIL_USERNAME'), 'Capital Motion')
         ->subject('Transaction Notification')

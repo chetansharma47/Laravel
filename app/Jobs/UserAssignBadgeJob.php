@@ -20,12 +20,12 @@ class UserAssignBadgeJob implements ShouldQueue
      *
      * @return void
      */
-    protected $user_find, $find_badge, $value;
-    public function __construct($user_find, $find_badge, $value)
+    protected $find_assign_badge, $find_user, $find_badge;
+    public function __construct($find_assign_badge, $find_user, $find_badge)
     {
-        $this->user_find = $user_find;
+        $this->find_assign_badge = $find_assign_badge;
+        $this->find_user = $find_user;
         $this->find_badge = $find_badge;
-        $this->value = $value;
     }
 
     /**
@@ -37,7 +37,7 @@ class UserAssignBadgeJob implements ShouldQueue
     {
 
         try{
-            \Mail::to($this->user_find['email'])->send(new AssignBadgeMail($this->user_find, $this->find_badge, $this->value));
+            \Mail::to($this->find_user->email)->send(new AssignBadgeMail($this->find_assign_badge, $this->find_user, $this->find_badge));
         }catch(\Exception $ex){
             // return $ex->getMessage();
         }

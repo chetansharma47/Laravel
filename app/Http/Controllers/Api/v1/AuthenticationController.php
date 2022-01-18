@@ -206,6 +206,26 @@ class AuthenticationController extends ResponseController
         $user = Auth::guard()->user();
         $user_id = $user->id;
         $this->is_validationRule(Validation::userAppUpdateUser($Validation = "", $message = "", $user_id) , $request);
+
+        $profile = $request->file('image');
+        if($profile){
+
+            $extension = $profile->getClientOriginalExtension();
+            $size = $profile->getSize();
+
+            if($extension != 'jpg' && $extension != 'jpeg' && $extension != 'png' && $extension != 'JPG' && $extension != 'JPEG' && $extension != 'PNG'){
+                return $this->responseWithErrorValidation("Please select image type of Jpg, Jpeg or Png format file only.");
+            }
+
+            if($extension == "jpg" || $extension == "jpeg" || $extension == "png" || $extension == "JPG" || $extension == "JPEG" || $extension == "PNG"){
+                if($size > 20971520){
+                    return $this->responseWithErrorValidation("Image should not be greater than 20 MB.");
+                }
+            }
+
+
+        }
+
         $data = $request->all();
         $update_user = $this->profileModel->updateUserProfile($data, $user);
         if($update_user['status'] == 1){
@@ -227,6 +247,10 @@ class AuthenticationController extends ResponseController
         }else if($update_user['status'] == 9){
             return $this->responseOk($update_user['success_msg']);
         }else if($update_user['status'] == 10){
+            return $this->responseOk($update_user['success_msg']);
+        }else if($update_user['status'] == 11){
+            return $this->responseOk($update_user['success_msg']);
+        }else if($update_user['status'] == 13){
             return $this->responseOk($update_user['success_msg']);
         }else{
             return $this->responseOk('User has been updated successfully.', ['update_user' => $update_user]);

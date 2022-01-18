@@ -103,7 +103,8 @@ class Controller extends BaseController
 
             foreach ($user_match_with_offers as $user_match_with_offer){
 
-                //return $user_match_with_offer;
+                // return $user_match_with_offer;
+                $current_year = Carbon::now()->format('Y');
 
                 $user_assign_offers = UserAssignOffer::where(function($query) use ($user_match_with_offer, $offer){
                                             $query->where('user_id',$user_match_with_offer->id);
@@ -115,11 +116,17 @@ class Controller extends BaseController
                                             $query->where('assign_at', Carbon::now()->toDateString());
                                         })->first();
 
+                                            // $query->where('assign_at', Carbon::now()->toDateString());
+                                        // })->first();
 
                 // $user_assign_offers = UserAssignOffer::whereUserId($user_match_with_offer->id)->whereOfferId($offer->id)->whereAssignAt(Carbon::now()->toDateString())->first();
 
+                $user_assign_birthday_offers = UserAssignOffer::where('user_id',$user_match_with_offer->id)->whereOfferId($offer->id)->whereYear('assign_at',Carbon::now()->toDateString())->first();
+
                 if($offer->offer_type == "BirthdayOffer"){
-                    $dob_month = Carbon::parse($user_match_with_offer->dob)->format('m');
+                    // $user_assign_birthday_offers = UserAssignOffer::where('user_id',$user_match_with_offer->id)->whereOfferId($offer->id)->whereYear('assign_at',Carbon::now()->format('Y'))->first();
+                    if(empty($user_assign_birthday_offers)){
+                        $dob_month = Carbon::parse($user_match_with_offer->dob)->format('m');
                     $dob_date = Carbon::parse($user_match_with_offer->dob)->format('d');
                     $current_month = Carbon::now()->format('m');
                     $current_date = Carbon::now()->format('d');
@@ -230,6 +237,7 @@ class Controller extends BaseController
 
 
                         }
+                    }
                     }
                 }else{
 

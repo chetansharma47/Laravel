@@ -32,19 +32,19 @@ class AuthenticationController extends ResponseController
         return new AdminAuthenticateBusiness();
     }
     public function login(Request $request){
-      if($request->isMethod('GET')){
+    	if($request->isMethod('GET')){
 
             if(Auth()->guard('admin')->user()){
                 return redirect(route('admin.adminTabs'));
             }
 
-        return view('admin/login');
-      }
+    		return view('admin/login');
+    	}
 
-      if($request->isMethod('POST')){
+    	if($request->isMethod('POST')){
 
-        $validator = $this->is_validationRuleWeb(Validation::adminLoginValidation($Validation = "", $message = "") , $request);
-        if(!empty($validator)){
+    		$validator = $this->is_validationRuleWeb(Validation::adminLoginValidation($Validation = "", $message = "") , $request);
+    		if(!empty($validator)){
                 return $validator;
             }
 
@@ -59,7 +59,7 @@ class AuthenticationController extends ResponseController
                 Session::flash('message', $login['success']);
                 return redirect(route('admin.adminTabs'));
             }
-      }
+    	}
     }
 
     public function logout(Request $request){

@@ -32,31 +32,24 @@
         $img_third = public_path("admin/assets/email_img/CM-Logo-2.png");
         $iimg = public_path("admin/assets/email_img/curve-bg.png");
         $footer_img = public_path("admin/assets/email_img/footer-bg.png");
-        $pin = public_path("pin.png");
-        $cal = public_path("cal.png");
-        $clock = public_path("icon.png");
-        $call = public_path("call.png");
-        $location = public_path("location.png");
-        $bag = public_path("bag.png");
-        $open_app = public_path("open_app.png");
+        $transaction_notification_top_curve = public_path("admin/assets/email_img/notification-top-curve.png");
        ?>
 
-      <table width="100%" border="0" cellspacing="0" cellpadding="0">
-        <!-- <tr>
+    
+        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+        <tr>
           <td style="border-top-left-radius: 30px; border-top-right-radius: 30px; background-color: #fff;">
-        <img src="{{$message->embed($open_app)}}" alt="" style="border-top-left-radius: 30px;border-top-right-radius: 30px; width: 442px;" />
+        <img src="{{$message->embed($transaction_notification_top_curve)}}" alt="" style="border-top-left-radius: 30px;border-top-right-radius: 30px; width: 442px;" />
             
           </td>
-        </tr> -->
+        </tr>
         
         <!-- <tr>
           <td width="20" align="left" valign="top">&nbsp;</td>
           <td align="center" valign="top" style="padding:5px 0;">
              <div style="width: 300px">
-             
               <img src="{{$message->embed($img_second)}}" alt="CR-Logo" style="width: 100px;" width="100"/>
             </div>
-              <img src="{{$message->embed($img_second)}}" alt="CR-Logo" style="width: 100px;" width="100"/>
           </td>
           <td width="20" align="left" valign="top">&nbsp;</td>
         </tr>
@@ -64,7 +57,7 @@
           <td width="20" align="left" valign="top">&nbsp;</td>
           <td align="center" valign="top" style="font-family: 'Lato', sans-serif;
      font-weight: 700; color: #fff; padding-bottom: 17px;">
-          &nbsp;
+            Transaction Notification
           </td>
           <td width="20" align="left" valign="top">&nbsp;</td>
         </tr> -->
@@ -75,14 +68,13 @@
     <td height="1" align="left" valign="top" bgcolor="#d9d9d9"></td>
   </tr> -->
   <tr>
-    <td align="left" valign="top" style="background:#fff; padding:0px;border-bottom-left-radius: 30px;border-bottom-right-radius: 30px;">
-      <table width="400" border="0" cellspacing="0" cellpadding="0">
+    <td align="left" valign="top" style="background:#fff; padding:30px 20px;border-bottom-left-radius: 30px;border-bottom-right-radius: 30px;">
+      <table width="100%" border="0" cellspacing="0" cellpadding="0">
       <tr>
-        <td align="left" valign="top">
-          <table width="400" border="0" cellspacing="0" cellpadding="0" style="padding: 30px 23px;">
+        <td align="left" valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="0">
           <tr>
             <td align="left" valign="top" style="font-family: 'Lato', sans-serif;
-     font-weight: 700; font-size: 15px; color:#0D0D0D;">Hello, {{$user_find['first_name']}} {{$user_find['last_name']}}</td>
+     font-weight: 700; font-size: 15px; color:#0D0D0D;">Hello, {{$find_user->first_name}} {{$find_user->last_name}}</b></td>
           </tr>
           <tr>
             <td align="left" valign="top">&nbsp;</td>
@@ -90,76 +82,27 @@
 
           <tr>
             <td align="left" valign="top" style="font-family: 'Lato', sans-serif;
-     font-weight: 500; font-size:18px; color:#000;">Badge
+     font-weight: 400; font-size:14px; color:#474747;">The {{$find_badge->badge_name}} badge has been assigned to you.<br><br>
+
             
             </td>
           </tr>
-
           <tr>
-            <td align="left" valign="top" style="font-family: 'Lato', sans-serif;
-     font-weight: 600; font-size:28px; color:#dba520;">{{$find_badge['badge_name']}}
-            
-            </td>
-          </tr>
-
-
-          <tr>
-            <td align="left" valign="top">&nbsp;</td>
-          </tr>
-
-
-          <tr>
-            <td align="left" valign="top" style="font-family: 'Lato', sans-serif;
-     font-weight: 400; font-size:14px; color:#000;"><div style="width: 300px;">You have Assigned Badge from Capital Motion.</div><br><br>
-            </td>
+            <td height="10" align="left" valign="top"></td>
           </tr>
           <tr>
-            <td height="10" align="left" valign="top">&nbsp;</td>
+            <td height="10" align="left" valign="top"></td>
           </tr>
- <!--   <table width="400" border="0" cellspacing="0" cellpadding="0">
-           <tr>
-            <td align="left" valign="top" style="font-family: 'Lato', sans-serif;
-     font-weight: 600; font-size:14px; color:#ccc; text-align: center;">
-              <tr>
-                <td style="text-align: center;">
-                   <a href="tel:{{$general_setting[1]['setting_content']}}" style="color: #fff!important;">
-                    <img src="{{$message->embed($call)}}" style="width: 50px;"/>
-                    <span style="display: block; padding: 0px 0px 0px 0px; color: #ccc; font-size: 11px;">Call Us</span>
-                  </a>
-                </td>
-                <td style="text-align: center;">
-                  <a href="https://gozl8.test-app.link/RN3Hfsykbkb" style="color: #fff!important;">
-                    <img src="{{$message->embed($open_app)}}" style="width: 50px;"/>
-                    <span style="display: block; padding: 0px 0px 0px 0px; color: #ccc; font-size: 11px;">Open App</span>
-                  </a>
-                </td>
-              </tr>
-            </td>
-          </tr>
-        </table> -->
-          <!-- <tr>
-            <td height="10" align="left" valign="top" style="text-align: center; color: #ccc; padding-left: 16px; font-size: 11px;">
-              <span style="padding: 0px 8px 0px 0px;">Call Us</span>
-              <span style="padding: 0px 8px 0px 0px;">Location</span>
-              <span style="padding: 0px 8px 0px 0px;">Book Now</span>
-              <span style="padding: 0px 8px 0px 0px;">Open App</span>
-            </td>
-          </tr> -->
-
-          <!-- <tr>
-            <td height="10" align="left" valign="top">&nbsp;</td>
-          </tr> -->
            <!--   <tr>
             <td align="left" valign="top" style="font-family:arial, sans-serif; font-size: 15px; font-weight:  bold; color:#474747;">ThankYou Team</b></td>
           </tr>  -->   
 
-          <!-- <tr>
+          <tr>
             <td align="left" valign="top">&nbsp;</td>
           </tr>
- -->
+
           
-        </table>
-      </td>
+        </table></td>
       </tr>
       <!-- <tr>
         <td height="" align="left" valign="top">&nbsp;</td>
@@ -197,7 +140,7 @@
       {{$general_setting[9]['setting_content']}}
     </td>
   </tr>
-<!--   <tr>
+ <!--  <tr>
     <td align="center" style="font-family: 'Lato', sans-serif;
     font-weight: 400; font-size: 12px; color: #fff; padding-bottom: 12px;">
       Phone: {{$general_setting[1]['setting_content']}}

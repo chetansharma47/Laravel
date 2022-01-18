@@ -18,12 +18,12 @@ class AssignBadgeMail extends Mailable
      * @return void
      */
 
-    protected $user_find, $find_badge, $value;
-    public function __construct($user_find, $find_badge, $value)
+    protected $find_assign_badge, $find_user, $find_badge;
+    public function __construct($find_assign_badge, $find_user, $find_badge)
     {
-        $this->user_find = $user_find;
+        $this->find_assign_badge = $find_assign_badge;
+        $this->find_user = $find_user;
         $this->find_badge = $find_badge;
-        $this->value = $value;
     }
 
     /**
@@ -38,9 +38,9 @@ class AssignBadgeMail extends Mailable
         ->subject('Assign Badge')
         ->view('admin.email.assign-badge-email')
         ->with([
-            'user_find'   => $this->user_find,
+            'find_user'   => $this->find_user,
             'find_badge'   => $this->find_badge,
-            'value'   => $this->value,
+            'find_assign_badge'   => $this->find_assign_badge,
             'general_setting'   => $general_setting,
             'logo'   => public_path('admin/assets/email_img/CM-Logo-2.png'),
         ]);
