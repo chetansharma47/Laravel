@@ -82,7 +82,7 @@
 
           <tr>
             <td align="left" valign="top" style="font-family: 'Lato', sans-serif;
-     font-weight: 400; font-size:14px; color:#474747;">The {{$find_badge->badge_name}} badge has been assigned to you.<br><br>
+     font-weight: 400; font-size:14px; color:#474747;">The <span style="color:#5baf0c;">{{$find_badge->badge_name}}</span> badge has been assigned to you.<br><br>
 
             
             </td>
