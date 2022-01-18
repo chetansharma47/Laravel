@@ -135,7 +135,7 @@ class AuthenticationController extends ResponseController
                             $noti_record_find->update();
                         }
 
-                        $total_noti_record = NotiRecord::whereUserId($user->id)->sum(DB::raw('wallet + offer + event + normal'));
+                        $total_noti_record = NotiRecord::whereUserId($register['data']['id'])->sum(DB::raw('wallet + offer + event + normal'));
 
                        $android_notify =  $this->send_android_notification_new($register['data']['device_token'], $admin_notification_find->message, $notmessage = "Bonus Notification", $noti_type = 3,null,null,$total_noti_record);
 
@@ -164,7 +164,7 @@ class AuthenticationController extends ResponseController
                             $noti_record_find->wallet = $noti_record_find->wallet + 1;
                             $noti_record_find->update();
                         }
-                        $total_noti_record = NotiRecord::whereUserId($user->id)->sum(DB::raw('wallet + offer + event + normal'));
+                        $total_noti_record = NotiRecord::whereUserId($register['data']['id'])->sum(DB::raw('wallet + offer + event + normal'));
                         $ios_notify =  $this->iphoneNotification($register['data']['device_token'], $admin_notification_find->message, $notmessage = "Bonus Notification", $noti_type = 3,null,null,$total_noti_record);
 
                         $criteria_data = [

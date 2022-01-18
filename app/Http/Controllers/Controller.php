@@ -123,9 +123,20 @@ class Controller extends BaseController
 
                 $user_assign_birthday_offers = UserAssignOffer::where('user_id',$user_match_with_offer->id)->whereOfferId($offer->id)->whereYear('assign_at',Carbon::now()->toDateString())->first();
 
+                $assign_offer = 0;
+
+                if(!empty($user_assign_birthday_offers)){
+                    if($user_assign_birthday_offers->offer_redeem == 1){
+                        $assign_offer = 1;
+                    }else{
+                        $user_assign_birthday_offers->delete();
+                        $assign_offer = 0;
+                    }
+                }
+
                 if($offer->offer_type == "BirthdayOffer"){
                     // $user_assign_birthday_offers = UserAssignOffer::where('user_id',$user_match_with_offer->id)->whereOfferId($offer->id)->whereYear('assign_at',Carbon::now()->format('Y'))->first();
-                    if(empty($user_assign_birthday_offers)){
+                    if($assign_offer == 0){
                         $dob_month = Carbon::parse($user_match_with_offer->dob)->format('m');
                     $dob_date = Carbon::parse($user_match_with_offer->dob)->format('d');
                     $current_month = Carbon::now()->format('m');

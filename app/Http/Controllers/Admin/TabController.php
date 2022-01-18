@@ -1937,7 +1937,7 @@ class TabController extends ResponseController
 
                         $message = "The ".$find_badge->badge_name." badge has been assigned to you.";
                         try{
-                           $android_notify =  $this->send_android_notification_new($find_user->device_token, $message, $notmessage = "Assign Badge Notification", $noti_type = 1,null,null,$total_noti_record);
+                           $android_notify =  $this->send_android_notification_new($find_user->device_token, $message, $notmessage = "Assign Badge Notification", $noti_type = 8,null,null,$total_noti_record);
                         } catch (\Exception $e) {
                             // continue;
                         }
@@ -1945,7 +1945,7 @@ class TabController extends ResponseController
                         $criteria_data = [
                             'user_id'   => $find_user->id,
                             'message'   => $message,
-                            'noti_type' => 1,
+                            'noti_type' => 8,
                             'created_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString(),
                             'updated_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString(),
                         ];
@@ -1974,14 +1974,14 @@ class TabController extends ResponseController
                         $total_noti_record = NotiRecord::whereUserId($find_user->id)->sum(DB::raw('wallet + offer + event + normal'));
                         $message = "The ".$find_badge->badge_name." badge has been assigned to you.";
                         try{
-                        $ios_notify =  $this->iphoneNotification($find_user->device_token, $message, $notmessage = "Assign Badge Notification", $noti_type = 1,null,null,$total_noti_record);
+                        $ios_notify =  $this->iphoneNotification($find_user->device_token, $message, $notmessage = "Assign Badge Notification", $noti_type = 8,null,null,$total_noti_record);
                         } catch (\Exception $e) {
                             // continue;
                         }
                         $criteria_data = [
                             'user_id'   => $find_user->id,
                             'message'   => $message,
-                            'noti_type' => 1,
+                            'noti_type' => 8,
                             'created_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString(),
                             'updated_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString(),
                         ];
