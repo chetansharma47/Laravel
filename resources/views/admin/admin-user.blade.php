@@ -38,6 +38,27 @@
 .row.left-side {
     margin-left: -5px;
 }
+
+#eye{
+	position: absolute;
+    width: 22px;
+    right: 30px;
+    top: 126px;
+    cursor: pointer;
+    display: block;
+}
+.exampleInputPassword{
+	position: relative;
+}
+
+#eye_hide{
+	display: none;
+	position: absolute;
+    width: 22px;
+    right: 30px;
+    top: 122px;
+    cursor: pointer;
+}
 /*#basic-datatables_wrapper,
 		#basic-datatables2_wrapper,
 		#basic-datatables3_wrapper {
@@ -253,13 +274,18 @@
 						<label style="font-weight: 400;">
 							Username
 						</label>
-						<input type="text" class="form-control form-control-user admin_username" value="" maxlength="30" placeholder="Username" value="" style="border-radius: 10px"/>
+						<input type="text" class="form-control form-control-user admin_username" value="" onpaste="return false" maxlength="30" placeholder="Username" value="" style="border-radius: 10px"/>
 					</div>
 					<div class="venue_inputs mb-3 px-2 pl-3">
 						<label style="font-weight: 400;">
 							Password
 						</label>
-						<input type="password" class="form-control form-control-user admin_password" maxlength="65" placeholder="Password" value="" style="border-radius: 10px; font-family: 'Lato', sans-serif;"/>
+						<div class="form-control-group">
+						<img src="{{url('public/admin/assets/img/eye.png')}}" id="eye" alt="eye"/>
+                    	 <img src="{{url('public/admin/assets/img/eye-hide.png')}}" id="eye_hide" alt="eye_hide"/>
+						<input type="password" class="form-control form-control-user admin_password" id="admin_password" maxlength="65" placeholder="Password" value="" style="border-radius: 10px; font-family: 'Lato', sans-serif; padding-right: 35px!important;"/>
+							
+						</div>
 					</div>
 					<div class="venue_inputs mb-3 px-2 pl-3">
 						<label style="font-weight: 400;">
@@ -757,6 +783,38 @@
 		$(".admin_username").on("paste",function(e){
 			e.preventDefault();
 		});
+
+		$(document).ready(function(){
+	      $("#eye").on("click",function(){
+	        let check_type = $("#admin_password").attr("type");
+
+	        if(check_type == "password"){
+
+	          $("#admin_password").attr("type","text");
+	          $('#eye_hide').show();
+	          $('#eye').hide();
+	        }else{
+	          $("#admin_password").attr("type","password");
+	          $('#eye_hide').hide();
+	          $('#eye').show();
+	        }
+	      });
+
+	      $("#eye_hide").on("click",function(){
+	        let check_type = $("#admin_password").attr("type");
+
+	        if(check_type == "password"){
+
+	          $("#admin_password").attr("type","text");
+	          $('#eye_hide').show();
+	          $('#eye').hide();
+	        }else{
+	          $("#admin_password").attr("type","password");
+	          $('#eye_hide').hide();
+	          $('#eye').show();
+	        }
+	      });
+	    });
 
 	</script>
 </body>
