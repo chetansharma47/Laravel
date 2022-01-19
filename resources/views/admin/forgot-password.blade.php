@@ -198,7 +198,7 @@ label.error {
                   	{{@csrf_field()}}
                     <div class="form-group" style="padding-right: 0; padding-left: 0">
                     	<label>Forgot Password</label>
-                      <input type="email" class="form-control form-control-user" id="exampleInputEmail" onkeypress="return AvoidSpace(event)" aria-describedby="emailHelp" name="email" onpaste="return false" placeholder="Email Address">
+                      <input type="email" class="form-control form-control-user" id="exampleInputEmail" onkeypress="return AvoidSpace(event)" aria-describedby="emailHelp" name="email" placeholder="Email Address">
                     </div>
                     
                     <button type="submit" class="btn btn-primary btn-user btn-block common_btn mt-5" id="submit_btn">

@@ -274,7 +274,7 @@
 						<label style="font-weight: 400;">
 							Username
 						</label>
-						<input type="text" class="form-control form-control-user admin_username" value="" onpaste="return false" maxlength="30" placeholder="Username" value="" style="border-radius: 10px"/>
+						<input type="text" class="form-control form-control-user admin_username" value="" maxlength="30" placeholder="Username" value="" style="border-radius: 10px"/>
 					</div>
 					<div class="venue_inputs mb-3 px-2 pl-3">
 						<label style="font-weight: 400;">
@@ -780,9 +780,9 @@
 			});
 		});
 
-		$(".admin_username").on("paste",function(e){
-			e.preventDefault();
-		});
+		// $(".admin_username").on("paste",function(e){
+		// 	e.preventDefault();
+		// });
 
 		$(document).ready(function(){
 	      $("#eye").on("click",function(){
