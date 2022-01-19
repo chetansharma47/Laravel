@@ -922,7 +922,13 @@ class RestaurantAuthenticationController extends ResponseController
         $redeemed_wallet_amount_user = $user_find->wallet_cash - $data['redeemed_amount'];
 
         $data['venu_id'] = $venue_find->id;
-        $data['offer_product_ids'] = $data['verify_offer_ids'];
+
+        if(!empty($data['verify_offer_ids'])){
+            $find_offer_id =  Offer::wherePosProductId($data['verify_offer_ids'])->first();
+            if($find_offer_id){
+                $data['offer_product_ids'] = $find_offer_id->id;
+            }
+        }
         
         /*Second Entry in wallet transaction table for redeemed*/
         if($data['redeemed_amount'] > 0){
@@ -938,7 +944,7 @@ class RestaurantAuthenticationController extends ResponseController
 
 
         // if($data['total_bill_amount'] == 0){
-            $data['is_cross_verify'] = 1;
+            $data['is_cross_verify'] = 3;
         // }
         $data['description'] = "Cash Back Earnings";
         $wallet_transaction = new WalletTransaction();

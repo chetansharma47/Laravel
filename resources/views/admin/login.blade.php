@@ -212,7 +212,7 @@ label.error {
                   	{{@csrf_field()}}
                     <div class="form-group" style="padding-right: 0; padding-left: 0">
                     	<label>Login</label>
-                      <input type="text" class="form-control form-control-user" id="exampleInputEmail" onkeypress="return AvoidSpace(event)" aria-describedby="emailHelp" name="email" placeholder="Email Address">
+                      <input type="text" class="form-control form-control-user" id="exampleInputEmail" onkeypress="return AvoidSpace(event)" onpaste="return false" aria-describedby="emailHelp" name="email" placeholder="Email Address">
                     </div>
                     <div class="form-group" style="padding-right: 0; padding-left: 0">
                     	<label>Password</label>

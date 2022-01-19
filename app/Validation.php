@@ -529,7 +529,8 @@ class Validation extends Model
           'description'   => 'sometimes||nullable|max:500',
           'invoice_number' => 'required|max:50',
           'redeemed_amount'  => 'sometimes|nullable|numeric|min:0|max:10000000',
-          'total_bill_amount'    => 'required|numeric|max:10000000'
+          'total_bill_amount'    => 'required|numeric|max:10000000',
+          'verify_offer_ids'    => 'sometimes|exists:offers,pos_product_id'
          
       ];
       
@@ -540,7 +541,8 @@ class Validation extends Model
         'description.sometimes'   =>  "Please enter description id.",
         'invoice_number.required' => "Please enter invoice number.",
         'redeemed_amount.required'  =>  "Please enter redeemed amount.",
-        'total_bill_amount.required'    =>  "Please enter total bill amount."
+        'total_bill_amount.required'    =>  "Please enter total bill amount.",
+        'verify_offer_ids.sometimes'    =>  "Please enter valid offer POS ID."
       ];
 
       return $data = ['validation' => $validation, 'message' => $message];

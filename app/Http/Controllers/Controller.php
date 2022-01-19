@@ -621,11 +621,13 @@ class Controller extends BaseController
                                         $noti_record_find->update();
                                     }
                                     $total_noti_record = NotiRecord::whereUserId($user_find->id)->sum(DB::raw('wallet + offer + event + normal'));
-                                   $android_notify =  $this->send_android_notification_new($user_find->device_token, "Upcoming Events: ".$find_event->event_name." at ".$find_event->venu->venue_name."\n".$admin_event_notification->message,"Event Create Notification", $noti_type = 5, $event_id = $find_event->id,null,$total_noti_record);
+                                   // $android_notify =  $this->send_android_notification_new($user_find->device_token, "Upcoming Events: ".$find_event->event_name." at ".$find_event->venu->venue_name."\n".$admin_event_notification->message,"Event Create Notification", $noti_type = 5, $event_id = $find_event->id,null,$total_noti_record);
+                                    $android_notify =  $this->send_android_notification_new($user_find->device_token, $admin_event_notification->message,"Event Create Notification", $noti_type = 5, $event_id = $find_event->id,null,$total_noti_record);
 
                                     $criteria_data = [
                                         'user_id'   => $user_find->id,
-                                        'message'   => "Upcoming Events: ".$find_event->event_name." at ".$find_event->venu->venue_name."\n".$admin_event_notification->message,
+                                        // 'message'   => "Upcoming Events: ".$find_event->event_name." at ".$find_event->venu->venue_name."\n".$admin_event_notification->message,
+                                        'message'   => $admin_event_notification->message,
                                         'noti_type' => 5,
                                         'event_id'  => $find_event->id
                                     ];
@@ -650,7 +652,7 @@ class Controller extends BaseController
                                         $noti_record_find->update();
                                     }
                                     $total_noti_record = NotiRecord::whereUserId($user_find->id)->sum(DB::raw('wallet + offer + event + normal'));
-                                    $ios_notify =  $this->iphoneNotification($user_find->device_token, "Upcoming Events: ".$find_event->event_name." at ".$find_event->venu->venue_name."\n".$admin_event_notification->message,"Event Create Notification", $noti_type = 5, $event_id = $find_event->id,null,$total_noti_record);
+                                    $ios_notify =  $this->iphoneNotification($user_find->device_token,$admin_event_notification->message,"Event Create Notification", $noti_type = 5, $event_id = $find_event->id,null,$total_noti_record);
 
                                     $criteria_data = [
                                         'user_id'   => $user_find->id,
@@ -668,7 +670,7 @@ class Controller extends BaseController
                         if($admin_event_notification->sms_type == 1){
                             \SMSGlobal\Credentials::set(env('SMS_GLOBAL_API'),env('SMS_GLOBAL_SECERET'));
                             $sms = new \SMSGlobal\Resource\Sms();
-                            $message = "Upcoming Events: ".$find_event->event_name." at ".$find_event->venu->venue_name."\n".$admin_event_notification->message;
+                            $message = $admin_event_notification->message;
                             try {
                                 $response = $sms->sendToOne($user_find->country_code.$user_find->mobile_number, $message,'AD-MSociety');
                             } catch (\Exception $e) {

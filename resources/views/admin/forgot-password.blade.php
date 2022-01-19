@@ -120,7 +120,7 @@ label.error {
 							<div class="col-md-5 col-sm-12">
 								<ul class="navbar-nav">
 									<li class="nav-item">
-										<a class="nav-link" href="javascript:void(0);" style="padding-right: 0">Admin Panel</a>
+										<a class="nav-link" href="{{route('admin.adminTabs')}}" style="padding-right: 0">Admin Panel</a>
 									</li>
 								</ul>
 							</div>
@@ -198,7 +198,7 @@ label.error {
                   	{{@csrf_field()}}
                     <div class="form-group" style="padding-right: 0; padding-left: 0">
                     	<label>Forgot Password</label>
-                      <input type="email" class="form-control form-control-user" id="exampleInputEmail" onkeypress="return AvoidSpace(event)" aria-describedby="emailHelp" name="email" placeholder="Email Address">
+                      <input type="email" class="form-control form-control-user" id="exampleInputEmail" onkeypress="return AvoidSpace(event)" aria-describedby="emailHelp" name="email" onpaste="return false" placeholder="Email Address">
                     </div>
                     
                     <button type="submit" class="btn btn-primary btn-user btn-block common_btn mt-5" id="submit_btn">

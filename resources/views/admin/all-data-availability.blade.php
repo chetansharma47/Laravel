@@ -555,6 +555,7 @@
 								<option value="">Select Transaction Verification</option>
 								<option value="verified">Verified</option>
 								<option value="not_verified">Not Verified</option>
+								<option value="micros_verified">Micros Verified</option>
 								<option value="all">All</option>
 							</select>
 						</div>
