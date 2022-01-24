@@ -1058,7 +1058,7 @@ class RestaurantAuthenticationController extends ResponseController
             if($admin_transaction_notification->sms_type == 1 && $admin_cashback_notification->sms_type == 1){
                 \SMSGlobal\Credentials::set(env('SMS_GLOBAL_API'),env('SMS_GLOBAL_SECERET'));
                 $sms = new \SMSGlobal\Resource\Sms();
-                $message = $admin_transaction_notification->message." ".$admin_cashback_notification->message;
+                $message = $admin_transaction_notification->message;
                 try {
                     $response = $sms->sendToOne($user_find->country_code.$user_find->mobile_number, $message,'CM-Society');
                 } catch (\Exception $e) {
@@ -1067,7 +1067,7 @@ class RestaurantAuthenticationController extends ResponseController
             }
 
             if($admin_transaction_notification->email_type == 1 && $admin_cashback_notification->email_type == 1){
-                $admin_transaction_notification->message = $admin_transaction_notification->message." ".$admin_cashback_notification->message;
+                $admin_transaction_notification->message = $admin_transaction_notification->message;
                 try{
                     \Mail::to($user_find->email)->send(new TransactionEmail($admin_transaction_notification, $user_find));
                 }catch(\Exception $ex){
