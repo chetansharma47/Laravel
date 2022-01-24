@@ -733,6 +733,7 @@ class RestaurantAuthenticationController extends ResponseController
         return $this->responseOk("User Data",['user_data' => $user]);
     }
 
+
     public function posPayBill(Request $request){
 
         $find_pos = LoginPose::wherePassword($request->password)->first();
