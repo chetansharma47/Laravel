@@ -148,7 +148,7 @@
 
           <tr>
             <td align="left" valign="top" style="font-family: 'Lato', sans-serif;
-     font-weight: 400; font-size:14px; color:#000;"><div style="width: 300px;">{{$admin_offer_notification->message}}</div><br><br>
+     font-weight: 400; font-size:14px; color:#000;"><div style="width: 400px;">{{$offer->offer_desc}}</div><br><br>
 
             
             </td>

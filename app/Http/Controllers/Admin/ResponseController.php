@@ -19,7 +19,9 @@ use App\Mail\CashbackEmail;
 use App\Jobs\CashbackEmailJob;
 use Carbon\Carbon;
 use App\Models\NotiRecord;
-
+use DateTime;
+use DateTimeZone;
+date_default_timezone_set('Asia/Dubai');
 class ResponseController extends Controller
 {
     public function is_require($data, $field)
@@ -360,4 +362,26 @@ class ResponseController extends Controller
             }             
         }
       }
+
+    public function convert_to_server_date($date, $format, $userTimeZone, $serverTimeZone = 'UTC')
+    {
+        try {
+            $dateTime = new DateTime ($date, new DateTimeZone($userTimeZone));
+            $dateTime->setTimezone(new DateTimeZone($serverTimeZone));
+            return $dateTime->format($format);
+        } catch (Exception $e) {
+            return '';
+        }
+    }
+
+    public function convert_to_user_date($date, $format, $userTimeZone = 'Asia/Dubai', $serverTimeZone = 'UTC')
+    {
+        try {
+            $dateTime = new DateTime ($date, new DateTimeZone($serverTimeZone));
+            $dateTime->setTimezone(new DateTimeZone($userTimeZone));
+            return $dateTime->format($format);
+        } catch (Exception $e) {
+            return '';
+        }
+    }
 }

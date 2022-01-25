@@ -48,7 +48,7 @@ use App\Models\WalletDetail;
 use App\Models\NotiRecord;
 use App\Models\GeneralSetting;
 require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
-
+date_default_timezone_set('Asia/Dubai');
 class RestaurantAuthenticationController extends ResponseController
 {
 
@@ -306,7 +306,7 @@ class RestaurantAuthenticationController extends ResponseController
         $data = $request->all();
         $active_venue_ids = Venu::where('status' , 'Active')->where('deleted_at' , null)->pluck('id');
         // date_default_timezone_set($data['timezone']);
-         date_default_timezone_set("UTC");
+         // date_default_timezone_set("UTC");
 
         $user_find = User::whereId($data['user_id'])->first();
         $tier_find = TierCondition::whereTierName($user_find->customer_tier)->whereDeletedAt(null)->first();
@@ -720,7 +720,7 @@ class RestaurantAuthenticationController extends ResponseController
 
 
         // date_default_timezone_set($timezone);
-         date_default_timezone_set("UTC");
+         // date_default_timezone_set("UTC");
         $today_days = Carbon::now()->format('l');
 
         $active_badges = Badge::whereDeletedAt(null)->whereStatus('Active')->pluck('id');
@@ -732,7 +732,6 @@ class RestaurantAuthenticationController extends ResponseController
         $user->valid_time = $now_time->diffInSeconds($time_after_10mins);   //10 min = 600 secs 
         return $this->responseOk("User Data",['user_data' => $user]);
     }
-
 
     public function posPayBill(Request $request){
 
@@ -759,7 +758,7 @@ class RestaurantAuthenticationController extends ResponseController
         $data = $request->all();
         $active_venue_ids = Venu::where('status' , 'Active')->where('deleted_at' , null)->pluck('id');
         // date_default_timezone_set($data['timezone']);
-         date_default_timezone_set("UTC");
+         // date_default_timezone_set("UTC");
 
         
         $tier_find = TierCondition::whereTierName($user_find->customer_tier)->whereDeletedAt(null)->first();
