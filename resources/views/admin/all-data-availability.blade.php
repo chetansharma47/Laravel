@@ -1872,7 +1872,7 @@ selected_customer_wallet_transactions();
 					{data:'check_amount_pos', name:'check_amount_pos'},
 					{data:'txn_status', name:'txn_status', orderable: false},
 					{data:'cashback_percentage', name:'cashback_percentage'},
-					{data:'wallet_cash', name:'wallet_cash'},
+					{data:'user_wallet_cash', name:'user_wallet_cash'},
 					{data:'redeemed_amount', name:'redeemed_amount'},
 					{data:'venue_name', name:'venue_name'},
 					{data:'offer_name', name:'offer_name', orderable: false,  searchable: false},

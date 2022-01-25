@@ -26,7 +26,8 @@ class WalletTransaction extends Model
         'updated_by',
         'created_at',
         'created_by',
-        'check_amount_pos'
+        'check_amount_pos',
+        'user_wallet_cash'
     ]; 
 
     public function offerProductIds(){
