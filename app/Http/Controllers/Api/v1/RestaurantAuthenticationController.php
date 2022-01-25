@@ -52,7 +52,7 @@ date_default_timezone_set('Asia/Dubai');
 class RestaurantAuthenticationController extends ResponseController
 {
 
-	protected $profileModel;
+    protected $profileModel;
 
     public function __construct(ProfileModel $profileModel){
         $this->profileModel = $profileModel;
@@ -78,16 +78,16 @@ class RestaurantAuthenticationController extends ResponseController
     }
 
     public function venuUserProfile(Request $request){
-    	$id = $request->id;
-    	$token = $_SERVER['HTTP_TOKEN'];
-    	$login_user = VenueUser::whereAccessToken($token)->first();
+        $id = $request->id;
+        $token = $_SERVER['HTTP_TOKEN'];
+        $login_user = VenueUser::whereAccessToken($token)->first();
 
-    	$show_data = $login_user;
+        $show_data = $login_user;
 
-    	if(!empty($id)){
-    		$show_data = VenueUser::whereId($id)->first();
-    	}
-    	return $this->responseOk("User Profile",['profile' => $show_data]);
+        if(!empty($id)){
+            $show_data = VenueUser::whereId($id)->first();
+        }
+        return $this->responseOk("User Profile",['profile' => $show_data]);
     }
 
     public function venueListingWithoutToken(Request $request){
@@ -179,6 +179,7 @@ class RestaurantAuthenticationController extends ResponseController
 
         $this->is_validationRule(Validation::sendOtpIpadValidation($Validation = "", $message = "") , $request);
 
+        $admin_email = GeneralSetting::whereUniqId(1)->first();
         $user = User::whereId($request->user_id)->first();
         if(empty($user->wallet_cash)){
 
@@ -218,10 +219,12 @@ class RestaurantAuthenticationController extends ResponseController
         //$message = "Your OTP for Society App is ".$otp;
         if($request->redeem_type == "offer"){
             $offer_name = $request->offer_name;
-            $message = "Your OTP to redeem ".$offer_name." using Capital Society Loyalty App is ".$otp.". If you did not inititate this request, Please call us 800 6996.";
+            // $message = "Your OTP to redeem ".$offer_name." using Capital Society Loyalty App is ".$otp.". If you did not inititate this request, Please call us 800 6996.";
+            $message = "Your OTP to redeem ".$offer_name." using Capital Society Loyalty App is ".$otp.". If you did not inititate this request, Please contact us on ".$admin_email->setting_content;
         }else{
             //wallet case
-            $message = "Your OTP to redeem AED ".$redeemed_amount." using Capital Society Loyalty App is ".$otp.". If you did not inititate this request, Please call us 800 6996.";
+            // $message = "Your OTP to redeem AED ".$redeemed_amount." using Capital Society Loyalty App is ".$otp.". If you did not inititate this request, Please call us 800 6996.";
+            $message = "Your OTP to redeem AED ".$redeemed_amount." using Capital Society Loyalty App is ".$otp.". If you did not inititate this request, Please contact us on ".$admin_email->setting_content;
         }
 
         try {
@@ -983,7 +986,12 @@ class RestaurantAuthenticationController extends ResponseController
 
             //$admin_transaction_notification->message = "Congratulations you have redeemed amount of ".$data['redeemed_amount']." AED for your transaction. ".$admin_transaction_notification->message;
 
-            $admin_cashback_notification->message = "Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. ".$admin_cashback_notification->message;
+            if($admin_transaction_notification->push_type == 0 || $admin_transaction_notification->sms_type == 0){
+                $admin_cashback_notification->message = $admin_cashback_notification->message;
+            }else{
+                $admin_cashback_notification->message = "Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. ".$admin_cashback_notification->message;
+            }
+
 
             if($admin_transaction_notification->push_type == 1){
 
