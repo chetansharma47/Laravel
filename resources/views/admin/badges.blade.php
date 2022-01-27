@@ -1448,9 +1448,9 @@
 			//window.open(url_hit);
 		});
 
-		$(".badge-name").on("paste",function(e){
-			e.preventDefault();
-		});
+		// $(".badge-name").on("paste",function(e){
+		// 	e.preventDefault();
+		// });
 		$(document).on("paste",".td_edit",function(e){
 			e.preventDefault();
 		});

@@ -26,6 +26,11 @@ Route::get('/queue-work', function() {
     return 'queue-work';
 });
 
+Route::get('/queue-restart', function() {
+   $exitCode = Artisan::call('queue:restart');
+    return 'queue-restart';
+});
+
 Route::get('/cache', function() {
     $exitCode = Artisan::call('cache:clear');
     return 'cache cleared';

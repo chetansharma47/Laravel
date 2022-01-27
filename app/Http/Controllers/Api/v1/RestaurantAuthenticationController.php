@@ -954,6 +954,7 @@ class RestaurantAuthenticationController extends ResponseController
         $wallet_transaction = new WalletTransaction();
         $data['user_id'] = $user_find->id;
         $data['user_wallet_cash'] = $user_find->wallet_cash - $data['redeemed_amount'] + $data['cashback_earned'];
+        $data['check_amount_pos'] = $data['total_bill_amount'];
         $wallet_transaction->fill($data);
         $wallet_transaction->save();
 
@@ -992,7 +993,7 @@ class RestaurantAuthenticationController extends ResponseController
             $email_type = 0;
             if($admin_transaction_notification->push_type == 1){
                 if($admin_cashback_notification->push_type == 1){
-                    $message_text ="Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. ".$admin_cashback_notification->message;
+                    $message_text ="Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
                 }else{
                     $message_text = $admin_transaction_notification->message;
                 }
@@ -1000,14 +1001,13 @@ class RestaurantAuthenticationController extends ResponseController
                 $push_type = 1;
             }elseif($admin_cashback_notification->push_type == 1){
                 if($admin_transaction_notification->push_type == 1){
-                    $message_text ="Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. ".$admin_cashback_notification->message;
+                    $message_text ="Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
                 }else{
                     $message_text = $admin_cashback_notification->message;
                 }
 
                 $push_type = 1;
             }
-
             if($push_type == 1){
                 if($user_find->device_type == 'Android'){
                     if($user_find->device_token && strlen($user_find->device_token) > 20){
@@ -1076,7 +1076,7 @@ class RestaurantAuthenticationController extends ResponseController
 
             if($admin_transaction_notification->sms_type == 1){
                 if($admin_cashback_notification->sms_type == 1){
-                    $message_text ="Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. ".$admin_cashback_notification->message;
+                    $message_text ="Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
                 }else{
                     $message_text = $admin_transaction_notification->message;
                 }
@@ -1084,7 +1084,7 @@ class RestaurantAuthenticationController extends ResponseController
                 $sms_type = 1;
             }elseif($admin_cashback_notification->sms_type == 1){
                 if($admin_transaction_notification->sms_type == 1){
-                    $message_text ="Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. ".$admin_cashback_notification->message;
+                    $message_text ="Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
                 }else{
                     $message_text = $admin_cashback_notification->message;
                 }
@@ -1105,7 +1105,7 @@ class RestaurantAuthenticationController extends ResponseController
 
             if($admin_transaction_notification->email_type == 1){
                 if($admin_cashback_notification->email_type == 1){
-                    $message_text ="Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. ".$admin_cashback_notification->message;
+                    $message_text ="Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
                 }else{
                     $message_text = $admin_transaction_notification->message;
                 }
@@ -1113,7 +1113,7 @@ class RestaurantAuthenticationController extends ResponseController
                 $email_type = 1;
             }elseif($admin_cashback_notification->email_type == 1){
                 if($admin_transaction_notification->email_type == 1){
-                    $message_text ="Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. ".$admin_cashback_notification->message;
+                    $message_text ="Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
                 }else{
                     $message_text = $admin_cashback_notification->message;
                 }

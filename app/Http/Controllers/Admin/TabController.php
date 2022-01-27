@@ -1913,8 +1913,8 @@ class TabController extends ResponseController
             $assign_badge_find = AssignBadge::whereId($assign_badge->id)->with('user','badge')->first();
             $find_assign_badge = AssignBadge::whereId($assign_badge->id)->first();
 
-            // $assign_badge_mail = (new UserAssignBadgeJob($find_assign_badge, $find_user, $find_badge))->delay(Carbon::now()->addSeconds(3));
-            // dispatch($assign_badge_mail);
+            $assign_badge_mail = (new UserAssignBadgeJob($find_assign_badge, $find_user, $find_badge))->delay(Carbon::now()->addSeconds(3));
+            dispatch($assign_badge_mail);
 
             // if($admin_cashback_notification_find->push_type == 1){
 

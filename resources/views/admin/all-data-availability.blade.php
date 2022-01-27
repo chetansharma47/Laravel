@@ -1638,7 +1638,6 @@ selected_customer_wallet_transactions();
 			});
 
 
-
 			$("#activate_user").on("click",function(){
 				let ids = $("#selected_checkboxes").val();
 				if(ids == "" || ids == null || ids == "undefiend"){

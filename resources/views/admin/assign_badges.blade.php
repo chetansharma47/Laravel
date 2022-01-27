@@ -288,7 +288,7 @@ table#basic-datatables {
 	</header>
 	<section class="mt-3" style="overflow: hidden;">
 
-		<input type="hidden" class="days" value="">
+		<input type="hidden" class="days w-75" value="">
 
 		<div class="container-fluid font-size-small">
 			<div class="row">
@@ -808,6 +808,8 @@ table#basic-datatables {
 	    function tdClick1(){
 			$(".td_click1").on("dblclick",function(){
 				$("#exampleFormControlSelect1").attr("disabled","true");
+				$(".days").val('');
+				$('.checkbox_click').prop('checked',false);
 				let customer_id = $(this).parent().find(".td_click1[key_type='customer_id']").text();
 				let assign_id = $(this).parent().find(".td_click1[key_type='badge_name']").attr("data-id");
 
@@ -838,8 +840,10 @@ table#basic-datatables {
 				          		$("#exampleFormControlSelect1").val(badge.badge_id);
 
 				          		let day_on = badge.when_day;
+				          		console.log(day_on);
 
 								let split_day_on = day_on.split(",");
+								// console.lo
 							   	split_day_on = split_day_on.filter(function (el) {
 							   		if(el == ""){
 							   			return el != "";
@@ -994,12 +998,12 @@ table#basic-datatables {
 	  					return false;
 	  				}
 
-	  				if(comment == ""){
-	  					$("#alert_text").text("Please enter comment.");
-	  					$("#validationModel").modal("show");
-	  					$("#validationModel").unbind("click");
-	  					return false;
-	  				}
+	  				// if(comment == ""){
+	  				// 	$("#alert_text").text("Please enter comment.");
+	  				// 	$("#validationModel").modal("show");
+	  				// 	$("#validationModel").unbind("click");
+	  				// 	return false;
+	  				// }
 
 	  				if(status == ""){
 	  					$("#alert_text").text("Please select status.");
@@ -1252,12 +1256,12 @@ table#basic-datatables {
 	  					return false;
 	  				}
 
-	  				if(comment == ""){
-	  					$("#alert_text").text("Please enter comment.");
-	  					$("#validationModel").modal("show");
-	  					$("#validationModel").unbind("click");
-	  					return false;
-	  				}
+	  				// if(comment == ""){
+	  				// 	$("#alert_text").text("Please enter comment.");
+	  				// 	$("#validationModel").modal("show");
+	  				// 	$("#validationModel").unbind("click");
+	  				// 	return false;
+	  				// }
 
 	  				if(status == ""){
 	  					$("#alert_text").text("Please select status.");
