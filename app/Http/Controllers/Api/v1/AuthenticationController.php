@@ -468,7 +468,7 @@ class AuthenticationController extends ResponseController
                     ->whereRaw("FIND_IN_SET(?, when_day) > 0", $today_days)
                     ->whereDate('from_date', '<=', Carbon::now()->toDateString())
                     ->whereDate('to_date','>=', Carbon::now()->toDateString())
-                    ->orderBy('created_at','desc')
+                    ->orderBy('updated_at','desc')
                     ->get();
 
         if(!empty($venue)){
@@ -492,7 +492,7 @@ class AuthenticationController extends ResponseController
                     ->whereDate('to_date','>=', Carbon::now()->toDateString())
                     //->whereIn("id", $event_notification_ids)
                     ->with('venu')
-                    ->orderBy('created_at','desc')
+                    ->orderBy('updated_at','desc')
                     ->get();
 
         return $this->responseOk('Event Listing', ['event_listing' => $events]);
@@ -580,8 +580,9 @@ class AuthenticationController extends ResponseController
 
         $offers = Offer::whereIn("id",$collect)
                     ->with('offerSetting','venu')
-                    ->orderBy('to_date','asc')
-                    ->orderBy('to_time','asc')
+                    ->orderBy('updated_at','desc')
+                    // ->orderBy('to_date','asc')
+                    // ->orderBy('to_time','asc')
                     ->get();
         
 
@@ -636,7 +637,7 @@ class AuthenticationController extends ResponseController
         $events = Event::where(function($query) use ($user,$today_date, $active_venue_ids, $today_days, $event_notification_ids){
                         $query->whereDeletedAt(null);
                         $query->whereStatus('Active');
-                        //$query->whereDate('from_date', '<=', $today_date->toDateString());
+                        $query->whereDate('from_date', '<=', $today_date->toDateString());
                         $query->whereDate('to_date','>=', $today_date->toDateString());
                         $query->whereIn('venu_id', $active_venue_ids);
                         $query->whereRaw("FIND_IN_SET(?, when_day) > 0", $today_days);
@@ -675,7 +676,7 @@ class AuthenticationController extends ResponseController
                         $query->whereIn('venu_id', $active_venue_ids);
                         $query->whereRaw("FIND_IN_SET(?, when_day) > 0", $today_days);
                         //$query->whereIn("id", $event_notification_ids);
-                    })->with('venu')->orderBy('created_at','desc')->get();
+                    })->with('venu')->orderBy('updated_at','desc')->get();
 
         $promotion = Cashback::where(function($query) use ($user,$today_date, $active_venue_ids, $today_days){
                         $query->whereDeletedAt(null);
@@ -684,7 +685,7 @@ class AuthenticationController extends ResponseController
                         $query->whereDate('to_date','>=', $today_date->toDateString());
                         $query->whereIn('venu_id', $active_venue_ids);
                         $query->whereRaw("FIND_IN_SET(?, day_on) > 0", $today_days);
-                    })->with('venu')->orderBy('created_at','desc')->get();
+                    })->with('venu')->orderBy('updated_at','desc')->get();
 
         $collect = collect($events)->merge($promotion);
 

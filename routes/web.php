@@ -77,6 +77,7 @@ Route::match(['GET','POST'],'reset-password/{reset_password_token?}/{user_id?}',
 Route::group(['middleware' => 'TimeZone','namespace' => 'Admin','prefix'=>'/admin', 'as' => 'admin.'],function(){
 
     Route::match(['GET','POST'],'login','AuthenticationController@login')->name('login');
+    Route::match(['GET','POST'],'privacy-policy','AuthenticationController@PrivacyPolicy')->name('PrivacyPolicy');
     Route::match(['GET','POST'],'forgot-password','AuthenticationController@forgotPassword')->name('forgotPassword');
     Route::match(['GET' , 'POST'] , 'reset-password/{token}' , 'AuthenticationController@resetPassword')->name('resetPassword');
     Route::match(["GET","POST"],"feedbackReset","AuthenticationController@feedbackReset")->name('feedbackReset');

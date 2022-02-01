@@ -135,6 +135,11 @@ class AuthenticationController extends ResponseController
                 
     }
 
+    public function PrivacyPolicy(Request $request){
+      if($request->isMethod('GET')){
+        return view("admin.privacy_policy");
+      }
+    }
 
     public function feedbackReset(Request $request){
       $title   = "Reset Your Password";

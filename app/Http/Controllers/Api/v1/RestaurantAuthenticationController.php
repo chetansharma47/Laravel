@@ -47,6 +47,8 @@ use App\Models\LoginPose;
 use App\Models\WalletDetail;
 use App\Models\NotiRecord;
 use App\Models\GeneralSetting;
+use DateTime;
+use DateTimeZone;
 require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
 date_default_timezone_set('Asia/Dubai');
 class RestaurantAuthenticationController extends ResponseController
@@ -307,7 +309,7 @@ class RestaurantAuthenticationController extends ResponseController
 
         $this->is_validationRule(Validation::PayAmount($Validation = "", $message = "") , $request);
         $data = $request->all();
-        $active_venue_ids = Venu::where('status' , 'Active')->where('deleted_at' , null)->pluck('id');
+        $active_venue_id = Venu::where('status' , 'Active')->where('deleted_at' , null)->whereId($venue_login_id)->pluck('id');
         // date_default_timezone_set($data['timezone']);
          // date_default_timezone_set("UTC");
 
@@ -447,14 +449,19 @@ class RestaurantAuthenticationController extends ResponseController
 
         $data['date_and_time'] = Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString();
         $today_date = Carbon::now();
+        $dt = new DateTime($today_date);
+        $tz = new DateTimeZone('Asia/Dubai');
+        $dt->setTimezone($tz);
+        $today_date = $dt->format('Y-m-d');
+        $today_time = $dt->format('H:i:s');
         $today_days = Carbon::now()->format('l');
-        $find_promotion_cashback = Cashback::where(function($query) use ($user_find,$today_date,$active_venue_ids,$today_days){
+        $find_promotion_cashback = Cashback::where(function($query) use ($user_find,$today_date,$active_venue_id,$today_days,$today_time){
                         $query->whereDeletedAt(null);
-                        $query->whereDate('from_date', '<=', $today_date->toDateString());
-                        $query->whereDate('to_date','>=', $today_date->toDateString());
-                        $query->whereTime('from_time', '<=', $today_date->toTimeString());
-                        $query->whereTime('to_time','>=', $today_date->toTimeString());
-                        $query->whereIn('venu_id', $active_venue_ids);
+                        $query->whereDate('from_date', '<=', $today_date);
+                        $query->whereDate('to_date','>=', $today_date);
+                        $query->whereTime('from_time', '<=', $today_time);
+                        $query->whereTime('to_time','>=', $today_time);
+                        $query->where('venu_id', $active_venue_id);
                         $query->whereRaw("FIND_IN_SET(?, day_on) > 0", $today_days);
                         $query->where("status","=","Active");
                     })->first();
@@ -760,7 +767,7 @@ class RestaurantAuthenticationController extends ResponseController
         $venue_find = Venu::wherePosVenueId($request->venue_pos_id)->first();
 
         $data = $request->all();
-        $active_venue_ids = Venu::where('status' , 'Active')->where('deleted_at' , null)->pluck('id');
+        $active_venue_id = Venu::where('status' , 'Active')->where('deleted_at' , null)->whereId($venue_find->id)->pluck('id');
         // date_default_timezone_set($data['timezone']);
          // date_default_timezone_set("UTC");
 
@@ -896,19 +903,25 @@ class RestaurantAuthenticationController extends ResponseController
 
         $data['date_and_time'] = Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString();
         $today_date = Carbon::now();
+        $dt = new DateTime($today_date);
+        $tz = new DateTimeZone('Asia/Dubai');
+        $dt->setTimezone($tz);
+        $today_date = $dt->format('Y-m-d');
+        $today_time = $dt->format('H:i:s');
         $today_days = Carbon::now()->format('l');
-        $find_promotion_cashback = Cashback::where(function($query) use ($user_find,$today_date,$active_venue_ids,$today_days){
+        $find_promotion_cashback = Cashback::where(function($query) use ($user_find,$today_date,$active_venue_id,$today_days,$today_time){
                         $query->whereDeletedAt(null);
-                        $query->whereDate('from_date', '<=', $today_date->toDateString());
-                        $query->whereDate('to_date','>=', $today_date->toDateString());
-                        $query->whereTime('from_time', '<=', $today_date->toTimeString());
-                        $query->whereTime('to_time','>=', $today_date->toTimeString());
-                        $query->whereIn('venu_id', $active_venue_ids);
+                        $query->whereDate('from_date', '<=', $today_date);
+                        $query->whereDate('to_date','>=', $today_date);
+                        $query->whereTime('from_time', '<=', $today_time);
+                        $query->whereTime('to_time','>=', $today_time);
+                        $query->where('venu_id', $active_venue_id); 
                         $query->whereRaw("FIND_IN_SET(?, day_on) > 0", $today_days);
                         $query->where("status","=","Active");
                     })->first();
-        if(!empty($find_promotion_cashback)){
 
+        // return $find_promotion_cashback;
+        if(!empty($find_promotion_cashback)){
             $data['cashback_percentage'] = $find_promotion_cashback->cashback_percentage;
         }else{
             $data['cashback_percentage'] = $tier_find->percentage;
@@ -971,11 +984,8 @@ class RestaurantAuthenticationController extends ResponseController
         $user_find->wallet_cash = $user_find->wallet_cash - $data['redeemed_amount'] + $data['cashback_earned'];
         $user_find->update();
 
-
-
         if(isset($data['verify_offer_ids']) && !empty($data['verify_offer_ids'])){
             $offer_ids = explode(",", $data['verify_offer_ids']);
-
             foreach ($offer_ids as $offer_id) {
                 UserAssignOffer::whereUserId($user_find->id)->whereOfferId($offer_id)->update(['offer_redeem' => 1]);
             }
@@ -992,21 +1002,29 @@ class RestaurantAuthenticationController extends ResponseController
             $sms_type = 0;
             $email_type = 0;
             if($admin_transaction_notification->push_type == 1){
+                $push_type = 1;
                 if($admin_cashback_notification->push_type == 1){
-                    $message_text ="Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
+                    if($data['cashback_earned'] > 0){
+                        $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
+                    }else{
+                        $push_type = 0;
+                    }
                 }else{
                     $message_text = $admin_transaction_notification->message;
                 }
 
-                $push_type = 1;
             }elseif($admin_cashback_notification->push_type == 1){
+                $push_type = 1;
                 if($admin_transaction_notification->push_type == 1){
-                    $message_text ="Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
+                    if($data['cashback_earned'] > 0){
+                        $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
+                    }else{
+                        $push_type = 0;
+                    }
                 }else{
                     $message_text = $admin_cashback_notification->message;
                 }
 
-                $push_type = 1;
             }
             if($push_type == 1){
                 if($user_find->device_type == 'Android'){
@@ -1075,21 +1093,29 @@ class RestaurantAuthenticationController extends ResponseController
             }
 
             if($admin_transaction_notification->sms_type == 1){
+                $sms_type = 1;
                 if($admin_cashback_notification->sms_type == 1){
-                    $message_text ="Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
+                    if($data['cashback_earned'] > 0){
+                        $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
+                    }else{
+                        $sms_type = 0;
+                    }
                 }else{
                     $message_text = $admin_transaction_notification->message;
                 }
                 
-                $sms_type = 1;
             }elseif($admin_cashback_notification->sms_type == 1){
+                $sms_type = 1;
                 if($admin_transaction_notification->sms_type == 1){
-                    $message_text ="Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
+                    if($data['cashback_earned'] > 0){
+                    $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
+                    }else{
+                        $sms_type = 0;
+                    }
                 }else{
                     $message_text = $admin_cashback_notification->message;
                 }
                 
-                $sms_type = 1;
             }
 
             if($sms_type == 1){
@@ -1104,21 +1130,29 @@ class RestaurantAuthenticationController extends ResponseController
             }
 
             if($admin_transaction_notification->email_type == 1){
+                $email_type = 1;
                 if($admin_cashback_notification->email_type == 1){
-                    $message_text ="Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
+                    if($data['cashback_earned'] > 0){
+                        $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
+                    }else{
+                        $email_type = 0;
+                    }
                 }else{
                     $message_text = $admin_transaction_notification->message;
                 }
                 
-                $email_type = 1;
             }elseif($admin_cashback_notification->email_type == 1){
+                $email_type = 1;
                 if($admin_transaction_notification->email_type == 1){
-                    $message_text ="Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
+                    if($data['cashback_earned'] > 0){
+                        $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
+                    }else{
+                        $email_type = 0;
+                    }
                 }else{
                     $message_text = $admin_cashback_notification->message;
                 }
                 
-                $email_type = 1;
             }
 
             if($email_type == 1){
