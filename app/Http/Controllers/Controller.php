@@ -422,8 +422,8 @@ class Controller extends BaseController
         $apns_topic     = 'com.captial.motion.user';
 
         $sample_alert = json_encode($body);
-        $url = "https://api.development.push.apple.com/3/device/$deviceToken"; //development
-        //$url = "https://api.push.apple.com/3/device/$deviceToken"; //production
+        // $url = "https://api.development.push.apple.com/3/device/$deviceToken"; //development
+        $url = "https://api.push.apple.com/3/device/$deviceToken"; //production
 
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $sample_alert);
