@@ -744,7 +744,7 @@ class RestaurantAuthenticationController extends ResponseController
         return $this->responseOk("User Data",['user_data' => $user]);
     }
 
-    public function posPayBill(Request $request){
+   public function posPayBill(Request $request){
 
         $find_pos = LoginPose::wherePassword($request->password)->first();
 
@@ -784,9 +784,9 @@ class RestaurantAuthenticationController extends ResponseController
 
         if(isset($data['redeemed_amount'])){
 
-            if($data['redeemed_amount'] > $data['total_bill_amount']){
-                return $this->responseWithErrorCode("Bill amount should be greater than or equal to redeem amount.",406);
-            }
+            // if($data['redeemed_amount'] > $data['total_bill_amount']){
+            //     return $this->responseWithErrorCode("Bill amount should be greater than or equal to redeem amount.",406);
+            // }
             if($user_find->wallet_cash < $data['redeemed_amount']){
                 return $this->responseWithErrorCode("Redeem amount should be less than or equal to wallet amount.",406);
             }
@@ -984,12 +984,14 @@ class RestaurantAuthenticationController extends ResponseController
         $user_find->wallet_cash = $user_find->wallet_cash - $data['redeemed_amount'] + $data['cashback_earned'];
         $user_find->update();
 
-        if(isset($data['verify_offer_ids']) && !empty($data['verify_offer_ids'])){
-            $offer_ids = explode(",", $data['verify_offer_ids']);
-            foreach ($offer_ids as $offer_id) {
-                UserAssignOffer::whereUserId($user_find->id)->whereOfferId($offer_id)->update(['offer_redeem' => 1]);
-            }
+        if(isset($data['offer_product_ids']) && !empty($data['offer_product_ids'])){
+            // $offer_ids = explode(",", $data['verify_offer_ids']);
+            // foreach ($offer_ids as $offer_id) {
+                UserAssignOffer::whereUserId($user_find->id)->whereOfferId($data['offer_product_ids'])->update(['offer_redeem' => 1]);
+            // }
         }
+        // return UserAssignOffer::whereUserId($user_find->id)->whereOfferId($data['offer_product_ids'])->get();
+
 
         $admin_transaction_notification = AdminNotification::where("uniq_id","=",1)->first();
         $admin_refer_notification = AdminNotification::where("uniq_id","=",4)->first();
