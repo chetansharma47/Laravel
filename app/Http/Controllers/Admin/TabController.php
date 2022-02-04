@@ -3418,7 +3418,7 @@ class TabController extends ResponseController
 
                                 }else{
                                     $wallet_txn->is_cross_verify = 2;
-                                    $wallet_txn->check_amount_pos = $val['check_total'];
+                                    $wallet_txn->check_amount_pos = $val['check_amount'];
                                     $wallet_txn->updated_by = $admin_user->name;
                                     $wallet_txn->update();
                                 } 
