@@ -99,7 +99,6 @@ class RestaurantAuthenticationController extends ResponseController
 
     public function getUserData(Request $request){
 
-
         $token = $_SERVER['HTTP_TOKEN'];
         $login_user = VenueUser::whereAccessToken($token)->first();
         $venue_login_id = $request->venue_login_id; 
@@ -107,54 +106,59 @@ class RestaurantAuthenticationController extends ResponseController
         $this->is_validationRule(Validation::getUserDataValidation($Validation = "", $message = "") , $request);
         $timezone = $request->timezone;
         $user = User::whereId($request->user_id)->first();
-        $tier = TierCondition::whereTierName($user->customer_tier)->orderBy('id','desc')->first();
-        $user->tier = $tier;
+        if(!empty($user)){
+            $tier = TierCondition::whereTierName($user->customer_tier)->orderBy('id','desc')->first();
+            $user->tier = $tier;
 
-        $assign_user_venues = AssignUserVenue::whereVenueUserId($login_user->id)->pluck('venu_id');
+            $assign_user_venues = AssignUserVenue::whereVenueUserId($login_user->id)->pluck('venu_id');
 
-        $user_assign_offers = UserAssignOffer::whereUserId($user->id)->whereOfferRedeem(0)->pluck('offer_id');
+            $user_assign_offers = UserAssignOffer::whereUserId($user->id)->whereOfferRedeem(0)->pluck('offer_id');
 
-        $active_venue_ids = Venu::where('status' , 'Active')->where('deleted_at' , null)->whereIn("id", $assign_user_venues)->whereId($venue_login_id)->pluck('id');
+            $active_venue_ids = Venu::where('status' , 'Active')->where('deleted_at' , null)->whereIn("id", $assign_user_venues)->whereId($venue_login_id)->pluck('id');
 
-        $offers = Offer::where(function($query) use ($user_assign_offers, $active_venue_ids){
-                $query->whereDeletedAt(null);
-                $query->whereStatus('Active');
-                $query->whereIn('id',$user_assign_offers);
-                $query->whereDate('to_date','>=',Carbon::now()->toDateString());
-                $query->whereIn('venu_id', $active_venue_ids);
+            $offers = Offer::where(function($query) use ($user_assign_offers, $active_venue_ids){
+                    $query->whereDeletedAt(null);
+                    $query->whereStatus('Active');
+                    $query->whereIn('id',$user_assign_offers);
+                    $query->whereDate('to_date','>=',Carbon::now()->toDateString());
+                    $query->whereIn('venu_id', $active_venue_ids);
 
-            })->orWhere(function($query) use ($user_assign_offers, $active_venue_ids){
-                $query->whereDeletedAt(null);
-                $query->whereStatus('Active');
-                $query->whereIn('id',$user_assign_offers);
-                $query->where('offer_type','=','BirthdayOffer');
-                $query->whereIn('venu_id', $active_venue_ids);
-            })
-            ->with('offerSetting','venu')
-            ->get();
+                })->orWhere(function($query) use ($user_assign_offers, $active_venue_ids){
+                    $query->whereDeletedAt(null);
+                    $query->whereStatus('Active');
+                    $query->whereIn('id',$user_assign_offers);
+                    $query->where('offer_type','=','BirthdayOffer');
+                    $query->whereIn('venu_id', $active_venue_ids);
+                })
+                ->with('offerSetting','venu')
+                ->get();
 
-        $user->offers = $offers;
+            $user->offers = $offers;
 
 
-        date_default_timezone_set($timezone);
-        $today_days = Carbon::now()->format('l');
+            date_default_timezone_set($timezone);
+            $today_days = Carbon::now()->format('l');
 
-        $active_badges = Badge::whereDeletedAt(null)->whereStatus('Active')->pluck('id');
+            $active_badges = Badge::whereDeletedAt(null)->whereStatus('Active')->pluck('id');
 
-        $user_assign_badge = AssignBadge::whereUserId($user->id)->whereDeletedAt(null)->whereStatus('Active')->whereDate('to_date','>=',Carbon::now()->toDateString())->whereDate('from_date','<=',Carbon::now()->toDateString())->whereRaw("FIND_IN_SET(?, when_day) > 0", $today_days)->whereIn('badge_id', $active_badges)->with('badge')->get();
-        $user->badges = $user_assign_badge;
-        $now_time = Carbon::now();
-        $time_after_10mins = Carbon::now()->addMinutes(10);
+            $user_assign_badge = AssignBadge::whereUserId($user->id)->whereDeletedAt(null)->whereStatus('Active')->whereDate('to_date','>=',Carbon::now()->toDateString())->whereDate('from_date','<=',Carbon::now()->toDateString())->whereRaw("FIND_IN_SET(?, when_day) > 0", $today_days)->whereIn('badge_id', $active_badges)->with('badge')->get();
+            $user->badges = $user_assign_badge;
+            $now_time = Carbon::now();
+            $time_after_10mins = Carbon::now()->addMinutes(10);
 
-        $find_venue_timeout_time = GeneralSetting::whereUniqId(16)->first();
+            $find_venue_timeout_time = GeneralSetting::whereUniqId(16)->first();
 
-        if(!empty($find_venue_timeout_time)){
-            $user->valid_time = (string)$find_venue_timeout_time->setting_content;
+            if(!empty($find_venue_timeout_time)){
+                $user->valid_time = (string)$find_venue_timeout_time->setting_content;
+            }else{
+
+                $user->valid_time = (string)$now_time->diffInSeconds($time_after_10mins);   //10 min = 600 secs 
+            }
+            return $this->responseOk("User Data",['user_data' => $user]);
+
         }else{
-
-            $user->valid_time = (string)$now_time->diffInSeconds($time_after_10mins);   //10 min = 600 secs 
+            return $this->responseWithErrorCode("Customer not found.",406);
         }
-        return $this->responseOk("User Data",['user_data' => $user]);
     }
 
     public function searchUserData(Request $request){

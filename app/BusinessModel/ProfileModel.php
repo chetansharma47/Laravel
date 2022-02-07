@@ -268,7 +268,8 @@ class ProfileModel extends Model
         $imageName = date('mdYHis') . rand(10,100) . uniqid().'.png';
         $destinationPath = storage_path('app/public/bar_code').'/'.$imageName;
 
-        file_put_contents($destinationPath, $generator->getBarcode((string)$save_user->id.",cp", $generator::TYPE_CODE_128));
+        // file_put_contents($destinationPath, $generator->getBarcode((string)$save_user->id.",cp", $generator::TYPE_CODE_128));
+        file_put_contents($destinationPath, $generator->getBarcode((string)$save_user->customer_id, $generator::TYPE_CODE_128));
 
 
         //QR CODE
