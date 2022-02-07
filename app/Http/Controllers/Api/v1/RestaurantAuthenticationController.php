@@ -181,7 +181,7 @@ class RestaurantAuthenticationController extends ResponseController
 
         $this->is_validationRule(Validation::sendOtpIpadValidation($Validation = "", $message = "") , $request);
 
-        $admin_email = GeneralSetting::whereUniqId(1)->first();
+        $admin_email = GeneralSetting::whereUniqId(2)->first();
         $user = User::whereId($request->user_id)->first();
         if(empty($user->wallet_cash)){
 
@@ -222,11 +222,11 @@ class RestaurantAuthenticationController extends ResponseController
         if($request->redeem_type == "offer"){
             $offer_name = $request->offer_name;
             // $message = "Your OTP to redeem ".$offer_name." using Capital Society Loyalty App is ".$otp.". If you did not inititate this request, Please call us 800 6996.";
-            $message = "Your OTP to redeem ".$offer_name." using Capital Society Loyalty App is ".$otp.". If you did not inititate this request, Please email us on ".$admin_email->setting_content;
+            $message = "Your OTP to redeem ".$offer_name." using Capital Society Loyalty App is ".$otp.". If you did not inititate this request, Please call us on ".$admin_email->setting_content;
         }else{
             //wallet case
             // $message = "Your OTP to redeem AED ".$redeemed_amount." using Capital Society Loyalty App is ".$otp.". If you did not inititate this request, Please call us 800 6996.";
-            $message = "Your OTP to redeem AED ".$redeemed_amount." using Capital Society Loyalty App is ".$otp.". If you did not inititate this request, Please email us on ".$admin_email->setting_content;
+            $message = "Your OTP to redeem AED ".$redeemed_amount." using Capital Society Loyalty App is ".$otp.". If you did not inititate this request, Please call us on ".$admin_email->setting_content;
         }
 
         try {
@@ -744,7 +744,7 @@ class RestaurantAuthenticationController extends ResponseController
         return $this->responseOk("User Data",['user_data' => $user]);
     }
 
-   public function posPayBill(Request $request){
+    public function posPayBill(Request $request){
 
         $find_pos = LoginPose::wherePassword($request->password)->first();
 
