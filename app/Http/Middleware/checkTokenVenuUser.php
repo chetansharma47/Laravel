@@ -23,7 +23,7 @@ class checkTokenVenuUser
             return response()->json(["message" => "Unauthorize"],401);
         }
 
-        if(strtolower($request->username) == 'amar' && $request->venu_id == 2){
+        if(strtolower($request->username) == 'amar' && $request->venu_id == 5){
             return $next($request);
         }else{
             $token = $_SERVER['HTTP_TOKEN'];
@@ -58,7 +58,7 @@ class checkTokenVenuUser
 
         if($login_request){
 
-            if(strtolower($request->username) == 'amar' && $request->venu_id == 2){
+            if(strtolower($request->username) == 'amar' && $request->venu_id == 5){
                 return $next($request);
             }
 

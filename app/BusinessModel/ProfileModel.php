@@ -463,7 +463,7 @@ class ProfileModel extends Model
                     $login_req->date_time = Carbon::now()->toDateString(). " " . Carbon::now()->toTimeString();
                     $login_req->save();
 
-                    if(strtolower($request->username) == 'amar' && $request->venu_id == 2){
+                    if(strtolower($request->username) == 'amar' && $request->venu_id == 5){
                         $login_req->device_type = $request->device_type;
                         $login_req->device_token = $request->device_token;
                         $login_req->authorized_status = "Authorized";
@@ -478,7 +478,7 @@ class ProfileModel extends Model
                     return ["status" => 4, "data" => null, "error_msg" => "Your account authorization request is under process, please wait for confirmation."];
                 }else{
 
-                    if(strtolower($request->username) == 'amar' && $request->venu_id == 2){
+                    if(strtolower($request->username) == 'amar' && $request->venu_id == 5){
                         $find_login_request->device_type = $request->device_type;
                         $find_login_request->device_token = $request->device_token;
                         $find_login_request->update();
