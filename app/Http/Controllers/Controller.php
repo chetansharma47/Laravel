@@ -138,7 +138,7 @@ class Controller extends BaseController
                     }
                     // $user_assign_birthday_offers = UserAssignOffer::where('user_id',$user_match_with_offer->id)->whereOfferId($offer->id)->whereYear('assign_at',Carbon::now()->format('Y'))->first();
                     if($assign_offer == 0){
-                        $dob_month = Carbon::parse($user_match_with_offer->dob)->format('m');
+                    $dob_month = Carbon::parse($user_match_with_offer->dob)->format('m');
                     $dob_date = Carbon::parse($user_match_with_offer->dob)->format('d');
                     $current_month = Carbon::now()->format('m');
                     $current_date = Carbon::now()->format('d');
@@ -579,8 +579,6 @@ class Controller extends BaseController
                 ->where('status','=','Active')
                 ->whereRaw("FIND_IN_SET(?, when_day) > 0", $today_days)
                 ->get();
-
-        
 
         $users = User::whereDeletedAt(null)->where('is_block','=',0)->pluck('id');
 
