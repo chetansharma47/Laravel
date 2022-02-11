@@ -1954,8 +1954,6 @@ class TabController extends ResponseController
                             'user_id'   => $find_user->id,
                             'message'   => $message,
                             'noti_type' => 8,
-                            'created_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString(),
-                            'updated_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString(),
                         ];
                         AdminCriteriaNotification::create($criteria_data);
                    
@@ -1990,8 +1988,6 @@ class TabController extends ResponseController
                             'user_id'   => $find_user->id,
                             'message'   => $message,
                             'noti_type' => 8,
-                            'created_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString(),
-                            'updated_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString(),
                         ];
                         AdminCriteriaNotification::create($criteria_data);
                     
@@ -2978,6 +2974,7 @@ class TabController extends ResponseController
         ->where('wallet_transactions.is_cross_verify','!=',1)
         ->where('wallet_transactions.is_cross_verify','!=',3)
         ->where('wallet_transactions.deleted_at','=',null)
+        // ->where('wallet_transactions.check_amount_pos','!=',0)
         ->with('offerProductIds')->orderBy($column,$asc_desc);
 
         $total = $data->count();

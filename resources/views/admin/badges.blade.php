@@ -610,6 +610,18 @@
 				return false;
 			}
 
+			// if(badge_name.length > 1 && badge_name.length < 4 ){
+			// 	var new_value = badge_name.trim();
+			// 	if(new_value.length < 2){
+			// 		$("#alert_text").text("Badge name should be at least 2 characters long.");
+			// 		$("#validationModel").modal("show");
+			// 		$("#validationModel").unbind("click");
+			// 		return false;
+			// 	}
+			// }
+
+
+
 			if(badge_image_src == ''){
 				$("#alert_text").text("Please upload badge image.");
 				$("#validationModel").modal("show");
@@ -1287,7 +1299,7 @@
     $(document).ready(function(){
       $(".form-control").on("keyup",function(){
         var length = $.trim($(this).val()).length;
-        console.log(length)
+        // console.log(length)
         if(length == 0){
            $(this).val("");
         }else{
@@ -1298,7 +1310,7 @@
 
       	$(document).on("keyup",".td_edit[key_type='badge_name']",function(e){
 		 	var length = $.trim($(this).text()).length;
-	        console.log(length)
+	        // console.log(length)
 	        if(length == 0){
 	           $(this).text("");
 	        }else{

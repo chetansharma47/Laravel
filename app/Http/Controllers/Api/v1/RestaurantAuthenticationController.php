@@ -330,9 +330,9 @@ class RestaurantAuthenticationController extends ResponseController
 
         if(isset($data['redeemed_amount'])){
 
-            if($data['redeemed_amount'] > $data['total_bill_amount']){
-                return $this->responseWithErrorCode("Bill amount should be greater than or equal to redeem amount.",406);
-            }
+            // if($data['redeemed_amount'] > $data['total_bill_amount']){
+            //     return $this->responseWithErrorCode("Bill amount should be greater than or equal to redeem amount.",406);
+            // }
             if($user_find->wallet_cash < $data['redeemed_amount']){
                 return $this->responseWithErrorCode("Redeem amount should be less than or equal to wallet amount.",406);
             }
@@ -947,7 +947,17 @@ class RestaurantAuthenticationController extends ResponseController
         if(!empty($data['verify_offer_ids'])){
             $find_offer_id =  Offer::wherePosProductId($data['verify_offer_ids'])->first();
             if($find_offer_id){
-                $data['offer_product_ids'] = $find_offer_id->id;
+                $user_assign_offer = UserAssignOffer::whereUserId($user_find->id)->whereOfferId($find_offer_id->id)->whereOfferRedeem(0)->first();
+
+                if($user_assign_offer){
+                    $user_assign_offer->offer_redeem = 1;
+                    $user_assign_offer->update();
+                    $data['offer_product_ids'] = $find_offer_id->id;
+                }else{
+                    return $this->responseWithErrorCode("Offer not applicable for you.",406);
+                }
+
+
             }
         }
         
