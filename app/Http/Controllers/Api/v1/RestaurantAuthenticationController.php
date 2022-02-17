@@ -105,7 +105,12 @@ class RestaurantAuthenticationController extends ResponseController
 
         $this->is_validationRule(Validation::getUserDataValidation($Validation = "", $message = "") , $request);
         $timezone = $request->timezone;
-        $user = User::whereId($request->user_id)->first();
+        // $user = User::whereId($request->user_id)->first();
+        $user = User::whereCustomerId($request->user_id)
+                ->orWhere(function($query) use ($request){
+                    $query->where(DB::raw("CONCAT(users.country_code,users.mobile_number)"),'=',"+".$request->user_id);
+                })->first();
+                
         if(!empty($user)){
             $tier = TierCondition::whereTierName($user->customer_tier)->orderBy('id','desc')->first();
             $user->tier = $tier;
