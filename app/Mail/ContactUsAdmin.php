@@ -34,7 +34,7 @@ class ContactUsAdmin extends Mailable
         // return $this->view('view.name');
         $general_setting = GeneralSetting::all();
         return $this->from(env('MAIL_USERNAME'), 'Capital Motion')
-        ->subject('Contact Us')
+        ->subject('Support Request ['.ucfirst($this->user->first_name).' '.ucfirst($this->user->last_name).' '.$this->user->mobile_number.']')
         ->view('admin.email.admin-contact-us')
         ->with([
             'user'   => $this->user,

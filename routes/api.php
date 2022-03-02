@@ -25,6 +25,8 @@ Route::get('assign-badges-email-cron-job','Controller@AssignBadgesEmailCronJob')
   
 Route::group(['namespace' => 'Api\v1','prefix'=>'v1'], function() {
 
+
+    Route::post('check-admin-exist','AuthenticationController@CheckAdminExist');
     Route::post('send-otp','AuthenticationController@sendOTP');
     Route::post('verify-otp','AuthenticationController@verifyOTP');
     Route::post('register', 'AuthenticationController@register');
@@ -33,6 +35,9 @@ Route::group(['namespace' => 'Api\v1','prefix'=>'v1'], function() {
     Route::post('forgot-password','AuthenticationController@forgotPassword');
     Route::get('application-data','AuthenticationController@applicationData');
     Route::get('city-listing','AuthenticationController@cityListing');
+
+    Route::get('back-all-users','AuthenticationController@BackAllUsers');
+    Route::post('edit-back-all-users','AuthenticationController@EditBackAllUsers');
 
     Route::get('content-managment','AuthenticationController@contentManagment');
 

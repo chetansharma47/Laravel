@@ -238,11 +238,11 @@ class RestaurantAuthenticationController extends ResponseController
             $message = "Your OTP to redeem AED ".$redeemed_amount." using Capital Society Loyalty App is ".$otp.". If you did not inititate this request, Please call us on ".$admin_email->setting_content;
         }
 
-        try {
-            $response = $sms->sendToOne($user->country_code.$user->mobile_number, $message,'CM-Society');
-        } catch (\Exception $e) {
-            return $this->responseWithErrorCode("Please enter valid phone number.",400);
-        }
+        // try {
+        //     $response = $sms->sendToOne($user->country_code.$user->mobile_number, $message,'CM-Society');
+        // } catch (\Exception $e) {
+        //     return $this->responseWithErrorCode("Please enter valid phone number.",400);
+        // }
 
         $data['otp'] = $otp;
         Otp::whereMobileNumber($user->mobile_number)->whereCountryCode($user->country_code)->delete();

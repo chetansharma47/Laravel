@@ -301,7 +301,7 @@
 							</label>
 							<input type="date" class="form-control form-control-user" placeholder="Joining Date - To" id="joined_to" value="" style="border-radius: 0px ;    padding: 8px 10px !important;" />
 						</div>
-						<div class="venue_inputs mb-3 px-2">
+						<!-- <div class="venue_inputs mb-3 px-2">
 							<label>
 								Venue Selection
 							</label>
@@ -311,7 +311,7 @@
 								<option value="{{$venue->id}}">{{$venue->venue_name}}</option>
 								@endforeach()
 							</select>
-						</div>
+						</div> -->
 						<div class="venue_inputs mb-3 px-2">
 							<label>
 								Gender

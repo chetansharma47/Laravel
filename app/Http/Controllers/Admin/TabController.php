@@ -520,7 +520,7 @@ class TabController extends ResponseController
 
             $tier_find = TierCondition::whereId($request->tier)->first();
 
-            $data = User::select("*",DB::raw('CONCAT(users.first_name, " ", users.last_name) AS full_name'),DB::raw('CONCAT(users.country_code, " ", users.mobile_number) AS country_code_with_phone_number'),DB::raw("DATE_FORMAT(dob, '%d-%M-%Y') AS dob"),DB::raw("DATE_FORMAT(created_at, '%d-%M-%Y') AS join_date"))
+            $data = User::select("*",DB::raw('CONCAT(users.first_name, " ", users.last_name) AS full_name'),DB::raw('CONCAT(users.country_code,users.mobile_number) AS country_code_with_phone_number'),DB::raw("DATE_FORMAT(dob, '%d-%M-%Y') AS dob"),DB::raw("DATE_FORMAT(created_at, '%d-%M-%Y') AS join_date"))
                 ->where(function($query) use ($request, $tier_find){
                     $query->whereDeletedAt(null);
                     if($request->joined_from && $request->joined_to){
@@ -2817,7 +2817,7 @@ class TabController extends ResponseController
         $get_all_customers = $users->pluck('id');
 
 
-        $customer_dirhams_wallet = $users->sum('wallet_cash');
+        $customer_dirhams_wallet = round($users->sum('wallet_cash'),2);
 
 
         $customer_registrations = $users->count();
