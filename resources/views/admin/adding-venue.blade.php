@@ -227,9 +227,11 @@
 			<li class="nav-item">
 				<a class="nav-link" href="{{route('admin.addingEvents')}}">Events</a>
 			</li>
+			@if(Auth()->guard('admin')->user()->role_type !== "Marketing")
 			<li class="nav-item">
 				<a class="nav-link" href="{{route('admin.offerSettings')}}">Offers</a>
 			</li>
+			@endif
 		</ul>
 	</div>
 	<div class="events_venue_details">

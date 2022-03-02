@@ -471,45 +471,6 @@
 					
 				</div>
 			</div>
-			<div class="row">
-				<div class="col-md-12">
-					<div class="d-flex align-items-center">
-						<div class="d-flex align-items-baseline venue_inputs mb-3 mt-4 px-2">
-							<label style="font-size: 18px !important; font-weight: 400; margin-right: 12px;">
-								Selected Customer Wallet Transactions (Selection from above)
-							</label>
-							<a href="javascript:void(0);" class="btn btn-primary btn-user btn-block selected_download_transactions common_btn" style="     font-size: 18px; width: 154px; margin-right: 15px; text-transform: none; padding: 8px 0; z-index: 99;">
-									Download
-							</a>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-12 mb-4" style="margin-top: -105px;">
-					<div class="table-responsive px-2">
-						<table id="basic-datatables2" class="display table table-striped table-hover" style="padding: 0">
-							<thead>
-								<tr style="background-color: #193358;    color: #fff;">
-									<th>Sr. No.</th>
-									<th style="min-width: 128px;">Customer ID</th>
-									<th style="min-width: 128px;">Customer Name</th>
-									<th style="min-width: 150px;">Customer Mobile No.</th>
-									<th style="min-width: 128px;">Email ID</th>
-									<th style="min-width: 128px;">Description</th>
-									<th style="min-width: 128px;">Cashback Earned</th>
-									<th style="min-width: 128px;">Redeemed Amount</th>
-									<th style="min-width: 128px;">Wallet Cash</th>
-									<th style="min-width: 200px;">Date and Time Added</th>
-								</tr>
-							</thead>
-							<tbody>
-							</tbody>
-						</table>
-					</div>
-					
-				</div>
-			</div>
 
 			<div class="row">
 				<div class="col-md-12">
@@ -733,6 +694,45 @@
 								</tbody>
 							</table>
 						</div>
+				</div>
+			</div>
+				<div class="row">
+				<div class="col-md-12">
+					<div class="d-flex align-items-center">
+						<div class="d-flex align-items-baseline venue_inputs mb-3 mt-4 px-2">
+							<label style="font-size: 18px !important; font-weight: 400; margin-right: 12px;">
+								Selected Customer Wallet Transactions (Selection from above)
+							</label>
+							<a href="javascript:void(0);" class="btn btn-primary btn-user btn-block selected_download_transactions common_btn" style="     font-size: 18px; width: 154px; margin-right: 15px; text-transform: none; padding: 8px 0; z-index: 99;">
+									Download
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12 mb-4" style="margin-top: -105px;">
+					<div class="table-responsive px-2">
+						<table id="basic-datatables2" class="display table table-striped table-hover" style="padding: 0">
+							<thead>
+								<tr style="background-color: #193358;    color: #fff;">
+									<th>Sr. No.</th>
+									<th style="min-width: 128px;">Customer ID</th>
+									<th style="min-width: 128px;">Customer Name</th>
+									<th style="min-width: 150px;">Customer Mobile No.</th>
+									<th style="min-width: 128px;">Email ID</th>
+									<th style="min-width: 128px;">Description</th>
+									<th style="min-width: 128px;">Cashback Earned</th>
+									<th style="min-width: 128px;">Redeemed Amount</th>
+									<th style="min-width: 128px;">Wallet Cash</th>
+									<th style="min-width: 200px;">Date and Time Added</th>
+								</tr>
+							</thead>
+							<tbody>
+							</tbody>
+						</table>
+					</div>
+					
 				</div>
 			</div>
 		</div>
@@ -1861,6 +1861,23 @@ selected_customer_wallet_transactions();
 					type:"POST",
 					data:{'_token':'{{csrf_token()}}',joined_from,joined_to,venue_id_wallet,txn_status_wallet,offers_product_wallet_id,email,mobile_number,customer_name_wallet,invoice_number_wallet,venu_username_id_wallet},
 				},
+				createdRow: function( row, data, dataIndex ) {
+
+			       $( row ).find('td:eq(1)').attr('data-id', data['user_id']).addClass('td_click');
+			        $( row ).find('td:eq(2)').attr('data-id', data['user_id']).addClass('td_click');
+			        $( row ).find('td:eq(3)').attr('data-id', data['user_id']).addClass('td_click');
+			        $( row ).find('td:eq(4)').attr('data-id', data['user_id']).addClass('td_click');
+			        $( row ).find('td:eq(5)').attr('data-id', data['user_id']).addClass('td_click');
+			        $( row ).find('td:eq(6)').attr('data-id', data['user_id']).addClass('td_click');
+			        $( row ).find('td:eq(7)').attr('data-id', data['user_id']).addClass('td_click');
+			        $( row ).find('td:eq(8)').attr('data-id', data['user_id']).addClass('td_click');
+			        $( row ).find('td:eq(9)').attr('data-id', data['user_id']).addClass('td_click');
+			        $( row ).find('td:eq(10)').attr('data-id', data['user_id']).addClass('td_click');
+			        $( row ).find('td:eq(11)').attr('data-id', data['user_id']).addClass('td_click');
+			        $( row ).find('td:eq(12)').attr('data-id', data['user_id']).addClass('td_click');
+			        $( row ).find('td:eq(13)').attr('data-id', data['user_id']).addClass('td_click');
+			        $( row ).find('td:eq(14)').attr('data-id', data['user_id']).addClass('td_click');
+			    },
 				columns:[
 					{data:'customer_id', name:'customer_id'},
 					{data:'full_name', name:'full_name'},

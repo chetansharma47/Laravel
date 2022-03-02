@@ -548,7 +548,7 @@ class TabController extends ResponseController
                     }
 
                     if($request->mobile_number){
-                        $query->where(DB::raw('CONCAT(users.country_code, " ", users.mobile_number)'), 'Like', '%' . $request->mobile_number . '%');
+                        $query->where(DB::raw('CONCAT(users.country_code,users.mobile_number)'), 'Like', '%' . $request->mobile_number . '%');
     
                     }
                 })->orderBy($column,$asc_desc);
@@ -566,7 +566,7 @@ class TabController extends ResponseController
         if($search){
             $data  = $data->where(function($query) use($search){
                         $query->orWhere('customer_id', 'Like', '%'. $search . '%');
-                        $query->orWhere(DB::raw('CONCAT(users.country_code, " ", users.mobile_number)'), 'Like', '%' . $search . '%');
+                        $query->orWhere(DB::raw('CONCAT(users.country_code,users.mobile_number)'), 'Like', '%' . $search . '%');
                         $query->orWhere('first_name', 'Like', '%' . $search . '%');
                         $query->orWhere('last_name', 'Like', '%' . $search . '%');
                         $query->orWhere('email', 'Like', '%' . $search . '%');
@@ -698,7 +698,7 @@ class TabController extends ResponseController
         }
 
 
-        $data = WalletDetail::select("id","description","cashback_earned","redeemed_amount","user_wallet_cash",DB::raw("DATE_FORMAT(date_and_time, '%Y-%m-%d %h:%i %p') AS date_and_time"),DB::raw("(select customer_id from users where id = wallet_details.user_id) AS customer_id"),DB::raw("(select email from users where id = wallet_details.user_id) AS email"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where id = wallet_details.user_id) AS mobile_number"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where id = wallet_details.user_id) AS full_name"))->where('wallet_details.user_id',$request->selected_wallet_id)->orderBy($column,$asc_desc);
+        $data = WalletDetail::select("id","description","cashback_earned","redeemed_amount","user_wallet_cash",DB::raw("DATE_FORMAT(date_and_time, '%Y-%m-%d %h:%i %p') AS date_and_time"),DB::raw("(select customer_id from users where id = wallet_details.user_id) AS customer_id"),DB::raw("(select email from users where id = wallet_details.user_id) AS email"),DB::raw("(select CONCAT(users.country_code, users.mobile_number) from users where id = wallet_details.user_id) AS mobile_number"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where id = wallet_details.user_id) AS full_name"))->where('wallet_details.user_id',$request->selected_wallet_id)->orderBy($column,$asc_desc);
 
             
         $total = $data->get()->count();
@@ -715,7 +715,7 @@ class TabController extends ResponseController
             $data  = $data->where(function($query) use($search){
                         $query->orWhere(DB::raw("(select customer_id from users where id = wallet_details.user_id)"), 'Like', '%'. $search . '%');
                         $query->orWhere(DB::raw("(select email from users where id = wallet_details.user_id)"), 'Like', '%'. $search . '%');
-                        $query->orWhere(DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where id = wallet_details.user_id)"), 'Like', '%' . $search . '%');
+                        $query->orWhere(DB::raw("(select CONCAT(users.country_code, users.mobile_number) from users where id = wallet_details.user_id)"), 'Like', '%' . $search . '%');
                         $query->orWhere(DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where id = wallet_details.user_id)"), 'Like', '%' . $search . '%');
                         $query->orWhere('description', 'Like', '%' . $search . '%');
                         $query->orWhere('cashback_earned', 'Like', '%' . $search . '%');
@@ -1664,7 +1664,7 @@ class TabController extends ResponseController
         }
 
         //$have_badges_not_in_user_ids = AssignBadge::whereDeletedAt(null)->pluck('user_id');
-        $data = User::select("id","customer_id",DB::raw('CONCAT(users.first_name, " ", users.last_name) AS customer_name'),DB::raw('CONCAT(users.country_code, " ", users.mobile_number) AS country_code_with_phone_number'))->whereId("kk")->orderBy($column,$asc_desc);
+        $data = User::select("id","customer_id",DB::raw('CONCAT(users.first_name, " ", users.last_name) AS customer_name'),DB::raw('CONCAT(users.country_code,users.mobile_number) AS country_code_with_phone_number'))->whereId("kk")->orderBy($column,$asc_desc);
 
         $total = $data->get()->count();
 
@@ -1678,14 +1678,14 @@ class TabController extends ResponseController
 
 
         if($search){
-            $data  = User::select("id","customer_id",DB::raw('CONCAT(users.first_name, " ", users.last_name) AS customer_name'),DB::raw('CONCAT(users.country_code, " ", users.mobile_number) AS country_code_with_phone_number'))->whereDeletedAt(null)
+            $data  = User::select("id","customer_id",DB::raw('CONCAT(users.first_name, " ", users.last_name) AS customer_name'),DB::raw('CONCAT(users.country_code,users.mobile_number) AS country_code_with_phone_number'))->whereDeletedAt(null)
                 //->whereNotIn('id', $have_badges_not_in_user_ids)
                 ->orderBy($column,$asc_desc)
                 ->where(function($query) use($search){
                         $query->where('customer_id', 'Like', '%'. $search . '%');
-                        $query->orWhere(DB::raw('CONCAT(users.country_code, " ", users.mobile_number)'), 'Like', '%' . $search . '%');
+                        $query->orWhere(DB::raw('CONCAT(users.country_code,users.mobile_number)'), 'Like', '%' . $search . '%');
                         $query->orWhere(DB::raw('CONCAT(users.first_name, " ", users.last_name)'), 'Like', '%' . $search . '%');
-                        $query->orWhere(DB::raw('CONCAT(users.country_code, " ", users.mobile_number)'), 'Like', '%' . $search . '%');
+                        $query->orWhere(DB::raw('CONCAT(users.country_code,users.mobile_number)'), 'Like', '%' . $search . '%');
                             // ->orWhereHas('category', function($insideQuery) use ($search){
                             //     return $insideQuery->where('category_name', 'like', '%'.$search.'%');
                             // })
@@ -2232,7 +2232,7 @@ class TabController extends ResponseController
             $column = "updated_at";
         }
 
-       $data = AssignBadge::select('*',DB::raw("(select customer_id from users where id = assign_badges.user_id) AS customer_id"),DB::raw("(select badge_name from badges where id = assign_badges.badge_id) AS badge_name"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where id = assign_badges.user_id) AS mobile_number"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where id = assign_badges.user_id) AS full_name"),DB::raw("DATE_FORMAT(from_date, '%Y-%M-%d') AS from_date"), DB::raw("DATE_FORMAT(to_date, '%Y-%M-%d') AS to_date"),DB::raw("DATE_FORMAT(from_time, '%h:%i %p') AS from_time"),DB::raw("DATE_FORMAT(to_time, '%h:%i %p') AS to_time"))->whereIn('badge_id', [$badge_id])->whereDeletedAt(null)->orderBy($column,$asc_desc);
+       $data = AssignBadge::select('*',DB::raw("(select customer_id from users where id = assign_badges.user_id) AS customer_id"),DB::raw("(select badge_name from badges where id = assign_badges.badge_id) AS badge_name"),DB::raw("(select CONCAT(users.country_code,users.mobile_number) from users where id = assign_badges.user_id) AS mobile_number"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where id = assign_badges.user_id) AS full_name"),DB::raw("DATE_FORMAT(from_date, '%Y-%M-%d') AS from_date"), DB::raw("DATE_FORMAT(to_date, '%Y-%M-%d') AS to_date"),DB::raw("DATE_FORMAT(from_time, '%h:%i %p') AS from_time"),DB::raw("DATE_FORMAT(to_time, '%h:%i %p') AS to_time"))->whereIn('badge_id', [$badge_id])->whereDeletedAt(null)->orderBy($column,$asc_desc);
         $total = $data->count();
         $filter = $total;
 
@@ -2240,7 +2240,7 @@ class TabController extends ResponseController
              $data  = $data->where(function($query) use($search){
                     $query->orWhere(DB::raw("(select customer_id from users where id = assign_badges.user_id)"), 'like', '%'.$search.'%');
                     $query->orWhere(DB::raw("(select badge_name from badges where id = assign_badges.id)"), 'like', '%'.$search.'%');
-                    $query->orWhere(DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where id = assign_badges.user_id)"), 'like', '%'.$search.'%');
+                    $query->orWhere(DB::raw("(select CONCAT(users.country_code,users.mobile_number) from users where id = assign_badges.user_id)"), 'like', '%'.$search.'%');
                     $query->orWhere(DB::raw("(select CONCAT(users.first_name,' ', users.last_name) AS full_name from users where id = assign_badges.user_id)"), 'Like', '%' . $search . '%');
                     $query->orWhere('status', 'Like', '%' . $search . '%');
                     $query->orWhere(DB::raw("DATE_FORMAT(from_date, '%Y-%M-%d')"), 'Like', '%' . $search . '%');
@@ -2970,7 +2970,7 @@ class TabController extends ResponseController
             $column = "username";
         }
 
-        $data = WalletTransaction::select("wallet_transactions.*",DB::raw("(select customer_id from users where id = wallet_transactions.user_id) AS customer_id"),DB::raw("(select email from users where id = wallet_transactions.user_id) AS email"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where id = wallet_transactions.user_id) AS full_name"),DB::raw("(select wallet_cash from users where id = wallet_transactions.user_id) AS wallet_cash"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where users.id = wallet_transactions.user_id) AS mobile_number"),DB::raw("CONCAT(case wallet_transactions.is_cross_verify when '0' then 'Not Verified' else 'Mismatch' end) AS txn_status"),DB::raw("(select venue_name from venus where id = wallet_transactions.venu_id) AS venue_name"),DB::raw("(select username from venue_users where id = wallet_transactions.venue_user_id) AS username"),DB::raw("(select offer_redeem from user_assign_offers where id = wallet_transactions.offer_product_ids) AS offer_redeem"))
+        $data = WalletTransaction::select("wallet_transactions.*",DB::raw("(select customer_id from users where id = wallet_transactions.user_id) AS customer_id"),DB::raw("(select email from users where id = wallet_transactions.user_id) AS email"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where id = wallet_transactions.user_id) AS full_name"),DB::raw("(select wallet_cash from users where id = wallet_transactions.user_id) AS wallet_cash"),DB::raw("(select CONCAT(users.country_code,users.mobile_number) from users where users.id = wallet_transactions.user_id) AS mobile_number"),DB::raw("CONCAT(case wallet_transactions.is_cross_verify when '0' then 'Not Verified' else 'Mismatch' end) AS txn_status"),DB::raw("(select venue_name from venus where id = wallet_transactions.venu_id) AS venue_name"),DB::raw("(select username from venue_users where id = wallet_transactions.venue_user_id) AS username"),DB::raw("(select offer_redeem from user_assign_offers where id = wallet_transactions.offer_product_ids) AS offer_redeem"))
         ->where('wallet_transactions.is_cross_verify','!=',1)
         ->where('wallet_transactions.is_cross_verify','!=',3)
         ->where('wallet_transactions.deleted_at','=',null)
@@ -2986,7 +2986,7 @@ class TabController extends ResponseController
                     $query->orWhere(DB::raw("(select email from users where id = wallet_transactions.user_id)"), 'Like', '%' . $search . '%');
                     $query->orWhere(DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where id = wallet_transactions.user_id)"), 'like', '%'.$search.'%');
                     $query->orWhere(DB::raw("(select wallet_cash from users where id = wallet_transactions.user_id)"), 'Like', '%' . $search . '%');
-                    $query->orWhere(DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where id = wallet_transactions.user_id)"), 'like', '%'.$search.'%');
+                    $query->orWhere(DB::raw("(select CONCAT(users.country_code,users.mobile_number) from users where id = wallet_transactions.user_id)"), 'like', '%'.$search.'%');
                     $query->orWhere("wallet_transactions.invoice_number", 'Like', '%' . $search . '%');
                     $query->orWhere("wallet_transactions.total_bill_amount", 'Like', '%' . $search . '%');
                     $query->orWhere("wallet_transactions.check_amount_pos", 'Like', '%' . $search . '%');
