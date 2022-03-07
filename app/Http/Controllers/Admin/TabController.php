@@ -2232,7 +2232,7 @@ class TabController extends ResponseController
             $column = "updated_at";
         }
 
-       $data = AssignBadge::select('*',DB::raw("(select customer_id from users where id = assign_badges.user_id) AS customer_id"),DB::raw("(select badge_name from badges where id = assign_badges.badge_id) AS badge_name"),DB::raw("(select CONCAT(users.country_code,users.mobile_number) from users where id = assign_badges.user_id) AS mobile_number"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where id = assign_badges.user_id) AS full_name"),DB::raw("DATE_FORMAT(from_date, '%Y-%M-%d') AS from_date"), DB::raw("DATE_FORMAT(to_date, '%Y-%M-%d') AS to_date"),DB::raw("DATE_FORMAT(from_time, '%h:%i %p') AS from_time"),DB::raw("DATE_FORMAT(to_time, '%h:%i %p') AS to_time"))->whereIn('badge_id', [$badge_id])->whereDeletedAt(null)->orderBy($column,$asc_desc);
+       $data = AssignBadge::select('*',DB::raw("(select customer_id from users where id = assign_badges.user_id) AS customer_id"),DB::raw("(select badge_name from badges where id = assign_badges.badge_id) AS badge_name"),DB::raw("(select CONCAT(users.country_code,users.mobile_number) from users where id = assign_badges.user_id) AS mobile_number"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where id = assign_badges.user_id) AS full_name"),DB::raw("DATE_FORMAT(from_date, '%d-%M-%Y') AS from_date"), DB::raw("DATE_FORMAT(to_date, '%d-%M-%Y') AS to_date"),DB::raw("DATE_FORMAT(from_time, '%h:%i %p') AS from_time"),DB::raw("DATE_FORMAT(to_time, '%h:%i %p') AS to_time"))->whereIn('badge_id', [$badge_id])->whereDeletedAt(null)->orderBy($column,$asc_desc);
         $total = $data->count();
         $filter = $total;
 
@@ -2243,8 +2243,8 @@ class TabController extends ResponseController
                     $query->orWhere(DB::raw("(select CONCAT(users.country_code,users.mobile_number) from users where id = assign_badges.user_id)"), 'like', '%'.$search.'%');
                     $query->orWhere(DB::raw("(select CONCAT(users.first_name,' ', users.last_name) AS full_name from users where id = assign_badges.user_id)"), 'Like', '%' . $search . '%');
                     $query->orWhere('status', 'Like', '%' . $search . '%');
-                    $query->orWhere(DB::raw("DATE_FORMAT(from_date, '%Y-%M-%d')"), 'Like', '%' . $search . '%');
-                    $query->orWhere(DB::raw("DATE_FORMAT(to_date, '%Y-%M-%d')"), 'Like', '%' . $search . '%');
+                    $query->orWhere(DB::raw("DATE_FORMAT(from_date, '%d-%M-%Y')"), 'Like', '%' . $search . '%');
+                    $query->orWhere(DB::raw("DATE_FORMAT(to_date, '%d-%M-%Y')"), 'Like', '%' . $search . '%');
                     $query->orWhere(DB::raw("DATE_FORMAT(from_time, '%h:%i %p')"), 'Like', '%' . $search . '%');
                     $query->orWhere(DB::raw("DATE_FORMAT(to_time, '%h:%i %p')"), 'Like', '%' . $search . '%');
                     $query->orWhere("created_at", 'Like', '%' . $search . '%');
@@ -2296,8 +2296,8 @@ class TabController extends ResponseController
                         $query->orWhere(DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where id = assign_badges.user_id)"), 'like', '%'.$search.'%');
                         $query->orWhere(DB::raw("(select CONCAT(users.first_name,' ', users.last_name) AS full_name from users where id = assign_badges.user_id)"), 'Like', '%' . $search . '%');
                         $query->orWhere('status', 'Like', '%' . $search . '%');
-                        $query->orWhere(DB::raw("DATE_FORMAT(from_date, '%Y-%M-%d')"), 'Like', '%' . $search . '%');
-                        $query->orWhere(DB::raw("DATE_FORMAT(to_date, '%Y-%M-%d')"), 'Like', '%' . $search . '%');
+                        $query->orWhere(DB::raw("DATE_FORMAT(from_date, '%d-%M-%Y')"), 'Like', '%' . $search . '%');
+                        $query->orWhere(DB::raw("DATE_FORMAT(to_date, '%d-%M-%Y')"), 'Like', '%' . $search . '%');
                         $query->orWhere(DB::raw("DATE_FORMAT(from_time, '%h:%i %p')"), 'Like', '%' . $search . '%');
                         $query->orWhere(DB::raw("DATE_FORMAT(to_time, '%h:%i %p')"), 'Like', '%' . $search . '%');
                         $query->orWhere("created_at", 'Like', '%' . $search . '%');
