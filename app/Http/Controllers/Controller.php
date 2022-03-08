@@ -81,22 +81,22 @@ class Controller extends BaseController
          //  return $offer;
             if(!empty($offer->offerSetting->city_id) && !empty($offer->offerSetting->gender)){
                 $find_city_name = City::select('city_name')->whereId($offer->offerSetting->city_id)->first();
-                $user_match_with_offers = User::select('id','email','dob','first_name','last_name','device_type','device_token','country_code','mobile_number')->whereCityOfResidence($find_city_name->city_name)->where('gender','=',$offer->offerSetting->gender)->whereDeletedAt(null)->where('is_block','=',0)->get();
+                $user_match_with_offers = User::select('id','email','dob','first_name','last_name','device_type','device_token','country_code','mobile_number')->whereCityOfResidence($find_city_name->city_name)->where('gender','=',$offer->offerSetting->gender)->whereDeletedAt(null)->where('is_block','=',0)->where("is_active", "=", 'Active')->get();
 
             }
             if(!empty($offer->offerSetting->city_id) && empty($offer->offerSetting->gender)){
 
                 $find_city_name = City::select('city_name')->whereId($offer->offerSetting->city_id)->first();
-                $user_match_with_offers = User::select('id','email','dob','first_name','last_name','device_type','device_token','country_code','mobile_number')->whereCityOfResidence($find_city_name->city_name)->whereDeletedAt(null)->where('is_block','=',0)->get();
+                $user_match_with_offers = User::select('id','email','dob','first_name','last_name','device_type','device_token','country_code','mobile_number')->whereCityOfResidence($find_city_name->city_name)->whereDeletedAt(null)->where('is_block','=',0)->where("is_active", "=", 'Active')->get();
 
             }
             if(empty($offer->offerSetting->city_id) && !empty($offer->offerSetting->gender)){
-                $user_match_with_offers = User::select('id','email','dob','first_name','last_name','device_type','device_token','country_code','mobile_number')->where('gender','=',$offer->offerSetting->gender)->whereDeletedAt(null)->where('is_block','=',0)->get();
+                $user_match_with_offers = User::select('id','email','dob','first_name','last_name','device_type','device_token','country_code','mobile_number')->where('gender','=',$offer->offerSetting->gender)->whereDeletedAt(null)->where('is_block','=',0)->where("is_active", "=", 'Active')->get();
             }
 
             if(empty($offer->offerSetting->city_id) && empty($offer->offerSetting->gender)){
                 //both are empty
-                $user_match_with_offers = User::select('id','email','dob','first_name','last_name','device_type','device_token','country_code','mobile_number')->whereDeletedAt(null)->where('is_block','=',0)->get();
+                $user_match_with_offers = User::select('id','email','dob','first_name','last_name','device_type','device_token','country_code','mobile_number')->whereDeletedAt(null)->where('is_block','=',0)->where("is_active", "=", 'Active')->get();
             }
 
 
@@ -422,8 +422,8 @@ class Controller extends BaseController
         $apns_topic     = 'com.captial.motion.user';
 
         $sample_alert = json_encode($body);
-        // $url = "https://api.development.push.apple.com/3/device/$deviceToken"; //development
-        $url = "https://api.push.apple.com/3/device/$deviceToken"; //production
+        $url = "https://api.development.push.apple.com/3/device/$deviceToken"; //development
+        // $url = "https://api.push.apple.com/3/device/$deviceToken"; //production
 
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $sample_alert);
@@ -580,7 +580,7 @@ class Controller extends BaseController
                 ->whereRaw("FIND_IN_SET(?, when_day) > 0", $today_days)
                 ->get();
 
-        $users = User::whereDeletedAt(null)->where('is_block','=',0)->pluck('id');
+        $users = User::whereDeletedAt(null)->where('is_block','=',0)->where("is_active", "=", 'Active')->pluck('id');
 
         if(count($events) > 0){
 

@@ -112,6 +112,10 @@ class RestaurantAuthenticationController extends ResponseController
                 })->first();
                 
         if(!empty($user)){
+
+            if($user->is_active == 'Inactive' || $user->is_block == 1){
+                 return $this->responseWithErrorCode("User has been blocked or inactivated by admin.",410);
+            }
             $tier = TierCondition::whereTierName($user->customer_tier)->orderBy('id','desc')->first();
             $user->tier = $tier;
 
@@ -204,9 +208,9 @@ class RestaurantAuthenticationController extends ResponseController
             if($redeemed_amount == ""){
                 return $this->responseWithErrorCode("Please enter redeemed amount.",406);
             }
-            if($redeemed_amount <= 0){
-                return $this->responseWithErrorCode("Redeem amount should be greater than 0.",406);
-            }
+            // if($redeemed_amount <= 0){
+            //     return $this->responseWithErrorCode("Redeem amount should be greater than 0.",406);
+            // }
 
             if($user_wallet_cash < $redeemed_amount){
                 return $this->responseWithErrorCode("Redeem amount should be less than or equal to wallet amount.",406);
@@ -216,9 +220,9 @@ class RestaurantAuthenticationController extends ResponseController
 
 
         if($user->deleted_at != null){
-            return $this->responseWithErrorCode("User has been deleted by admin.",404);
+            return $this->responseWithErrorCode("User has been deleted by admin.",410);
         }else if($user->is_active == "Inactive"){
-            return $this->responseWithErrorCode("User has been inactivated by admin.",404);
+            return $this->responseWithErrorCode("User has been inactivated by admin.",410);
         }
 
         \SMSGlobal\Credentials::set(env('SMS_GLOBAL_API'),env('SMS_GLOBAL_SECERET'));
@@ -348,11 +352,11 @@ class RestaurantAuthenticationController extends ResponseController
         // return $data['redeemed_amount'];
 
         if($user_find->deleted_at != null){
-            return $this->responseWithErrorCode("User has been deleted by admin.",404);
+            return $this->responseWithErrorCode("User has been deleted by admin.",410);
         }else if($user_find->is_active == "Inactive"){
-            return $this->responseWithErrorCode("User has been inactivated by admin.",404);
+            return $this->responseWithErrorCode("User has been inactivated by admin.",410);
         }else if($user_find->is_block == 1){
-            return $this->responseWithErrorCode("User has been blocked by admin.",404);
+            return $this->responseWithErrorCode("User has been blocked by admin.",410);
         }
 
         $check_days_for_repeat_invoice = GeneralSetting::whereUniqId(15)->first();

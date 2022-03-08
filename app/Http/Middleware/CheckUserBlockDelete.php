@@ -18,7 +18,7 @@ class CheckUserBlockDelete
     {
 
 
-        if(Auth::User()->is_block == '1') { //error
+        if(Auth::User()->is_block == '1' || Auth::User()->is_active == 'Inactive') { //error
             // return redirect('/admin');
             $user = auth()->user();
             $user->update(['device_token' => null, 'device_type' => "None"]);

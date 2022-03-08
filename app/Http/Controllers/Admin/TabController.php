@@ -1877,7 +1877,11 @@ class TabController extends ResponseController
         $data = $request->all();
         $data['from_time'] = date("H:i:s", strtotime($data['from_time']));
         $data['to_time'] = date("H:i:s", strtotime($data['to_time']));
-        $find_user = User::whereCustomerId($data['customer_id'])->first();
+        $find_user = User::whereCustomerId($data['customer_id'])->where("is_active", "=", 'Active')->where("is_block", "=", 0)->first();
+
+        if(empty($find_user)){
+            return response()->json(['badge_found_err' => "Selected customer has been blocked or inactive by admin."],422);
+        }
 
         if($data['action_type'] == "add"){
             $find_assign_badge = AssignBadge::whereUserId($find_user->id)->whereBadgeId($data['badge_id'])->whereDeletedAt(null)->first();
@@ -2531,28 +2535,28 @@ class TabController extends ResponseController
 
             if(!empty($request->nationality) && !empty($request->city_name)){
 
-                $users_notify = User::whereCityOfResidence($request->city_name)->whereNationality($request->nationality)->where('is_block','=',0)->get();
+                $users_notify = User::whereCityOfResidence($request->city_name)->whereNationality($request->nationality)->where('is_block','=',0)->where("is_active", "=", 'Active')->get();
                 
             }else if(!empty($request->city_name)){
-                $users_notify = User::whereCityOfResidence($request->city_name)->where('is_block','=',0)->get();
+                $users_notify = User::whereCityOfResidence($request->city_name)->where('is_block','=',0)->where("is_active", "=", 'Active')->get();
             }else if(!empty($request->nationality)){
-                $users_notify = User::whereNationality($request->nationality)->where('is_block','=',0)->get();
+                $users_notify = User::whereNationality($request->nationality)->where('is_block','=',0)->where("is_active", "=", 'Active')->get();
             }else{
-                $users_notify = User::where('is_block','=',0)->get();
+                $users_notify = User::where('is_block','=',0)->where("is_active", "=", 'Active')->get();
             }
         }else{
 
             if(!empty($request->nationality) && !empty($request->city_name)){
 
-                $users_notify = User::whereCityOfResidence($request->city_name)->whereGender($request->gender)->whereNationality($request->nationality)->where('is_block','=',0)->get();
+                $users_notify = User::whereCityOfResidence($request->city_name)->whereGender($request->gender)->whereNationality($request->nationality)->where('is_block','=',0)->where("is_active", "=", 'Active')->get();
 
             }else if(!empty($request->city_name)){
 
-                $users_notify = User::whereCityOfResidence($request->city_name)->whereGender($request->gender)->where('is_block','=',0)->get();
+                $users_notify = User::whereCityOfResidence($request->city_name)->whereGender($request->gender)->where('is_block','=',0)->where("is_active", "=", 'Active')->get();
             }else if(!empty($request->nationality)){
-                $users_notify = User::whereNationality($request->nationality)->whereGender($request->gender)->where('is_block','=',0)->get();
+                $users_notify = User::whereNationality($request->nationality)->whereGender($request->gender)->where('is_block','=',0)->where("is_active", "=", 'Active')->get();
             }else{
-                $users_notify = User::whereGender($request->gender)->where('is_block','=',0)->get();
+                $users_notify = User::whereGender($request->gender)->where('is_block','=',0)->where("is_active", "=", 'Active')->get();
             }
         }
 
