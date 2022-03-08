@@ -182,7 +182,7 @@ class AuthenticationController extends ResponseController
         }
 
         // return $this->responseOk("Now login with your mobile number, to login with email address Please verify the email address.", ['register' => $register['data']]);
-        return $this->responseOk("Now you can login with your mobile number , please verify your email address to login with the email address.", ['register' => $register['data']]);
+        return $this->responseOk("Now you can login with your mobile number, please verify your email address to login with the email address.", ['register' => $register['data']]);
     }
 
     public function login(Request $request){
