@@ -1869,10 +1869,16 @@ class TabController extends ResponseController
 
         $admin = Auth::guard('admin')->user();
 
-        $check_badge_deleted = Badge::whereId($request->badge_id)->where('deleted_at','!=',null)->first();
+        // $check_badge_deleted = Badge::whereId($request->badge_id)->where('deleted_at','!=',null)->first();
+
+       $check_badge_deleted = Badge::where(function($query) use ($request){
+                                    $query->where("deleted_at", "!=", null);
+                                })->orWhere(function($query) use ($request){
+                                    $query->where("status", "=", 'Inactive');
+                                })->whereId($request->badge_id)->first();
 
         if(!empty($check_badge_deleted)){
-            return response()->json(['badge_found_err' => 'Selected badge has been deleted by admin or super admin.'],422);
+            return response()->json(['badge_found_err' => 'Selected badge has been deleted or inactive by admin or super admin.'],422);
         }
         $data = $request->all();
         $data['from_time'] = date("H:i:s", strtotime($data['from_time']));
@@ -1921,82 +1927,86 @@ class TabController extends ResponseController
             // $assign_badge_mail = (new UserAssignBadgeJob($find_assign_badge, $find_user, $find_badge))->delay(Carbon::now()->addSeconds(3));
             // dispatch($assign_badge_mail);
 
-            try{
-                \Mail::to($find_user->email)->send(new AssignBadgeMail($find_assign_badge, $find_user, $find_badge));
-            }catch(\Exception $ex){
-                // return $ex->getMessage();
+            if($data['status'] != 'Inactive'){
+                try{
+                    \Mail::to($find_user->email)->send(new AssignBadgeMail($find_assign_badge, $find_user, $find_badge));
+                }catch(\Exception $ex){
+                    // return $ex->getMessage();
+                }
+
+                // if($admin_cashback_notification_find->push_type == 1){
+
+                    if($find_user->device_type == 'Android'){
+                        if($find_user->device_token && strlen($find_user->device_token) > 20){
+
+                            $noti_record_find = NotiRecord::whereUserId($find_user->id)->first();
+
+                            if(empty($noti_record_find)){
+                                $save_noti_record = new NotiRecord();
+                                $save_noti_record->user_id = $find_user->id;
+                                $save_noti_record->normal = 1;
+                                $save_noti_record->save();
+
+                            }else{
+                                $noti_record_find->normal = $noti_record_find->normal + 1;
+                                $noti_record_find->update();
+                            }
+
+                            $total_noti_record = NotiRecord::whereUserId($find_user->id)->sum(DB::raw('wallet + offer + event + normal'));
+
+                            $message = "The ".$find_badge->badge_name." badge has been assigned to you.";
+                            try{
+                               $android_notify =  $this->send_android_notification_new($find_user->device_token, $message, $notmessage = "Assign Badge Notification", $noti_type = 8,null,null,$total_noti_record);
+                            } catch (\Exception $e) {
+                                // continue;
+                            }
+
+                            $criteria_data = [
+                                'user_id'   => $find_user->id,
+                                'message'   => $message,
+                                'noti_type' => 8,
+                            ];
+                            AdminCriteriaNotification::create($criteria_data);
+                       
+                       }
+                    }
+
+                    if($find_user->device_type == 'Ios' && strlen($find_user->device_token) > 20){
+                        if($find_user->device_token){
+
+                            $noti_record_find = NotiRecord::whereUserId($find_user->id)->first();
+
+                            if(empty($noti_record_find)){
+                                $save_noti_record = new NotiRecord();
+                                $save_noti_record->user_id = $find_user->id;
+                                $save_noti_record->normal = 1;
+                                $save_noti_record->save();
+
+                            }else{
+                                $noti_record_find->normal = $noti_record_find->normal + 1;
+                                $noti_record_find->update();
+                            }
+
+
+                            $total_noti_record = NotiRecord::whereUserId($find_user->id)->sum(DB::raw('wallet + offer + event + normal'));
+                            $message = "The ".$find_badge->badge_name." badge has been assigned to you.";
+                            try{
+                            $ios_notify =  $this->iphoneNotification($find_user->device_token, $message, $notmessage = "Assign Badge Notification", $noti_type = 8,null,null,$total_noti_record);
+                            } catch (\Exception $e) {
+                                // continue;
+                            }
+                            $criteria_data = [
+                                'user_id'   => $find_user->id,
+                                'message'   => $message,
+                                'noti_type' => 8,
+                            ];
+                            AdminCriteriaNotification::create($criteria_data);
+                        
+                       }
+                    }
+                
             }
 
-            // if($admin_cashback_notification_find->push_type == 1){
-
-                if($find_user->device_type == 'Android'){
-                    if($find_user->device_token && strlen($find_user->device_token) > 20){
-
-                        $noti_record_find = NotiRecord::whereUserId($find_user->id)->first();
-
-                        if(empty($noti_record_find)){
-                            $save_noti_record = new NotiRecord();
-                            $save_noti_record->user_id = $find_user->id;
-                            $save_noti_record->normal = 1;
-                            $save_noti_record->save();
-
-                        }else{
-                            $noti_record_find->normal = $noti_record_find->normal + 1;
-                            $noti_record_find->update();
-                        }
-
-                        $total_noti_record = NotiRecord::whereUserId($find_user->id)->sum(DB::raw('wallet + offer + event + normal'));
-
-                        $message = "The ".$find_badge->badge_name." badge has been assigned to you.";
-                        try{
-                           $android_notify =  $this->send_android_notification_new($find_user->device_token, $message, $notmessage = "Assign Badge Notification", $noti_type = 8,null,null,$total_noti_record);
-                        } catch (\Exception $e) {
-                            // continue;
-                        }
-
-                        $criteria_data = [
-                            'user_id'   => $find_user->id,
-                            'message'   => $message,
-                            'noti_type' => 8,
-                        ];
-                        AdminCriteriaNotification::create($criteria_data);
-                   
-                   }
-                }
-
-                if($find_user->device_type == 'Ios' && strlen($find_user->device_token) > 20){
-                    if($find_user->device_token){
-
-                        $noti_record_find = NotiRecord::whereUserId($find_user->id)->first();
-
-                        if(empty($noti_record_find)){
-                            $save_noti_record = new NotiRecord();
-                            $save_noti_record->user_id = $find_user->id;
-                            $save_noti_record->normal = 1;
-                            $save_noti_record->save();
-
-                        }else{
-                            $noti_record_find->normal = $noti_record_find->normal + 1;
-                            $noti_record_find->update();
-                        }
-
-
-                        $total_noti_record = NotiRecord::whereUserId($find_user->id)->sum(DB::raw('wallet + offer + event + normal'));
-                        $message = "The ".$find_badge->badge_name." badge has been assigned to you.";
-                        try{
-                        $ios_notify =  $this->iphoneNotification($find_user->device_token, $message, $notmessage = "Assign Badge Notification", $noti_type = 8,null,null,$total_noti_record);
-                        } catch (\Exception $e) {
-                            // continue;
-                        }
-                        $criteria_data = [
-                            'user_id'   => $find_user->id,
-                            'message'   => $message,
-                            'noti_type' => 8,
-                        ];
-                        AdminCriteriaNotification::create($criteria_data);
-                    
-                   }
-                }
 
                 // }
 
@@ -2354,20 +2364,25 @@ class TabController extends ResponseController
     public function SaveNotificationMessage(Request $request){
 
         $message_type = $request->type_message;
-        
-        if(in_array('push', $message_type)){
-            $push_type = 1;
+        if(!empty($message_type)){
+            if(in_array('push', $message_type)){
+                $push_type = 1;
+            }else{
+                $push_type = 0;
+            }
+            if(in_array('sms', $message_type)){
+                $sms_type = 1;
+            }else{
+                $sms_type = 0;
+            }
+            if(in_array('email', $message_type)){
+                $email_type = 1;
+            }else{
+                $email_type = 0;
+            }
         }else{
             $push_type = 0;
-        }
-        if(in_array('sms', $message_type)){
-            $sms_type = 1;
-        }else{
             $sms_type = 0;
-        }
-        if(in_array('email', $message_type)){
-            $email_type = 1;
-        }else{
             $email_type = 0;
         }
 
@@ -3138,7 +3153,12 @@ class TabController extends ResponseController
                                         $wallet_detail2->user_wallet_cash = $user_find->wallet_cash;
                                         $wallet_detail2->save();
 
-                                        $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$wallet_txn->cashback_earned." AED. ".$admin_cashback_notification_find->message;
+                                        if($wallet_txn->cashback_earned > 0){
+                                            $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$wallet_txn->cashback_earned." AED. ".$admin_cashback_notification_find->message;
+                                        }else{
+                                            $admin_cashback_notification_find->message = $admin_cashback_notification_find->message;
+                                        }
+
 
                                         if($admin_cashback_notification_find->push_type == 1){
 
@@ -3771,7 +3791,13 @@ class TabController extends ResponseController
                     $wallet_detail2->user_wallet_cash = $find_user->wallet_cash;
                     $wallet_detail2->save();
 
-                    $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$value->cashback_earned." AED. ".$admin_cashback_notification_find->message;
+                    if($value->cashback_earned > 0){
+                        $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$value->cashback_earned." AED. ".$admin_cashback_notification_find->message;
+                    }else{
+                        $admin_cashback_notification_find->message = $admin_cashback_notification_find->message;
+                    }
+
+                    // $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$value->cashback_earned." AED. ".$admin_cashback_notification_find->message;
 
                     if($admin_cashback_notification_find->push_type == 1){
 
@@ -4144,8 +4170,14 @@ class TabController extends ResponseController
                 $wallet_detail2->user_wallet_cash = $find_user->wallet_cash;
                 $wallet_detail2->save();
 
-                $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$user_wallet_txn->cashback_earned." AED. ".$admin_cashback_notification_find->message;
+                // $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$user_wallet_txn->cashback_earned." AED. ".$admin_cashback_notification_find->message;
                 // $this->send_notifications_verified_users($admin_cashback_notification_find,$find_user);
+
+                if($user_wallet_txn->cashback_earned > 0){
+                    $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$user_wallet_txn->cashback_earned." AED. ".$admin_cashback_notification_find->message;
+                }else{
+                    $admin_cashback_notification_find->message = $admin_cashback_notification_find->message;
+                }
 
                 if($admin_cashback_notification_find->push_type == 1){
 

@@ -1032,7 +1032,8 @@ class RestaurantAuthenticationController extends ResponseController
                     if($data['cashback_earned'] > 0){
                         $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
                     }else{
-                        $push_type = 0;
+                        $push_type = 1;
+                        $message_text = $admin_cashback_notification->message;
                     }
                 }else{
                     $message_text = $admin_transaction_notification->message;
@@ -1044,7 +1045,8 @@ class RestaurantAuthenticationController extends ResponseController
                     if($data['cashback_earned'] > 0){
                         $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
                     }else{
-                        $push_type = 0;
+                        $push_type = 1;
+                        $message_text = $admin_cashback_notification->message;
                     }
                 }else{
                     $message_text = $admin_cashback_notification->message;
@@ -1123,7 +1125,8 @@ class RestaurantAuthenticationController extends ResponseController
                     if($data['cashback_earned'] > 0){
                         $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
                     }else{
-                        $sms_type = 0;
+                        $sms_type = 1;
+                        $message_text = $admin_cashback_notification->message;
                     }
                 }else{
                     $message_text = $admin_transaction_notification->message;
@@ -1135,7 +1138,8 @@ class RestaurantAuthenticationController extends ResponseController
                     if($data['cashback_earned'] > 0){
                     $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
                     }else{
-                        $sms_type = 0;
+                        $sms_type = 1;
+                        $message_text = $admin_cashback_notification->message;
                     }
                 }else{
                     $message_text = $admin_cashback_notification->message;
@@ -1160,7 +1164,8 @@ class RestaurantAuthenticationController extends ResponseController
                     if($data['cashback_earned'] > 0){
                         $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
                     }else{
-                        $email_type = 0;
+                        $email_type = 1;
+                        $message_text = $admin_cashback_notification->message;
                     }
                 }else{
                     $message_text = $admin_transaction_notification->message;
@@ -1172,7 +1177,8 @@ class RestaurantAuthenticationController extends ResponseController
                     if($data['cashback_earned'] > 0){
                         $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
                     }else{
-                        $email_type = 0;
+                        $email_type = 1;
+                        $message_text = $admin_cashback_notification->message;
                     }
                 }else{
                     $message_text = $admin_cashback_notification->message;

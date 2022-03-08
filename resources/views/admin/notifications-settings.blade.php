@@ -1011,12 +1011,12 @@
 				return false;
 			}
 
-			if(type_message.length == 0){
-				$("#alert_text").text("Please select atleast one checkbox.");
-				$("#validationModel").modal("show");
-				$("#validationModel").unbind("click");
-				return false;
-			}
+			// if(type_message.length == 0){
+			// 	$("#alert_text").text("Please select atleast one checkbox.");
+			// 	$("#validationModel").modal("show");
+			// 	$("#validationModel").unbind("click");
+			// 	return false;
+			// }
 
 
 			$.ajax({
