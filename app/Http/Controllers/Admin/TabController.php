@@ -1290,7 +1290,7 @@ class TabController extends ResponseController
                        // $query->orWhere('status', 'Like', '%' . $search . '%');
                         $query->orWhere("updated_at", 'Like', '%' . $search . '%');
                         // $query->orWhere('created_by', 'Like', '%'. $search . '%');
-                        $query->orWhere('updated_by', 'Like', '%'. $search . '%');
+                        // $query->orWhere('updated_by', 'Like', '%'. $search . '%');
                     });
             
 
@@ -1604,15 +1604,16 @@ class TabController extends ResponseController
     public function resetPasswordSendLink(Request $request){
         $ids = explode(",", $request->ids);
 
-        $check_deactivated_user = User::whereIn("id", $ids)->where("is_active", "=", 'Inactive')->orWhere("is_block", "=", 1)->first();
+        $check_deactivated_user = User::where(function($query) use ($ids){
+                                        $query->whereIn("id", $ids);
+                                        $query->where("is_active", "=", "Inactive");
+                                    })->orWhere(function($query) use ($ids){
+                                        $query->whereIn("id", $ids);
+                                        $query->where("is_block", "=", 1);
+                                    })->first();
 
         if(!empty($check_deactivated_user)){
             return response()->json(['user_action_err' => 'Selected user has been already deactivated or blocked by admin.'],422);
-        }
-
-        $check_verified_users = User::whereIn("id", $ids)->where("is_verify", "=", 0)->first();
-        if(!empty($check_verified_users)){
-            return response()->json(['user_action_err' => 'Selected user has been not verified.'],422);
         }
 
         $users = User::whereIn("id", $ids)->get();
@@ -4952,7 +4953,7 @@ class TabController extends ResponseController
                 $query->orWhere('created_at', 'Like', '%' . $search . '%');
                 // $query->orWhere('created_by', 'Like', '%' . $search . '%');
                 $query->orWhere('updated_at', 'Like', '%' . $search . '%');
-                $query->orWhere('updated_by', 'Like', '%' . $search . '%');
+                // $query->orWhere('updated_by', 'Like', '%' . $search . '%');
                 $query->orWhere('status', 'Like', '%' . $search . '%');
             });
 
