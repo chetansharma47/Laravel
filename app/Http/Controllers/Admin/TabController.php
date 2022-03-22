@@ -3201,7 +3201,7 @@ class TabController extends ResponseController
 
                                         if($wallet_txn->cashback_earned > 0){
                                             if($wallet_txn->redeemed_amount > 0){
-                                                $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$wallet_txn->cashback_earned." AED. Your wallet usage is ".$wallet_txn->redeemed_amount." AED.".$admin_cashback_notification_find->message;
+                                                $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$wallet_txn->cashback_earned." AED. Your wallet usage is ".$wallet_txn->redeemed_amount." AED. ".$admin_cashback_notification_find->message;
                                             }else{
                                                 $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$wallet_txn->cashback_earned." AED. ".$admin_cashback_notification_find->message;
                                             }
@@ -3843,7 +3843,7 @@ class TabController extends ResponseController
 
                     if($value->cashback_earned > 0){
                         if($value->redeemed_amount > 0){
-                            $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$value->cashback_earned." AED. Your wallet usage is ".$vaue->redeemed_amount." AED.".$admin_cashback_notification_find->message;
+                            $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$value->cashback_earned." AED. Your wallet usage is ".$vaue->redeemed_amount." AED. ".$admin_cashback_notification_find->message;
                         }else{
                             $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$value->cashback_earned." AED. ".$admin_cashback_notification_find->message;
                         }
@@ -4229,7 +4229,7 @@ class TabController extends ResponseController
 
                 if($user_wallet_txn->cashback_earned > 0){
                    if($user_wallet_txn->redeemed_amount > 0){
-                            $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$user_wallet_txn->cashback_earned." AED. Your wallet usage is ".$user_wallet_txn->redeemed_amount." AED.".$admin_cashback_notification_find->message;
+                            $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$user_wallet_txn->cashback_earned." AED. Your wallet usage is ".$user_wallet_txn->redeemed_amount." AED. ".$admin_cashback_notification_find->message;
                         }else{
                             $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$user_wallet_txn->cashback_earned." AED. ".$admin_cashback_notification_find->message;
                         }
