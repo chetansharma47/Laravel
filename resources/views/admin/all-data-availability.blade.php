@@ -417,6 +417,11 @@
 							</a>
 						</div>
 						<div>
+							<a href="javascript:void(0);" id="reset_password_btn" class="btn btn-primary btn-user btn-block common_btn" style="     font-size: 18px; width: 154px; margin-right: 15px; text-transform: none; padding: 8px 0;">
+								Reset Password
+							</a>
+						</div>
+						<div>
 							<a href="" class="btn btn-primary btn-user btn-block common_btn" style="     font-size: 18px; width: 154px; margin-right: 15px; text-transform: none; padding: 8px 0;">
 								Reset Selection
 							</a>
@@ -2027,6 +2032,63 @@ selected_customer_wallet_transactions();
 	          $(this).val($(this).val().trimLeft(""));
 	        }
       });
+
+		$('#reset_password_btn').click(function(){
+			let ids = $("#selected_checkboxes").val();
+			if(ids == "" || ids == null || ids == "undefiend"){
+				$("#alert_text").text("Please select checkbox for send reset password link to users.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
+
+			var data = {
+	            	'_token': "{{csrf_token()}}",
+	            	"ids": ids
+	            };
+
+	          	$.ajax({
+		              url:"{{route('admin.resetPasswordSendLink')}}",
+		              type:'POST',
+		              data:data,
+		              beforeSend:function(){
+		              	$("#loaderModel").modal("show");
+						$("#loaderModel").unbind("click");
+		              },
+		              success: function(res){
+		              	setTimeout(function(){
+
+		              		$("#loaderModel").modal("hide");
+		              		$("#success_alert_text").text(res.message);
+		              		$("#successModel").modal("show");
+
+		              		$("#selected_checkboxes").val("");
+		              		$(".single_checkbox").prop("checked",false);
+		              		$(".select_all_checkbox").prop("checked",false);
+
+		              	},500);
+		              },
+		              error: function(data, textStatus, xhr) {
+		                if(data.status == 422){
+		                  setTimeout(function(){
+			              	$("#loaderModel").modal("hide");
+		                  	var result = data.responseJSON;
+			              	if(result['user_action_err'] && result['user_action_err'].length > 0){
+			             		$("#alert_text").text(result['user_action_err']);
+								$("#validationModel").modal("show");
+								$("#validationModel").unbind("click");
+		             		}
+							return false;
+			              },500);
+			              
+		                  // window.location.href = "";
+		                  // return false;
+		                } 
+	              	}
+
+
+	            });
+		});
 
 </script>
 

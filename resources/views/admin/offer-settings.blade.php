@@ -997,10 +997,24 @@ if(dob_condition=="" && txn_condition_attr == "BirthdayOffer"){
 // 		return false;
 // }
 
+if(txn_start_condition != "" && txn_end_condition == "" && txn_condition_attr == "Normal"){
+	$("#alert_text").text("Please select transaction end period date.");
+	$("#validationModel").modal("show");
+	$("#validationModel").unbind("click");
+	return false;
+}
+
 if(txn_start_condition != "" && txn_end_condition != "" && txn_condition_attr == "Normal"){
 
 	if(txn_start_condition > txn_end_condition && txn_condition_attr == "Normal"){
 		$("#alert_text").text("Transaction end date should be greater than transaction start date.");
+		$("#validationModel").modal("show");
+		$("#validationModel").unbind("click");
+		return false;
+	}
+
+	if(txn_condition == "" && txn_condition_attr == "Normal"){
+		$("#alert_text").text("Please select transaction amount condition.");
 		$("#validationModel").modal("show");
 		$("#validationModel").unbind("click");
 		return false;
@@ -1011,6 +1025,15 @@ if(date_condition=="" && txn_condition_attr == "Normal"){
 	$("#validationModel").modal("show");
 	$("#validationModel").unbind("click");
 	return false;
+}
+if(txn_start_condition != "" && txn_end_condition != "" && txn_condition_attr == "Normal"){
+
+	if(txn_condition == "" && txn_condition_attr == "Normal"){
+		$("#alert_text").text("Please select transaction amount condition.");
+		$("#validationModel").modal("show");
+		$("#validationModel").unbind("click");
+		return false;
+	}
 }
 
 // if(date_condition!==txn_start_condition && txn_condition_attr == "Normal"){

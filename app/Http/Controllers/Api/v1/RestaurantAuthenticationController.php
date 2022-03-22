@@ -386,7 +386,7 @@ class RestaurantAuthenticationController extends ResponseController
 
         /*End*/
 
-        $transaction_amount_check_last_days = 30;
+        /*$transaction_amount_check_last_days = 30;
         $customer_tier_validity_check = 30;
         $tier_setting = TierSetting::first();
         if(!empty($tier_setting)){
@@ -453,7 +453,7 @@ class RestaurantAuthenticationController extends ResponseController
             $user_find->customer_tier = $amount_between_tier_find->tier_name;
             $user_find->tier_update_date = Carbon::now()->toDateString();
             $user_find->update();
-        }
+        }*/
 
 
         $data['description'] = "Redeemed Earnings";
@@ -710,10 +710,14 @@ class RestaurantAuthenticationController extends ResponseController
         $this->is_validationRule(Validation::scanPosValidate($Validation = "", $message = "") , $request);
 
         $timezone = $request->timezone;
-        $user = User::whereId($request->user_id)->orWhere('customer_id', '=', $request->user_id)->first();
+        // $user = User::whereId($request->user_id)->orWhere('customer_id', '=', $request->user_id)->first();
+        $user = User::whereCustomerId( $request->user_id)
+                ->orWhere(function($query) use ($request){
+                    $query->where(DB::raw("CONCAT(users.country_code,users.mobile_number)"),'=',"+". $request->user_id);
+                })->first();
 
         if(empty($user)){
-            return $this->responseWithErrorCode("Please enter valid user id or customer id.",406);
+            return $this->responseWithErrorCode("Please enter valid mobile number or customer id.",406);
         }
 
         $tier = TierCondition::whereTierName($user->customer_tier)->orderBy('id','desc')->first();
@@ -753,6 +757,7 @@ class RestaurantAuthenticationController extends ResponseController
         $user->badges = $user_assign_badge;
         $now_time = Carbon::now();
         $time_after_10mins = Carbon::now()->addMinutes(10);
+       $user->wallet_cash =  round($user->wallet_cash);
         $user->valid_time = $now_time->diffInSeconds($time_after_10mins);   //10 min = 600 secs 
         return $this->responseOk("User Data",['user_data' => $user]);
     }
@@ -844,7 +849,7 @@ class RestaurantAuthenticationController extends ResponseController
 
         /*End*/
 
-        $transaction_amount_check_last_days = 30;
+        /*$transaction_amount_check_last_days = 30;
         $customer_tier_validity_check = 30;
         $tier_setting = TierSetting::first();
         if(!empty($tier_setting)){
@@ -909,7 +914,7 @@ class RestaurantAuthenticationController extends ResponseController
             $user_find->customer_tier = $amount_between_tier_find->tier_name;
             $user_find->tier_update_date = Carbon::now()->toDateString();
             $user_find->update();
-        }
+        }*/
 
 
         $data['description'] = "Redeemed Earnings";
@@ -1030,7 +1035,11 @@ class RestaurantAuthenticationController extends ResponseController
                 $push_type = 1;
                 if($admin_cashback_notification->push_type == 1){
                     if($data['cashback_earned'] > 0){
-                        $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
+                        if($data['redeemed_amount'] > 0){
+                            $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. Your wallet usage is ".$data['redeemed_amount']." AED. \n".$admin_cashback_notification->message;
+                        }else{
+                            $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
+                        }
                     }else{
                         $push_type = 1;
                         $message_text = $admin_cashback_notification->message;
@@ -1043,7 +1052,11 @@ class RestaurantAuthenticationController extends ResponseController
                 $push_type = 1;
                 if($admin_transaction_notification->push_type == 1){
                     if($data['cashback_earned'] > 0){
-                        $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
+                         if($data['redeemed_amount'] > 0){
+                            $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. Your wallet usage is ".$data['redeemed_amount']." AED. \n".$admin_cashback_notification->message;
+                        }else{
+                            $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
+                        }
                     }else{
                         $push_type = 1;
                         $message_text = $admin_cashback_notification->message;
@@ -1123,7 +1136,11 @@ class RestaurantAuthenticationController extends ResponseController
                 $sms_type = 1;
                 if($admin_cashback_notification->sms_type == 1){
                     if($data['cashback_earned'] > 0){
-                        $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
+                         if($data['redeemed_amount'] > 0){
+                            $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. Your wallet usage is ".$data['redeemed_amount']." AED. \n".$admin_cashback_notification->message;
+                        }else{
+                            $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
+                        }
                     }else{
                         $sms_type = 1;
                         $message_text = $admin_cashback_notification->message;
@@ -1136,7 +1153,11 @@ class RestaurantAuthenticationController extends ResponseController
                 $sms_type = 1;
                 if($admin_transaction_notification->sms_type == 1){
                     if($data['cashback_earned'] > 0){
-                    $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
+                     if($data['redeemed_amount'] > 0){
+                            $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. Your wallet usage is ".$data['redeemed_amount']." AED. \n".$admin_cashback_notification->message;
+                        }else{
+                            $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
+                        }
                     }else{
                         $sms_type = 1;
                         $message_text = $admin_cashback_notification->message;
@@ -1162,7 +1183,11 @@ class RestaurantAuthenticationController extends ResponseController
                 $email_type = 1;
                 if($admin_cashback_notification->email_type == 1){
                     if($data['cashback_earned'] > 0){
-                        $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
+                         if($data['redeemed_amount'] > 0){
+                            $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. Your wallet usage is ".$data['redeemed_amount']." AED. \n".$admin_cashback_notification->message;
+                        }else{
+                            $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
+                        }
                     }else{
                         $email_type = 1;
                         $message_text = $admin_cashback_notification->message;
@@ -1175,7 +1200,11 @@ class RestaurantAuthenticationController extends ResponseController
                 $email_type = 1;
                 if($admin_transaction_notification->email_type == 1){
                     if($data['cashback_earned'] > 0){
-                        $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
+                         if($data['redeemed_amount'] > 0){
+                            $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. Your wallet usage is ".$data['redeemed_amount']." AED. \n".$admin_cashback_notification->message;
+                        }else{
+                            $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
+                        }
                     }else{
                         $email_type = 1;
                         $message_text = $admin_cashback_notification->message;

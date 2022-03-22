@@ -389,7 +389,7 @@
 	     }
 		},
 		data: [{        
-			type: "area",  
+			type: "line",  
 			showInLegend: true, 
 			legendMarkerColor: "grey",
 			legendText: "Date Interval",
@@ -420,7 +420,7 @@
 	     }
 		},
 		data: [{        
-			type: "area",  
+			type: "line",  
 			showInLegend: true, 
 			legendMarkerColor: "grey",
 			legendText: "Date Interval",
@@ -451,7 +451,7 @@
 	     }
 		},
 		data: [{        
-			type: "area",  
+			type: "line",  
 			showInLegend: true, 
 			legendMarkerColor: "grey",
 			legendText: "Date Interval",
@@ -482,7 +482,7 @@
 	     }
 		},
 		data: [{        
-			type: "area",  
+			type: "line",  
 			showInLegend: true, 
 			legendMarkerColor: "grey",
 			legendText: "Date Interval",

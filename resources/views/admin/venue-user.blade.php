@@ -576,7 +576,7 @@ select.form-control.form-group.status_select:focus{
 		});
 
 		function displayVenue(){
-			let table =$("#basic-datatables").DataTable({
+			let table = $("#basic-datatables").DataTable({
 				processing:true,
 				serverSide:true,
 				retrieve: true,
@@ -588,8 +588,6 @@ select.form-control.form-group.status_select:focus{
 					data:{'_token':'{{csrf_token()}}'},
 				},
 				createdRow: function( row, data, dataIndex ) {
-
-				
 		        $( row ).find('td:eq(0)').attr('data-id', data['id']).attr('key_type','serial_number').addClass('td_edit');
 		        $( row ).find('td:eq(1)').attr('data-id', data['id']).attr('key_type','username').addClass('td_edit').addClass('white_space').addClass('break-all');
 		        $( row ).find('td:eq(2)').attr('data-id', data['id']).attr({key_type:'password',type:'password'}).addClass('td_edit').addClass('white_space').addClass('break-all').html('<span>'+data.password+'</span>');
@@ -604,17 +602,17 @@ select.form-control.form-group.status_select:focus{
 		        $( row ).find('td:eq(7)').attr('data-id', data['id']).attr('key_type','updated_at').addClass('td_edit').addClass('white_space').addClass('date_white_space').addClass('col_min_width');
 		        $( row ).find('td:eq(8)').attr('data-id', data['id']).attr('key_type','updated_by').addClass('td_edit').addClass('white_space');
 		    },
-				columns:[
-					{data: 'DT_RowIndex', name: 'DT_RowIndex'},
-					{data:'username',name:'username'},
-					{data:'password',name:'password'},
-					{data:'venue_name', name:'venue_name', orderable: false},
-					{data:'status', name:'status'},
-					{data:'created_at', name:'created_at'},
-					{data:'created_by', name:'created_by'},
-					{data:'updated_at', name:'updated_at'},
-					{data:'updated_by', name:'updated_by'},
-				]
+			columns:[
+				{data: 'DT_RowIndex', name: 'DT_RowIndex'},
+				{data:'username',name:'username'},
+				{data:'password',name:'password'},
+				{data:'venue_name', name:'venue_name', orderable: false},
+				{data:'status', name:'status'},
+				{data:'created_at', name:'created_at'},
+				{data:'created_by', name:'created_by'},
+				{data:'updated_at', name:'updated_at'},
+				{data:'updated_by', name:'updated_by'},
+			]
 			
 			});
 				

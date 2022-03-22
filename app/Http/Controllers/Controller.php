@@ -17,6 +17,7 @@ use DB;
 use Carbon\Carbon;
 use App\Validation;
 use App\Models\WalletTransaction;
+use App\Models\TierCondition;
 use App\Models\TierSetting;
 use App\Models\AdminNotification;
 use App\Models\AdminCriteriaNotification;
@@ -262,8 +263,8 @@ class Controller extends BaseController
 
                             $total_amount_transaction = WalletTransaction::where(function($query) use ($user_match_with_offer,$offer){
                                     $query->whereUserId($user_match_with_offer->id);
-                                    $query->whereDate('created_at','<=',$offer->offerSetting->txn_start_period);
-                                    $query->whereDate('created_at','>=',$offer->offerSetting->txn_end_period);
+                                    $query->whereDate('created_at','>=',$offer->offerSetting->txn_start_period);
+                                    $query->whereDate('created_at','<=',$offer->offerSetting->txn_end_period);
                                 })->sum('total_bill_amount');
 
                             if($offer->offerSetting->txn_amount_condition == "Greater Than"){
@@ -422,8 +423,8 @@ class Controller extends BaseController
         $apns_topic     = 'com.captial.motion.user';
 
         $sample_alert = json_encode($body);
-        $url = "https://api.development.push.apple.com/3/device/$deviceToken"; //development
-        // $url = "https://api.push.apple.com/3/device/$deviceToken"; //production
+        // $url = "https://api.development.push.apple.com/3/device/$deviceToken"; //development
+        $url = "https://api.push.apple.com/3/device/$deviceToken"; //production
 
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $sample_alert);
@@ -686,14 +687,6 @@ class Controller extends BaseController
                 if($admin_event_notification->email_type == 1){
                     if(count($events_getting) > 0){
 
-
-                        // try{
-                        //     \Mail::to($user_find->email)->send(new MultipleEventCroneMailSend($admin_event_notification, $user_find, $events_getting));
-                        // }catch(\Exception $ex){
-                        //     return $ex->getMessage();
-                        // }
-                        // return "W";
-
                         $notificationJob = (new MultipleEventsJobSendMail($admin_event_notification, $user_find, $events_getting))->delay(Carbon::now()->addSeconds(3));
                         dispatch($notificationJob);
                     }
@@ -735,13 +728,98 @@ class Controller extends BaseController
 
             $assign_badge_mail = (new UserAssignBadgeJob($user_find, $find_badge, $value))->delay(Carbon::now()->addSeconds(3));
             dispatch($assign_badge_mail);
-
-            // try{
-            //     \Mail::to($user_find['email'])->send(new AssignBadgeMail($user_find, $find_badge, $value));
-            // }catch(\Exception $ex){
-            //     return $ex->getMessage();
-            // }
             
+        }
+
+        return "success";
+
+    }
+
+    public function CustomerTierUpdateCronJob(Request $request){
+
+        $get_all_users = User::where('is_verify','=',1)->where('is_block','=',0)->where("is_active", "=", 'Active')->pluck('id');
+
+        foreach ($get_all_users as $value) {
+            $user_find = User::whereId($value)->first();
+
+            $tier_find = TierCondition::whereTierName($user_find->customer_tier)->whereDeletedAt(null)->first();
+            if(empty($tier_find)){
+                $tier_find = TierCondition::whereDeletedAt(null)->first();
+            }
+
+            if(empty($tier_find)){
+                break;
+            }
+
+            $transaction_amount_check_last_days = 30;
+            $customer_tier_validity_check = 30;
+            $tier_setting = TierSetting::first();
+            if(!empty($tier_setting)){
+                $transaction_amount_check_last_days = $tier_setting->transaction_amount_check_last_days;
+                $customer_tier_validity_check = $tier_setting->customer_tier_validity_check;
+            }
+
+            $last_30_days_transaction_amount = Carbon::now()->subDays($transaction_amount_check_last_days);
+
+            $last_validity_check_days = Carbon::now()->subDays($customer_tier_validity_check);
+
+            $total_amount_transaction = WalletTransaction::where(function($query) use ($transaction_amount_check_last_days,$customer_tier_validity_check, $user_find, $last_30_days_transaction_amount, $last_validity_check_days){
+                                            $query->whereUserId($user_find->id);
+                                            $query->whereDate('created_at','<=',Carbon::now()->toDateString());
+                                            $query->whereDate('created_at','>=',$last_30_days_transaction_amount->toDateString());
+                                            $query->whereIsCrossVerify(1);
+                                        })->sum('total_bill_amount');
+
+            // $total_amount_transaction = $total_amount_transaction + $data['total_bill_amount'];
+            $total_amount_transaction = $total_amount_transaction;
+
+            $amount_between_tier_find = TierCondition::whereDeletedAt(null)->where('from_amount', '<=', $total_amount_transaction)->where('to_amount', '>=', $total_amount_transaction)->first();
+            if(empty($amount_between_tier_find)){
+
+                //preveious tier found according to total amount transaction
+                $amount_between_tier_find = TierCondition::whereDeletedAt(null)->where('to_amount','<=', $total_amount_transaction)->orderBy('to_amount','desc')->first();
+
+                if(!empty($amount_between_tier_find)){
+                    
+                    $last_tier_update_date = Carbon::parse($user_find->tier_update_date);
+                    $diffrence_in_days_for_tier = $last_tier_update_date->diffInDays(Carbon::now());
+
+                    if($tier_find->to_amount >= $amount_between_tier_find->to_amount){
+
+                        if($diffrence_in_days_for_tier >= $customer_tier_validity_check){
+                            $user_find->customer_tier = $amount_between_tier_find->tier_name;
+                            $user_find->tier_update_date = Carbon::now()->toDateString();
+                            $user_find->update();
+                        }
+                    }else{
+                        $user_find->customer_tier = $amount_between_tier_find->tier_name;
+                        $user_find->tier_update_date = Carbon::now()->toDateString();
+                        $user_find->update();
+                    }
+                }
+
+                if(empty($amount_between_tier_find)){
+
+                    //next tier found according to transaction amount total
+                    $amount_between_tier_find = TierCondition::whereDeletedAt(null)->where('to_amount','>=', $total_amount_transaction)->orderBy('to_amount','desc')->first();
+
+                    if(empty($amount_between_tier_find)){
+
+                        return $this->responseWithErrorCode("No tier add from admin.",400);
+                    }
+
+                    $user_find->customer_tier = $amount_between_tier_find->tier_name;
+                    $user_find->tier_update_date = Carbon::now()->toDateString();
+                    $user_find->update();
+                }
+
+
+            }else{
+                $user_find->customer_tier = $amount_between_tier_find->tier_name;
+                $user_find->tier_update_date = Carbon::now()->toDateString();
+                $user_find->update();
+            }
+
         }
 
         return "success";

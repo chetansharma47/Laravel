@@ -22,6 +22,11 @@
       </td>
     </tr>
     <tr>
+      <td align="left" valign="top" style="font-family: 'Lato', sans-serif;
+     font-weight: 400; font-size:14px; color:#000;">{{$admin_event_notification->message}}
+      </td>
+    </tr>
+    <tr>
       <td align="left" valign="top">&nbsp;</td>
     </tr>
   </table>
@@ -167,7 +172,7 @@
 
           <tr>
             <td align="left" valign="top" style="font-family: 'Lato', sans-serif;
-     font-weight: 400; font-size:14px; color:#000;">{{$admin_event_notification->message}}<br><br>
+     font-weight: 400; font-size:14px; color:#000;">{{$event->event_description}}<br><br>
 
             
             </td>

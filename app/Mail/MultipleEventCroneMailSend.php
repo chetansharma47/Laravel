@@ -35,7 +35,7 @@ class MultipleEventCroneMailSend extends Mailable
 
 $general_setting = GeneralSetting::all();
         return $this->from(env('MAIL_USERNAME'), 'Capital Motion')
-        ->subject("Upcoming Events at Capital Motion Venues")
+        ->subject("Upcoming Promotions at Capital Motion Venues")
         ->view('admin.email.multiple-event-email')
         ->with([
             'admin_event_notification'   => $this->admin_event_notification,

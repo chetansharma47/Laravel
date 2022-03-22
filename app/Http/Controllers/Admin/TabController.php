@@ -52,6 +52,7 @@ use App\Jobs\EventNotificationJob;
 use App\Jobs\CashbackEmailJob;
 use App\Jobs\UserAssignBadgeJob;
 use App\Jobs\ReferMailSend;
+use App\Jobs\UserResetPasswordMail;
 use App\Mail\NewEventCreateMail;
 use App\Mail\OfferAssignMail;
 use App\Mail\CashbackEmail;
@@ -850,7 +851,7 @@ class TabController extends ResponseController
 
     public function downloadUserAfterCriteria(Request $request,$ids_data){
         $ids_data = explode(",", base64_decode($request->ids_data));
-        $users = User::whereDeletedAt(null)->select('customer_id as Customer ID', 'mobile_number as Mobile Number','first_name as First Name','last_name as Last Name','email as Email ID','nationality as Nationality','dob as DOB', 'gender as Gender','is_active as Status',DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d') AS Join_On"),'customer_tier as Customer Tier',DB::raw("ROUND(wallet_cash,1) AS 'Wallet Cash'"),'reference_code as Customer Referral Code','reference_by as Referral By')->orderBy("id","desc")->whereIn('users.id',$ids_data)->get()->toArray();
+        $users = User::whereDeletedAt(null)->select('customer_id as Customer ID', DB::raw('CONCAT(users.country_code, users.mobile_number) AS "Mobile Number"'),'first_name as First Name','last_name as Last Name','email as Email ID','nationality as Nationality','dob as DOB', 'gender as Gender','is_active as Status',DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d') AS Join_On"),'customer_tier as Customer Tier',DB::raw("ROUND(wallet_cash,1) AS 'Wallet Cash'"),'reference_code as Customer Referral Code','reference_by as Referral By')->orderBy("id","desc")->whereIn('users.id',$ids_data)->get()->toArray();
 
          return $download =  Excel::create('export-users', function($excel) use ($users){
 
@@ -867,7 +868,7 @@ class TabController extends ResponseController
 
     public function downloadWalletTransactions(Request $request){
 
-       $wallet_transactions = WalletDetail::select(DB::raw("(select customer_id from users where id = wallet_details.user_id) AS 'Customer ID'"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where id = wallet_details.user_id) AS 'Customer Name'"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where id = wallet_details.user_id) AS 'Mobile Number'"),DB::raw("(select email from users where id = wallet_details.user_id) AS 'Email'"),"description as Description","cashback_earned as Cashback Earn","user_wallet_cash as Wallet Cash",DB::raw("DATE_FORMAT(date_and_time, '%d-%M-%Y %H:%i %p') AS 'Date and Time Added'"),"id")->where('wallet_details.user_id',$request->selected_user);
+       $wallet_transactions = WalletDetail::select(DB::raw("(select customer_id from users where id = wallet_details.user_id) AS 'Customer ID'"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where id = wallet_details.user_id) AS 'Customer Name'"),DB::raw("(select CONCAT(users.country_code, users.mobile_number) from users where id = wallet_details.user_id) AS 'Mobile Number'"),DB::raw("(select email from users where id = wallet_details.user_id) AS 'Email'"),"description as Description","cashback_earned as Cashback Earn","user_wallet_cash as Wallet Cash",DB::raw("DATE_FORMAT(date_and_time, '%d-%M-%Y %H:%i %p') AS 'Date and Time Added'"),"id")->where('wallet_details.user_id',$request->selected_user);
        
        if(!empty($request->search_txt)){
             $search = $request->search_txt;
@@ -896,7 +897,7 @@ class TabController extends ResponseController
 
     public function downloadWalletTransactionsAfterSelectedUser(Request $request,$ids_data){
         $ids_data = explode(",", base64_decode($request->ids_data));
-        $wallet_transactions = WalletDetail::select(DB::raw("(select customer_id from users where id = wallet_details.user_id) AS 'Customer ID'"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where id = wallet_details.user_id) AS 'Customer Name'"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where id = wallet_details.user_id) AS 'Mobile Number'"),DB::raw("(select email from users where id = wallet_details.user_id) AS 'Email ID'"),"description as Description",DB::raw("ROUND(cashback_earned,2) AS 'Cashback Earned'"),DB::raw("ROUND(redeemed_amount,2) AS 'Redeemed Amount'"),"user_wallet_cash as Wallet Cash",DB::raw("DATE_FORMAT(date_and_time, '%Y-%m-%d %h:%i %p') AS 'Date and Time Added'"))->orderBy("wallet_details.id","desc")->whereIn('wallet_details.id',$ids_data)->get();
+        $wallet_transactions = WalletDetail::select(DB::raw("(select customer_id from users where id = wallet_details.user_id) AS 'Customer ID'"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where id = wallet_details.user_id) AS 'Customer Name'"),DB::raw("(select CONCAT(users.country_code, users.mobile_number) from users where id = wallet_details.user_id) AS 'Mobile Number'"),DB::raw("(select email from users where id = wallet_details.user_id) AS 'Email ID'"),"description as Description",DB::raw("ROUND(cashback_earned,2) AS 'Cashback Earned'"),DB::raw("ROUND(redeemed_amount,2) AS 'Redeemed Amount'"),"user_wallet_cash as Wallet Cash",DB::raw("DATE_FORMAT(date_and_time, '%Y-%m-%d %h:%i %p') AS 'Date and Time Added'"))->orderBy("wallet_details.id","desc")->whereIn('wallet_details.id',$ids_data)->get();
 
         foreach ($wallet_transactions as $value) {
             $value['Date and Time Added'] =  $this->convert_to_user_date($value['Date and Time Added'], 'Y-m-d H:i:s');
@@ -1288,7 +1289,7 @@ class TabController extends ResponseController
                         $query->orWhere("created_at", 'Like', '%' . $search . '%');
                        // $query->orWhere('status', 'Like', '%' . $search . '%');
                         $query->orWhere("updated_at", 'Like', '%' . $search . '%');
-                        $query->orWhere('created_by', 'Like', '%'. $search . '%');
+                        // $query->orWhere('created_by', 'Like', '%'. $search . '%');
                         $query->orWhere('updated_by', 'Like', '%'. $search . '%');
                     });
             
@@ -1598,6 +1599,51 @@ class TabController extends ResponseController
         }
         User::whereIn("id", $ids)->update(['is_active' => "Inactive", 'is_block' => 1]);
         return ['status' => "success","ids" => $ids];
+    }
+
+    public function resetPasswordSendLink(Request $request){
+        $ids = explode(",", $request->ids);
+
+        $check_deactivated_user = User::whereIn("id", $ids)->where("is_active", "=", 'Inactive')->orWhere("is_block", "=", 1)->first();
+
+        if(!empty($check_deactivated_user)){
+            return response()->json(['user_action_err' => 'Selected user has been already deactivated or blocked by admin.'],422);
+        }
+
+        $check_verified_users = User::whereIn("id", $ids)->where("is_verify", "=", 0)->first();
+        if(!empty($check_verified_users)){
+            return response()->json(['user_action_err' => 'Selected user has been not verified.'],422);
+        }
+
+        $users = User::whereIn("id", $ids)->get();
+
+        foreach ($users as $value) {
+            $user_id = $value->id;
+            $reset_password_token = str_random(64);
+            $link = url("reset-password/$reset_password_token") . "/" . base64_encode($user_id);
+
+            $resetPasswordJob = (new UserResetPasswordMail($value, $link))
+                            ->delay(Carbon::now()->addSeconds(3));
+            dispatch($resetPasswordJob);
+
+            DB::table('password_resets')->whereEmail($value->email)->delete();
+
+            DB::table('password_resets')->insert(['email' => $value->email, 'token' => $reset_password_token,
+                    'created_at' => Carbon::now()]);
+
+            $message_text = "We have received a request to reset your Capital Motion account password associate with this email address. ".$link;
+
+            \SMSGlobal\Credentials::set(env('SMS_GLOBAL_API'),env('SMS_GLOBAL_SECERET'));
+            $sms = new \SMSGlobal\Resource\Sms();
+            // $message = $admin_transaction_notification->message;
+            try {
+                $response = $sms->sendToOne($value->country_code.$value->mobile_number,$message_text,'CM-Society');
+            } catch (\Exception $e) {
+                continue;
+            }
+        }
+
+        return ['status' => "success","message" => 'A reset password link has been sent to user registered email address and mobile number.'];
     }
 
     public function totalTransactionAmountForDays(Request $request){
@@ -2879,9 +2925,9 @@ class TabController extends ResponseController
             'customer_registrations' => $customer_registrations,
             'customer_registrations_trends' => $customer_registrations_trends,
             'customer_referal' => $customer_referal,
-            'total_sales' => $total_sales,
-            'cashback_earned' => $cashback_earned,
-            'redeemed_amount' => $redeemed_amount,
+            'total_sales' => round($total_sales,2),
+            'cashback_earned' => round($cashback_earned,2),
+            'redeemed_amount' => round($redeemed_amount,2),
             'referral_first_transaction_done' => $referral_first_transaction_done,
             'totalsales_amount_trends' => $totalsales_amount_trends,
             'redeemed_amount_trends' => $redeemed_amount_trends,
@@ -3154,7 +3200,11 @@ class TabController extends ResponseController
                                         $wallet_detail2->save();
 
                                         if($wallet_txn->cashback_earned > 0){
-                                            $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$wallet_txn->cashback_earned." AED. ".$admin_cashback_notification_find->message;
+                                            if($wallet_txn->redeemed_amount > 0){
+                                                $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$wallet_txn->cashback_earned." AED. Your wallet usage is ".$wallet_txn->redeemed_amount." AED.".$admin_cashback_notification_find->message;
+                                            }else{
+                                                $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$wallet_txn->cashback_earned." AED. ".$admin_cashback_notification_find->message;
+                                            }
                                         }else{
                                             $admin_cashback_notification_find->message = $admin_cashback_notification_find->message;
                                         }
@@ -3472,7 +3522,7 @@ class TabController extends ResponseController
         //     }
         // DB::raw('(CASE WHEN wallet_transactions.is_cross_verify = 1 THEN "Verified" ELSE "Mismatch" END) AS Status')
 
-        $data_ecxel = WalletTransaction::select(DB::raw("(select customer_id from users where id = wallet_transactions.user_id) AS 'Customer ID'"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where id = wallet_transactions.user_id) AS 'Customer Name'"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where users.id = wallet_transactions.user_id) AS 'Customer No.'"),DB::raw("(select email from users where id = wallet_transactions.user_id) AS 'Email ID'"),'wallet_transactions.invoice_number as Check No.','wallet_transactions.total_bill_amount as Check Amount','check_amount_pos as Check Amount POS',DB::raw("(CASE WHEN wallet_transactions.is_cross_verify = 1 THEN 'Verified' ELSE 'Mismatch' END) AS 'Transaction Status'"),'wallet_transactions.cashback_percentage as Cash Back %',DB::raw("(select wallet_cash from users where id = wallet_transactions.user_id) AS 'Wallet Cash'"),'wallet_transactions.redeemed_amount as Redemption from Loyalty',DB::raw("(select venue_name from venus where id = wallet_transactions.venu_id) AS 'Restaurant Name'"),'wallet_transactions.offer_product_ids',DB::raw("DATE_FORMAT(wallet_transactions.date_and_time, '%Y-%m-%d %h:%i %p') AS Date"),DB::raw("(select username from venue_users where id = wallet_transactions.venue_user_id) AS 'Restaurant Logged In User'"))
+        $data_ecxel = WalletTransaction::select(DB::raw("(select customer_id from users where id = wallet_transactions.user_id) AS 'Customer ID'"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where id = wallet_transactions.user_id) AS 'Customer Name'"),DB::raw("(select CONCAT(users.country_code, users.mobile_number) from users where users.id = wallet_transactions.user_id) AS 'Customer No.'"),DB::raw("(select email from users where id = wallet_transactions.user_id) AS 'Email ID'"),'wallet_transactions.invoice_number as Check No.','wallet_transactions.total_bill_amount as Check Amount','check_amount_pos as Check Amount POS',DB::raw("(CASE WHEN wallet_transactions.is_cross_verify = 1 THEN 'Verified' ELSE 'Mismatch' END) AS 'Transaction Status'"),'wallet_transactions.cashback_percentage as Cash Back %',DB::raw("(select wallet_cash from users where id = wallet_transactions.user_id) AS 'Wallet Cash'"),'wallet_transactions.redeemed_amount as Redemption from Loyalty',DB::raw("(select venue_name from venus where id = wallet_transactions.venu_id) AS 'Restaurant Name'"),'wallet_transactions.offer_product_ids',DB::raw("DATE_FORMAT(wallet_transactions.date_and_time, '%Y-%m-%d %h:%i %p') AS Date"),DB::raw("(select username from venue_users where id = wallet_transactions.venue_user_id) AS 'Restaurant Logged In User'"))
         ->where('wallet_transactions.is_cross_verify','!=',0)
         ->where('wallet_transactions.is_cross_verify','!=',3)
         ->whereIn('wallet_transactions.id',$ids_data)
@@ -3520,7 +3570,7 @@ class TabController extends ResponseController
         // ->where('wallet_transactions.deleted_at','=',null)
         // ->with('offerProductIds')->orderBy('id','desc');
 
-         $data = WalletTransaction::select(DB::raw("(select customer_id from users where id = wallet_transactions.user_id) AS 'Customer ID'"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where id = wallet_transactions.user_id) AS 'Customer Name'"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where users.id = wallet_transactions.user_id) AS 'Customer No.'"),DB::raw("(select email from users where id = wallet_transactions.user_id) AS 'Email ID'"),'wallet_transactions.invoice_number as Check No.','wallet_transactions.total_bill_amount as Check Amount','check_amount_pos as Check Amount POS',DB::raw("CONCAT(case wallet_transactions.is_cross_verify when '0' then 'Not Verified' else 'Mismatch' end) AS 'Transaction Status'"),'wallet_transactions.cashback_percentage as Cash Back %',DB::raw("(select wallet_cash from users where id = wallet_transactions.user_id) AS 'Wallet Cash'"),'wallet_transactions.redeemed_amount as Redemption from Loyalty',DB::raw("(select venue_name from venus where id = wallet_transactions.venu_id) AS 'Restaurant Name'"),'wallet_transactions.offer_product_ids',DB::raw("DATE_FORMAT(wallet_transactions.date_and_time, '%Y-%m-%d %h:%i %p') AS Date"),DB::raw("(select username from venue_users where id = wallet_transactions.venue_user_id) AS 'Restaurant Logged In User'"))
+         $data = WalletTransaction::select(DB::raw("(select customer_id from users where id = wallet_transactions.user_id) AS 'Customer ID'"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where id = wallet_transactions.user_id) AS 'Customer Name'"),DB::raw("(select CONCAT(users.country_code, users.mobile_number) from users where users.id = wallet_transactions.user_id) AS 'Customer No.'"),DB::raw("(select email from users where id = wallet_transactions.user_id) AS 'Email ID'"),'wallet_transactions.invoice_number as Check No.','wallet_transactions.total_bill_amount as Check Amount','check_amount_pos as Check Amount POS',DB::raw("CONCAT(case wallet_transactions.is_cross_verify when '0' then 'Not Verified' else 'Mismatch' end) AS 'Transaction Status'"),'wallet_transactions.cashback_percentage as Cash Back %',DB::raw("(select wallet_cash from users where id = wallet_transactions.user_id) AS 'Wallet Cash'"),'wallet_transactions.redeemed_amount as Redemption from Loyalty',DB::raw("(select venue_name from venus where id = wallet_transactions.venu_id) AS 'Restaurant Name'"),'wallet_transactions.offer_product_ids',DB::raw("DATE_FORMAT(wallet_transactions.date_and_time, '%Y-%m-%d %h:%i %p') AS Date"),DB::raw("(select username from venue_users where id = wallet_transactions.venue_user_id) AS 'Restaurant Logged In User'"))
         ->where('wallet_transactions.is_cross_verify','!=',1)
         ->where('wallet_transactions.is_cross_verify','!=',3)
         ->where('wallet_transactions.deleted_at','=',null)
@@ -3792,7 +3842,11 @@ class TabController extends ResponseController
                     $wallet_detail2->save();
 
                     if($value->cashback_earned > 0){
-                        $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$value->cashback_earned." AED. ".$admin_cashback_notification_find->message;
+                        if($value->redeemed_amount > 0){
+                            $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$value->cashback_earned." AED. Your wallet usage is ".$vaue->redeemed_amount." AED.".$admin_cashback_notification_find->message;
+                        }else{
+                            $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$value->cashback_earned." AED. ".$admin_cashback_notification_find->message;
+                        }
                     }else{
                         $admin_cashback_notification_find->message = $admin_cashback_notification_find->message;
                     }
@@ -4174,7 +4228,11 @@ class TabController extends ResponseController
                 // $this->send_notifications_verified_users($admin_cashback_notification_find,$find_user);
 
                 if($user_wallet_txn->cashback_earned > 0){
-                    $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$user_wallet_txn->cashback_earned." AED. ".$admin_cashback_notification_find->message;
+                   if($user_wallet_txn->redeemed_amount > 0){
+                            $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$user_wallet_txn->cashback_earned." AED. Your wallet usage is ".$user_wallet_txn->redeemed_amount." AED.".$admin_cashback_notification_find->message;
+                        }else{
+                            $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$user_wallet_txn->cashback_earned." AED. ".$admin_cashback_notification_find->message;
+                        }
                 }else{
                     $admin_cashback_notification_find->message = $admin_cashback_notification_find->message;
                 }
@@ -4331,7 +4389,7 @@ class TabController extends ResponseController
 
         $offer_product_name = Offer::whereOfferName($request->offer_name)->first();
 
-        $data = WalletTransaction::select("wallet_transactions.*",DB::raw("(select customer_id from users where id = wallet_transactions.user_id) AS customer_id"),DB::raw("(select email from users where id = wallet_transactions.user_id) AS email"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where users.id = wallet_transactions.user_id) AS full_name"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where users.id = wallet_transactions.user_id) AS mobile_number"),DB::raw("CONCAT(case wallet_transactions.is_cross_verify when '0' then 'Not Verified' when '1' then 'Verified' when '3' then 'Micros Verified' else 'Mismatch' end) AS txn_status"),DB::raw("(select venue_name from venus where id = wallet_transactions.venu_id) AS venue_name"),DB::raw("(select username from venue_users where id = wallet_transactions.venue_user_id) AS username"),DB::raw("(select offer_redeem from user_assign_offers where id = wallet_transactions.offer_product_ids) AS offer_redeem"))
+        $data = WalletTransaction::select("wallet_transactions.*",DB::raw("(select customer_id from users where id = wallet_transactions.user_id) AS customer_id"),DB::raw("(select email from users where id = wallet_transactions.user_id) AS email"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where users.id = wallet_transactions.user_id) AS full_name"),DB::raw("(select CONCAT(users.country_code, users.mobile_number) from users where users.id = wallet_transactions.user_id) AS mobile_number"),DB::raw("CONCAT(case wallet_transactions.is_cross_verify when '0' then 'Not Verified' when '1' then 'Verified' when '3' then 'Micros Verified' else 'Mismatch' end) AS txn_status"),DB::raw("(select venue_name from venus where id = wallet_transactions.venu_id) AS venue_name"),DB::raw("(select username from venue_users where id = wallet_transactions.venue_user_id) AS username"),DB::raw("(select offer_redeem from user_assign_offers where id = wallet_transactions.offer_product_ids) AS offer_redeem"))
         // ->whereUserId($user_id->id)
         ->where(function($query) use ($request){
 
@@ -4391,7 +4449,7 @@ class TabController extends ResponseController
              $data  = $data->where(function($query) use($search){
                     $query->orWhere(DB::raw("(select customer_id from users where id = wallet_transactions.user_id)"), 'Like', '%' . $search . '%');
                     $query->orWhere(DB::raw("(select email from users where id = wallet_transactions.user_id)"), 'Like', '%' . $search . '%');
-                    $query->orWhere(DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where id = wallet_transactions.user_id)"), 'like', '%'.$search.'%');
+                    $query->orWhere(DB::raw("(select CONCAT(users.country_code, users.mobile_number) from users where id = wallet_transactions.user_id)"), 'like', '%'.$search.'%');
                     $query->orWhere(DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where id = wallet_transactions.user_id)"), 'like', '%'.$search.'%');
                     $query->orWhere("wallet_transactions.user_wallet_cash", 'Like', '%' . $search . '%');
                     $query->orWhere("wallet_transactions.invoice_number", 'Like', '%' . $search . '%');
@@ -4459,7 +4517,7 @@ class TabController extends ResponseController
 
         $offer_product_name = Offer::whereOfferName($request->offer_name)->first();
 
-        $data = WalletTransaction::select("wallet_transactions.*",DB::raw("(select customer_id from users where id = wallet_transactions.user_id) AS customer_id"),DB::raw("(select email from users where id = wallet_transactions.user_id) AS email"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where users.id = wallet_transactions.user_id) AS full_name"),DB::raw("(select wallet_cash from users where id = wallet_transactions.user_id) AS wallet_cash"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where users.id = wallet_transactions.user_id) AS mobile_number"),DB::raw("CONCAT(case wallet_transactions.is_cross_verify when '0' then 'Not Verified' when '1' then 'Verified' when '3' then 'Micros Verified' else 'Mismatch' end) AS txn_status"),DB::raw("(select venue_name from venus where id = wallet_transactions.venu_id) AS venue_name"),DB::raw("(select username from venue_users where id = wallet_transactions.venue_user_id) AS username"),DB::raw("(select offer_redeem from user_assign_offers where id = wallet_transactions.offer_product_ids) AS offer_redeem"))
+        $data = WalletTransaction::select("wallet_transactions.*",DB::raw("(select customer_id from users where id = wallet_transactions.user_id) AS customer_id"),DB::raw("(select email from users where id = wallet_transactions.user_id) AS email"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where users.id = wallet_transactions.user_id) AS full_name"),DB::raw("(select wallet_cash from users where id = wallet_transactions.user_id) AS wallet_cash"),DB::raw("(select CONCAT(users.country_code, users.mobile_number) from users where users.id = wallet_transactions.user_id) AS mobile_number"),DB::raw("CONCAT(case wallet_transactions.is_cross_verify when '0' then 'Not Verified' when '1' then 'Verified' when '3' then 'Micros Verified' else 'Mismatch' end) AS txn_status"),DB::raw("(select venue_name from venus where id = wallet_transactions.venu_id) AS venue_name"),DB::raw("(select username from venue_users where id = wallet_transactions.venue_user_id) AS username"),DB::raw("(select offer_redeem from user_assign_offers where id = wallet_transactions.offer_product_ids) AS offer_redeem"))
         // ->whereUserId($user_id->id)
         ->where(function($query) use ($request){
 
@@ -4566,7 +4624,7 @@ class TabController extends ResponseController
         // $data = WalletTransaction::select(DB::raw("(select customer_id from users where id = wallet_transactions.user_id) AS 'Customer ID'"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where users.id = wallet_transactions.user_id) AS 'Customer Name'"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where users.id = wallet_transactions.user_id) AS 'Mobile Number'"),DB::raw("(select email from users where id = wallet_transactions.user_id) AS 'Email ID'"),"wallet_transactions.invoice_number AS Invoice Number","wallet_transactions.total_bill_amount AS Check Amount","wallet_transactions.check_amount_pos AS Check Amount POS",DB::raw("CONCAT(case wallet_transactions.is_cross_verify when '0' then 'Not Verified' when '1' then 'Verified' else 'Mismatch' end) AS 'Transaction Status'"),"wallet_transactions.cashback_percentage AS Cashback Percentage",DB::raw("ROUND((select wallet_cash from users where id = wallet_transactions.user_id),1) AS 'Redeemed Wallet'"),"wallet_transactions.redeemed_amount AS Redemption From Loyalty",DB::raw("(select venue_name from venus where id = wallet_transactions.venu_id) AS 'Restaurant Name'"),DB::raw("(select username from venue_users where id = wallet_transactions.venue_user_id) AS 'Restaurant User'"),DB::raw("DATE_FORMAT(wallet_transactions.date_and_time, '%Y-%m-%d') AS Date"))->orderBy('wallet_transactions.id','desc')->whereIn('id',$ids_data)
         //     ->get()->toArray();
 
-        $data = WalletTransaction::select('cashier_name',DB::raw("(select customer_id from users where id = wallet_transactions.user_id) AS 'Customer ID'"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where id = wallet_transactions.user_id) AS 'Customer Name'"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where users.id = wallet_transactions.user_id) AS 'Customer No.'"),DB::raw("(select email from users where id = wallet_transactions.user_id) AS 'Email ID'"),'wallet_transactions.invoice_number as Check No.','wallet_transactions.total_bill_amount as Check Amount','check_amount_pos as Check Amount POS',DB::raw("CONCAT(case wallet_transactions.is_cross_verify when '0' then 'Not Verified' when '1' then 'Verified' when '3' then 'Micros Verified' else 'Mismatch' end) AS 'Transaction Status'"),'wallet_transactions.cashback_percentage as Cash Back %','wallet_transactions.user_wallet_cash as Wallet Cash','wallet_transactions.redeemed_amount as Redemption from Loyalty',DB::raw("(select venue_name from venus where id = wallet_transactions.venu_id) AS 'Restaurant Name'"),'wallet_transactions.offer_product_ids',DB::raw("DATE_FORMAT(wallet_transactions.date_and_time, '%Y-%m-%d %h:%i %p') AS Date"),DB::raw("(select username from venue_users where id = wallet_transactions.venue_user_id) AS 'Restaurant Logged In User'"))
+        $data = WalletTransaction::select('cashier_name',DB::raw("(select customer_id from users where id = wallet_transactions.user_id) AS 'Customer ID'"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where id = wallet_transactions.user_id) AS 'Customer Name'"),DB::raw("(select CONCAT(users.country_code, users.mobile_number) from users where users.id = wallet_transactions.user_id) AS 'Customer No.'"),DB::raw("(select email from users where id = wallet_transactions.user_id) AS 'Email ID'"),'wallet_transactions.invoice_number as Check No.','wallet_transactions.total_bill_amount as Check Amount','check_amount_pos as Check Amount POS',DB::raw("CONCAT(case wallet_transactions.is_cross_verify when '0' then 'Not Verified' when '1' then 'Verified' when '3' then 'Micros Verified' else 'Mismatch' end) AS 'Transaction Status'"),'wallet_transactions.cashback_percentage as Cash Back %','wallet_transactions.user_wallet_cash as Wallet Cash','wallet_transactions.redeemed_amount as Redemption from Loyalty',DB::raw("(select venue_name from venus where id = wallet_transactions.venu_id) AS 'Restaurant Name'"),'wallet_transactions.offer_product_ids',DB::raw("DATE_FORMAT(wallet_transactions.date_and_time, '%Y-%m-%d %h:%i %p') AS Date"),DB::raw("(select username from venue_users where id = wallet_transactions.venue_user_id) AS 'Restaurant Logged In User'"))
         ->whereIn('wallet_transactions.id',$ids_data)
         ->orderBy('wallet_transactions.id','desc')->get();
 
@@ -4892,7 +4950,7 @@ class TabController extends ResponseController
                 $query->orWhere('name', 'Like', '%' . $search . '%');
                 $query->orWhere('role_type', 'Like', '%' . $search . '%');
                 $query->orWhere('created_at', 'Like', '%' . $search . '%');
-                $query->orWhere('created_by', 'Like', '%' . $search . '%');
+                // $query->orWhere('created_by', 'Like', '%' . $search . '%');
                 $query->orWhere('updated_at', 'Like', '%' . $search . '%');
                 $query->orWhere('updated_by', 'Like', '%' . $search . '%');
                 $query->orWhere('status', 'Like', '%' . $search . '%');
