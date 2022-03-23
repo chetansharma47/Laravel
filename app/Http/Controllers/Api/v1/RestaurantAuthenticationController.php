@@ -1036,13 +1036,27 @@ class RestaurantAuthenticationController extends ResponseController
                 if($admin_cashback_notification->push_type == 1){
                     if($data['cashback_earned'] > 0){
                         if($data['redeemed_amount'] > 0){
-                            $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. Your wallet usage is ".$data['redeemed_amount']." AED. \n".$admin_cashback_notification->message;
+                            if(!empty($admin_cashback_notification->message)){
+                                $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. Your wallet usage is ".$data['redeemed_amount']." AED. \n".$admin_cashback_notification->message;
+
+                            }else{
+                                $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. Your wallet usage is ".$data['redeemed_amount']." AED. ";
+                                
+                            }
                         }else{
-                            $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
+                            if(!empty($admin_cashback_notification->message)){
+                                $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
+
+                            }else{
+                                $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. ";
+                            }
                         }
                     }else{
                         $push_type = 1;
                         $message_text = $admin_cashback_notification->message;
+                        if(empty($message_text)){
+                            $push_type = 0;
+                        }
                     }
                 }else{
                     $message_text = $admin_transaction_notification->message;
@@ -1053,16 +1067,31 @@ class RestaurantAuthenticationController extends ResponseController
                 if($admin_transaction_notification->push_type == 1){
                     if($data['cashback_earned'] > 0){
                          if($data['redeemed_amount'] > 0){
-                            $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. Your wallet usage is ".$data['redeemed_amount']." AED. \n".$admin_cashback_notification->message;
+                            if(!empty($admin_cashback_notification->message)){
+                                $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. Your wallet usage is ".$data['redeemed_amount']." AED. \n".$admin_cashback_notification->message;
+                            }else{
+                                $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. Your wallet usage is ".$data['redeemed_amount']." AED. ";
+                            }
                         }else{
-                            $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
+                            if(!empty($admin_cashback_notification->message)){
+                                $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
+                            }else{
+                                $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. ";
+                            }
                         }
                     }else{
                         $push_type = 1;
                         $message_text = $admin_cashback_notification->message;
+                        if(empty($message_text)){
+                            $push_type = 0;
+                        }
                     }
                 }else{
+
                     $message_text = $admin_cashback_notification->message;
+                    if(empty($message_text)){
+                        $push_type = 0;
+                    }
                 }
 
             }
@@ -1137,13 +1166,24 @@ class RestaurantAuthenticationController extends ResponseController
                 if($admin_cashback_notification->sms_type == 1){
                     if($data['cashback_earned'] > 0){
                          if($data['redeemed_amount'] > 0){
-                            $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. Your wallet usage is ".$data['redeemed_amount']." AED. \n".$admin_cashback_notification->message;
+                            if(!empty($admin_cashback_notification->message)){
+                                $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. Your wallet usage is ".$data['redeemed_amount']." AED. \n".$admin_cashback_notification->message;
+                            }else{
+                                $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. Your wallet usage is ".$data['redeemed_amount']." AED. ";
+                            }
                         }else{
-                            $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
+                            if(!empty($admin_cashback_notification->message)){
+                                $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
+                            }else{
+                                $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. ";
+                            }
                         }
                     }else{
                         $sms_type = 1;
                         $message_text = $admin_cashback_notification->message;
+                        if(empty($message_text)){
+                            $sms_type = 0;
+                        }
                     }
                 }else{
                     $message_text = $admin_transaction_notification->message;
@@ -1154,13 +1194,24 @@ class RestaurantAuthenticationController extends ResponseController
                 if($admin_transaction_notification->sms_type == 1){
                     if($data['cashback_earned'] > 0){
                      if($data['redeemed_amount'] > 0){
-                            $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. Your wallet usage is ".$data['redeemed_amount']." AED. \n".$admin_cashback_notification->message;
+                            if(!empty($admin_cashback_notification->message)){
+                                $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. Your wallet usage is ".$data['redeemed_amount']." AED. \n".$admin_cashback_notification->message;
+                            }else{
+                                $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. Your wallet usage is ".$data['redeemed_amount']." AED. ";
+                            }
                         }else{
-                            $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
+                            if(!empty($admin_cashback_notification->message)){
+                                $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
+                            }else{
+                                $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. ";
+                            }
                         }
                     }else{
                         $sms_type = 1;
                         $message_text = $admin_cashback_notification->message;
+                        if(empty($message_text)){
+                            $sms_type = 0;
+                        }
                     }
                 }else{
                     $message_text = $admin_cashback_notification->message;
@@ -1184,13 +1235,25 @@ class RestaurantAuthenticationController extends ResponseController
                 if($admin_cashback_notification->email_type == 1){
                     if($data['cashback_earned'] > 0){
                          if($data['redeemed_amount'] > 0){
-                            $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. Your wallet usage is ".$data['redeemed_amount']." AED. \n".$admin_cashback_notification->message;
+                            if(!empty($admin_cashback_notification->message)){
+                                $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. Your wallet usage is ".$data['redeemed_amount']." AED. \n".$admin_cashback_notification->message;
+                            }else{
+                                $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. Your wallet usage is ".$data['redeemed_amount']." AED. ";
+                                
+                            }
                         }else{
-                            $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
+                            if(!empty($admin_cashback_notification->message)){
+                                $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
+                            }else{
+                                $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. ";
+                            }
                         }
                     }else{
                         $email_type = 1;
                         $message_text = $admin_cashback_notification->message;
+                        if(empty($message_text)){
+                            $email_type = 0;
+                        }
                     }
                 }else{
                     $message_text = $admin_transaction_notification->message;
@@ -1201,16 +1264,34 @@ class RestaurantAuthenticationController extends ResponseController
                 if($admin_transaction_notification->email_type == 1){
                     if($data['cashback_earned'] > 0){
                          if($data['redeemed_amount'] > 0){
-                            $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. Your wallet usage is ".$data['redeemed_amount']." AED. \n".$admin_cashback_notification->message;
+                            if(!empty($admin_cashback_notification->message)){
+                                $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. Your wallet usage is ".$data['redeemed_amount']." AED. \n".$admin_cashback_notification->message;
+
+                            }else{
+                                $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. Your wallet usage is ".$data['redeemed_amount']." AED. ";
+
+                            }
                         }else{
-                            $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
+                            if(!empty($admin_cashback_notification->message)){
+                                $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
+
+                            }else{
+                                $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. ";
+                                
+                            }
                         }
                     }else{
                         $email_type = 1;
                         $message_text = $admin_cashback_notification->message;
+                        if(empty($message_text)){
+                            $email_type = 0;
+                        }
                     }
                 }else{
                     $message_text = $admin_cashback_notification->message;
+                    if(empty($message_text)){
+                        $email_type = 0;
+                    }
                 }
                 
             }
@@ -1254,7 +1335,12 @@ class RestaurantAuthenticationController extends ResponseController
         }
         if(!empty($admin_refer_notification) && !empty($refer_user_find)){
 
-            $admin_refer_notification->message = "Congratulations you have earned referral bonus of ".$user_find->refer_amount." AED. ".$admin_refer_notification->message;
+            if($admin_refer_notification->message != null){
+                $admin_refer_notification->message = "Congratulations you have earned referral bonus of ".$user_find->refer_amount." AED. ".$admin_refer_notification->message;
+            }else{
+                $admin_refer_notification->message = "Congratulations you have earned referral bonus of ".$user_find->refer_amount." AED. ";
+            }
+
 
             $user_find->refer_amount_used = 1;
             $user_find->update();

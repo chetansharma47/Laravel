@@ -2901,12 +2901,13 @@ class TabController extends ResponseController
         $redeemed_amount = WalletTransaction::whereDate('created_at','>=',$request->from_date)
                 ->whereDate('created_at','<=',$request->to_date)->sum('redeemed_amount');
 
-        $repeat_customers = WalletTransaction::select(DB::raw('COUNT(user_id) count'))->whereDate('created_at','>=',$request->from_date)->whereDate('created_at','<=',$request->to_date)->groupBy('user_id')->havingRaw('COUNT(user_id) > 1')->count();
-        $fraud_check = WalletTransaction::whereDeletedAt(null)
+        $fraud_check = WalletTransaction::select(DB::raw('COUNT(user_id) count'))->whereDate('created_at','>=',$request->from_date)->whereDate('created_at','<=',$request->to_date)->groupBy('user_id')->havingRaw('COUNT(user_id) > 1')->count();
+        $repeat_customers = WalletTransaction::whereDeletedAt(null)
                                     ->whereDate('created_at','>=',$request->from_date)
                                     ->whereDate('created_at','<=',$request->to_date)
-                                    ->where('is_cross_verify','=',2)
-                                    ->count();
+                                    // ->where('is_cross_verify','=',2)
+                                    ->get()
+                                    ->groupBy('user_id')->count();
         $wallet_transactions_offers = WalletTransaction::whereDeletedAt(null)
                                     ->whereDate('created_at','>=',$request->from_date)
                                     ->whereDate('created_at','<=',$request->to_date)
@@ -3202,12 +3203,23 @@ class TabController extends ResponseController
 
                                         if($wallet_txn->cashback_earned > 0){
                                             if($wallet_txn->redeemed_amount > 0){
-                                                $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$wallet_txn->cashback_earned." AED. Your wallet usage is ".$wallet_txn->redeemed_amount." AED. ".$admin_cashback_notification_find->message;
+                                                if(!empty($admin_cashback_notification_find->message)){
+                                                    $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$wallet_txn->cashback_earned." AED. Your wallet usage is ".$wallet_txn->redeemed_amount." AED. ".$admin_cashback_notification_find->message;
+                                                }else{
+                                                    $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$wallet_txn->cashback_earned." AED. Your wallet usage is ".$wallet_txn->redeemed_amount." AED. ";
+                                                }
                                             }else{
-                                                $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$wallet_txn->cashback_earned." AED. ".$admin_cashback_notification_find->message;
+                                                if(!empty($admin_cashback_notification_find->message)){
+                                                    $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$wallet_txn->cashback_earned." AED. ".$admin_cashback_notification_find->message;
+                                                }else{
+                                                    $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$wallet_txn->cashback_earned." AED. ";
+                                                }
                                             }
                                         }else{
                                             $admin_cashback_notification_find->message = $admin_cashback_notification_find->message;
+                                            if(empty($admin_cashback_notification_find->message)){
+                                                $admin_cashback_notification_find->push_type = 0; 
+                                            }
                                         }
 
 
@@ -3286,18 +3298,23 @@ class TabController extends ResponseController
 
                                         if($admin_cashback_notification_find->email_type == 1){
                                             $show_message_cashback  = $admin_cashback_notification_find->message;
-                                            $cashbackNotificationJob = (new CashbackEmailJob($admin_cashback_notification_find, $user_find, $show_message_cashback))->delay(Carbon::now()->addSeconds(3));
-                                            dispatch($cashbackNotificationJob);
+
+                                            if(!empty($show_message_cashback)){
+                                                $cashbackNotificationJob = (new CashbackEmailJob($admin_cashback_notification_find, $user_find, $show_message_cashback))->delay(Carbon::now()->addSeconds(3));
+                                                dispatch($cashbackNotificationJob);
+                                            }
                                         }
 
                                         if($admin_cashback_notification_find->sms_type == 1){
                                             \SMSGlobal\Credentials::set(env('SMS_GLOBAL_API'),env('SMS_GLOBAL_SECERET'));
                                             $sms = new \SMSGlobal\Resource\Sms();
                                             $message = $admin_cashback_notification_find->message;
-                                            try {
-                                                $response = $sms->sendToOne($user_find->country_code.$user_find->mobile_number, $message,'CM-Society');
-                                            } catch (\Exception $e) {
-                                                // return $e->getMessage();
+                                            if(!empty($message)){
+                                                try {
+                                                    $response = $sms->sendToOne($user_find->country_code.$user_find->mobile_number, $message,'CM-Society');
+                                                } catch (\Exception $e) {
+                                                    // return $e->getMessage();
+                                                }
                                             }
                                         }
                                     }
@@ -3383,7 +3400,13 @@ class TabController extends ResponseController
 
                                     if(!empty($admin_refer_notification) && !empty($refer_user_find)){
 
-                                        $admin_refer_notification->message = "Congratulations you have earned referral bonus of ".$user_find->refer_amount." AED. ".$admin_refer_notification->message;
+                                        if($admin_refer_notification->message != null){
+                                            $admin_refer_notification->message = "Congratulations you have earned referral bonus of ".$user_find->refer_amount." AED. ".$admin_refer_notification->message;
+                                        }else{
+                                            $admin_refer_notification->message = "Congratulations you have earned referral bonus of ".$user_find->refer_amount." AED. ";
+                                        }
+
+                                        // $admin_refer_notification->message = "Congratulations you have earned referral bonus of ".$user_find->refer_amount." AED. ".$admin_refer_notification->message;
 
                                         $user_find->refer_amount_used = 1;
                                         $user_find->update();
@@ -3718,7 +3741,12 @@ class TabController extends ResponseController
                 }
                 if(!empty($admin_refer_notification) && !empty($refer_user_find)){
 
-                    $admin_refer_notification->message = "Congratulations you have earned referral bonus of ".$user_find->refer_amount." AED. ".$admin_refer_notification->message;
+                    if($admin_refer_notification->message != null){
+                        $admin_refer_notification->message = "Congratulations you have earned referral bonus of ".$user_find->refer_amount." AED. ".$admin_refer_notification->message;
+                    }else{
+                        $admin_refer_notification->message = "Congratulations you have earned referral bonus of ".$user_find->refer_amount." AED. ";
+                        
+                    }
 
                     $user_find->refer_amount_used = 1;
                     $user_find->update();
@@ -3844,12 +3872,26 @@ class TabController extends ResponseController
 
                     if($value->cashback_earned > 0){
                         if($value->redeemed_amount > 0){
-                            $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$value->cashback_earned." AED. Your wallet usage is ".$vaue->redeemed_amount." AED. ".$admin_cashback_notification_find->message;
+                            if(!empty($admin_cashback_notification_find->message)){
+                                $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$value->cashback_earned." AED. Your wallet usage is ".$vaue->redeemed_amount." AED. ".$admin_cashback_notification_find->message;
+                            }else{
+                                $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$value->cashback_earned." AED. Your wallet usage is ".$vaue->redeemed_amount." AED. ";
+                                
+                            }
                         }else{
-                            $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$value->cashback_earned." AED. ".$admin_cashback_notification_find->message;
+                             if(!empty($admin_cashback_notification_find->message)){
+                                $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$value->cashback_earned." AED. ".$admin_cashback_notification_find->message;
+
+                             }else{
+                                $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$value->cashback_earned." AED. ";
+                                
+                             }
                         }
                     }else{
                         $admin_cashback_notification_find->message = $admin_cashback_notification_find->message;
+                        if(empty($admin_cashback_notification_find->message)){
+                            $admin_cashback_notification_find->push_type = 0;
+                        }
                     }
 
                     // $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$value->cashback_earned." AED. ".$admin_cashback_notification_find->message;
@@ -3929,18 +3971,22 @@ class TabController extends ResponseController
 
                     if($admin_cashback_notification_find->email_type == 1){
                         $show_message_cashback  = $admin_cashback_notification_find->message;
-                        $cashbackNotificationJob = (new CashbackEmailJob($admin_cashback_notification_find, $find_user, $show_message_cashback))->delay(Carbon::now()->addSeconds(3));
-                        dispatch($cashbackNotificationJob);
+                        if(!empty($show_message_cashback)){
+                            $cashbackNotificationJob = (new CashbackEmailJob($admin_cashback_notification_find, $find_user, $show_message_cashback))->delay(Carbon::now()->addSeconds(3));
+                            dispatch($cashbackNotificationJob);
+                        }
                     }
 
                     if($admin_cashback_notification_find->sms_type == 1){
                         \SMSGlobal\Credentials::set(env('SMS_GLOBAL_API'),env('SMS_GLOBAL_SECERET'));
                         $sms = new \SMSGlobal\Resource\Sms();
                         $message = $admin_cashback_notification_find->message;
-                        try {
-                            $response = $sms->sendToOne($find_user->country_code.$find_user->mobile_number, $message,'CM-Society');
-                        } catch (\Exception $e) {
-                            // return $e->getMessage();
+                        if(!empty($message)){
+                            try {
+                                $response = $sms->sendToOne($find_user->country_code.$find_user->mobile_number, $message,'CM-Society');
+                            } catch (\Exception $e) {
+                                // return $e->getMessage();
+                            }
                         }
                     }
                 }
@@ -4100,7 +4146,13 @@ class TabController extends ResponseController
             }
             if(!empty($admin_refer_notification) && !empty($refer_user_find)){
 
-                $admin_refer_notification->message = "Congratulations you have earned referral bonus of ".$user_find->refer_amount." AED. ".$admin_refer_notification->message;
+                if($admin_refer_notification->message != null){
+                    $admin_refer_notification->message = "Congratulations you have earned referral bonus of ".$user_find->refer_amount." AED. ".$admin_refer_notification->message;
+                }else{
+                    $admin_refer_notification->message = "Congratulations you have earned referral bonus of ".$user_find->refer_amount." AED. ";
+                    
+                }
+
 
                 $user_find->refer_amount_used = 1;
                 $user_find->update();
@@ -4230,12 +4282,25 @@ class TabController extends ResponseController
 
                 if($user_wallet_txn->cashback_earned > 0){
                    if($user_wallet_txn->redeemed_amount > 0){
-                            $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$user_wallet_txn->cashback_earned." AED. Your wallet usage is ".$user_wallet_txn->redeemed_amount." AED. ".$admin_cashback_notification_find->message;
+                            if(!empty($admin_cashback_notification_find->message)){
+                                $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$user_wallet_txn->cashback_earned." AED. Your wallet usage is ".$user_wallet_txn->redeemed_amount." AED. ".$admin_cashback_notification_find->message;
+                            }else{
+                                $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$user_wallet_txn->cashback_earned." AED. Your wallet usage is ".$user_wallet_txn->redeemed_amount." AED. ";
+                            }
                         }else{
+                            if(!empty($admin_cashback_notification_find->message)){
                             $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$user_wallet_txn->cashback_earned." AED. ".$admin_cashback_notification_find->message;
+                                
+                            }else{
+                            $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$user_wallet_txn->cashback_earned." AED. ";
+                                
+                            }
                         }
                 }else{
                     $admin_cashback_notification_find->message = $admin_cashback_notification_find->message;
+                    if(empty($admin_cashback_notification_find->message)){
+                        $admin_cashback_notification_find->push_type = 0;
+                    }
                 }
 
                 if($admin_cashback_notification_find->push_type == 1){
@@ -4313,18 +4378,22 @@ class TabController extends ResponseController
 
                 if($admin_cashback_notification_find->email_type == 1){
                     $show_message_cashback  = $admin_cashback_notification_find->message;
-                    $cashbackNotificationJob = (new CashbackEmailJob($admin_cashback_notification_find, $find_user, $show_message_cashback))->delay(Carbon::now()->addSeconds(3));
-                    dispatch($cashbackNotificationJob);
+                    if(!empty($show_message_cashback)){
+                        $cashbackNotificationJob = (new CashbackEmailJob($admin_cashback_notification_find, $find_user, $show_message_cashback))->delay(Carbon::now()->addSeconds(3));
+                        dispatch($cashbackNotificationJob);
+                    }
                 }
 
                 if($admin_cashback_notification_find->sms_type == 1){
                     \SMSGlobal\Credentials::set(env('SMS_GLOBAL_API'),env('SMS_GLOBAL_SECERET'));
                     $sms = new \SMSGlobal\Resource\Sms();
                     $message = $admin_cashback_notification_find->message;
-                    try {
-                        $response = $sms->sendToOne($find_user->country_code.$find_user->mobile_number, $message,'CM-Society');
-                    } catch (\Exception $e) {
-                        // return $e->getMessage();
+                    if(!empty($message)){
+                        try {
+                            $response = $sms->sendToOne($find_user->country_code.$find_user->mobile_number, $message,'CM-Society');
+                        } catch (\Exception $e) {
+                            // return $e->getMessage();
+                        }
                     }
                 }
             }

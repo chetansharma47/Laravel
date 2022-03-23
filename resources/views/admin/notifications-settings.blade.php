@@ -1004,12 +1004,15 @@
 				type_message.push($(this).attr('data-name'));
 			});
 
-			if(message == ''){
-				$("#alert_text").text("Please enter "+data_name+" notification message.");
-				$("#validationModel").modal("show");
-				$("#validationModel").unbind("click");
-				return false;
+			if(!(uniq_id >= 2) || !(uniq_id <= 4) ){
+				if(message == ''){
+					$("#alert_text").text("Please enter "+data_name+" notification message.");
+					$("#validationModel").modal("show");
+					$("#validationModel").unbind("click");
+					return false;
+				}
 			}
+
 
 			// if(type_message.length == 0){
 			// 	$("#alert_text").text("Please select atleast one checkbox.");

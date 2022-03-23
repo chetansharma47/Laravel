@@ -22,8 +22,14 @@
       </td>
     </tr>
     <tr>
+      <?php 
+
+        $messgae_text = $admin_event_notification->message." View the offers: https://gozl8.app.link/Vd9GIeKh4nb";
+
+
+       ?>
       <td align="left" valign="top" style="font-family: 'Lato', sans-serif;
-     font-weight: 400; font-size:14px; color:#000;">{{$admin_event_notification->message}}
+     font-weight: 400; font-size:14px; color:#000;">{{$messgae_text}}
       </td>
     </tr>
     <tr>

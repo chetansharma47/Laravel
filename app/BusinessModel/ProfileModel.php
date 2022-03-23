@@ -295,7 +295,11 @@ class ProfileModel extends Model
 
 
                 if(!empty($admin_notification_find)){
-                    $admin_notification_find->message = "Congratulations you have earned welcome bonus of ".$save_user->wallet_cash." AED. ".$admin_notification_find->message;
+                    if($admin_notification_find->message != null){
+                        $admin_notification_find->message = "Congratulations you have earned welcome bonus of ".$save_user->wallet_cash." AED. ".$admin_notification_find->message;   
+                    }else{
+                        $admin_notification_find->message = "Congratulations you have earned welcome bonus of ".$save_user->wallet_cash." AED. ";
+                    }
                 }else{
                     $admin_notification_find = '';
                 }
