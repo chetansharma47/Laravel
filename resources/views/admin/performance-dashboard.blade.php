@@ -379,6 +379,9 @@
 		title:{
 			text: ""
 		},
+		axisX:{
+			valueFormatString: "DD MMM YYYY"
+		},
 		axisY: {
 			title: "Number of User Registrations",
 			titleFontColor: "#4F81BC",
@@ -386,7 +389,7 @@
 			crosshair:{
 			 enabled: false,
 			 snapToDataPoint: true,
-	     }
+	     	}
 		},
 		data: [{        
 			type: "line",  
@@ -409,6 +412,9 @@
 		theme: "light2", // "light1", "light2", "dark1", "dark2"
 		title:{
 			text: ""
+		},
+		axisX:{
+			valueFormatString: "DD MMM YYYY"
 		},
 		axisY: {
 			title: "Total Number of Sales",
@@ -441,6 +447,9 @@
 		title:{
 			text: ""
 		},
+		axisX:{
+			valueFormatString: "DD MMM YYYY"
+		},
 		axisY: {
 			title: "Total Number of Customer Dirhams",
 			titleFontColor: "#4F81BC",
@@ -471,6 +480,9 @@
 		theme: "light2", // "light1", "light2", "dark1", "dark2"
 		title:{
 			text: ""
+		},
+		axisX:{
+			valueFormatString: "DD MMM YYYY"
 		},
 		axisY: {
 			title: "Total Dirhams Earned",

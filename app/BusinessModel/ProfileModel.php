@@ -394,6 +394,16 @@ class ProfileModel extends Model
         $user_id = $user->id;
         $reset_password_token = str_random(64);
         $link = url("reset-password/$reset_password_token") . "/" . base64_encode($user_id);
+        $message_text = "We have received a request to reset your Capital Motion account password associate with this email address. ".$link;
+
+        \SMSGlobal\Credentials::set(env('SMS_GLOBAL_API'),env('SMS_GLOBAL_SECERET'));
+        $sms = new \SMSGlobal\Resource\Sms();
+        // $message = $admin_transaction_notification->message;
+        try {
+            $response = $sms->sendToOne($user->country_code.$user->mobile_number,$message_text,'CM-Society');
+        } catch (\Exception $e) {
+            // continue;
+        }
         try{
           \Mail::to($user->email)->send(new UserForgotPassword($user, $link));
 

@@ -466,8 +466,8 @@ class AuthenticationController extends ResponseController
         $events = Event::whereDeletedAt(null)
                     ->whereStatus('Active')
                     ->where('venu_id', $venue_id)
-                    ->whereRaw("FIND_IN_SET(?, when_day) > 0", $today_days)
-                    ->whereDate('from_date', '<=', Carbon::now()->toDateString())
+                    // ->whereRaw("FIND_IN_SET(?, when_day) > 0", $today_days)
+                    // ->whereDate('from_date', '<=', Carbon::now()->toDateString())
                     ->whereDate('to_date','>=', Carbon::now()->toDateString())
                     ->orderBy('updated_at','desc')
                     ->get();
@@ -629,8 +629,7 @@ class AuthenticationController extends ResponseController
         $this->is_validationRule(Validation::todayEvent($Validation = "", $message = "") , $request);
         $timezone = $request->timezone;
         date_default_timezone_set($timezone);
-        $today_date = Carbon::now();
-
+        $today_date = Carbon::now('Asia/Dubai');
         $user = Auth::guard()->user();
         $active_venue_ids = Venu::where('status' , 'Active')->where('deleted_at' , null)->pluck('id');
         $today_days = Carbon::now()->format('l');
@@ -640,10 +639,12 @@ class AuthenticationController extends ResponseController
                         $query->whereStatus('Active');
                         $query->whereDate('from_date', '<=', $today_date->toDateString());
                         $query->whereDate('to_date','>=', $today_date->toDateString());
+                        // $query->whereDate('from_time','<=',$today_date->toTimeString());
+                        $query->whereDate('to_time','>=',$today_date->toTimeString());
                         $query->whereIn('venu_id', $active_venue_ids);
                         $query->whereRaw("FIND_IN_SET(?, when_day) > 0", $today_days);
                         // $query->whereIn("id", $event_notification_ids);
-                    })->with('venu')->orderBy('event_time','asc')->get();
+                    })->with('venu')->orderBy('to_time','asc')->get();
 
         // $tier = TierCondition::whereTierName($user->customer_tier)->orderBy('id','desc')->first();
 

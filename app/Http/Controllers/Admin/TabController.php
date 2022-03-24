@@ -2857,25 +2857,39 @@ class TabController extends ResponseController
 
     public function AnalyticsDashboard(Request $request){
 
-        $customer_registrations_trends = User::selectRaw("COUNT(*) y, DATE_FORMAT(created_at, '%Y-%m-%e') x")
+
+        // return $customer_registrations_trends = User::select(DB::raw("DATE_FORMAT(created_at, '%Y-%m-%e') as x"),DB::raw('COUNT(*) as y'))
+        //     // ->whereDate('created_at','>=',$request->from_date)
+        //     // ->whereDate('created_at','<=',$request->to_date)
+        //     // ->orderBy('created_at','ASC')
+        //     ->groupBy('x')
+        //     ->get();
+
+            // selectRaw("DATE_FORMAT(created_at, '%Y-%m-%e') x, COUNT(*) y")
+
+        $customer_registrations_trends = User::selectRaw("DATE_FORMAT(created_at, '%Y-%m-%d') x, COUNT(*) y")
             ->whereDate('created_at','>=',$request->from_date)
             ->whereDate('created_at','<=',$request->to_date)
             ->groupBy('x')
+            ->orderBy('x', 'asc')
             ->get();
 
-        $customer_dirshams_wallet_cash_trends = User::selectRaw("SUM(wallet_cash) y, DATE_FORMAT(created_at, '%Y-%m-%e') x")->whereDate('created_at','>=',$request->from_date)
+        $customer_dirshams_wallet_cash_trends = User::selectRaw("SUM(wallet_cash) y, DATE_FORMAT(created_at, '%Y-%m-%d') x")->whereDate('created_at','>=',$request->from_date)
             ->whereDate('created_at','<=',$request->to_date)
             ->groupBy('x')
+            ->orderBy('x', 'asc')
             ->get();
 
-        $totalsales_amount_trends = WalletTransaction::selectRaw("SUM(pay_bill_amount) y, DATE_FORMAT(created_at, '%Y-%m-%e') x")->whereDate('created_at','>=',$request->from_date)
+        $totalsales_amount_trends = WalletTransaction::selectRaw("SUM(pay_bill_amount) y, DATE_FORMAT(created_at, '%Y-%m-%d') x")->whereDate('created_at','>=',$request->from_date)
             ->whereDate('created_at','<=',$request->to_date)
             ->groupBy('x')
+            ->orderBy('x', 'asc')
             ->get();
 
-        $redeemed_amount_trends = WalletTransaction::selectRaw("SUM(redeemed_amount) y, DATE_FORMAT(created_at, '%Y-%m-%e') x")->whereDate('created_at','>=',$request->from_date)
+        $redeemed_amount_trends = WalletTransaction::selectRaw("SUM(redeemed_amount) y, DATE_FORMAT(created_at, '%Y-%m-%d') x")->whereDate('created_at','>=',$request->from_date)
             ->whereDate('created_at','<=',$request->to_date)
             ->groupBy('x')
+            ->orderBy('x', 'asc')
             ->get();
 
         $users = User::whereDate('created_at','>=',$request->from_date)
@@ -2901,13 +2915,11 @@ class TabController extends ResponseController
         $redeemed_amount = WalletTransaction::whereDate('created_at','>=',$request->from_date)
                 ->whereDate('created_at','<=',$request->to_date)->sum('redeemed_amount');
 
-        $fraud_check = WalletTransaction::select(DB::raw('COUNT(user_id) count'))->whereDate('created_at','>=',$request->from_date)->whereDate('created_at','<=',$request->to_date)->groupBy('user_id')->havingRaw('COUNT(user_id) > 1')->count();
-        $repeat_customers = WalletTransaction::whereDeletedAt(null)
-                                    ->whereDate('created_at','>=',$request->from_date)
-                                    ->whereDate('created_at','<=',$request->to_date)
-                                    // ->where('is_cross_verify','=',2)
-                                    ->get()
-                                    ->groupBy('user_id')->count();
+       $repeat_customers = WalletTransaction::select('user_id',DB::raw('COUNT(user_id) count'))->whereDate('created_at','>=',$request->from_date)->whereDate('created_at','<=',$request->to_date)->groupBy('user_id')->havingRaw('COUNT(count) > 1')->get()->count();
+
+      $fraud_check = WalletTransaction::select('user_id',DB::raw('COUNT(user_id) count'))->whereDate('created_at','>=',$request->from_date)->whereDate('created_at','<=',$request->to_date)->groupBy('user_id')->havingRaw('COUNT(count) > 1')->orderBy('count','desc')->first();
+
+      $fraud_check = $fraud_check->count;
         $wallet_transactions_offers = WalletTransaction::whereDeletedAt(null)
                                     ->whereDate('created_at','>=',$request->from_date)
                                     ->whereDate('created_at','<=',$request->to_date)
@@ -4507,10 +4519,13 @@ class TabController extends ResponseController
                     $query->whereRaw("FIND_IN_SET(?, offer_product_ids) > 0", [$request->offers_product_wallet_id]);
                 }
         })
-        ->where('wallet_transactions.deleted_at',null)
         ->with('offerProductIds')
-        ->orderBy($column,$asc_desc);
+        ->orderBy($column,$asc_desc)
+        ->where('wallet_transactions.deleted_at',null);
 
+        if($request->select_user_id != null){
+            $data->where('wallet_transactions.user_id',$request->select_user_id);
+        }
 
         $total = $data->count();
         $filter = $total;
@@ -4637,6 +4652,10 @@ class TabController extends ResponseController
         })
         ->where('wallet_transactions.deleted_at',null)
         ->with('offerProductIds');
+
+        if($request->selected_user_id != null){
+            $data->where('wallet_transactions.user_id',$request->selected_user_id);
+        }
 
         if(!empty($request->search_txt)){
             $search = $request->search_txt;
