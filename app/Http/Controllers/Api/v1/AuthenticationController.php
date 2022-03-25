@@ -640,7 +640,7 @@ class AuthenticationController extends ResponseController
                         $query->whereDate('from_date', '<=', $today_date->toDateString());
                         $query->whereDate('to_date','>=', $today_date->toDateString());
                         // $query->whereDate('from_time','<=',$today_date->toTimeString());
-                        $query->whereDate('to_time','>=',$today_date->toTimeString());
+                        $query->where('to_time','>=',$today_date->toTimeString());
                         $query->whereIn('venu_id', $active_venue_ids);
                         $query->whereRaw("FIND_IN_SET(?, when_day) > 0", $today_days);
                         // $query->whereIn("id", $event_notification_ids);

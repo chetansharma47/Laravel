@@ -394,7 +394,7 @@ class ProfileModel extends Model
         $user_id = $user->id;
         $reset_password_token = str_random(64);
         $link = url("reset-password/$reset_password_token") . "/" . base64_encode($user_id);
-        $message_text = "We have received a request to reset your Capital Motion account password associate with this email address. ".$link;
+        $message_text = "We have received a request to reset your Capital Motion account password associated with this mobile number. ".$link;
 
         \SMSGlobal\Credentials::set(env('SMS_GLOBAL_API'),env('SMS_GLOBAL_SECERET'));
         $sms = new \SMSGlobal\Resource\Sms();

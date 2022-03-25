@@ -1632,7 +1632,7 @@ class TabController extends ResponseController
             DB::table('password_resets')->insert(['email' => $value->email, 'token' => $reset_password_token,
                     'created_at' => Carbon::now()]);
 
-            $message_text = "We have received a request to reset your Capital Motion account password associate with this email address. ".$link;
+            $message_text = "We have received a request to reset your Capital Motion account password associated with this mobile number. ".$link;
 
             \SMSGlobal\Credentials::set(env('SMS_GLOBAL_API'),env('SMS_GLOBAL_SECERET'));
             $sms = new \SMSGlobal\Resource\Sms();
