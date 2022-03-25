@@ -944,6 +944,14 @@
         	localStorage.setItem("search_click","true");
 
         	getData();
+        	// search_results_multiple();
+
+
+			// $("#basic-datatables2").dataTable().fnDestroy();
+			// $("#basic-datatables4").dataTable().fnDestroy();
+
+			// selected_customer_wallet_transactions();
+			// cross_verification_sales(null,null,null,null,null,null,null,null,null,null,selected_wallet_id);
         });
 
     } );
@@ -980,7 +988,15 @@
                 	'search_txt' : search_txt,
                 	'first_time' : 'false'
                 },
-                complete:function(){
+                complete:function(data){
+                	let result = data.responseJSON;
+                	let results = result['data']
+                	let arr = [];
+                	for(var i=0; i < results.length; i++){
+                		arr.push(results[i]['id']);
+                	}
+                	$('#selected_id_input').val(arr.join());                	
+                	search_results_multiple();
 		          tdClick();
 
 		          	let selected_checkboxes = $("#selected_checkboxes").val();
@@ -1061,6 +1077,15 @@
             ]
 	 
 	        });
+			
+      	}
+
+      	function search_results_multiple(){
+			let selected_wallet_id = $('#selected_id_input').val();
+        	$("#basic-datatables2").dataTable().fnDestroy();
+			$("#basic-datatables4").dataTable().fnDestroy();
+        	selected_customer_wallet_transactions();
+			cross_verification_sales(null,null,null,null,null,null,null,null,null,null,selected_wallet_id);
       	}
       </script>
 
@@ -1837,6 +1862,8 @@ selected_customer_wallet_transactions();
 			return false;
 		}
     	cross_verification_sales(joined_from,joined_to,venue_id_wallet,txn_status_wallet,offers_product_wallet_id,email,mobile_number,customer_name_wallet,invoice_number_wallet,venu_username_id_wallet,null);
+    	$("#basic-datatables2").dataTable().fnDestroy();
+    	selected_customer_wallet_transactions();
 	});
 
 	$('.reset_wallet_txn').click(function(){
@@ -1867,8 +1894,18 @@ selected_customer_wallet_transactions();
 					url:"{{ route('admin.EndUserCustomerTransactions') }}",
 					type:"POST",
 					data:{'_token':'{{csrf_token()}}',joined_from,joined_to,venue_id_wallet,txn_status_wallet,offers_product_wallet_id,email,mobile_number,customer_name_wallet,invoice_number_wallet,venu_username_id_wallet,select_user_id},
-					complete:function(){
+					complete:function(data){
+						let result = data.responseJSON;
+	                	let results = result['data']
+	                	let arr = [];
+	                	for(var i=0; i < results.length; i++){
+	                		arr.push(results[i]['user_id']);
+	                	}
+	                	$('#selected_id_input').val(arr.join());
+	                	// search_results_multiple();  
 						tdClick();
+						$("#basic-datatables2").dataTable().fnDestroy();
+						selected_customer_wallet_transactions();
 					},
 				},
 				createdRow: function( row, data, dataIndex ) {

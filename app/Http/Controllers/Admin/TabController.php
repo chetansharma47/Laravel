@@ -698,8 +698,10 @@ class TabController extends ResponseController
             $column = "date_and_time";
         }
 
+        $selected_ids = explode(',', $request->selected_wallet_id);
+        
 
-        $data = WalletDetail::select("id","description","cashback_earned","redeemed_amount","user_wallet_cash",DB::raw("DATE_FORMAT(date_and_time, '%Y-%m-%d %h:%i %p') AS date_and_time"),DB::raw("(select customer_id from users where id = wallet_details.user_id) AS customer_id"),DB::raw("(select email from users where id = wallet_details.user_id) AS email"),DB::raw("(select CONCAT(users.country_code, users.mobile_number) from users where id = wallet_details.user_id) AS mobile_number"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where id = wallet_details.user_id) AS full_name"))->where('wallet_details.user_id',$request->selected_wallet_id)->orderBy($column,$asc_desc);
+        $data = WalletDetail::select("id","description","cashback_earned","redeemed_amount","user_wallet_cash",DB::raw("DATE_FORMAT(date_and_time, '%Y-%m-%d %h:%i %p') AS date_and_time"),DB::raw("(select customer_id from users where id = wallet_details.user_id) AS customer_id"),DB::raw("(select email from users where id = wallet_details.user_id) AS email"),DB::raw("(select CONCAT(users.country_code, users.mobile_number) from users where id = wallet_details.user_id) AS mobile_number"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where id = wallet_details.user_id) AS full_name"))->whereIn('wallet_details.user_id',$selected_ids)->orderBy($column,$asc_desc);
 
             
         $total = $data->get()->count();
@@ -868,7 +870,9 @@ class TabController extends ResponseController
 
     public function downloadWalletTransactions(Request $request){
 
-       $wallet_transactions = WalletDetail::select(DB::raw("(select customer_id from users where id = wallet_details.user_id) AS 'Customer ID'"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where id = wallet_details.user_id) AS 'Customer Name'"),DB::raw("(select CONCAT(users.country_code, users.mobile_number) from users where id = wallet_details.user_id) AS 'Mobile Number'"),DB::raw("(select email from users where id = wallet_details.user_id) AS 'Email'"),"description as Description","cashback_earned as Cashback Earn","user_wallet_cash as Wallet Cash",DB::raw("DATE_FORMAT(date_and_time, '%d-%M-%Y %H:%i %p') AS 'Date and Time Added'"),"id")->where('wallet_details.user_id',$request->selected_user);
+        $selected_ids = explode(',', $request->selected_user);
+
+       $wallet_transactions = WalletDetail::select(DB::raw("(select customer_id from users where id = wallet_details.user_id) AS 'Customer ID'"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where id = wallet_details.user_id) AS 'Customer Name'"),DB::raw("(select CONCAT(users.country_code, users.mobile_number) from users where id = wallet_details.user_id) AS 'Mobile Number'"),DB::raw("(select email from users where id = wallet_details.user_id) AS 'Email'"),"description as Description","cashback_earned as Cashback Earn","user_wallet_cash as Wallet Cash",DB::raw("DATE_FORMAT(date_and_time, '%d-%M-%Y %H:%i %p') AS 'Date and Time Added'"),"id")->whereIn('wallet_details.user_id',$selected_ids);
        
        if(!empty($request->search_txt)){
             $search = $request->search_txt;
@@ -4524,7 +4528,8 @@ class TabController extends ResponseController
         ->where('wallet_transactions.deleted_at',null);
 
         if($request->select_user_id != null){
-            $data->where('wallet_transactions.user_id',$request->select_user_id);
+            $user_ids = explode("," , $request->select_user_id);
+            $data->whereIn('wallet_transactions.user_id',$user_ids);
         }
 
         $total = $data->count();
@@ -4654,7 +4659,8 @@ class TabController extends ResponseController
         ->with('offerProductIds');
 
         if($request->selected_user_id != null){
-            $data->where('wallet_transactions.user_id',$request->selected_user_id);
+            $selected_ids = explode(',',$request->selected_user_id );
+            $data->whereIn('wallet_transactions.user_id',$selected_ids);
         }
 
         if(!empty($request->search_txt)){
