@@ -181,7 +181,9 @@ class RestaurantAuthenticationController extends ResponseController
                     $query->where(DB::raw("CONCAT(users.country_code,users.mobile_number)"),'=',"+".$request->search_txt);
                 })->first();
 
+
         if(!empty($user)){
+            $user->wallet_cash =  floor($user->wallet_cash);
 
             return $this->responseOk("Search User Data",['search_user_data' => $user]);
         }else{
@@ -701,6 +703,7 @@ class RestaurantAuthenticationController extends ResponseController
 
         $tier = TierCondition::whereTierName($user->customer_tier)->orderBy('id','desc')->first();
         $user->tier = $tier;
+        // $user->wallet_cash = round($user->wallet_cash);
 
         $active_venue_ids = Venu::wherePosVenueId($request->venue_pos_id)->where('status' , 'Active')->where('deleted_at' , null)->first();
 
@@ -736,7 +739,7 @@ class RestaurantAuthenticationController extends ResponseController
         $user->badges = $user_assign_badge;
         $now_time = Carbon::now();
         $time_after_10mins = Carbon::now()->addMinutes(10);
-       $user->wallet_cash =  round($user->wallet_cash);
+        $user->wallet_cash =  floor($user->wallet_cash);
         $user->valid_time = $now_time->diffInSeconds($time_after_10mins);   //10 min = 600 secs 
         return $this->responseOk("User Data",['user_data' => $user]);
     }
