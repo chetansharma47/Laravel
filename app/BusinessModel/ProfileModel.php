@@ -184,11 +184,13 @@ class ProfileModel extends Model
             $user = Auth::guard()->user();
             $tier = TierCondition::whereTierName($user->customer_tier)->orderBy('id','desc')->first();
             $user->tier = $tier;
+            $user->wallet_cash = floor($user->wallet_cash);
             return $user;
         }else{
             $user = User::whereId($id)->first();
             $tier = TierCondition::whereTierName($user->customer_tier)->orderBy('id','desc')->first();
             $user->tier = $tier;
+            $user->wallet_cash = floor($user->wallet_cash);
             return $user;
         }
     }
@@ -369,6 +371,7 @@ class ProfileModel extends Model
                 
                 $user_data = self::updateUser($data,$user);
                 $user_data->access_token = $user_data->createToken('andrew')->accessToken;
+                $user_data->wallet_cash = floor($user_data->wallet_cash);
                 return ["status" => 8, "data" => $user_data, "error_msg" => ""];
             }else{
                 return ["status" => 5, "data" => null, "error_msg" => "Invalid mobile number / email address or password."];
@@ -414,7 +417,7 @@ class ProfileModel extends Model
         }catch(\Exception $ex){
           return ["status" => 0, "data" => null, "error_msg" => "Something went wrong."];
         }
-        return ["status" => 8, "data" => null, "msg" => "A reset password link has been sent to your registered email address."];
+        return ["status" => 8, "data" => $user, "msg" => "A reset password link has been sent to your registered email address."];
     }
 
     public function reset($request,$token, $tokenData){

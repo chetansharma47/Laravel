@@ -271,22 +271,20 @@ class ResponseController extends Controller
         if(!empty($admin_cashback_notification)){
             if($admin_cashback_notification->push_type == 1){
 
+                $noti_record_find = NotiRecord::whereUserId($find_user->id)->first();
+
+                if(empty($noti_record_find)){
+                    $save_noti_record = new NotiRecord();
+                    $save_noti_record->user_id = $find_user->id;
+                    $save_noti_record->wallet = 1;
+                    $save_noti_record->save();
+
+                }else{
+                    $noti_record_find->wallet = $noti_record_find->wallet + 1;
+                    $noti_record_find->update();
+                }
                 if($find_user->device_type == 'Android'){
                     if($find_user->device_token && strlen($find_user->device_token) > 20){
-
-
-                        $noti_record_find = NotiRecord::whereUserId($find_user->id)->first();
-
-                        if(empty($noti_record_find)){
-                            $save_noti_record = new NotiRecord();
-                            $save_noti_record->user_id = $find_user->id;
-                            $save_noti_record->wallet = 1;
-                            $save_noti_record->save();
-
-                        }else{
-                            $noti_record_find->wallet = $noti_record_find->wallet + 1;
-                            $noti_record_find->update();
-                        }
 
                         $total_noti_record = NotiRecord::whereUserId($find_user->id)->sum(DB::raw('wallet + offer + event + normal'));
                         try{
@@ -301,27 +299,13 @@ class ResponseController extends Controller
                             'created_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString(),
                             'updated_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString()
                         ];
-                        AdminCriteriaNotification::create($criteria_data);
+                        // AdminCriteriaNotification::create($criteria_data);
                    
                    }
                 }
 
                 if($find_user->device_type == 'Ios' && strlen($find_user->device_token) > 20){
                     if($find_user->device_token){
-
-                        $noti_record_find = NotiRecord::whereUserId($find_user->id)->first();
-
-                        if(empty($noti_record_find)){
-                            $save_noti_record = new NotiRecord();
-                            $save_noti_record->user_id = $find_user->id;
-                            $save_noti_record->wallet = 1;
-                            $save_noti_record->save();
-
-                        }else{
-                            $noti_record_find->wallet = $noti_record_find->wallet + 1;
-                            $noti_record_find->update();
-                        }
-
 
                         $total_noti_record = NotiRecord::whereUserId($find_user->id)->sum(DB::raw('wallet + offer + event + normal'));
                         try{
@@ -336,10 +320,11 @@ class ResponseController extends Controller
                             'created_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString(),
                             'updated_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString()
                         ];
-                        AdminCriteriaNotification::create($criteria_data);
+                        // AdminCriteriaNotification::create($criteria_data);
                     
                    }
                 }
+                        AdminCriteriaNotification::create($criteria_data);
 
             }
 

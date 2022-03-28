@@ -118,64 +118,41 @@ class AuthenticationController extends ResponseController
             // }
 
             if(!empty($admin_notification_find) && $admin_notification_find->push_type == 1){
+                $noti_record_find = NotiRecord::whereUserId($register['data']['id'])->first();
 
+                if(empty($noti_record_find)){
+                    $save_noti_record = new NotiRecord();
+                    $save_noti_record->user_id = $register['data']['id'];
+                    $save_noti_record->wallet = 1;
+                    $save_noti_record->save();
+
+                }else{
+                    $noti_record_find->wallet = $noti_record_find->wallet + 1;
+                    $noti_record_find->update();
+                }
+
+               $criteria_data = [
+                    'user_id'   => $register['data']['id'],
+                    'message'   => $admin_notification_find->message,
+                    'noti_type' => 3
+                ];
                 if($register['data']['device_type'] == 'Android'){
                     if($register['data']['device_token'] && strlen($register['data']['device_token']) > 20){
-
-                        $noti_record_find = NotiRecord::whereUserId($register['data']['id'])->first();
-
-                        if(empty($noti_record_find)){
-                            $save_noti_record = new NotiRecord();
-                            $save_noti_record->user_id = $register['data']['id'];
-                            $save_noti_record->wallet = 1;
-                            $save_noti_record->save();
-
-                        }else{
-                            $noti_record_find->wallet = $noti_record_find->wallet + 1;
-                            $noti_record_find->update();
-                        }
 
                         $total_noti_record = NotiRecord::whereUserId($register['data']['id'])->sum(DB::raw('wallet + offer + event + normal'));
 
                        $android_notify =  $this->send_android_notification_new($register['data']['device_token'], $admin_notification_find->message, $notmessage = "Bonus Notification", $noti_type = 3,null,null,$total_noti_record);
-
-                       $criteria_data = [
-                            'user_id'   => $register['data']['id'],
-                            'message'   => $admin_notification_find->message,
-                            'noti_type' => 3
-                        ];
-                        AdminCriteriaNotification::create($criteria_data);
-                   
                    }
                 }
 
                 if($register['data']['device_type'] == 'Ios' && strlen($register['data']['device_token']) > 20){
                     if($register['data']['device_token']){
-
-                        $noti_record_find = NotiRecord::whereUserId($register['data']['id'])->first();
-
-                        if(empty($noti_record_find)){
-                            $save_noti_record = new NotiRecord();
-                            $save_noti_record->user_id = $register['data']['id'];
-                            $save_noti_record->wallet = 1;
-                            $save_noti_record->save();
-
-                        }else{
-                            $noti_record_find->wallet = $noti_record_find->wallet + 1;
-                            $noti_record_find->update();
-                        }
                         $total_noti_record = NotiRecord::whereUserId($register['data']['id'])->sum(DB::raw('wallet + offer + event + normal'));
                         $ios_notify =  $this->iphoneNotification($register['data']['device_token'], $admin_notification_find->message, $notmessage = "Bonus Notification", $noti_type = 3,null,null,$total_noti_record);
-
-                        $criteria_data = [
-                            'user_id'   => $register['data']['id'],
-                            'message'   => $admin_notification_find->message,
-                            'noti_type' => 3
-                        ];
-                        AdminCriteriaNotification::create($criteria_data);
                     
                    }
                 }
+                        AdminCriteriaNotification::create($criteria_data);
             }
 
 
@@ -283,7 +260,8 @@ class AuthenticationController extends ResponseController
         }elseif ($user_details['status'] == 5){
             return $this->responseWithErrorCode($user_details['error_msg'], 406);
         }else{
-            return $this->responseOk('A reset password link has been sent to your registered email address.');
+            $user_detail = collect($user_details['data'])->only(['email','mobile_number','country_code']);
+            return $this->responseOk('A reset password link has been sent to your registered email address.',['user_details' => $user_detail]);
         }
     }
 

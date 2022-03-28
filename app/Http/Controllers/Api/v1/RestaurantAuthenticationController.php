@@ -542,61 +542,40 @@ class RestaurantAuthenticationController extends ResponseController
 
             if($admin_transaction_notification->push_type == 1){
 
+                $noti_record_find = NotiRecord::whereUserId($user_find->id)->first();
+
+                if(empty($noti_record_find)){
+                    $save_noti_record = new NotiRecord();
+                    $save_noti_record->user_id = $user_find->id;
+                    $save_noti_record->wallet = 1;
+                    $save_noti_record->save();
+
+                }else{
+                    $noti_record_find->wallet = $noti_record_find->wallet + 1;
+                    $noti_record_find->update();
+                }
+               $criteria_data = [
+                    'user_id'   => $user_find->id,
+                    'message'   => $admin_transaction_notification->message,
+                    'noti_type' => 1
+               ];
                 if($user_find->device_type == 'Android'){
                     if($user_find->device_token && strlen($user_find->device_token) > 20){
 
-                        $noti_record_find = NotiRecord::whereUserId($user_find->id)->first();
-
-                        if(empty($noti_record_find)){
-                            $save_noti_record = new NotiRecord();
-                            $save_noti_record->user_id = $user_find->id;
-                            $save_noti_record->wallet = 1;
-                            $save_noti_record->save();
-
-                        }else{
-                            $noti_record_find->wallet = $noti_record_find->wallet + 1;
-                            $noti_record_find->update();
-                        }
                         $total_noti_record = NotiRecord::whereUserId($user_find->id)->sum(DB::raw('wallet + offer + event + normal'));
                        $android_notify =  $this->send_android_notification_new($user_find->device_token, $admin_transaction_notification->message, $notmessage = "Transaction Notification", $noti_type = 1,null,null,$total_noti_record);
 
-                       $criteria_data = [
-                            'user_id'   => $user_find->id,
-                            'message'   => $admin_transaction_notification->message,
-                            'noti_type' => 1
-                       ];
-                       AdminCriteriaNotification::create($criteria_data);
-                   
                    }
                 }
 
                 if($user_find->device_type == 'Ios' && strlen($user_find->device_token) > 20){
                     if($user_find->device_token){
 
-                        $noti_record_find = NotiRecord::whereUserId($user_find->id)->first();
-
-                        if(empty($noti_record_find)){
-                            $save_noti_record = new NotiRecord();
-                            $save_noti_record->user_id = $user_find->id;
-                            $save_noti_record->wallet = 1;
-                            $save_noti_record->save();
-
-                        }else{
-                            $noti_record_find->wallet = $noti_record_find->wallet + 1;
-                            $noti_record_find->update();
-                        }
                         $total_noti_record = NotiRecord::whereUserId($user_find->id)->sum(DB::raw('wallet + offer + event + normal'));
-                        $ios_notify =  $this->iphoneNotification($user_find->device_token, $admin_transaction_notification->message, $notmessage = "Transaction Notification", $noti_type = 1,null,null,$total_noti_record);
-
-                        $criteria_data = [
-                            'user_id'   => $user_find->id,
-                            'message'   => $admin_transaction_notification->message,
-                            'noti_type' => 1
-                        ];
-                        AdminCriteriaNotification::create($criteria_data);
-                    
+                        $ios_notify =  $this->iphoneNotification($user_find->device_token, $admin_transaction_notification->message, $notmessage = "Transaction Notification", $noti_type = 1,null,null,$total_noti_record);                    
                    }
                 }
+                AdminCriteriaNotification::create($criteria_data);
 
             }
 
@@ -1096,49 +1075,33 @@ class RestaurantAuthenticationController extends ResponseController
 
             }
             if($push_type == 1){
+                $noti_record_find = NotiRecord::whereUserId($user_find->id)->first();
+
+                if(empty($noti_record_find)){
+                    $save_noti_record = new NotiRecord();
+                    $save_noti_record->user_id = $user_find->id;
+                    $save_noti_record->wallet = 1;
+                    $save_noti_record->save();
+
+                }else{
+                    $noti_record_find->wallet = $noti_record_find->wallet + 1;
+                    $noti_record_find->update();
+                }
+               $criteria_data = [
+                    'user_id'   => $user_find->id,
+                    'message'   => $message_text,
+                    'noti_type' => 1
+                ];
                 if($user_find->device_type == 'Android'){
                     if($user_find->device_token && strlen($user_find->device_token) > 20){
 
-                        $noti_record_find = NotiRecord::whereUserId($user_find->id)->first();
-
-                        if(empty($noti_record_find)){
-                            $save_noti_record = new NotiRecord();
-                            $save_noti_record->user_id = $user_find->id;
-                            $save_noti_record->wallet = 1;
-                            $save_noti_record->save();
-
-                        }else{
-                            $noti_record_find->wallet = $noti_record_find->wallet + 1;
-                            $noti_record_find->update();
-                        }
                         $total_noti_record = NotiRecord::whereUserId($user_find->id)->sum(DB::raw('wallet + offer + event + normal'));
                        $android_notify =  $this->send_android_notification_new($user_find->device_token, $message_text, $notmessage = "Transaction Notification", $noti_type = 1,null,null,$total_noti_record);
-
-                       $criteria_data = [
-                            'user_id'   => $user_find->id,
-                            'message'   => $message_text,
-                            'noti_type' => 1
-                        ];
-                        AdminCriteriaNotification::create($criteria_data);
-                   
                    }
                 }
 
                 if($user_find->device_type == 'Ios' && strlen($user_find->device_token) > 20){
                     if($user_find->device_token){
-
-                        $noti_record_find = NotiRecord::whereUserId($user_find->id)->first();
-
-                        if(empty($noti_record_find)){
-                            $save_noti_record = new NotiRecord();
-                            $save_noti_record->user_id = $user_find->id;
-                            $save_noti_record->wallet = 1;
-                            $save_noti_record->save();
-
-                        }else{
-                            $noti_record_find->wallet = $noti_record_find->wallet + 1;
-                            $noti_record_find->update();
-                        }
                         $total_noti_record = NotiRecord::whereUserId($user_find->id)->sum(DB::raw('wallet + offer + event + normal'));
                         $ios_notify =  $this->iphoneNotification($user_find->device_token, $message_text, $notmessage = "Transaction Notification", $noti_type = 1,null,null,$total_noti_record);
 
@@ -1147,17 +1110,10 @@ class RestaurantAuthenticationController extends ResponseController
                             'message'   => $message_text,
                             'noti_type' => 1
                         ];
-                        AdminCriteriaNotification::create($criteria_data);
-
-                        /*$criteria_data = [
-                            'user_id'   => $user_find->id,
-                            'message'   => $admin_cashback_notification->message,
-                            'noti_type' => 1
-                       ];
-                       AdminCriteriaNotification::create($criteria_data);*/
                     
                    }
                 }
+                        AdminCriteriaNotification::create($criteria_data);
 
             }
 
@@ -1361,61 +1317,39 @@ class RestaurantAuthenticationController extends ResponseController
 
             if($admin_refer_notification->push_type == 1){
 
+                $noti_record_find = NotiRecord::whereUserId($refer_user_find->id)->first();
+
+                if(empty($noti_record_find)){
+                    $save_noti_record = new NotiRecord();
+                    $save_noti_record->user_id = $refer_user_find->id;
+                    $save_noti_record->wallet = 1;
+                    $save_noti_record->save();
+
+                }else{
+                    $noti_record_find->wallet = $noti_record_find->wallet + 1;
+                    $noti_record_find->update();
+                }
+               $criteria_data = [
+                    'user_id'   => $refer_user_find->id,
+                    'message'   => $admin_refer_notification->message,
+                    'noti_type' => 4
+                ];
                 if($refer_user_find->device_type == 'Android'){
                     if($refer_user_find->device_token && strlen($refer_user_find->device_token) > 20){
 
-                        $noti_record_find = NotiRecord::whereUserId($refer_user_find->id)->first();
-
-                        if(empty($noti_record_find)){
-                            $save_noti_record = new NotiRecord();
-                            $save_noti_record->user_id = $refer_user_find->id;
-                            $save_noti_record->wallet = 1;
-                            $save_noti_record->save();
-
-                        }else{
-                            $noti_record_find->wallet = $noti_record_find->wallet + 1;
-                            $noti_record_find->update();
-                        }
                         $total_noti_record = NotiRecord::whereUserId($refer_user_find->id)->sum(DB::raw('wallet + offer + event + normal'));
                        $android_notify =  $this->send_android_notification_new($refer_user_find->device_token, $admin_refer_notification->message, $notmessage = "Referral Bonus Notification", $noti_type = 4,null,null,$total_noti_record);
-
-                       $criteria_data = [
-                            'user_id'   => $refer_user_find->id,
-                            'message'   => $admin_refer_notification->message,
-                            'noti_type' => 4
-                        ];
-                        AdminCriteriaNotification::create($criteria_data);
                    
                    }
                 }
 
                 if($refer_user_find->device_type == 'Ios' && strlen($refer_user_find->device_token) > 20){
                     if($refer_user_find->device_token){
-
-                        $noti_record_find = NotiRecord::whereUserId($refer_user_find->id)->first();
-
-                        if(empty($noti_record_find)){
-                            $save_noti_record = new NotiRecord();
-                            $save_noti_record->user_id = $refer_user_find->id;
-                            $save_noti_record->wallet = 1;
-                            $save_noti_record->save();
-
-                        }else{
-                            $noti_record_find->wallet = $noti_record_find->wallet + 1;
-                            $noti_record_find->update();
-                        }
                         $total_noti_record = NotiRecord::whereUserId($refer_user_find->id)->sum(DB::raw('wallet + offer + event + normal'));
                         $ios_notify =  $this->iphoneNotification($refer_user_find->device_token, $admin_refer_notification->message, $notmessage = "Referral Bonus Notification", $noti_type = 4,null,null,$total_noti_record);
-
-                        $criteria_data = [
-                            'user_id'   => $refer_user_find->id,
-                            'message'   => $admin_refer_notification->message,
-                            'noti_type' => 4
-                        ];
-                        AdminCriteriaNotification::create($criteria_data);
-                    
                    }
                 }
+                AdminCriteriaNotification::create($criteria_data);
 
             }
 

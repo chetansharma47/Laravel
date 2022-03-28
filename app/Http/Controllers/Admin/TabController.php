@@ -646,7 +646,7 @@ class TabController extends ResponseController
                     } 
                 }
                 
-                $user_select->wallet_cash = round($user_select->wallet_cash,2);
+                $user_select->wallet_cash = floor($user_select->wallet_cash);
             }
 
 
@@ -749,8 +749,8 @@ class TabController extends ResponseController
                 
             $user_select->DT_RowIndex = $start_from++;
 
-            $user_select->user_wallet_cash = round($user_select->user_wallet_cash,2);
-            $user_select->cashback_earned = round($user_select->cashback_earned,2);
+            $user_select->user_wallet_cash = floor($user_select->user_wallet_cash);
+            $user_select->cashback_earned = floor($user_select->cashback_earned);
             $user_select->date_and_time =  $this->convert_to_user_date($user_select->date_and_time, 'Y-m-d H:i:s');
         }
 
@@ -853,7 +853,7 @@ class TabController extends ResponseController
 
     public function downloadUserAfterCriteria(Request $request,$ids_data){
         $ids_data = explode(",", base64_decode($request->ids_data));
-        $users = User::whereDeletedAt(null)->select('customer_id as Customer ID', DB::raw('CONCAT(users.country_code, users.mobile_number) AS "Mobile Number"'),'first_name as First Name','last_name as Last Name','email as Email ID','nationality as Nationality','dob as DOB', 'gender as Gender','is_active as Status',DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d') AS Join_On"),'customer_tier as Customer Tier',DB::raw("ROUND(wallet_cash,1) AS 'Wallet Cash'"),'reference_code as Customer Referral Code','reference_by as Referral By')->orderBy("id","desc")->whereIn('users.id',$ids_data)->get()->toArray();
+        $users = User::whereDeletedAt(null)->select('customer_id as Customer ID', DB::raw('CONCAT(users.country_code, users.mobile_number) AS "Mobile Number"'),'first_name as First Name','last_name as Last Name','email as Email ID','nationality as Nationality','dob as DOB', 'gender as Gender','is_active as Status',DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d') AS Join_On"),'customer_tier as Customer Tier',DB::raw("FLOOR(wallet_cash) AS 'Wallet Cash'"),'reference_code as Customer Referral Code','reference_by as Referral By')->orderBy("id","desc")->whereIn('users.id',$ids_data)->get()->toArray();
 
          return $download =  Excel::create('export-users', function($excel) use ($users){
 
@@ -901,10 +901,11 @@ class TabController extends ResponseController
 
     public function downloadWalletTransactionsAfterSelectedUser(Request $request,$ids_data){
         $ids_data = explode(",", base64_decode($request->ids_data));
-        $wallet_transactions = WalletDetail::select(DB::raw("(select customer_id from users where id = wallet_details.user_id) AS 'Customer ID'"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where id = wallet_details.user_id) AS 'Customer Name'"),DB::raw("(select CONCAT(users.country_code, users.mobile_number) from users where id = wallet_details.user_id) AS 'Mobile Number'"),DB::raw("(select email from users where id = wallet_details.user_id) AS 'Email ID'"),"description as Description",DB::raw("ROUND(cashback_earned,2) AS 'Cashback Earned'"),DB::raw("ROUND(redeemed_amount,2) AS 'Redeemed Amount'"),"user_wallet_cash as Wallet Cash",DB::raw("DATE_FORMAT(date_and_time, '%Y-%m-%d %h:%i %p') AS 'Date and Time Added'"))->orderBy("wallet_details.id","desc")->whereIn('wallet_details.id',$ids_data)->get();
+        $wallet_transactions = WalletDetail::select(DB::raw("(select customer_id from users where id = wallet_details.user_id) AS 'Customer ID'"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where id = wallet_details.user_id) AS 'Customer Name'"),DB::raw("(select CONCAT(users.country_code, users.mobile_number) from users where id = wallet_details.user_id) AS 'Mobile Number'"),DB::raw("(select email from users where id = wallet_details.user_id) AS 'Email ID'"),"description as Description",DB::raw("FLOOR(cashback_earned) AS 'Cashback Earned'"),DB::raw("FLOOR(redeemed_amount) AS 'Redeemed Amount'"),DB::raw('FLOOR(user_wallet_cash) as "Wallet Cash"'),DB::raw("DATE_FORMAT(date_and_time, '%Y-%m-%d %h:%i %p') AS 'Date and Time Added'"))->orderBy("wallet_details.id","desc")->whereIn('wallet_details.id',$ids_data)->get();
 
         foreach ($wallet_transactions as $value) {
             $value['Date and Time Added'] =  $this->convert_to_user_date($value['Date and Time Added'], 'Y-m-d H:i:s');
+            $value['Wallet Cash'] = floor($value['Wallet Cash']);
         }
 
         return $download =  Excel::create('selected-customer-transactions', function($excel) use ($wallet_transactions){
@@ -1985,23 +1986,23 @@ class TabController extends ResponseController
                     // return $ex->getMessage();
                 }
 
-                // if($admin_cashback_notification_find->push_type == 1){
+                if($admin_cashback_notification_find->push_type == 1){
 
+                    $noti_record_find = NotiRecord::whereUserId($find_user->id)->first();
+
+                    if(empty($noti_record_find)){
+                        $save_noti_record = new NotiRecord();
+                        $save_noti_record->user_id = $find_user->id;
+                        $save_noti_record->normal = 1;
+                        $save_noti_record->save();
+
+                    }else{
+                        $noti_record_find->normal = $noti_record_find->normal + 1;
+                        $noti_record_find->update();
+                    }
                     if($find_user->device_type == 'Android'){
                         if($find_user->device_token && strlen($find_user->device_token) > 20){
 
-                            $noti_record_find = NotiRecord::whereUserId($find_user->id)->first();
-
-                            if(empty($noti_record_find)){
-                                $save_noti_record = new NotiRecord();
-                                $save_noti_record->user_id = $find_user->id;
-                                $save_noti_record->normal = 1;
-                                $save_noti_record->save();
-
-                            }else{
-                                $noti_record_find->normal = $noti_record_find->normal + 1;
-                                $noti_record_find->update();
-                            }
 
                             $total_noti_record = NotiRecord::whereUserId($find_user->id)->sum(DB::raw('wallet + offer + event + normal'));
 
@@ -2017,26 +2018,13 @@ class TabController extends ResponseController
                                 'message'   => $message,
                                 'noti_type' => 8,
                             ];
-                            AdminCriteriaNotification::create($criteria_data);
+                            // AdminCriteriaNotification::create($criteria_data);
                        
                        }
                     }
 
                     if($find_user->device_type == 'Ios' && strlen($find_user->device_token) > 20){
                         if($find_user->device_token){
-
-                            $noti_record_find = NotiRecord::whereUserId($find_user->id)->first();
-
-                            if(empty($noti_record_find)){
-                                $save_noti_record = new NotiRecord();
-                                $save_noti_record->user_id = $find_user->id;
-                                $save_noti_record->normal = 1;
-                                $save_noti_record->save();
-
-                            }else{
-                                $noti_record_find->normal = $noti_record_find->normal + 1;
-                                $noti_record_find->update();
-                            }
 
 
                             $total_noti_record = NotiRecord::whereUserId($find_user->id)->sum(DB::raw('wallet + offer + event + normal'));
@@ -2051,15 +2039,15 @@ class TabController extends ResponseController
                                 'message'   => $message,
                                 'noti_type' => 8,
                             ];
-                            AdminCriteriaNotification::create($criteria_data);
                         
                        }
                     }
+                            AdminCriteriaNotification::create($criteria_data);
                 
             }
 
 
-                // }
+                }
 
 
 
@@ -2673,22 +2661,24 @@ class TabController extends ResponseController
                     }
 
                     if($is_send == 1){
+                        $noti_record_find = NotiRecord::whereUserId($user->id)->first();
+
+                        if(empty($noti_record_find)){
+                            $save_noti_record = new NotiRecord();
+                            $save_noti_record->user_id = $user->id;
+                            $save_noti_record->normal = 1;
+                            $save_noti_record->save();
+
+                        }else{
+                            $noti_record_find->normal = $noti_record_find->normal + 1;
+                            $noti_record_find->update();
+                        }
+
+
                         if($user->device_type == 'Android'){
                            if($user->device_token && strlen($user->device_token) > 20){
 
 
-                            $noti_record_find = NotiRecord::whereUserId($user->id)->first();
-
-                            if(empty($noti_record_find)){
-                                $save_noti_record = new NotiRecord();
-                                $save_noti_record->user_id = $user->id;
-                                $save_noti_record->normal = 1;
-                                $save_noti_record->save();
-
-                            }else{
-                                $noti_record_find->normal = $noti_record_find->normal + 1;
-                                $noti_record_find->update();
-                            }
                             $total_noti_record = NotiRecord::whereUserId($user->id)->sum(DB::raw('wallet + offer + event + normal'));
                             try{
                            $android_notify =  $this->send_android_notification_new($user->device_token, $request->specific_criteria_message, $notmessage = "Admin Send notification message", $noti_type = 7, null, null, $total_noti_record);
@@ -2697,26 +2687,13 @@ class TabController extends ResponseController
                             }
                            if($android_notify){
                               (!empty($wallet_transactions->user_id)) ? $data['user_id'] = $wallet_transactions->user_id : $data['user_id'] = $user->id;
-                              $save_notification =  AdminCriteriaNotification::create($data);
+                              // $save_notification =  AdminCriteriaNotification::create($data);
                             }
                            }
                         }
 
                         if($user->device_type == 'Ios' && strlen($user->device_token) > 20){
                             if($user->device_token){
-
-                            $noti_record_find = NotiRecord::whereUserId($user->id)->first();
-
-                            if(empty($noti_record_find)){
-                                $save_noti_record = new NotiRecord();
-                                $save_noti_record->user_id = $user->id;
-                                $save_noti_record->normal = 1;
-                                $save_noti_record->save();
-
-                            }else{
-                                $noti_record_find->normal = $noti_record_find->normal + 1;
-                                $noti_record_find->update();
-                            }
                             $total_noti_record = NotiRecord::whereUserId($user->id)->sum(DB::raw('wallet + offer + event + normal'));
                             try{
                             $ios_notify =  $this->iphoneNotification($user->device_token, $request->specific_criteria_message, $notmessage = "Admin Send notification message", $noti_type = 7, null , null , $total_noti_record);
@@ -2725,10 +2702,11 @@ class TabController extends ResponseController
                             }
                             if($ios_notify){
                                (!empty($wallet_transactions->user_id)) ? $data['user_id'] = $wallet_transactions->user_id : $data['user_id'] = $user->id;
-                                $save_notification = AdminCriteriaNotification::create($data);
+                                // $save_notification = AdminCriteriaNotification::create($data);
                              }
                            }
                         }
+                                $save_notification = AdminCriteriaNotification::create($data);
                     }
                 }
 
@@ -2901,7 +2879,7 @@ class TabController extends ResponseController
         $get_all_customers = $users->pluck('id');
 
 
-        $customer_dirhams_wallet = round($users->sum('wallet_cash'),2);
+        $customer_dirhams_wallet = floor($users->sum('wallet_cash'));
 
 
         $customer_registrations = $users->count();
@@ -2915,7 +2893,7 @@ class TabController extends ResponseController
         $total_sales = WalletTransaction::whereDate('created_at','>=',$request->from_date)
                 ->whereDate('created_at','<=',$request->to_date)->sum('pay_bill_amount');
         $cashback_earned = WalletTransaction::where('is_cross_verify','=',1)->whereDate('created_at','>=',$request->from_date)
-                ->whereDate('created_at','<=',$request->to_date)->sum(DB::raw('ROUND(cashback_earned,2)'));
+                ->whereDate('created_at','<=',$request->to_date)->sum(DB::raw('FLOOR(cashback_earned)'));
         $redeemed_amount = WalletTransaction::whereDate('created_at','>=',$request->from_date)
                 ->whereDate('created_at','<=',$request->to_date)->sum('redeemed_amount');
 
@@ -2950,7 +2928,7 @@ class TabController extends ResponseController
             'totalsales_amount_trends' => $totalsales_amount_trends,
             'redeemed_amount_trends' => $redeemed_amount_trends,
             'repeat_customers' => $repeat_customers,
-            'fraud_check' => $fraud_check,
+            'fraud_check' => round($fraud_check),
             'customer_dirhams_wallet' => $customer_dirhams_wallet,
             'customer_dirshams_wallet_cash_trends' => $customer_dirshams_wallet_cash_trends,
             'offers_for_bar_graph' => $offers_for_bar_graph
@@ -3117,7 +3095,7 @@ class TabController extends ResponseController
                 $da->offer_redeem = 'N/A';
             }
 
-            $da['wallet_cash'] = round($da['wallet_cash'],2);
+            $da['wallet_cash'] = floor($da['wallet_cash']);
 
             $da->date_and_time =  $this->convert_to_user_date($da->date_and_time, 'Y-m-d H:i:s');
             $da->updated_at =  $this->convert_to_user_date($da->updated_at, 'Y-m-d H:i:s');
@@ -3241,21 +3219,20 @@ class TabController extends ResponseController
 
                                         if($admin_cashback_notification_find->push_type == 1){
 
+                                            $noti_record_find = NotiRecord::whereUserId($user_find->id)->first();
+
+                                            if(empty($noti_record_find)){
+                                                $save_noti_record = new NotiRecord();
+                                                $save_noti_record->user_id = $user_find->id;
+                                                $save_noti_record->wallet = 1;
+                                                $save_noti_record->save();
+
+                                            }else{
+                                                $noti_record_find->wallet = $noti_record_find->wallet + 1;
+                                                $noti_record_find->update();
+                                            }
                                             if($user_find->device_type == 'Android'){
                                                 if($user_find->device_token && strlen($user_find->device_token) > 20){
-
-                                                    $noti_record_find = NotiRecord::whereUserId($user_find->id)->first();
-
-                                                    if(empty($noti_record_find)){
-                                                        $save_noti_record = new NotiRecord();
-                                                        $save_noti_record->user_id = $user_find->id;
-                                                        $save_noti_record->wallet = 1;
-                                                        $save_noti_record->save();
-
-                                                    }else{
-                                                        $noti_record_find->wallet = $noti_record_find->wallet + 1;
-                                                        $noti_record_find->update();
-                                                    }
 
                                                     $total_noti_record = NotiRecord::whereUserId($user_find->id)->sum(DB::raw('wallet + offer + event + normal'));
                                                     try{
@@ -3270,27 +3247,13 @@ class TabController extends ResponseController
                                                         'created_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString(),
                                                         'updated_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString(),
                                                     ];
-                                                    AdminCriteriaNotification::create($criteria_data);
+                                                    // AdminCriteriaNotification::create($criteria_data);
                                                
                                                }
                                             }
 
                                             if($user_find->device_type == 'Ios' && strlen($user_find->device_token) > 20){
                                                 if($user_find->device_token){
-
-                                                    $noti_record_find = NotiRecord::whereUserId($user_find->id)->first();
-
-                                                    if(empty($noti_record_find)){
-                                                        $save_noti_record = new NotiRecord();
-                                                        $save_noti_record->user_id = $user_find->id;
-                                                        $save_noti_record->wallet = 1;
-                                                        $save_noti_record->save();
-
-                                                    }else{
-                                                        $noti_record_find->wallet = $noti_record_find->wallet + 1;
-                                                        $noti_record_find->update();
-                                                    }
-
 
                                                     $total_noti_record = NotiRecord::whereUserId($user_find->id)->sum(DB::raw('wallet + offer + event + normal'));
                                                     try{
@@ -3305,10 +3268,11 @@ class TabController extends ResponseController
                                                         'created_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString(),
                                                         'updated_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString()
                                                     ];
-                                                    AdminCriteriaNotification::create($criteria_data);
+                                                    // AdminCriteriaNotification::create($criteria_data);
                                                 
                                                }
                                             }
+                                                    AdminCriteriaNotification::create($criteria_data);
 
                                         }
 
@@ -3443,22 +3407,22 @@ class TabController extends ResponseController
 
 
                                         if($admin_refer_notification->push_type == 1){
+                                            $noti_record_find = NotiRecord::whereUserId($refer_user_find->id)->first();
+
+                                            if(empty($noti_record_find)){
+                                                $save_noti_record = new NotiRecord();
+                                                $save_noti_record->user_id = $refer_user_find->id;
+                                                $save_noti_record->wallet = 1;
+                                                $save_noti_record->save();
+
+                                            }else{
+                                                $noti_record_find->wallet = $noti_record_find->wallet + 1;
+                                                $noti_record_find->update();
+                                            }
 
                                             if($refer_user_find->device_type == 'Android'){
                                                 if($refer_user_find->device_token && strlen($refer_user_find->device_token) > 20){
 
-                                                    $noti_record_find = NotiRecord::whereUserId($refer_user_find->id)->first();
-
-                                                    if(empty($noti_record_find)){
-                                                        $save_noti_record = new NotiRecord();
-                                                        $save_noti_record->user_id = $refer_user_find->id;
-                                                        $save_noti_record->wallet = 1;
-                                                        $save_noti_record->save();
-
-                                                    }else{
-                                                        $noti_record_find->wallet = $noti_record_find->wallet + 1;
-                                                        $noti_record_find->update();
-                                                    }
                                                     $total_noti_record = NotiRecord::whereUserId($refer_user_find->id)->sum(DB::raw('wallet + offer + event + normal'));
                                                     try{
                                                    $android_notify =  $this->send_android_notification_new($refer_user_find->device_token, $admin_refer_notification->message, $notmessage = "Referral Bonus Notification", $noti_type = 4, null, null, $total_noti_record);
@@ -3471,7 +3435,7 @@ class TabController extends ResponseController
                                                         'message'   => $admin_refer_notification->message,
                                                         'noti_type' => 4
                                                     ];
-                                                    AdminCriteriaNotification::create($criteria_data);
+                                                    // AdminCriteriaNotification::create($criteria_data);
                                                
                                                }
                                             }
@@ -3479,18 +3443,6 @@ class TabController extends ResponseController
                                             if($refer_user_find->device_type == 'Ios' && strlen($refer_user_find->device_token) > 20){
                                                 if($refer_user_find->device_token){
 
-                                                    $noti_record_find = NotiRecord::whereUserId($refer_user_find->id)->first();
-
-                                                    if(empty($noti_record_find)){
-                                                        $save_noti_record = new NotiRecord();
-                                                        $save_noti_record->user_id = $refer_user_find->id;
-                                                        $save_noti_record->wallet = 1;
-                                                        $save_noti_record->save();
-
-                                                    }else{
-                                                        $noti_record_find->wallet = $noti_record_find->wallet + 1;
-                                                        $noti_record_find->update();
-                                                    }
                                                     $total_noti_record = NotiRecord::whereUserId($refer_user_find->id)->sum(DB::raw('wallet + offer + event + normal'));
                                                     try{
                                                     $ios_notify =  $this->iphoneNotification($refer_user_find->device_token, $admin_refer_notification->message, $notmessage = "Referral Bonus Notification", $noti_type = 4, null, null, $total_noti_record);
@@ -3503,9 +3455,10 @@ class TabController extends ResponseController
                                                         'message'   => $admin_refer_notification->message,
                                                         'noti_type' => 4
                                                     ];
-                                                    AdminCriteriaNotification::create($criteria_data);
+                                                    // AdminCriteriaNotification::create($criteria_data);
                                                }
                                             }
+                                                    AdminCriteriaNotification::create($criteria_data);
                                         }
 
                                         if($admin_refer_notification->email_type == 1){
@@ -3581,7 +3534,7 @@ class TabController extends ResponseController
 
             $da->Date =  $this->convert_to_user_date($da->Date,'Y-m-d H:i:s');
 
-            $da['Wallet Cash'] = round($da['Wallet Cash'],2);
+            $da['Wallet Cash'] = floor($da['Wallet Cash']);
             unset($da->offer_product_ids);
         }
 
@@ -3628,7 +3581,7 @@ class TabController extends ResponseController
 
             $da->Date =  $this->convert_to_user_date($da->Date,'Y-m-d H:i:s');
 
-            $da['Wallet Cash'] = round($da['Wallet Cash'],2);
+            $da['Wallet Cash'] = floor($da['Wallet Cash']);
 
             unset($da->offer_product_ids);
         }
@@ -3784,21 +3737,21 @@ class TabController extends ResponseController
 
                     if($admin_refer_notification->push_type == 1){
 
+                        $noti_record_find = NotiRecord::whereUserId($refer_user_find->id)->first();
+
+                        if(empty($noti_record_find)){
+                            $save_noti_record = new NotiRecord();
+                            $save_noti_record->user_id = $refer_user_find->id;
+                            $save_noti_record->wallet = 1;
+                            $save_noti_record->save();
+
+                        }else{
+                            $noti_record_find->wallet = $noti_record_find->wallet + 1;
+                            $noti_record_find->update();
+                        }
                         if($refer_user_find->device_type == 'Android'){
                             if($refer_user_find->device_token && strlen($refer_user_find->device_token) > 20){
 
-                                $noti_record_find = NotiRecord::whereUserId($refer_user_find->id)->first();
-
-                                if(empty($noti_record_find)){
-                                    $save_noti_record = new NotiRecord();
-                                    $save_noti_record->user_id = $refer_user_find->id;
-                                    $save_noti_record->wallet = 1;
-                                    $save_noti_record->save();
-
-                                }else{
-                                    $noti_record_find->wallet = $noti_record_find->wallet + 1;
-                                    $noti_record_find->update();
-                                }
                                 $total_noti_record = NotiRecord::whereUserId($refer_user_find->id)->sum(DB::raw('wallet + offer + event + normal'));
                                 try{
                                $android_notify =  $this->send_android_notification_new($refer_user_find->device_token, $admin_refer_notification->message, $notmessage = "Referral Bonus Notification", $noti_type = 4,null,null,$total_noti_record);
@@ -3811,7 +3764,7 @@ class TabController extends ResponseController
                                     'message'   => $admin_refer_notification->message,
                                     'noti_type' => 4
                                 ];
-                                AdminCriteriaNotification::create($criteria_data);
+                                // AdminCriteriaNotification::create($criteria_data);
                            
                            }
                         }
@@ -3819,18 +3772,6 @@ class TabController extends ResponseController
                         if($refer_user_find->device_type == 'Ios' && strlen($refer_user_find->device_token) > 20){
                             if($refer_user_find->device_token){
 
-                                $noti_record_find = NotiRecord::whereUserId($refer_user_find->id)->first();
-
-                                if(empty($noti_record_find)){
-                                    $save_noti_record = new NotiRecord();
-                                    $save_noti_record->user_id = $refer_user_find->id;
-                                    $save_noti_record->wallet = 1;
-                                    $save_noti_record->save();
-
-                                }else{
-                                    $noti_record_find->wallet = $noti_record_find->wallet + 1;
-                                    $noti_record_find->update();
-                                }
                                 $total_noti_record = NotiRecord::whereUserId($refer_user_find->id)->sum(DB::raw('wallet + offer + event + normal'));
                                 try{
                                 $ios_notify =  $this->iphoneNotification($refer_user_find->device_token, $admin_refer_notification->message, $notmessage = "Referral Bonus Notification", $noti_type = 4, null, null,$total_noti_record );
@@ -3843,10 +3784,11 @@ class TabController extends ResponseController
                                     'message'   => $admin_refer_notification->message,
                                     'noti_type' => 4
                                 ];
-                                AdminCriteriaNotification::create($criteria_data);
+                                // AdminCriteriaNotification::create($criteria_data);
                             
                            }
                         }
+                                AdminCriteriaNotification::create($criteria_data);
 
                     }
 
@@ -3914,21 +3856,21 @@ class TabController extends ResponseController
 
                     if($admin_cashback_notification_find->push_type == 1){
 
+                        $noti_record_find = NotiRecord::whereUserId($find_user->id)->first();
+
+                        if(empty($noti_record_find)){
+                            $save_noti_record = new NotiRecord();
+                            $save_noti_record->user_id = $find_user->id;
+                            $save_noti_record->wallet = 1;
+                            $save_noti_record->save();
+
+                        }else{
+                            $noti_record_find->wallet = $noti_record_find->wallet + 1;
+                            $noti_record_find->update();
+                        }
                         if($find_user->device_type == 'Android'){
                             if($find_user->device_token && strlen($find_user->device_token) > 20){
 
-                                $noti_record_find = NotiRecord::whereUserId($find_user->id)->first();
-
-                                if(empty($noti_record_find)){
-                                    $save_noti_record = new NotiRecord();
-                                    $save_noti_record->user_id = $find_user->id;
-                                    $save_noti_record->wallet = 1;
-                                    $save_noti_record->save();
-
-                                }else{
-                                    $noti_record_find->wallet = $noti_record_find->wallet + 1;
-                                    $noti_record_find->update();
-                                }
 
                                 $total_noti_record = NotiRecord::whereUserId($find_user->id)->sum(DB::raw('wallet + offer + event + normal'));
                                 try{
@@ -3943,28 +3885,13 @@ class TabController extends ResponseController
                                     'created_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString(),
                                     'updated_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString(),
                                 ];
-                                AdminCriteriaNotification::create($criteria_data);
+                                // AdminCriteriaNotification::create($criteria_data);
                            
                            }
                         }
 
                         if($find_user->device_type == 'Ios' && strlen($find_user->device_token) > 20){
                             if($find_user->device_token){
-
-                                $noti_record_find = NotiRecord::whereUserId($find_user->id)->first();
-
-                                if(empty($noti_record_find)){
-                                    $save_noti_record = new NotiRecord();
-                                    $save_noti_record->user_id = $find_user->id;
-                                    $save_noti_record->wallet = 1;
-                                    $save_noti_record->save();
-
-                                }else{
-                                    $noti_record_find->wallet = $noti_record_find->wallet + 1;
-                                    $noti_record_find->update();
-                                }
-
-
                                 $total_noti_record = NotiRecord::whereUserId($find_user->id)->sum(DB::raw('wallet + offer + event + normal'));
                                 try{
                                 $ios_notify =  $this->iphoneNotification($find_user->device_token, $admin_cashback_notification_find->message, $notmessage = "Cashback Notification", $noti_type = 2,null,null,$total_noti_record);
@@ -3978,10 +3905,10 @@ class TabController extends ResponseController
                                     'created_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString(),
                                     'updated_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString()
                                 ];
-                                AdminCriteriaNotification::create($criteria_data);
                             
                            }
                         }
+                                AdminCriteriaNotification::create($criteria_data);
 
                     }
 
@@ -4189,22 +4116,22 @@ class TabController extends ResponseController
 
 
                 if($admin_refer_notification->push_type == 1){
+                    $noti_record_find = NotiRecord::whereUserId($refer_user_find->id)->first();
+
+                    if(empty($noti_record_find)){
+                        $save_noti_record = new NotiRecord();
+                        $save_noti_record->user_id = $refer_user_find->id;
+                        $save_noti_record->wallet = 1;
+                        $save_noti_record->save();
+
+                    }else{
+                        $noti_record_find->wallet = $noti_record_find->wallet + 1;
+                        $noti_record_find->update();
+                    }
 
                     if($refer_user_find->device_type == 'Android'){
                         if($refer_user_find->device_token && strlen($refer_user_find->device_token) > 20){
 
-                            $noti_record_find = NotiRecord::whereUserId($refer_user_find->id)->first();
-
-                            if(empty($noti_record_find)){
-                                $save_noti_record = new NotiRecord();
-                                $save_noti_record->user_id = $refer_user_find->id;
-                                $save_noti_record->wallet = 1;
-                                $save_noti_record->save();
-
-                            }else{
-                                $noti_record_find->wallet = $noti_record_find->wallet + 1;
-                                $noti_record_find->update();
-                            }
                             $total_noti_record = NotiRecord::whereUserId($refer_user_find->id)->sum(DB::raw('wallet + offer + event + normal'));
                             try{
                                 $android_notify =  $this->send_android_notification_new($refer_user_find->device_token, $admin_refer_notification->message, $notmessage = "Referral Bonus Notification", $noti_type = 4,null,null,$total_noti_record);
@@ -4217,26 +4144,13 @@ class TabController extends ResponseController
                                 'message'   => $admin_refer_notification->message,
                                 'noti_type' => 4
                             ];
-                            AdminCriteriaNotification::create($criteria_data);
+                            // AdminCriteriaNotification::create($criteria_data);
                        
                        }
                     }
 
                     if($refer_user_find->device_type == 'Ios' && strlen($refer_user_find->device_token) > 20){
                         if($refer_user_find->device_token){
-
-                            $noti_record_find = NotiRecord::whereUserId($refer_user_find->id)->first();
-
-                            if(empty($noti_record_find)){
-                                $save_noti_record = new NotiRecord();
-                                $save_noti_record->user_id = $refer_user_find->id;
-                                $save_noti_record->wallet = 1;
-                                $save_noti_record->save();
-
-                            }else{
-                                $noti_record_find->wallet = $noti_record_find->wallet + 1;
-                                $noti_record_find->update();
-                            }
                             $total_noti_record = NotiRecord::whereUserId($refer_user_find->id)->sum(DB::raw('wallet + offer + event + normal'));
                             try{
                                 $ios_notify =  $this->iphoneNotification($refer_user_find->device_token, $admin_refer_notification->message, $notmessage = "Referral Bonus Notification", $noti_type = 4,null,null,$total_noti_record);
@@ -4249,10 +4163,10 @@ class TabController extends ResponseController
                                 'message'   => $admin_refer_notification->message,
                                 'noti_type' => 4
                             ];
-                            AdminCriteriaNotification::create($criteria_data);
                         
                        }
                     }
+                            AdminCriteriaNotification::create($criteria_data);
 
                 }
 
@@ -4320,22 +4234,21 @@ class TabController extends ResponseController
                 }
 
                 if($admin_cashback_notification_find->push_type == 1){
+                    $noti_record_find = NotiRecord::whereUserId($find_user->id)->first();
+
+                    if(empty($noti_record_find)){
+                        $save_noti_record = new NotiRecord();
+                        $save_noti_record->user_id = $find_user->id;
+                        $save_noti_record->wallet = 1;
+                        $save_noti_record->save();
+
+                    }else{
+                        $noti_record_find->wallet = $noti_record_find->wallet + 1;
+                        $noti_record_find->update();
+                    }
 
                     if($find_user->device_type == 'Android'){
                         if($find_user->device_token && strlen($find_user->device_token) > 20){
-
-                            $noti_record_find = NotiRecord::whereUserId($find_user->id)->first();
-
-                            if(empty($noti_record_find)){
-                                $save_noti_record = new NotiRecord();
-                                $save_noti_record->user_id = $find_user->id;
-                                $save_noti_record->wallet = 1;
-                                $save_noti_record->save();
-
-                            }else{
-                                $noti_record_find->wallet = $noti_record_find->wallet + 1;
-                                $noti_record_find->update();
-                            }
 
                             $total_noti_record = NotiRecord::whereUserId($find_user->id)->sum(DB::raw('wallet + offer + event + normal'));
                             try{
@@ -4350,28 +4263,13 @@ class TabController extends ResponseController
                                 'created_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString(),
                                 'updated_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString(),
                             ];
-                            AdminCriteriaNotification::create($criteria_data);
+                            // AdminCriteriaNotification::create($criteria_data);
                        
                        }
                     }
 
                     if($find_user->device_type == 'Ios' && strlen($find_user->device_token) > 20){
                         if($find_user->device_token){
-
-                            $noti_record_find = NotiRecord::whereUserId($find_user->id)->first();
-
-                            if(empty($noti_record_find)){
-                                $save_noti_record = new NotiRecord();
-                                $save_noti_record->user_id = $find_user->id;
-                                $save_noti_record->wallet = 1;
-                                $save_noti_record->save();
-
-                            }else{
-                                $noti_record_find->wallet = $noti_record_find->wallet + 1;
-                                $noti_record_find->update();
-                            }
-
-
                             $total_noti_record = NotiRecord::whereUserId($find_user->id)->sum(DB::raw('wallet + offer + event + normal'));
                             try{
                             $ios_notify =  $this->iphoneNotification($find_user->device_token, $admin_cashback_notification_find->message, $notmessage = "Cashback Notification", $noti_type = 2,null,null,$total_noti_record);
@@ -4385,10 +4283,11 @@ class TabController extends ResponseController
                                 'created_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString(),
                                 'updated_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString()
                             ];
-                            AdminCriteriaNotification::create($criteria_data);
+                            // AdminCriteriaNotification::create($criteria_data);
                         
                        }
                     }
+                            AdminCriteriaNotification::create($criteria_data);
 
                 }
 
@@ -4588,7 +4487,7 @@ class TabController extends ResponseController
             $da->date_and_time =  $this->convert_to_user_date($da->date_and_time, 'Y-m-d H:i:s');
             $da->updated_at =  $this->convert_to_user_date($da->updated_at, 'Y-m-d H:i:s');
 
-            $da->user_wallet_cash = round($da->user_wallet_cash,2);
+            $da->user_wallet_cash = floor($da->user_wallet_cash);
         }
 
         $return_data = [
@@ -4719,11 +4618,9 @@ class TabController extends ResponseController
         // $data = WalletTransaction::select(DB::raw("(select customer_id from users where id = wallet_transactions.user_id) AS 'Customer ID'"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where users.id = wallet_transactions.user_id) AS 'Customer Name'"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where users.id = wallet_transactions.user_id) AS 'Mobile Number'"),DB::raw("(select email from users where id = wallet_transactions.user_id) AS 'Email ID'"),"wallet_transactions.invoice_number AS Invoice Number","wallet_transactions.total_bill_amount AS Check Amount","wallet_transactions.check_amount_pos AS Check Amount POS",DB::raw("CONCAT(case wallet_transactions.is_cross_verify when '0' then 'Not Verified' when '1' then 'Verified' else 'Mismatch' end) AS 'Transaction Status'"),"wallet_transactions.cashback_percentage AS Cashback Percentage",DB::raw("ROUND((select wallet_cash from users where id = wallet_transactions.user_id),1) AS 'Redeemed Wallet'"),"wallet_transactions.redeemed_amount AS Redemption From Loyalty",DB::raw("(select venue_name from venus where id = wallet_transactions.venu_id) AS 'Restaurant Name'"),DB::raw("(select username from venue_users where id = wallet_transactions.venue_user_id) AS 'Restaurant User'"),DB::raw("DATE_FORMAT(wallet_transactions.date_and_time, '%Y-%m-%d') AS Date"))->orderBy('wallet_transactions.id','desc')->whereIn('id',$ids_data)
         //     ->get()->toArray();
 
-        $data = WalletTransaction::select('cashier_name',DB::raw("(select customer_id from users where id = wallet_transactions.user_id) AS 'Customer ID'"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where id = wallet_transactions.user_id) AS 'Customer Name'"),DB::raw("(select CONCAT(users.country_code, users.mobile_number) from users where users.id = wallet_transactions.user_id) AS 'Customer No.'"),DB::raw("(select email from users where id = wallet_transactions.user_id) AS 'Email ID'"),'wallet_transactions.invoice_number as Check No.','wallet_transactions.total_bill_amount as Check Amount','check_amount_pos as Check Amount POS',DB::raw("CONCAT(case wallet_transactions.is_cross_verify when '0' then 'Not Verified' when '1' then 'Verified' when '3' then 'Micros Verified' else 'Mismatch' end) AS 'Transaction Status'"),'wallet_transactions.cashback_percentage as Cash Back %','wallet_transactions.user_wallet_cash as Wallet Cash','wallet_transactions.redeemed_amount as Redemption from Loyalty',DB::raw("(select venue_name from venus where id = wallet_transactions.venu_id) AS 'Restaurant Name'"),'wallet_transactions.offer_product_ids',DB::raw("DATE_FORMAT(wallet_transactions.date_and_time, '%Y-%m-%d %h:%i %p') AS Date"),DB::raw("(select username from venue_users where id = wallet_transactions.venue_user_id) AS 'Restaurant Logged In User'"))
+        $data = WalletTransaction::select('cashier_name',DB::raw("(select customer_id from users where id = wallet_transactions.user_id) AS 'Customer ID'"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where id = wallet_transactions.user_id) AS 'Customer Name'"),DB::raw("(select CONCAT(users.country_code, users.mobile_number) from users where users.id = wallet_transactions.user_id) AS 'Customer No.'"),DB::raw("(select email from users where id = wallet_transactions.user_id) AS 'Email ID'"),'wallet_transactions.invoice_number as Check No.','wallet_transactions.total_bill_amount as Check Amount','check_amount_pos as Check Amount POS',DB::raw("CONCAT(case wallet_transactions.is_cross_verify when '0' then 'Not Verified' when '1' then 'Verified' when '3' then 'Micros Verified' else 'Mismatch' end) AS 'Transaction Status'"),'wallet_transactions.cashback_percentage as Cash Back %',DB::raw('FLOOR(wallet_transactions.user_wallet_cash) as "Wallet Cash"'),DB::raw('FLOOR(wallet_transactions.redeemed_amount) as "Redemption from Loyalty"'),DB::raw("(select venue_name from venus where id = wallet_transactions.venu_id) AS 'Restaurant Name'"),'wallet_transactions.offer_product_ids',DB::raw("DATE_FORMAT(wallet_transactions.date_and_time, '%Y-%m-%d %h:%i %p') AS Date"),DB::raw("(select username from venue_users where id = wallet_transactions.venue_user_id) AS 'Restaurant Logged In User'"))
         ->whereIn('wallet_transactions.id',$ids_data)
         ->orderBy('wallet_transactions.id','desc')->get();
-
-        // return $data;
 
 
         foreach($data as $da){

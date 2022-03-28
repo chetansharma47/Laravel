@@ -2134,6 +2134,16 @@ selected_customer_wallet_transactions();
 		});
 
 </script>
+<script>
+
+	$(document).ready(function(){
+		$('input[type="Date"]').on('change',function(){
+			$(this).blur();
+		});
+	});
+	
+
+</script>
 
 
 </body>
