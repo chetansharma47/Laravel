@@ -3534,7 +3534,7 @@ class TabController extends ResponseController
 
             $da->Date =  $this->convert_to_user_date($da->Date,'Y-m-d H:i:s');
 
-            $da['Wallet Cash'] = round($da['Wallet Cash']);
+            $da['Wallet Cash'] = round($da['Wallet Cash'],2);
             unset($da->offer_product_ids);
         }
 
@@ -3581,7 +3581,7 @@ class TabController extends ResponseController
 
             $da->Date =  $this->convert_to_user_date($da->Date,'Y-m-d H:i:s');
 
-            $da['Wallet Cash'] = round($da['Wallet Cash']);
+            $da['Wallet Cash'] = round($da['Wallet Cash'],2);
 
             unset($da->offer_product_ids);
         }
@@ -4487,7 +4487,7 @@ class TabController extends ResponseController
             $da->date_and_time =  $this->convert_to_user_date($da->date_and_time, 'Y-m-d H:i:s');
             $da->updated_at =  $this->convert_to_user_date($da->updated_at, 'Y-m-d H:i:s');
 
-            $da->user_wallet_cash = round($da->user_wallet_cash);
+            $da->user_wallet_cash = round($da->user_wallet_cash,2);
         }
 
         $return_data = [
