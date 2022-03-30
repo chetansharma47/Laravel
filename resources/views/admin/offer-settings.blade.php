@@ -562,7 +562,7 @@
 							<label>
 								Offer Name
 							</label>
-							<input type="text" offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}" class="form-control form-control-user offer_name" placeholder="Offer Name" value="${(offer_name)?offer_name:''}" ${(offer_name)?'disabled':''} maxlength="30" venu-id="${venuid}" uniq-id="${uniqid}">
+							<input type="text" offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}" class="form-control form-control-user offer_name" placeholder="Offer Name" value="${(offer_name)?offer_name:''}" ${(offertype!='BirthdayOffer')?'disabled':''} maxlength="30" venu-id="${venuid}" uniq-id="${uniqid}">
 						</div>
 						<div class="col-md-6 venue_inputs">
 							<label>
@@ -578,7 +578,7 @@
 							<label>
 								Offer Description
 							</label>
-							<textarea offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}"  class="form-control offer_desc" style="font-size: 14px !important; padding:6px 10px;" rows="2" placeholder="Offer Description" maxlength="1000" ${(offer_desc)?'disabled':''} venu-id="${venuid}" uniq-id="${uniqid}">${(offer_desc)?offer_desc:''}</textarea>
+							<textarea offertype="${(offertype=='BirthdayOffer')?offertype:'Normal'}"  class="form-control offer_desc" style="font-size: 14px !important; padding:6px 10px;" rows="2" placeholder="Offer Description" maxlength="1000" ${(offertype!='BirthdayOffer')?'disabled':''} venu-id="${venuid}" uniq-id="${uniqid}">${(offer_desc)?offer_desc:''}</textarea>
 						</div>
 						<div class="col-md-6 venue_inputs">
 							<div class="">
@@ -597,7 +597,7 @@
 							</label>
 							${imageurl}
 							<label for="img_upload" data-toggle="tooltip" data-placement="top" title="Click to upload image">
-							<img venu-id="${venuid}" uniq-id="${uniqid}" src="{{url('public/upload_icon.png')}}" alt="upload-icon-img" class="upload_icon" style="width:30px; cursor:pointer; ${(imagename) ? 'pointer-events: none;': ''}">
+							<img venu-id="${venuid}" uniq-id="${uniqid}" src="{{url('public/upload_icon.png')}}" alt="upload-icon-img" class="upload_icon" style="width:30px; cursor:pointer; ${(offertype!='BirthdayOffer') ? 'pointer-events: none;': ''}">
 							<input type="file" id="img_upload" class="img_upload" src="" venu-id="${venuid}" uniq-id="${uniqid}" hidden value="" accept="image/*">
 							<input type="text" class="offer_imagehidden" venu-id="${venuid}" uniq-id="${uniqid}" hidden value="${(imagename)?imagename:''}">
 							<input type="text" class="offer_imagehidden2" venu-id="${venuid}" uniq-id="${uniqid}" hidden value="${(imagename)?imagename:''}">
@@ -741,6 +741,11 @@
 			$('#uniq_id_db #unique').attr('uniq-id',get_inc_last_id);
 			
 			$(".birthday_dob[uniq-id='"+recent_id_uniq+"']").remove();
+
+			$('.offer_name[uniq-id='+recent_id_uniq+']').attr('disabled',false);
+			$('.offer_desc[uniq-id='+recent_id_uniq+']').attr('disabled',false);
+			$('.upload_icon[uniq-id='+recent_id_uniq+']').css({'pointer-events':''});
+
 			venuRecords();
 		});
 
@@ -1242,15 +1247,17 @@ $.ajax({
 		$('.criteria_txn_condition[uniq-id='+uniq_id+']').css('cursor','default');
 		$('.criteria_from_price[uniq-id='+uniq_id+']').attr('disabled',true);
 		$('.criteria_to_price[uniq-id='+uniq_id+']').attr('disabled',true);
-		$('.offer_name[uniq-id='+uniq_id+']').attr('disabled',true);
-		$('.offer_desc[uniq-id='+uniq_id+']').attr('disabled',true);
+		if(txn_condition_attr != "BirthdayOffer"){
+			$('.offer_name[uniq-id='+uniq_id+']').attr('disabled',true);
+			$('.offer_desc[uniq-id='+uniq_id+']').attr('disabled',true);
+			$('.input_tier_name[uniq-id='+uniq_id+']').attr('disabled',true);
+			$('.input_tier_name[uniq-id='+uniq_id+']').css('cursor','default');
+			$(document).find('.upload_icon').css('pointer-events','none');
+		}
 		$('.offer_from_date[uniq-id='+uniq_id+']').attr('disabled',true);
 		$('.offer_to_date[uniq-id='+uniq_id+']').attr('disabled',true);
 		$('.offer_time[uniq-id='+uniq_id+']').attr('disabled',true);
 		$('.offer_to_time[uniq-id='+uniq_id+']').attr('disabled',true);
-		$(document).find('.upload_icon').css('pointer-events','none');
-		$('.input_tier_name[uniq-id='+uniq_id+']').attr('disabled',true);
-		$('.input_tier_name[uniq-id='+uniq_id+']').css('cursor','default');
   		
   	},500);
 		if(data.data != null || data.data != undefined){
@@ -1360,7 +1367,7 @@ function alloffers(){
 
 
 	  		if(dataoffer[i].deleted_at==null){
-	  			$('.menu-lisitng ul.listitem').append(`<li id="venu-${dataoffer[i].venu_id}" class="offers_list" uniq-id="${dataoffer[i].unique_id}" venu-id="${dataoffer[i].venu_id}" data-id="${dataoffer[i].id}" data-tab="uniq-${dataoffer[i].unique_id}"><input type="text" offertype="${(dataoffer[i].offer_type=='BirthdayOffer')?dataoffer[i].offer_type:'Normal'}" ${(dataoffer[i].offer_name) ? 'disabled' : ''}  class="input_tier_name" maxlength="30" uniq-id="${dataoffer[i].unique_id}" venu-id="${dataoffer[i].venu_id}" value="${dataoffer[i].offer_name}" style="cursor:${(dataoffer[i].offer_name) ? 'pointer' : ''}"></li>`);
+	  			$('.menu-lisitng ul.listitem').append(`<li id="venu-${dataoffer[i].venu_id}" class="offers_list" uniq-id="${dataoffer[i].unique_id}" venu-id="${dataoffer[i].venu_id}" data-id="${dataoffer[i].id}" data-tab="uniq-${dataoffer[i].unique_id}"><input type="text" offertype="${(dataoffer[i].offer_type=='BirthdayOffer')?dataoffer[i].offer_type:'Normal'}" ${(dataoffer[i].offer_type=='Normal') ? 'disabled' : ''}  class="input_tier_name" maxlength="30" uniq-id="${dataoffer[i].unique_id}" venu-id="${dataoffer[i].venu_id}" value="${dataoffer[i].offer_name}" style="cursor:${(dataoffer[i].offer_name) ? 'pointer' : ''}"></li>`);
 
 	  			$('.formdata').append(offerform(dataoffer[i].unique_id,dataoffer[i].venu_id,dataoffer[i].offer_name,dataoffer[i].offer_desc,dataoffer[i].image,dataoffer[i].from_date,dataoffer[i].to_date,dataoffer[i].offer_setting,dataoffer[i].offer_setting.txn_amount_condition,dataoffer[i].status,dataoffer[i].time,dataoffer[i].to_time,slice_name,dataoffer[i].id,dataoffer[i].venu,dataoffer[i].offer_setting.id,dataoffer[i].offer_setting.city,dataoffer[i].offer_type,dataoffer[i].offer_setting.gender,dataoffer[i].offer_setting.from_price,dataoffer[i].offer_setting.to_price,dataoffer[i].pos_product_id));
 

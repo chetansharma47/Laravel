@@ -2894,6 +2894,14 @@ class TabController extends ResponseController
                 ->whereDate('created_at','<=',$request->to_date)->sum('pay_bill_amount');
         $cashback_earned = WalletTransaction::where('is_cross_verify','=',1)->whereDate('created_at','>=',$request->from_date)
                 ->whereDate('created_at','<=',$request->to_date)->sum(DB::raw('ROUND(cashback_earned,2)'));
+
+        $cashback_earned_pluck_id = WalletTransaction::whereDate('created_at','>=',$request->from_date)->whereDate('created_at','<=',$request->to_date)->groupBy('user_id')->get(['user_id'])->pluck('user_id');
+
+        $cashbak_earned_wallet_other = WalletDetail::whereIn('user_id',$cashback_earned_pluck_id)->whereDate('created_at','>=',$request->from_date)
+                ->whereDate('created_at','<=',$request->to_date)->sum(DB::raw('ROUND(cashback_earned,2)'));
+
+        $cashback_earned = $cashback_earned + $cashbak_earned_wallet_other;
+
         $redeemed_amount = WalletTransaction::whereDate('created_at','>=',$request->from_date)
                 ->whereDate('created_at','<=',$request->to_date)->sum('redeemed_amount');
 
