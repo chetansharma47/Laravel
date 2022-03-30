@@ -422,7 +422,7 @@
 							</a>
 						</div>
 						<div>
-							<a href="" class="btn btn-primary btn-user btn-block common_btn" style="     font-size: 18px; width: 154px; margin-right: 15px; text-transform: none; padding: 8px 0;">
+							<a href="javascript:void(0);" class="btn btn-primary btn-user reset-selection-btn btn-block common_btn" style="     font-size: 18px; width: 154px; margin-right: 15px; text-transform: none; padding: 8px 0;">
 								Reset Selection
 							</a>
 						</div>
@@ -954,6 +954,11 @@
 			// cross_verification_sales(null,null,null,null,null,null,null,null,null,null,selected_wallet_id);
         });
 
+        $('.reset-selection-btn').click(function(){
+        	localStorage.setItem("search_click","true");
+        	getData();
+        });
+
     } );
       </script>
 
@@ -1188,7 +1193,7 @@
  
         });
 }
-selected_customer_wallet_transactions();
+// selected_customer_wallet_transactions();
 			$('#multi-filter-select').DataTable( {
 				"pageLength": 5,
 				initComplete: function () {
@@ -1880,7 +1885,7 @@ selected_customer_wallet_transactions();
     	cross_verification_sales();
 	});
 	
-	function cross_verification_sales(joined_from="",joined_to="",venue_id_wallet="",txn_status_wallet="",offers_product_wallet_id="",email="",mobile_number="",customer_name_wallet="",invoice_number_wallet="",venu_username_id_wallet="",select_user_id=""){
+	function cross_verification_sales(joined_from="",joined_to="",venue_id_wallet="",txn_status_wallet="",offers_product_wallet_id="",email="",mobile_number="",customer_name_wallet="",invoice_number_wallet="",venu_username_id_wallet="",select_user_id="",first_time=""){
 
     		$("#basic-datatables4").dataTable().fnDestroy();
 			let table = $("#basic-datatables4").DataTable({
@@ -1893,7 +1898,7 @@ selected_customer_wallet_transactions();
 				ajax:{
 					url:"{{ route('admin.EndUserCustomerTransactions') }}",
 					type:"POST",
-					data:{'_token':'{{csrf_token()}}',joined_from,joined_to,venue_id_wallet,txn_status_wallet,offers_product_wallet_id,email,mobile_number,customer_name_wallet,invoice_number_wallet,venu_username_id_wallet,select_user_id},
+					data:{'_token':'{{csrf_token()}}',joined_from,joined_to,venue_id_wallet,txn_status_wallet,offers_product_wallet_id,email,mobile_number,customer_name_wallet,invoice_number_wallet,venu_username_id_wallet,select_user_id,'first_time':first_time},
 					complete:function(data){
 						let result = data.responseJSON;
 	                	let results = result['data']
@@ -1948,7 +1953,8 @@ selected_customer_wallet_transactions();
 			});
 		}
 
-		cross_verification_sales();
+		// cross_verification_sales();
+		cross_verification_sales(null,null,null,null,null,null,null,null,null,null,null,'true');
 
 		$('.email_wallet, .mobile_number_wallet, .invoice_number_wallet').on('keydown',function(e){
 			if(e.which===32){
@@ -1979,6 +1985,13 @@ selected_customer_wallet_transactions();
 	    	let venu_username_id_wallet = $(".venu_username_wallet").val();
 			let search_txt = $(".form-control[type='search'][aria-controls='basic-datatables4']").val();
 			let selected_user_id = $('#selected_id_input').val();
+
+			if(selected_user_id == ''){
+				$("#alert_text").text("Please select or search at least one customer from customer list.");
+				$("#validationModel").modal("show");
+				$("#validationModel").unbind("click");
+				return false;
+			}
 
 	    	if(joined_from > joined_to){
 				$("#alert_text").text("Transaction from date should be greater than transaction to date");

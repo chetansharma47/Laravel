@@ -650,13 +650,23 @@ class TabController extends ResponseController
             }
 
 
-            $return_data = [
-                    "data" => $data,
-                    "draw" => (int)$request->draw,
-                    "recordsTotal" => $total,
-                    "recordsFiltered" => $filter,
-                    "input" => $request->all()
-            ];
+            if($request->first_time == 'true' && empty($search)){
+                $return_data = [
+                        "data" => [],
+                        "draw" => (int)$request->draw,
+                        "recordsTotal" => 0,
+                        "recordsFiltered" => 0,
+                        "input" => $request->all()
+                ];
+            }else{
+                $return_data = [
+                        "data" => $data,
+                        "draw" => (int)$request->draw,
+                        "recordsTotal" => $total,
+                        "recordsFiltered" => $filter,
+                        "input" => $request->all()
+                ];
+            }
             return response()->json($return_data);
         }
         
@@ -4497,14 +4507,23 @@ class TabController extends ResponseController
 
             $da->user_wallet_cash = round($da->user_wallet_cash,2);
         }
-
-        $return_data = [
-            "data" => $data,
-            "draw" => (int)$request->draw,
-            "recordsTotal" => $total,
-            "recordsFiltered" => $filter,
-            "input" => $request->all(),
-        ];
+        if($request->first_time == 'true' && empty($search)){
+            $return_data = [
+                "data" => [],
+                "draw" => (int)$request->draw,
+                "recordsTotal" => 0,
+                "recordsFiltered" => 0,
+                "input" => $request->all(),
+            ];
+        }else{
+            $return_data = [
+                "data" => $data,
+                "draw" => (int)$request->draw,
+                "recordsTotal" => $total,
+                "recordsFiltered" => $filter,
+                "input" => $request->all(),
+            ];
+        }
 
         return response()->json($return_data);
     }
