@@ -2922,7 +2922,11 @@ class TabController extends ResponseController
 
       $fraud_check = WalletTransaction::select('user_id',DB::raw('COUNT(user_id) count'))->whereDate('created_at','>=',$request->from_date)->whereDate('created_at','<=',$request->to_date)->groupBy('user_id')->havingRaw('COUNT(count) > 1')->orderBy('count','desc')->first();
 
-      $fraud_check = $fraud_check->count;
+      if($fraud_check != null){
+        $fraud_check = $fraud_check->count;
+      }else{
+        $fraud_check = 0;
+      }
         $wallet_transactions_offers = WalletTransaction::whereDeletedAt(null)
                                     ->whereDate('created_at','>=',$request->from_date)
                                     ->whereDate('created_at','<=',$request->to_date)

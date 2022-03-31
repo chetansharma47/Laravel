@@ -561,7 +561,7 @@ class Controller extends BaseController
                 $events_getting = Event::whereIn("id", $event_ids)->whereNotIn("id", $assign_events)->get();
 
                 foreach ($events_getting as $find_event) {
-                    $check_already_send_noti = EventSentNotification::whereEventId($find_event->id)->whereDate('created_at',Carbon::now('Asia/Dubai'))->first();
+                    $check_already_send_noti = EventSentNotification::whereEventId($find_event->id)->whereUserId($user_find->id)->whereDate('created_at',Carbon::now('Asia/Dubai'))->first();
 
                     if(empty($check_already_send_noti)){
 
