@@ -2889,7 +2889,7 @@ class TabController extends ResponseController
         $get_all_customers = $users->pluck('id');
 
 
-        $customer_dirhams_wallet = round($users->sum('wallet_cash'),2);
+        $customer_dirhams_wallet = round(User::sum('wallet_cash'),2);
 
 
         $customer_registrations = $users->count();
@@ -2900,8 +2900,11 @@ class TabController extends ResponseController
 
         $referral_first_transaction_done = User::whereIn("id", $user_ids_from_wallet_transactions)->where('refer_amount_used', '=', 1)->count();
 
-        $total_sales = WalletTransaction::whereDate('created_at','>=',$request->from_date)
-                ->whereDate('created_at','<=',$request->to_date)->sum('pay_bill_amount');
+        $total_sales_verified = WalletTransaction::whereDate('created_at','>=',$request->from_date)->whereDate('created_at','<=',$request->to_date)->whereIsCrossVerify(1)->sum('total_bill_amount');
+        $total_sales_verified_pos = WalletTransaction::whereDate('created_at','>=',$request->from_date)->whereDate('created_at','<=',$request->to_date)->whereIsCrossVerify(3)->sum('total_bill_amount');
+
+        $total_sales = $total_sales_verified + $total_sales_verified_pos;
+
         $cashback_earned = WalletTransaction::where('is_cross_verify','=',1)->whereDate('created_at','>=',$request->from_date)
                 ->whereDate('created_at','<=',$request->to_date)->sum(DB::raw('ROUND(cashback_earned,2)'));
 

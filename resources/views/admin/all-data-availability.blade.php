@@ -1192,6 +1192,7 @@
             ]
  
         });
+			
 }
 // selected_customer_wallet_transactions();
 			$('#multi-filter-select').DataTable( {
@@ -1288,7 +1289,7 @@
 
 	<script type="text/javascript">
 		function tdClick(){
-			$(".td_click").on("dblclick",function(){
+			$(".td_click").on("dblclick",function(e){
 				let data_id = $(this).data("id");
 				$('#selected_id_input').val(data_id);
 				$("#basic-datatables2").dataTable().fnDestroy();
@@ -1332,6 +1333,8 @@
 					
 
 				}
+
+				 e.stopImmediatePropagation();
 			});
 			
 		}
