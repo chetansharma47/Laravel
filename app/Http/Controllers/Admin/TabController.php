@@ -1675,7 +1675,6 @@ class TabController extends ResponseController
         $admin = Auth::guard('admin')->user();
         TierSetting::whereAdminId($admin->id)->update(['customer_tier_validity_check' => $days]);
         return "success";
-
     }
 
     public function badges(Request $request){
@@ -2927,6 +2926,7 @@ class TabController extends ResponseController
       }else{
         $fraud_check = 0;
       }
+      
         $wallet_transactions_offers = WalletTransaction::whereDeletedAt(null)
                                     ->whereDate('created_at','>=',$request->from_date)
                                     ->whereDate('created_at','<=',$request->to_date)

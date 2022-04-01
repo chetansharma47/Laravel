@@ -388,7 +388,7 @@ class RestaurantAuthenticationController extends ResponseController
 
         /*End*/
 
-        /*$transaction_amount_check_last_days = 30;
+        $transaction_amount_check_last_days = 30;
         $customer_tier_validity_check = 30;
         $tier_setting = TierSetting::first();
         if(!empty($tier_setting)){
@@ -414,48 +414,43 @@ class RestaurantAuthenticationController extends ResponseController
         if(empty($amount_between_tier_find)){
 
             //preveious tier found according to total amount transaction
-            $amount_between_tier_find = TierCondition::whereDeletedAt(null)->where('to_amount','<=', $total_amount_transaction)->orderBy('to_amount','desc')->first();
+            $amount_between_tier_find_previous = TierCondition::whereDeletedAt(null)->where('to_amount','<=', $total_amount_transaction)->orderBy('to_amount','desc')->first();
 
-            if(!empty($amount_between_tier_find)){
+            if(!empty($amount_between_tier_find_previous)){
                 
                 $last_tier_update_date = Carbon::parse($user_find->tier_update_date);
                 $diffrence_in_days_for_tier = $last_tier_update_date->diffInDays(Carbon::now());
 
-                if($tier_find->to_amount >= $amount_between_tier_find->to_amount){
+                if($tier_find->to_amount >= $amount_between_tier_find_previous->to_amount){
 
                     if($diffrence_in_days_for_tier >= $customer_tier_validity_check){
-                        $user_find->customer_tier = $amount_between_tier_find->tier_name;
+                        $user_find->customer_tier = $amount_between_tier_find_previous->tier_name;
                         $user_find->tier_update_date = Carbon::now()->toDateString();
                         $user_find->update();
                     }
                 }else{
-                    $user_find->customer_tier = $amount_between_tier_find->tier_name;
+                    $user_find->customer_tier = $amount_between_tier_find_previous->tier_name;
                     $user_find->tier_update_date = Carbon::now()->toDateString();
                     $user_find->update();
                 }
-            }
-
-            if(empty($amount_between_tier_find)){
-
+            }else{
                 //next tier found according to transaction amount total
-                $amount_between_tier_find = TierCondition::whereDeletedAt(null)->where('to_amount','>=', $total_amount_transaction)->orderBy('to_amount','desc')->first();
+                $amount_between_tier_find_previous = TierCondition::whereDeletedAt(null)->where('to_amount','>=', $total_amount_transaction)->orderBy('to_amount','desc')->first();
 
-                if(empty($amount_between_tier_find)){
-
+                if(!empty($amount_between_tier_find_previous)){
+                    $user_find->customer_tier = $amount_between_tier_find_previous->tier_name;
+                    $user_find->tier_update_date = Carbon::now()->toDateString();
+                    $user_find->update();
+                }else{
                     return $this->responseWithErrorCode("No tier add from admin.",400);
                 }
-
-                $user_find->customer_tier = $amount_between_tier_find->tier_name;
-                $user_find->tier_update_date = Carbon::now()->toDateString();
-                $user_find->update();
             }
-
 
         }else{
             $user_find->customer_tier = $amount_between_tier_find->tier_name;
             $user_find->tier_update_date = Carbon::now()->toDateString();
             $user_find->update();
-        }*/
+        }
 
 
         $data['description'] = "Redeemed Earnings";
@@ -831,7 +826,7 @@ class RestaurantAuthenticationController extends ResponseController
 
         /*End*/
 
-        /*$transaction_amount_check_last_days = 30;
+        $transaction_amount_check_last_days = 30;
         $customer_tier_validity_check = 30;
         $tier_setting = TierSetting::first();
         if(!empty($tier_setting)){
@@ -855,48 +850,44 @@ class RestaurantAuthenticationController extends ResponseController
         if(empty($amount_between_tier_find)){
 
             //preveious tier found according to total amount transaction
-            $amount_between_tier_find = TierCondition::whereDeletedAt(null)->where('to_amount','<=', $total_amount_transaction)->orderBy('to_amount','desc')->first();
+            $amount_between_tier_find_previous = TierCondition::whereDeletedAt(null)->where('to_amount','<=', $total_amount_transaction)->orderBy('to_amount','desc')->first();
 
-            if(!empty($amount_between_tier_find)){
+            if(!empty($amount_between_tier_find_previous)){
                 
                 $last_tier_update_date = Carbon::parse($user_find->tier_update_date);
                 $diffrence_in_days_for_tier = $last_tier_update_date->diffInDays(Carbon::now());
 
-                if($tier_find->to_amount >= $amount_between_tier_find->to_amount){
+                if($tier_find->to_amount >= $amount_between_tier_find_previous->to_amount){
 
                     if($diffrence_in_days_for_tier >= $customer_tier_validity_check){
-                        $user_find->customer_tier = $amount_between_tier_find->tier_name;
+                        $user_find->customer_tier = $amount_between_tier_find_previous->tier_name;
                         $user_find->tier_update_date = Carbon::now()->toDateString();
                         $user_find->update();
                     }
                 }else{
-                    $user_find->customer_tier = $amount_between_tier_find->tier_name;
+                    $user_find->customer_tier = $amount_between_tier_find_previous->tier_name;
                     $user_find->tier_update_date = Carbon::now()->toDateString();
                     $user_find->update();
                 }
-            }
-
-            if(empty($amount_between_tier_find)){
-
+            }else{
                 //next tier found according to transaction amount total
-                $amount_between_tier_find = TierCondition::whereDeletedAt(null)->where('to_amount','>=', $total_amount_transaction)->orderBy('to_amount','desc')->first();
-
-                if(empty($amount_between_tier_find)){
+                $amount_between_tier_find_previous = TierCondition::whereDeletedAt(null)->where('to_amount','>=', $total_amount_transaction)->orderBy('to_amount','desc')->first();
+                
+                if(!empty($amount_between_tier_find_previous)){
+                    $user_find->customer_tier = $amount_between_tier_find_previous->tier_name;
+                    $user_find->tier_update_date = Carbon::now()->toDateString();
+                    $user_find->update();
+                }else{
 
                     return $this->responseWithErrorCode("No tier add from admin.",400);
                 }
-
-                $user_find->customer_tier = $amount_between_tier_find->tier_name;
-                $user_find->tier_update_date = Carbon::now()->toDateString();
-                $user_find->update();
             }
-
 
         }else{
             $user_find->customer_tier = $amount_between_tier_find->tier_name;
             $user_find->tier_update_date = Carbon::now()->toDateString();
             $user_find->update();
-        }*/
+        }
 
 
         $data['description'] = "Redeemed Earnings";
@@ -1037,7 +1028,7 @@ class RestaurantAuthenticationController extends ResponseController
                         $push_type = 1;
                         $message_text = $admin_cashback_notification->message;
                         if(empty($message_text)){
-                            $push_type = 0;
+                            $message_text = $admin_transaction_notification->message;
                         }
                     }
                 }else{
@@ -1065,14 +1056,14 @@ class RestaurantAuthenticationController extends ResponseController
                         $push_type = 1;
                         $message_text = $admin_cashback_notification->message;
                         if(empty($message_text)){
-                            $push_type = 0;
+                            $message_text = $admin_transaction_notification->message;
                         }
                     }
                 }else{
 
                     $message_text = $admin_cashback_notification->message;
                     if(empty($message_text)){
-                        $push_type = 0;
+                        $message_text = $admin_transaction_notification->message;
                     }
                 }
 
@@ -1141,7 +1132,7 @@ class RestaurantAuthenticationController extends ResponseController
                         $sms_type = 1;
                         $message_text = $admin_cashback_notification->message;
                         if(empty($message_text)){
-                            $sms_type = 0;
+                            $message_text = $admin_transaction_notification->message;
                         }
                     }
                 }else{
@@ -1169,7 +1160,7 @@ class RestaurantAuthenticationController extends ResponseController
                         $sms_type = 1;
                         $message_text = $admin_cashback_notification->message;
                         if(empty($message_text)){
-                            $sms_type = 0;
+                            $message_text = $admin_transaction_notification->message;
                         }
                     }
                 }else{
@@ -1211,7 +1202,7 @@ class RestaurantAuthenticationController extends ResponseController
                         $email_type = 1;
                         $message_text = $admin_cashback_notification->message;
                         if(empty($message_text)){
-                            $email_type = 0;
+                            $message_text = $admin_transaction_notification->message;
                         }
                     }
                 }else{
@@ -1243,13 +1234,13 @@ class RestaurantAuthenticationController extends ResponseController
                         $email_type = 1;
                         $message_text = $admin_cashback_notification->message;
                         if(empty($message_text)){
-                            $email_type = 0;
+                            $message_text = $admin_transaction_notification->message;
                         }
                     }
                 }else{
                     $message_text = $admin_cashback_notification->message;
                     if(empty($message_text)){
-                        $email_type = 0;
+                        $message_text = $admin_transaction_notification->message;
                     }
                 }
                 
