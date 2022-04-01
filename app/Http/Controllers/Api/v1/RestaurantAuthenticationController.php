@@ -404,7 +404,8 @@ class RestaurantAuthenticationController extends ResponseController
                                         $query->whereUserId($user_find->id);
                                         $query->whereDate('created_at','<=',Carbon::now()->toDateString());
                                         $query->whereDate('created_at','>=',$last_30_days_transaction_amount->toDateString());
-                                        $query->whereIsCrossVerify(1);
+                                        $query->where('is_cross_verify',1);
+                                        $query->orWhere('is_cross_verify',3);
                                     })->sum('total_bill_amount');
 
         // $total_amount_transaction = $total_amount_transaction + $data['total_bill_amount'];
@@ -842,6 +843,8 @@ class RestaurantAuthenticationController extends ResponseController
                                         $query->whereUserId($user_find->id);
                                         $query->whereDate('created_at','<=',Carbon::now()->toDateString());
                                         $query->whereDate('created_at','>=',$last_30_days_transaction_amount->toDateString());
+                                        $query->where('is_cross_verify',1);
+                                        $query->orWhere('is_cross_verify',3);
                                     })->sum('total_bill_amount');
 
         $total_amount_transaction = $total_amount_transaction + $data['total_bill_amount'];
