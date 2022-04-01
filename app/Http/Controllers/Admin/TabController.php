@@ -711,7 +711,30 @@ class TabController extends ResponseController
         $selected_ids = explode(',', $request->selected_wallet_id);
         
 
-        $data = WalletDetail::select("id","description","cashback_earned","redeemed_amount","user_wallet_cash",DB::raw("DATE_FORMAT(date_and_time, '%Y-%m-%d %h:%i %p') AS date_and_time"),DB::raw("(select customer_id from users where id = wallet_details.user_id) AS customer_id"),DB::raw("(select email from users where id = wallet_details.user_id) AS email"),DB::raw("(select CONCAT(users.country_code, users.mobile_number) from users where id = wallet_details.user_id) AS mobile_number"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where id = wallet_details.user_id) AS full_name"))->whereIn('wallet_details.user_id',$selected_ids)->orderBy($column,$asc_desc);
+        $data = WalletDetail::select("id","description","cashback_earned","redeemed_amount","user_wallet_cash",DB::raw("DATE_FORMAT(date_and_time, '%Y-%m-%d %h:%i %p') AS date_and_time"),DB::raw("(select customer_id from users where id = wallet_details.user_id) AS customer_id"),DB::raw("(select email from users where id = wallet_details.user_id) AS email"),DB::raw("(select CONCAT(users.country_code, users.mobile_number) from users where id = wallet_details.user_id) AS mobile_number"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where id = wallet_details.user_id) AS full_name"))->whereIn('wallet_details.user_id',$selected_ids)
+            ->where(function($query) use ($request){
+
+                if($request->joined_from && $request->joined_to){
+                    $query->whereBetween(DB::raw('date(created_at)'),[$request->joined_from, $request->joined_to]);
+                }else if($request->joined_from){
+                    $query->where(DB::raw('date(created_at)'),'>=', $request->joined_from);
+                }else if($request->joined_to){
+                    $query->where(DB::raw('date(created_at)'),'<=', $request->joined_to);
+                }
+
+                if($request->mobile_number){
+                    $query->where(DB::raw("(select CONCAT(users.country_code, users.mobile_number) from users where users.id = wallet_details.user_id)"), 'Like', '%' . $request->mobile_number . '%');
+                }
+
+                if($request->customer_name_wallet){
+                    $query->where(DB::raw("(select CONCAT(users.first_name,' ',users.last_name) from users where users.id = wallet_details.user_id)"), 'Like', '%' . $request->customer_name_wallet . '%');
+                }
+
+                if($request->email){
+                    $query->where(DB::raw("(select email from users where users.id = wallet_details.user_id)"), 'Like', '%' . $request->email . '%');
+                }
+
+        })->orderBy($column,$asc_desc);
 
             
         $total = $data->get()->count();
@@ -1665,7 +1688,9 @@ class TabController extends ResponseController
     public function totalTransactionAmountForDays(Request $request){
         $days = $request->transaction_amount_check_last_days;
         $admin = Auth::guard('admin')->user();
-        TierSetting::whereAdminId($admin->id)->update(['transaction_amount_check_last_days' => $days]);
+        $tierSetting = TierSetting::first();
+        $tierSetting->transaction_amount_check_last_days = $days;
+        $tierSetting->update();
         return "success";
     }
 
@@ -1673,7 +1698,9 @@ class TabController extends ResponseController
 
         $days = $request->customer_tier_validity_check;
         $admin = Auth::guard('admin')->user();
-        TierSetting::whereAdminId($admin->id)->update(['customer_tier_validity_check' => $days]);
+        $tierSetting = TierSetting::first();
+        $tierSetting->customer_tier_validity_check = $days;
+        $tierSetting->update();
         return "success";
     }
 
@@ -4451,9 +4478,11 @@ class TabController extends ResponseController
         ->orderBy($column,$asc_desc)
         ->where('wallet_transactions.deleted_at',null);
 
-        if($request->select_user_id != null){
-            $user_ids = explode("," , $request->select_user_id);
-            $data->whereIn('wallet_transactions.user_id',$user_ids);
+        if($request->get_parent_class != 'basic-datatables4'){
+            if($request->select_user_id != null){
+                $user_ids = explode("," , $request->select_user_id);
+                $data->whereIn('wallet_transactions.user_id',$user_ids);
+            }
         }
 
         $total = $data->count();

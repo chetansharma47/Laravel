@@ -684,93 +684,171 @@ class Controller extends BaseController
 
     }
 
-    public function CustomerTierUpdateCronJob(Request $request){
+     public function CustomerTierUpdateCronJob(Request $request) {
 
-        $get_all_users = User::where('is_verify','=',1)->where('is_block','=',0)->where("is_active", "=", 'Active')->pluck('id');
+        $get_all_users = User::where('is_block','=',0)->where("is_active", "=", 'Active')->pluck('id');
 
         foreach ($get_all_users as $value) {
-            $user_find = User::whereId($value)->first();
 
-            $tier_find = TierCondition::whereTierName($user_find->customer_tier)->whereDeletedAt(null)->first();
+            $user_find = User::whereId($value)->first(); //Get the user details
+
+            $tier_find = TierCondition::whereTierName($user_find->customer_tier)->whereDeletedAt(null)->first(); //Get last tier of the user
+
             if(empty($tier_find)){
-                $tier_find = TierCondition::whereDeletedAt(null)->first();
+                $tier_find = TierCondition::whereDeletedAt(null)->first(); //If no tier is ther for the user, apply first tier
             }
 
-            if(empty($tier_find)){
+            if(empty($tier_find)) { // No use, we can remove in future
                 break;
             }
 
             $transaction_amount_check_last_days = 30;
             $customer_tier_validity_check = 30;
+
             $tier_setting = TierSetting::first();
-            if(!empty($tier_setting)){
+            if(!empty($tier_setting)){ //Get Tier Setting Values
                 $transaction_amount_check_last_days = $tier_setting->transaction_amount_check_last_days;
                 $customer_tier_validity_check = $tier_setting->customer_tier_validity_check;
             }
 
-           $last_30_days_transaction_amount = Carbon::now()->subDays($transaction_amount_check_last_days);
+            $last_amount_check_date = Carbon::now()->subDays($transaction_amount_check_last_days); //Get the date till where we need to get amount
 
-            $last_validity_check_days = Carbon::now()->subDays($customer_tier_validity_check);
-
-           $total_amount_transaction = WalletTransaction::where(function($query) use ($transaction_amount_check_last_days,$customer_tier_validity_check, $user_find, $last_30_days_transaction_amount, $last_validity_check_days){
-                                            $query->whereUserId($user_find->id);
-                                            $query->whereDate('created_at','<=',Carbon::now()->toDateString());
-                                            $query->whereDate('created_at','>=',$last_30_days_transaction_amount->toDateString());
-                                            $query->where('is_cross_verify',1);
-                                            $query->orWhere('is_cross_verify',3);
-                                        })->sum('total_bill_amount');
-
-            // $total_amount_transaction = $total_amount_transaction + $data['total_bill_amount'];
-            $total_amount_transaction = $total_amount_transaction;
-
-           $amount_between_tier_find = TierCondition::whereDeletedAt(null)->where('from_amount', '<=', $total_amount_transaction)->where('to_amount', '>=', $total_amount_transaction)->first();
+            //Get total Verified Transaction Amounts within dates
+            $total_transaction_amount = WalletTransaction::whereUserId($user_find->id)
+                                        ->whereDate('created_at','<=',Carbon::now()->toDateString())
+                                        ->whereDate('created_at','>=',$last_amount_check_date->toDateString())
+                                        ->whereIn('is_cross_verify',[1,3])
+                                        ->sum('total_bill_amount');
 
 
-            if(empty($amount_between_tier_find)){
-
-                //preveious tier found according to total amount transaction
-                $amount_between_tier_find_previous = TierCondition::whereDeletedAt(null)->where('to_amount','<=', $total_amount_transaction)->orderBy('to_amount','desc')->first();
-
-                if(!empty($amount_between_tier_find_previous)){
-                    
-                    $last_tier_update_date = Carbon::parse($user_find->tier_update_date);
-                    $diffrence_in_days_for_tier = $last_tier_update_date->diffInDays(Carbon::now());
-
-                    if($tier_find->to_amount >= $amount_between_tier_find_previous->to_amount){
-
-                        if($diffrence_in_days_for_tier >= $customer_tier_validity_check){
-                           $user_find->customer_tier = $amount_between_tier_find_previous->tier_name;
-                            $user_find->tier_update_date = Carbon::now()->toDateString();
-                            $user_find->update();
-                        }
-                    }else{
-                        $user_find->customer_tier = $amount_between_tier_find_previous->tier_name;
-                        $user_find->tier_update_date = Carbon::now()->toDateString();
-                        $user_find->update();
-                    }
-                }else{
-                    //next tier found according to transaction amount total
-                    $amount_between_tier_find_previous = TierCondition::whereDeletedAt(null)->where('to_amount','>=', $total_amount_transaction)->orderBy('to_amount','desc')->first();
-
-                    if(!empty($amount_between_tier_find_previous)){
-                        $user_find->customer_tier = $amount_between_tier_find->tier_name;
-                        $user_find->tier_update_date = Carbon::now()->toDateString();
-                        $user_find->update();
-                    }else{
-                        return $this->responseWithErrorCode("No tier add from admin.",400);
-                    }
-                    
+            if ($tier_find->to_amount < $total_transaction_amount) { //In case of Upgrade of Tier
+                $new_tier = TierCondition::whereDeletedAt(null)->where('from_amount', '<=', $total_transaction_amount)->where('to_amount', '>=', $total_transaction_amount)->first();
+                if (empty($new_tier)) {
+                    $new_tier = TierCondition::whereDeletedAt(null)->where('to_amount','>=', $total_transaction_amount)->orderBy('to_amount','desc')->first();
                 }
 
-            }else{
-                $user_find->customer_tier = $amount_between_tier_find->tier_name;
+                if (empty($new_tier)) {
+                    $new_tier = TierCondition::orderBy('id','desc')->first();
+
+                }
+                $user_find->customer_tier = $new_tier->tier_name;
                 $user_find->tier_update_date = Carbon::now()->toDateString();
                 $user_find->update();
             }
+            else { //In case of De-grade of Tier
+                    $last_tier_update_date = Carbon::parse($user_find->tier_update_date);
+                    $diffrence_in_days_for_tier = $last_tier_update_date->diffInDays(Carbon::now());
+                    if ($diffrence_in_days_for_tier >= $customer_tier_validity_check) {
+                        $new_tier = TierCondition::whereDeletedAt(null)->where('from_amount', '<=', $total_transaction_amount)->where('to_amount', '>=', $total_transaction_amount)->first();
+                        if (empty($new_tier)) {
+                            $new_tier = TierCondition::whereDeletedAt(null)->where('to_amount','>=', $total_transaction_amount)->orderBy('to_amount','desc')->first();
 
+                        }
+
+                        if (empty($new_tier)) {
+                            $new_tier = TierCondition::first();
+
+                        }
+
+                        $user_find->customer_tier = $new_tier->tier_name;
+                        $user_find->tier_update_date = Carbon::now()->toDateString();
+                        $user_find->update();
+                    }
+
+            }
         }
 
-        return "success";
-
+        return "Success";
     }
+
+
+    // public function CustomerTierUpdateCronJob(Request $request){
+
+    //     $get_all_users = User::where('is_verify','=',1)->where('is_block','=',0)->where("is_active", "=", 'Active')->pluck('id');
+
+    //     foreach ($get_all_users as $value) {
+    //         $user_find = User::whereId($value)->first();
+
+    //         $tier_find = TierCondition::whereTierName($user_find->customer_tier)->whereDeletedAt(null)->first();
+    //         if(empty($tier_find)){
+    //             $tier_find = TierCondition::whereDeletedAt(null)->first();
+    //         }
+
+    //         if(empty($tier_find)){
+    //             break;
+    //         }
+
+    //         $transaction_amount_check_last_days = 30;
+    //         $customer_tier_validity_check = 30;
+    //         $tier_setting = TierSetting::first();
+    //         if(!empty($tier_setting)){
+    //             $transaction_amount_check_last_days = $tier_setting->transaction_amount_check_last_days;
+    //             $customer_tier_validity_check = $tier_setting->customer_tier_validity_check;
+    //         }
+
+    //        $last_30_days_transaction_amount = Carbon::now()->subDays($transaction_amount_check_last_days);
+
+    //         $last_validity_check_days = Carbon::now()->subDays($customer_tier_validity_check);
+
+    //        $total_amount_transaction = WalletTransaction::where(function($query) use ($transaction_amount_check_last_days,$customer_tier_validity_check, $user_find, $last_30_days_transaction_amount, $last_validity_check_days){
+    //                                         $query->whereUserId($user_find->id);
+    //                                         $query->whereDate('created_at','<=',Carbon::now()->toDateString());
+    //                                         $query->whereDate('created_at','>=',$last_30_days_transaction_amount->toDateString());
+    //                                         $query->where('is_cross_verify',1);
+    //                                         $query->orWhere('is_cross_verify',3);
+    //                                     })->sum('total_bill_amount');
+
+    //         // $total_amount_transaction = $total_amount_transaction + $data['total_bill_amount'];
+    //         $total_amount_transaction = $total_amount_transaction;
+
+    //       $amount_between_tier_find = TierCondition::whereDeletedAt(null)->where('from_amount', '<=', $total_amount_transaction)->where('to_amount', '>=', $total_amount_transaction)->first();
+
+
+    //         if(empty($amount_between_tier_find)){
+
+    //             //preveious tier found according to total amount transaction
+    //             $amount_between_tier_find_previous = TierCondition::whereDeletedAt(null)->where('to_amount','<=', $total_amount_transaction)->orderBy('to_amount','desc')->first();
+
+    //             if(!empty($amount_between_tier_find_previous)){
+                    
+    //                 $last_tier_update_date = Carbon::parse($user_find->tier_update_date);
+    //                 $diffrence_in_days_for_tier = $last_tier_update_date->diffInDays(Carbon::now());
+
+    //                 if($tier_find->to_amount >= $amount_between_tier_find_previous->to_amount){
+
+    //                     if($diffrence_in_days_for_tier >= $customer_tier_validity_check){
+    //                        $user_find->customer_tier = $amount_between_tier_find_previous->tier_name;
+    //                         $user_find->tier_update_date = Carbon::now()->toDateString();
+    //                         $user_find->update();
+    //                     }
+    //                 }else{
+    //                     $user_find->customer_tier = $amount_between_tier_find_previous->tier_name;
+    //                     $user_find->tier_update_date = Carbon::now()->toDateString();
+    //                     $user_find->update();
+    //                 }
+    //             }else{
+    //                 //next tier found according to transaction amount total
+    //                 $amount_between_tier_find_previous = TierCondition::whereDeletedAt(null)->where('to_amount','>=', $total_amount_transaction)->orderBy('to_amount','desc')->first();
+
+    //                 if(!empty($amount_between_tier_find_previous)){
+    //                     $user_find->customer_tier = $amount_between_tier_find->tier_name;
+    //                     $user_find->tier_update_date = Carbon::now()->toDateString();
+    //                     $user_find->update();
+    //                 }else{
+    //                     return $this->responseWithErrorCode("No tier add from admin.",400);
+    //                 }
+                    
+    //             }
+
+    //         }else{
+    //             $user_find->customer_tier = $amount_between_tier_find->tier_name;
+    //             $user_find->tier_update_date = Carbon::now()->toDateString();
+    //             $user_find->update();
+    //         }
+
+    //     }
+
+    //     return "success";
+
+    // }
 }

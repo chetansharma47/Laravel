@@ -1145,6 +1145,12 @@
 
 		function selected_customer_wallet_transactions(){
 
+			let joined_from = $(".joined_from_date").val();
+	    	let joined_to = $(".joined_to_date").val();
+	    	let mobile_number = $(".mobile_number_wallet").val();
+	    	let customer_name_wallet = $(".customer_name_wallet").val();
+	    	let email = $(".email_wallet").val();
+
 			let selected_wallet_id = $('#selected_id_input').val();
 			$('#basic-datatables2').dataTable({
              dom: "Bfrtip",
@@ -1156,7 +1162,12 @@
                 "data" : {
                 	'_token': "{{csrf_token()}}",
                 	'first_time' : 'true',
-                	selected_wallet_id
+                	selected_wallet_id,
+                	joined_from,
+                	joined_to,
+                	mobile_number,
+                	customer_name_wallet,
+                	email
                 },
                 complete:function(){
 
@@ -1291,12 +1302,26 @@
 		function tdClick(){
 			$(".td_click").on("dblclick",function(e){
 				let data_id = $(this).data("id");
+				var get_parent_class = $(this).closest('table').attr('id');
 				$('#selected_id_input').val(data_id);
-				$("#basic-datatables2").dataTable().fnDestroy();
-				$("#basic-datatables4").dataTable().fnDestroy();
 
+				let joined_from = $(".joined_from_date").val();
+		    	let joined_to = $(".joined_to_date").val();
+		    	let venue_id_wallet = $(".venue_name_wallet").val();
+		    	let txn_status_wallet = $(".txn_status_wallet").val();
+		    	let offers_product_wallet_id = $(".offers_product_wallet").val();
+		    	let mobile_number = $(".mobile_number_wallet").val();
+		    	let customer_name_wallet = $(".customer_name_wallet").val();
+		    	let email = $(".email_wallet").val();
+		    	let invoice_number_wallet = $(".invoice_number_wallet").val();
+		    	let venu_username_id_wallet = $(".venu_username_wallet").val();
+				$("#basic-datatables2").dataTable().fnDestroy();
 				selected_customer_wallet_transactions();
-				cross_verification_sales(null,null,null,null,null,null,null,null,null,null,data_id);
+				if(get_parent_class != 'basic-datatables4' ){
+					$("#basic-datatables4").dataTable().fnDestroy();
+				cross_verification_sales(joined_from,joined_to,venue_id_wallet,txn_status_wallet,offers_product_wallet_id,email,mobile_number,customer_name_wallet,invoice_number_wallet,venu_username_id_wallet,data_id);
+				}
+
 				let key_type = $(this).attr("key_type");
 				let currentVal = $(this).text();
 				if(key_type == "first_name" || key_type == "last_name" || key_type == "nationality" || key_type == "gender"){
@@ -1869,7 +1894,7 @@
 			$("#validationModel").unbind("click");
 			return false;
 		}
-    	cross_verification_sales(joined_from,joined_to,venue_id_wallet,txn_status_wallet,offers_product_wallet_id,email,mobile_number,customer_name_wallet,invoice_number_wallet,venu_username_id_wallet,null);
+    	cross_verification_sales(joined_from,joined_to,venue_id_wallet,txn_status_wallet,offers_product_wallet_id,email,mobile_number,customer_name_wallet,invoice_number_wallet,venu_username_id_wallet,null,null);
     	$("#basic-datatables2").dataTable().fnDestroy();
     	selected_customer_wallet_transactions();
 	});
@@ -1888,7 +1913,7 @@
     	cross_verification_sales();
 	});
 	
-	function cross_verification_sales(joined_from="",joined_to="",venue_id_wallet="",txn_status_wallet="",offers_product_wallet_id="",email="",mobile_number="",customer_name_wallet="",invoice_number_wallet="",venu_username_id_wallet="",select_user_id="",first_time=""){
+	function cross_verification_sales(joined_from="",joined_to="",venue_id_wallet="",txn_status_wallet="",offers_product_wallet_id="",email="",mobile_number="",customer_name_wallet="",invoice_number_wallet="",venu_username_id_wallet="",select_user_id="",get_parent_class="",first_time=""){
 
     		$("#basic-datatables4").dataTable().fnDestroy();
 			let table = $("#basic-datatables4").DataTable({
@@ -1901,7 +1926,7 @@
 				ajax:{
 					url:"{{ route('admin.EndUserCustomerTransactions') }}",
 					type:"POST",
-					data:{'_token':'{{csrf_token()}}',joined_from,joined_to,venue_id_wallet,txn_status_wallet,offers_product_wallet_id,email,mobile_number,customer_name_wallet,invoice_number_wallet,venu_username_id_wallet,select_user_id,'first_time':first_time},
+					data:{'_token':'{{csrf_token()}}',joined_from,joined_to,venue_id_wallet,txn_status_wallet,offers_product_wallet_id,email,mobile_number,customer_name_wallet,invoice_number_wallet,venu_username_id_wallet,select_user_id,get_parent_class,'first_time':first_time},
 					complete:function(data){
 						let result = data.responseJSON;
 	                	let results = result['data']
@@ -1957,7 +1982,7 @@
 		}
 
 		// cross_verification_sales();
-		cross_verification_sales(null,null,null,null,null,null,null,null,null,null,null,'true');
+		cross_verification_sales(null,null,null,null,null,null,null,null,null,null,null,null,'true');
 
 		$('.email_wallet, .mobile_number_wallet, .invoice_number_wallet').on('keydown',function(e){
 			if(e.which===32){
