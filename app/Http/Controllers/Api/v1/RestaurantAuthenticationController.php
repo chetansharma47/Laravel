@@ -413,14 +413,11 @@ class RestaurantAuthenticationController extends ResponseController
                 if (empty($new_tier)) {
                     $new_tier = TierCondition::whereDeletedAt(null)->where('to_amount','>=', $total_transaction_amount)->orderBy('to_amount','desc')->first();
                 }
-
-                if (empty($new_tier)) {
-                    $new_tier = TierCondition::orderBy('id','desc')->first();
-
+                if (!empty($new_tier)) {
+                    $user_find->customer_tier = $new_tier->tier_name;
+                    $user_find->tier_update_date = Carbon::now()->toDateString();
+                    $user_find->update();
                 }
-                $user_find->customer_tier = $new_tier->tier_name;
-                $user_find->tier_update_date = Carbon::now()->toDateString();
-                $user_find->update();
             }
             else { //In case of De-grade of Tier
                     $last_tier_update_date = Carbon::parse($user_find->tier_update_date);
@@ -436,10 +433,11 @@ class RestaurantAuthenticationController extends ResponseController
                             $new_tier = TierCondition::first();
 
                         }
-
-                        $user_find->customer_tier = $new_tier->tier_name;
-                        $user_find->tier_update_date = Carbon::now()->toDateString();
-                        $user_find->update();
+                         if (!empty($new_tier)) {
+                            $user_find->customer_tier = $new_tier->tier_name;
+                            $user_find->tier_update_date = Carbon::now()->toDateString();
+                            $user_find->update();
+                        }
                     }
 
             }
@@ -844,13 +842,11 @@ class RestaurantAuthenticationController extends ResponseController
                     $new_tier = TierCondition::whereDeletedAt(null)->where('to_amount','>=', $total_transaction_amount)->orderBy('to_amount','desc')->first();
                 }
 
-                if (empty($new_tier)) {
-                    $new_tier = TierCondition::orderBy('id','desc')->first();
-
+                if (!empty($new_tier)) {
+                    $user_find->customer_tier = $new_tier->tier_name;
+                    $user_find->tier_update_date = Carbon::now()->toDateString();
+                    $user_find->update();
                 }
-                $user_find->customer_tier = $new_tier->tier_name;
-                $user_find->tier_update_date = Carbon::now()->toDateString();
-                $user_find->update();
             }
             else { //In case of De-grade of Tier
                     $last_tier_update_date = Carbon::parse($user_find->tier_update_date);
@@ -866,10 +862,11 @@ class RestaurantAuthenticationController extends ResponseController
                             $new_tier = TierCondition::first();
 
                         }
-
-                        $user_find->customer_tier = $new_tier->tier_name;
-                        $user_find->tier_update_date = Carbon::now()->toDateString();
-                        $user_find->update();
+                        if (!empty($new_tier)) {
+                            $user_find->customer_tier = $new_tier->tier_name;
+                            $user_find->tier_update_date = Carbon::now()->toDateString();
+                            $user_find->update();
+                        }
                     }
 
             }

@@ -2022,7 +2022,7 @@ class TabController extends ResponseController
                     // return $ex->getMessage();
                 }
 
-                if($admin_cashback_notification_find->push_type == 1){
+                // if($admin_cashback_notification_find->push_type == 1){
 
                     $noti_record_find = NotiRecord::whereUserId($find_user->id)->first();
 
@@ -2078,9 +2078,9 @@ class TabController extends ResponseController
                         
                        }
                     }
-                            AdminCriteriaNotification::create($criteria_data);
+                        AdminCriteriaNotification::create($criteria_data);
                 
-            }
+            // }
 
 
                 }

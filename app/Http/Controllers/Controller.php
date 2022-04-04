@@ -687,7 +687,7 @@ class Controller extends BaseController
      public function CustomerTierUpdateCronJob(Request $request) {
 
         $get_all_users = User::where('is_block','=',0)->where("is_active", "=", 'Active')->pluck('id');
-
+        $arr = [];
         foreach ($get_all_users as $value) {
 
             $user_find = User::whereId($value)->first(); //Get the user details
@@ -714,7 +714,7 @@ class Controller extends BaseController
             $last_amount_check_date = Carbon::now()->subDays($transaction_amount_check_last_days); //Get the date till where we need to get amount
 
             //Get total Verified Transaction Amounts within dates
-            $total_transaction_amount = WalletTransaction::whereUserId($user_find->id)
+           $total_transaction_amount = WalletTransaction::whereUserId($user_find->id)
                                         ->whereDate('created_at','<=',Carbon::now()->toDateString())
                                         ->whereDate('created_at','>=',$last_amount_check_date->toDateString())
                                         ->whereIn('is_cross_verify',[1,3])
@@ -727,16 +727,14 @@ class Controller extends BaseController
                     $new_tier = TierCondition::whereDeletedAt(null)->where('to_amount','>=', $total_transaction_amount)->orderBy('to_amount','desc')->first();
                 }
 
-                if (empty($new_tier)) {
-                    $new_tier = TierCondition::orderBy('id','desc')->first();
-
+                if(!empty($new_tier)){
+                    $user_find->customer_tier = $new_tier->tier_name;
+                    $user_find->tier_update_date = Carbon::now()->toDateString();
+                    $user_find->update();
                 }
-                $user_find->customer_tier = $new_tier->tier_name;
-                $user_find->tier_update_date = Carbon::now()->toDateString();
-                $user_find->update();
             }
             else { //In case of De-grade of Tier
-                    $last_tier_update_date = Carbon::parse($user_find->tier_update_date);
+                   $last_tier_update_date = Carbon::parse($user_find->tier_update_date);
                     $diffrence_in_days_for_tier = $last_tier_update_date->diffInDays(Carbon::now());
                     if ($diffrence_in_days_for_tier >= $customer_tier_validity_check) {
                         $new_tier = TierCondition::whereDeletedAt(null)->where('from_amount', '<=', $total_transaction_amount)->where('to_amount', '>=', $total_transaction_amount)->first();
@@ -750,15 +748,20 @@ class Controller extends BaseController
 
                         }
 
-                        $user_find->customer_tier = $new_tier->tier_name;
-                        $user_find->tier_update_date = Carbon::now()->toDateString();
-                        $user_find->update();
+                        if(!empty($new_tier)){
+                            $user_find->customer_tier = $new_tier->tier_name;
+                            $user_find->tier_update_date = Carbon::now()->toDateString();
+                            $user_find->update();
+                        }
+
                     }
 
             }
+
+            array_push($arr, $value);
         }
 
-        return "Success";
+        return $arr;
     }
 
 
