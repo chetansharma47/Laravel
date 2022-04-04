@@ -1001,7 +1001,7 @@
                 		arr.push(results[i]['id']);
                 	}
                 	$('#selected_id_input').val(arr.join());                	
-                	search_results_multiple();
+                	// search_results_multiple();
 		          tdClick();
 
 		          	let selected_checkboxes = $("#selected_checkboxes").val();
