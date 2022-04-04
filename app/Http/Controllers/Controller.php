@@ -687,7 +687,6 @@ class Controller extends BaseController
      public function CustomerTierUpdateCronJob(Request $request) {
 
         $get_all_users = User::where('is_block','=',0)->where("is_active", "=", 'Active')->pluck('id');
-        $arr = [];
         foreach ($get_all_users as $value) {
 
             $user_find = User::whereId($value)->first(); //Get the user details
@@ -758,10 +757,9 @@ class Controller extends BaseController
 
             }
 
-            array_push($arr, $value);
         }
 
-        return $arr;
+        return "Success";
     }
 
 
