@@ -3247,26 +3247,48 @@ class TabController extends ResponseController
                                         $wallet_detail2->user_wallet_cash = $user_find->wallet_cash;
                                         $wallet_detail2->save();
 
-                                        if($wallet_txn->cashback_earned > 0){
-                                            if($wallet_txn->redeemed_amount > 0){
-                                                if(!empty($admin_cashback_notification_find->message)){
-                                                    $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$wallet_txn->cashback_earned." AED. Your wallet usage is ".$wallet_txn->redeemed_amount." AED. ".$admin_cashback_notification_find->message;
-                                                }else{
-                                                    $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$wallet_txn->cashback_earned." AED. Your wallet usage is ".$wallet_txn->redeemed_amount." AED. ";
-                                                }
-                                            }else{
-                                                if(!empty($admin_cashback_notification_find->message)){
-                                                    $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$wallet_txn->cashback_earned." AED. ".$admin_cashback_notification_find->message;
-                                                }else{
-                                                    $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$wallet_txn->cashback_earned." AED. ";
-                                                }
+                                        if($wallet_txn->cashback_earned > 0 || $wallet_txn->redeemed_amount > 0){
+
+                                            //If Cashback or Redeem amout is there
+
+                                            if($wallet_txn->cashback_earned > 0 && $wallet_txn->redeemed_amount > 0) {
+                                                $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$wallet_txn->cashback_earned." AED. Your wallet usage is ".$wallet_txn->redeemed_amount." AED. ".$admin_cashback_notification_find->message;
+                                            }else if($wallet_txn->cashback_earned > 0 && $wallet_txn->redeemed_amount == 0) {
+                                                $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$wallet_txn->cashback_earned." AED. ".$admin_cashback_notification_find->message;
+                                            }else if($wallet_txn->cashback_earned == 0 && $wallet_txn->redeemed_amount > 0) {
+                                                $admin_cashback_notification_find->message = "Your wallet usage is ".$wallet_txn->redeemed_amount." AED. ".$admin_cashback_notification_find->message;
                                             }
+
                                         }else{
-                                            $admin_cashback_notification_find->message = $admin_cashback_notification_find->message;
-                                            if(empty($admin_cashback_notification_find->message)){
+                                            //Only Cashback Admin Message will go
+
+                                            if (!empty($admin_cashback_notification_find->message)) {
+                                                $admin_cashback_notification_find->message = $admin_cashback_notification_find->message;
+                                            }else{
                                                 $admin_cashback_notification_find->push_type = 0; 
                                             }
                                         }
+
+                                        // if($wallet_txn->cashback_earned > 0){
+                                        //     if($wallet_txn->redeemed_amount > 0){
+                                        //         if(!empty($admin_cashback_notification_find->message)){
+                                        //             $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$wallet_txn->cashback_earned." AED. Your wallet usage is ".$wallet_txn->redeemed_amount." AED. ".$admin_cashback_notification_find->message;
+                                        //         }else{
+                                        //             $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$wallet_txn->cashback_earned." AED. Your wallet usage is ".$wallet_txn->redeemed_amount." AED. ";
+                                        //         }
+                                        //     }else{
+                                        //         if(!empty($admin_cashback_notification_find->message)){
+                                        //             $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$wallet_txn->cashback_earned." AED. ".$admin_cashback_notification_find->message;
+                                        //         }else{
+                                        //             $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$wallet_txn->cashback_earned." AED. ";
+                                        //         }
+                                        //     }
+                                        // }else{
+                                        //     $admin_cashback_notification_find->message = $admin_cashback_notification_find->message;
+                                        //     if(empty($admin_cashback_notification_find->message)){
+                                        //         $admin_cashback_notification_find->push_type = 0; 
+                                        //     }
+                                        // }
 
 
                                         if($admin_cashback_notification_find->push_type == 1){
@@ -3880,32 +3902,55 @@ class TabController extends ResponseController
                     $wallet_detail2->user_wallet_cash = $find_user->wallet_cash;
                     $wallet_detail2->save();
 
-                    if($value->cashback_earned > 0){
-                        if($value->redeemed_amount > 0){
-                            if(!empty($admin_cashback_notification_find->message)){
-                                $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$value->cashback_earned." AED. Your wallet usage is ".$vaue->redeemed_amount." AED. ".$admin_cashback_notification_find->message;
-                            }else{
-                                $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$value->cashback_earned." AED. Your wallet usage is ".$vaue->redeemed_amount." AED. ";
-                                
-                            }
-                        }else{
-                             if(!empty($admin_cashback_notification_find->message)){
-                                $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$value->cashback_earned." AED. ".$admin_cashback_notification_find->message;
+                    if($value->cashback_earned > 0 || $value->redeemed_amount > 0){
 
-                             }else{
-                                $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$value->cashback_earned." AED. ";
-                                
-                             }
+                        //If Cashback or Redeem amout is there
+
+                        if($value->cashback_earned > 0 && $value->redeemed_amount > 0) {
+                            $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$value->cashback_earned." AED. Your wallet usage is ".$value->redeemed_amount." AED. ".$admin_cashback_notification_find->message;
+                        }else if($value->cashback_earned > 0 && $value->redeemed_amount == 0) {
+                            $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$value->cashback_earned." AED. ".$admin_cashback_notification_find->message;
+                        }else if($value->cashback_earned == 0 && $value->redeemed_amount > 0) {
+                            $admin_cashback_notification_find->message = "Your wallet usage is ".$value->redeemed_amount." AED. ".$admin_cashback_notification_find->message;
                         }
+
                     }else{
-                        $admin_cashback_notification_find->message = $admin_cashback_notification_find->message;
-                        if(empty($admin_cashback_notification_find->message)){
-                            $admin_cashback_notification_find->push_type = 0;
+                        //Only Cashback Admin Message will go
+
+                        if (!empty($admin_cashback_notification_find->message)) {
+                            $admin_cashback_notification_find->message = $admin_cashback_notification_find->message;
+                        }else{
+                            $admin_cashback_notification_find->push_type = 0; 
                         }
                     }
 
-                    // $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$value->cashback_earned." AED. ".$admin_cashback_notification_find->message;
 
+
+                    // if($value->cashback_earned > 0){
+                    //     if($value->redeemed_amount > 0){
+                    //         if(!empty($admin_cashback_notification_find->message)){
+                    //             $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$value->cashback_earned." AED. Your wallet usage is ".$vaue->redeemed_amount." AED. ".$admin_cashback_notification_find->message;
+                    //         }else{
+                    //             $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$value->cashback_earned." AED. Your wallet usage is ".$vaue->redeemed_amount." AED. ";
+                                
+                    //         }
+                    //     }else{
+                    //          if(!empty($admin_cashback_notification_find->message)){
+                    //             $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$value->cashback_earned." AED. ".$admin_cashback_notification_find->message;
+
+                    //          }else{
+                    //             $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$value->cashback_earned." AED. ";
+                                
+                    //          }
+                    //     }
+                    // }else{
+                    //     $admin_cashback_notification_find->message = $admin_cashback_notification_find->message;
+                    //     if(empty($admin_cashback_notification_find->message)){
+                    //         $admin_cashback_notification_find->push_type = 0;
+                    //     }
+                    // }
+
+                    
                     if($admin_cashback_notification_find->push_type == 1){
 
                         $noti_record_find = NotiRecord::whereUserId($find_user->id)->first();
@@ -4259,31 +4304,50 @@ class TabController extends ResponseController
                 $wallet_detail2->user_wallet_cash = $find_user->wallet_cash;
                 $wallet_detail2->save();
 
-                // $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$user_wallet_txn->cashback_earned." AED. ".$admin_cashback_notification_find->message;
-                // $this->send_notifications_verified_users($admin_cashback_notification_find,$find_user);
+                  if($user_wallet_txn->cashback_earned > 0 || $user_wallet_txn->redeemed_amount > 0){
 
-                if($user_wallet_txn->cashback_earned > 0){
-                   if($user_wallet_txn->redeemed_amount > 0){
-                            if(!empty($admin_cashback_notification_find->message)){
-                                $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$user_wallet_txn->cashback_earned." AED. Your wallet usage is ".$user_wallet_txn->redeemed_amount." AED. ".$admin_cashback_notification_find->message;
-                            }else{
-                                $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$user_wallet_txn->cashback_earned." AED. Your wallet usage is ".$user_wallet_txn->redeemed_amount." AED. ";
-                            }
-                        }else{
-                            if(!empty($admin_cashback_notification_find->message)){
-                            $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$user_wallet_txn->cashback_earned." AED. ".$admin_cashback_notification_find->message;
-                                
-                            }else{
-                            $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$user_wallet_txn->cashback_earned." AED. ";
-                                
-                            }
-                        }
+                    //If Cashback or Redeem amout is there
+
+                    if($user_wallet_txn->cashback_earned > 0 && $user_wallet_txn->redeemed_amount > 0) {
+                        $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$user_wallet_txn->cashback_earned." AED. Your wallet usage is ".$user_wallet_txn->redeemed_amount." AED. ".$admin_cashback_notification_find->message;
+                    }else if($user_wallet_txn->cashback_earned > 0 && $user_wallet_txn->redeemed_amount == 0) {
+                        $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$user_wallet_txn->cashback_earned." AED. ".$admin_cashback_notification_find->message;
+                    }else if($user_wallet_txn->cashback_earned == 0 && $user_wallet_txn->redeemed_amount > 0) {
+                        $admin_cashback_notification_find->message = "Your wallet usage is ".$user_wallet_txn->redeemed_amount." AED. ".$admin_cashback_notification_find->message;
+                    }
+
                 }else{
-                    $admin_cashback_notification_find->message = $admin_cashback_notification_find->message;
-                    if(empty($admin_cashback_notification_find->message)){
-                        $admin_cashback_notification_find->push_type = 0;
+                    //Only Cashback Admin Message will go
+
+                    if (!empty($admin_cashback_notification_find->message)) {
+                        $admin_cashback_notification_find->message = $admin_cashback_notification_find->message;
+                    }else{
+                        $admin_cashback_notification_find->push_type = 0; 
                     }
                 }
+
+                // if($user_wallet_txn->cashback_earned > 0){
+                //    if($user_wallet_txn->redeemed_amount > 0){
+                //             if(!empty($admin_cashback_notification_find->message)){
+                //                 $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$user_wallet_txn->cashback_earned." AED. Your wallet usage is ".$user_wallet_txn->redeemed_amount." AED. ".$admin_cashback_notification_find->message;
+                //             }else{
+                //                 $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$user_wallet_txn->cashback_earned." AED. Your wallet usage is ".$user_wallet_txn->redeemed_amount." AED. ";
+                //             }
+                //         }else{
+                //             if(!empty($admin_cashback_notification_find->message)){
+                //             $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$user_wallet_txn->cashback_earned." AED. ".$admin_cashback_notification_find->message;
+                                
+                //             }else{
+                //             $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$user_wallet_txn->cashback_earned." AED. ";
+                                
+                //             }
+                //         }
+                // }else{
+                //     $admin_cashback_notification_find->message = $admin_cashback_notification_find->message;
+                //     if(empty($admin_cashback_notification_find->message)){
+                //         $admin_cashback_notification_find->push_type = 0;
+                //     }
+                // }
 
                 if($admin_cashback_notification_find->push_type == 1){
                     $noti_record_find = NotiRecord::whereUserId($find_user->id)->first();
