@@ -19,6 +19,8 @@ class AdminNotification extends Model
     	'sms_type',
     	'email_type',
     	'notification_type',
+        'is_attachment',
+        'is_title',
     ];
 
     public function getImageAttribute($value){

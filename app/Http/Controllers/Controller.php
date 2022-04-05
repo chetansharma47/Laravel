@@ -77,28 +77,43 @@ class Controller extends BaseController
         $offers = Offer::whereIn('id', $pluck_offer_ids)->whereIn('venu_id', $active_venue_ids)->whereDeletedAt(null)->where('status','=','Active')->with('offerSetting')->get();
         // return $offers;
 
-        foreach ($offers as $offer){
+        foreach ($offers as $offer) {
 
-         //  return $offer;
-            if(!empty($offer->offerSetting->city_id) && !empty($offer->offerSetting->gender)){
+
+            $user_match_with_offers = User::select('id','email','dob','first_name','last_name','device_type','device_token','country_code','mobile_number')->whereDeletedAt(null)->where('is_block','=',0)->where("is_active", "=", 'Active');
+
+            if(!empty($offer->offerSetting->city_id)) { //If City is not empty
                 $find_city_name = City::select('city_name')->whereId($offer->offerSetting->city_id)->first();
-                $user_match_with_offers = User::select('id','email','dob','first_name','last_name','device_type','device_token','country_code','mobile_number')->whereCityOfResidence($find_city_name->city_name)->where('gender','=',$offer->offerSetting->gender)->whereDeletedAt(null)->where('is_block','=',0)->where("is_active", "=", 'Active')->get();
-
+                $user_match_with_offers = $user_match_with_offers->where("city_of_residence","=",$find_city_name->city_name);
             }
-            if(!empty($offer->offerSetting->city_id) && empty($offer->offerSetting->gender)){
-
-                $find_city_name = City::select('city_name')->whereId($offer->offerSetting->city_id)->first();
-                $user_match_with_offers = User::select('id','email','dob','first_name','last_name','device_type','device_token','country_code','mobile_number')->whereCityOfResidence($find_city_name->city_name)->whereDeletedAt(null)->where('is_block','=',0)->where("is_active", "=", 'Active')->get();
-
+            if (!empty($offer->offerSetting->gender)) {
+                $user_match_with_offers = $user_match_with_offers->where("gender","=",$offer->offerSetting->gender);
             }
-            if(empty($offer->offerSetting->city_id) && !empty($offer->offerSetting->gender)){
-                $user_match_with_offers = User::select('id','email','dob','first_name','last_name','device_type','device_token','country_code','mobile_number')->where('gender','=',$offer->offerSetting->gender)->whereDeletedAt(null)->where('is_block','=',0)->where("is_active", "=", 'Active')->get();
-            }
+            $user_match_with_offers = $user_match_with_offers->get();
 
-            if(empty($offer->offerSetting->city_id) && empty($offer->offerSetting->gender)){
-                //both are empty
-                $user_match_with_offers = User::select('id','email','dob','first_name','last_name','device_type','device_token','country_code','mobile_number')->whereDeletedAt(null)->where('is_block','=',0)->where("is_active", "=", 'Active')->get();
-            }
+
+
+
+         // //  return $offer;
+         //    if(!empty($offer->offerSetting->city_id) && !empty($offer->offerSetting->gender)){
+         //        $find_city_name = City::select('city_name')->whereId($offer->offerSetting->city_id)->first();
+         //        $user_match_with_offers = User::select('id','email','dob','first_name','last_name','device_type','device_token','country_code','mobile_number')->whereCityOfResidence($find_city_name->city_name)->where('gender','=',$offer->offerSetting->gender)->whereDeletedAt(null)->where('is_block','=',0)->where("is_active", "=", 'Active')->get();
+
+         //    }
+         //    if(!empty($offer->offerSetting->city_id) && empty($offer->offerSetting->gender)){
+
+         //        $find_city_name = City::select('city_name')->whereId($offer->offerSetting->city_id)->first();
+         //        $user_match_with_offers = User::select('id','email','dob','first_name','last_name','device_type','device_token','country_code','mobile_number')->whereCityOfResidence($find_city_name->city_name)->whereDeletedAt(null)->where('is_block','=',0)->where("is_active", "=", 'Active')->get();
+
+         //    }
+         //    if(empty($offer->offerSetting->city_id) && !empty($offer->offerSetting->gender)){
+         //        $user_match_with_offers = User::select('id','email','dob','first_name','last_name','device_type','device_token','country_code','mobile_number')->where('gender','=',$offer->offerSetting->gender)->whereDeletedAt(null)->where('is_block','=',0)->where("is_active", "=", 'Active')->get();
+         //    }
+
+         //    if(empty($offer->offerSetting->city_id) && empty($offer->offerSetting->gender)){
+         //        //both are empty
+         //        $user_match_with_offers = User::select('id','email','dob','first_name','last_name','device_type','device_token','country_code','mobile_number')->whereDeletedAt(null)->where('is_block','=',0)->where("is_active", "=", 'Active')->get();
+         //    }
 
 
            // return $user_match_with_offers;
@@ -391,8 +406,8 @@ class Controller extends BaseController
         $apns_topic     = 'com.captial.motion.user';
 
         $sample_alert = json_encode($body);
-        $url = "https://api.development.push.apple.com/3/device/$deviceToken"; //development
-        // $url = "https://api.push.apple.com/3/device/$deviceToken"; //production
+        // $url = "https://api.development.push.apple.com/3/device/$deviceToken"; //development
+        $url = "https://api.push.apple.com/3/device/$deviceToken"; //production
 
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $sample_alert);
@@ -561,7 +576,7 @@ class Controller extends BaseController
                 $events_getting = Event::whereIn("id", $event_ids)->whereNotIn("id", $assign_events)->get();
 
                 foreach ($events_getting as $find_event) {
-                    $check_already_send_noti = EventSentNotification::whereEventId($find_event->id)->whereUserId($user_find->id)->whereDate('created_at',Carbon::now('Asia/Dubai'))->first();
+                    $check_already_send_noti = EventSentNotification::whereUserId($user_find->id)->whereDate('created_at',Carbon::now('Asia/Dubai'))->first();
 
                     if(empty($check_already_send_noti)){
 
@@ -687,6 +702,7 @@ class Controller extends BaseController
      public function CustomerTierUpdateCronJob(Request $request) {
 
         $get_all_users = User::where('is_block','=',0)->where("is_active", "=", 'Active')->pluck('id');
+        $arr = [];
         foreach ($get_all_users as $value) {
 
             $user_find = User::whereId($value)->first(); //Get the user details
@@ -725,6 +741,9 @@ class Controller extends BaseController
                 if (empty($new_tier)) {
                     $new_tier = TierCondition::whereDeletedAt(null)->where('to_amount','>=', $total_transaction_amount)->orderBy('to_amount','desc')->first();
                 }
+                if (empty($new_tier)) {
+                    $new_tier = $tier_find;
+                }
 
                 if(!empty($new_tier)){
                     $user_find->customer_tier = $new_tier->tier_name;
@@ -757,9 +776,10 @@ class Controller extends BaseController
 
             }
 
+            array_push($arr, $value);
         }
 
-        return "Success";
+        return $arr;
     }
 
 

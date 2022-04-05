@@ -2582,6 +2582,8 @@ class TabController extends ResponseController
             $check_notification_email->image_type = $extension ? $extension : null;
             $check_notification_email->name_of_file_show = $file_original_name ? $file_original_name : null;
             $check_notification_email->push_type = 0;
+            $check_notification_email->is_title = (isset($request->welcome_title_checkbox)) ? 1: 0;
+            $check_notification_email->is_attachment = (isset($request->app_checkboxes_upload)) ? 1: 0;
             $check_notification_email->sms_type = 0;
             $check_notification_email->email_type = 1;
             $check_notification_email->notification_type = 'Welcome Email';
@@ -2594,6 +2596,8 @@ class TabController extends ResponseController
         }else{
             $check_notification_email->title = $request->title ? $request->title : $check_notification_email->title;
             $check_notification_email->message = $request->welcome_message;
+            $check_notification_email->is_title = (isset($request->welcome_title_checkbox)) ? 1: 0;
+            $check_notification_email->is_attachment = (isset($request->app_checkboxes_upload)) ? 1: 0;
 
             if(!empty($imageName)){
 

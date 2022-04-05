@@ -39,9 +39,13 @@ class SignupMail extends Mailable
     {
 
         $general_setting = GeneralSetting::all();
-        return $this->from(env('MAIL_USERNAME'), 'Capital Motion')
-        ->subject($this->admin_signup_notification_email->title)
-        ->attach(storage_path("app/public/attachment_mail"."/".$this->file_name))
+        if($this->admin_signup_notification_email->is_title == 1){
+            $title = $this->admin_signup_notification_email->title;
+        }else{
+            $title = 'Welcome user';
+        }
+        $email_send = $this->from(env('MAIL_USERNAME'), 'Capital Motion')
+        ->subject($title)
         ->view('admin.email.signup-email')
         ->with([
             'admin_signup_notification_email'   => $this->admin_signup_notification_email,
@@ -52,5 +56,11 @@ class SignupMail extends Mailable
             'general_setting'   => $general_setting,
             'logo'   => public_path('admin/assets/email_img/CM-Logo-2.png'),
         ]);
+
+        if($this->admin_signup_notification_email->is_attachment == 1){
+            return $email_send->attach(storage_path("app/public/attachment_mail"."/".$this->file_name));
+        }else{
+            return $email_send;
+        }
     }
 }

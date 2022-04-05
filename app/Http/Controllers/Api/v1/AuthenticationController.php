@@ -41,6 +41,8 @@ use App\Models\NotiRecord;
 use App\Models\GeneralSetting;
 use App\Mail\ContactUsAdmin;
 use App\Models\EventSentNotification;
+use App\Models\WalletDetail;
+use App\Models\WalletTransaction;
 
 require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
 
@@ -792,6 +794,16 @@ class AuthenticationController extends ResponseController
          }
 
     }
+
+    // public function resetUser(Request $request){
+    //     $tier_find = TierCondition::first();
+    //     $user = User::query()->update(['wallet_cash' => 50, 'customer_tier' => $tier_find->tier_name, 'reference_by' => null, 'refer_amount_used' => 0, 'refer_amount' => 0]);
+    //     AdminCriteriaNotification::query()->delete();
+    //     WalletDetail::query()->delete();
+    //     WalletTransaction::query()->delete();
+    //     UserAssignOffer::query()->delete();
+    //     return $this->responseOk('Reset customer details successfully');
+    // }
 
 }
 

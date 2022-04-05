@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Nov 16, 2021 at 05:13 PM
--- Server version: 5.7.36-0ubuntu0.18.04.1
--- PHP Version: 7.2.34-24+ubuntu18.04.1+deb.sury.org+1
+-- Generation Time: Apr 05, 2022 at 10:13 AM
+-- Server version: 5.7.37-0ubuntu0.18.04.1
+-- PHP Version: 7.2.34-28+ubuntu18.04.1+deb.sury.org+1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -17,7 +17,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `society_11_november`
+-- Database: `society_05_april`
 --
 
 -- --------------------------------------------------------
@@ -45,15 +45,7 @@ CREATE TABLE `admins` (
 --
 
 INSERT INTO `admins` (`id`, `name`, `email`, `password`, `status`, `role_type`, `remember_token`, `created_at`, `updated_at`, `created_by`, `updated_by`) VALUES
-(1, 'Nadeer', 'adminn@yopmail.com', '$2y$10$01b9.qb3ioJYe3LZK6Yamey.JP5XELdGOBNTGjYT.CWJjMLMeTAyW', 'Active', 'Super Admin', '6BCzVDn1dAr1ISmiX54AyGlv10S8pKRraii61BO80T6GC30Wyxd6OzKdqVAPDofB', '2021-11-10 18:30:00', '2021-11-16 11:43:26', 'Nadeer', 'Nadeer'),
-(2, 'admin2', NULL, '$2y$10$6bkQTrg3VrqhhG76nrHF..EGvus37wgcLK2qop4cV9kkcErYaiSMm', 'Active', 'Admin', 'rXp6eEE4DZJJzB8NPdxIvH7tTK5U1HQcDf0YUsgyojwx2aaRaja8dU1vQEWCzsIL', '2021-11-11 06:26:38', '2021-11-16 05:27:29', 'Nadeer', 'admin2'),
-(3, 'admin3', NULL, '$2y$10$foJqLWzLh0vj8bkPvJkLbOPynDIPBtif6l9V.cn6tMScE5Lyvw2xe', 'Active', 'Marketing', 'J6vvhICCNIR24pRxpWbkbbrXvc8apaJ06ih4lRjmTucJgZvf8GGhhqBR1fJC', '2021-11-11 06:28:56', '2021-11-16 11:13:12', 'admin2', 'admin2'),
-(4, 'kanhaiya', NULL, '$2y$10$S2ClRSThHO0X10on0SUBO.ga3Z1UgA/a9x7COjhh3jAQvgGAX6Dki', 'Active', 'Super Admin', 'T3Tl08cPzGgVVjSzzbVaA8rHmVhTzQl9jyXfLTPLeSxPhEK5yd0jKy0IZd2INf1H', '2021-11-12 13:54:05', '2021-11-15 05:33:16', 'Nadeer', 'admin2'),
-(5, 'kamal', NULL, '$2y$10$C/e306XmnKmqWR1ke8NmQ.tjqFJA7SgDIkNWfB7PUWHsNQCV45ld.', 'Active', 'Staff', 'ba12PwD1P22v2y7PGPBITnS0ATycylUHAdyUfo4Ilts8vFRL2NinegfSztrW', '2021-11-12 14:21:08', '2021-11-15 06:08:54', 'kanhaiya', 'Nadeer'),
-(6, 'harman', NULL, '$2y$10$ZYXDoqvkpci86UJOV/qZBu5U5Rr92nvB5KNLMSUea1TjhCOkRHVWK', 'Inactive', 'Admin', 'eKuOrD3D2eIT1w5Rqc64Z3woqswrn76YEVDNDoI3LJjxs3koBxbJ2WSYQUvN', '2021-11-16 06:47:14', '2021-11-16 06:51:05', 'Nadeer', 'Nadeer'),
-(7, 'aman', NULL, '$2y$10$qP7HyAP5v3Qk2HmFKqzyOOUZzx25oCxeANmn8.Iv00Me6readkFsW', 'Active', 'Super Admin', 'VvsfajhRQcoSYvYVQIfLZX0g66EfcuvXruuT4RQCDckSyUaydBkt7TUWE7eV', '2021-11-16 07:56:20', '2021-11-16 07:58:27', 'Nadeer', 'Nadeer'),
-(8, 'deepsh', NULL, '$2y$10$HbrMtP4Jak7EM7SPk1LdhOoubKH1iaMJzrG826GYgtflMzxwWJspe', 'Active', 'Super Admin', 'zZBoFtjRTkvozVztexplssbmUq2LwoFud55YdU0ftGG6Tbm4QIyeUdFfB7g1', '2021-11-16 08:08:09', '2021-11-16 08:18:11', 'Nadeer', 'Nadeer'),
-(9, 'amit123', NULL, '$2y$10$5F2fRoUel9DK7gKF.lKEbOE0K/laJrUHjp5xCjvBj82xrBzt1F0pa', 'Active', 'Marketing', 'KADZGJExhT9Yu4ZS2vkGhmhW5FHdF7ihnDqwZq8OuD9qdchhRlkFGGTtIV2V', '2021-11-16 10:46:04', '2021-11-16 11:14:32', 'Nadeer', 'Nadeer');
+(1, 'Nadeer', 'adminn@yopmail.com', '$2y$10$lWkPTtAP/pv5vPnWpdrJGuY8MVCPV3/REXvINpq4Gp6QpDHyeZK..', 'Active', 'Super Admin', 'CgiZDs0a4y71SBgB8WCcOTkftIDc91t2r9hosG5WLDBCi1EE2QUpUc8BAaO3D2UN', '2021-11-10 18:30:00', '2022-04-03 23:56:21', 'Nadeer', 'Nadeer');
 
 -- --------------------------------------------------------
 
@@ -103,6 +95,8 @@ CREATE TABLE `admin_notifications` (
   `sms_type` int(11) DEFAULT '0',
   `email_type` int(11) DEFAULT '0',
   `notification_type` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `is_title` int(11) DEFAULT NULL,
+  `is_attachment` int(11) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL
@@ -112,14 +106,14 @@ CREATE TABLE `admin_notifications` (
 -- Dumping data for table `admin_notifications`
 --
 
-INSERT INTO `admin_notifications` (`id`, `uniq_id`, `title`, `message`, `image`, `image_type`, `name_of_file_show`, `push_type`, `sms_type`, `email_type`, `notification_type`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 1, NULL, 'Your Amount has been transaction successfully.3', NULL, NULL, NULL, 1, 0, 1, 'Transaction', '2021-10-11 11:04:04', '2021-11-16 10:54:14', NULL),
-(2, 2, NULL, 'Your cashback has been successfully earned.2', NULL, NULL, NULL, 1, 1, 1, 'Cashback', '2021-10-11 11:05:06', '2021-11-16 08:17:01', NULL),
-(3, 3, NULL, 'You have successfully earned bonus.', NULL, NULL, NULL, 1, 0, 1, 'Welcome Bonus', '2021-10-11 11:05:37', '2021-11-12 06:28:12', NULL),
-(4, 4, NULL, 'This is a referral code bonus', NULL, NULL, NULL, 1, 1, 1, 'Referral Bonus', '2021-10-11 11:05:59', '2021-11-16 07:26:11', NULL),
-(5, 5, NULL, 'updated event', NULL, NULL, NULL, 1, 0, 1, 'Event', '2021-10-11 11:08:01', '2021-11-16 10:56:10', NULL),
-(6, 6, NULL, 'dummy', NULL, NULL, NULL, 1, 0, 1, 'Specific Customer', '2021-10-11 11:08:56', '2021-11-16 10:23:39', NULL),
-(7, 7, 'Welcome to Capital Motion Loyalty 3', 'Hi welcome,\r\nYour registration has been done successfully and you will get bonus on your register.', '1116202112384597619358fd632da.png', 'png', '2 Cropped.png', 0, 0, 1, 'Welcome Email', '2021-10-11 11:11:56', '2021-11-16 08:15:36', NULL);
+INSERT INTO `admin_notifications` (`id`, `uniq_id`, `title`, `message`, `image`, `image_type`, `name_of_file_show`, `push_type`, `sms_type`, `email_type`, `notification_type`, `is_title`, `is_attachment`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(1, 5, NULL, 'Event assigned successfully', NULL, NULL, NULL, 1, 0, 1, 'Event', NULL, NULL, '2022-01-25 02:34:20', '2022-03-23 00:45:28', NULL),
+(2, 4, NULL, 'Referral Bonus earned successfully', NULL, NULL, NULL, 1, 0, 1, 'Referral Bonus', NULL, NULL, '2022-01-25 02:34:35', '2022-03-23 00:12:03', NULL),
+(3, 3, NULL, 'Welcome Bonus earned successfully', NULL, NULL, NULL, 1, 0, 1, 'Welcome Bonus', NULL, NULL, '2022-01-25 02:34:47', '2022-03-23 00:11:47', NULL),
+(4, 2, NULL, NULL, NULL, NULL, NULL, 1, 0, 1, 'Cashback', NULL, NULL, '2022-01-25 02:34:59', '2022-03-31 22:56:32', NULL),
+(5, 1, NULL, 'Transaction successfully.', NULL, NULL, NULL, 1, 0, 1, 'Transaction', NULL, NULL, '2022-01-25 02:35:14', '2022-03-21 03:54:16', NULL),
+(6, 7, 'Hi user', 'Welcome to the capital motion I hope enjoy memories', '012520220806215061efaf7d8aed3.jpeg', 'jpeg', '112920211724279961a4bf733ab1f.jpeg', 0, 0, 1, 'Welcome Email', 0, 1, '2022-01-25 02:36:13', '2022-04-04 23:02:51', NULL),
+(7, 6, NULL, 'Offer Assigned Successfully.', NULL, NULL, NULL, 1, 0, 1, 'Specific Customer', NULL, NULL, '2022-01-25 02:49:47', '2022-02-01 08:14:03', NULL);
 
 -- --------------------------------------------------------
 
@@ -145,7 +139,7 @@ CREATE TABLE `application_datas` (
 --
 
 INSERT INTO `application_datas` (`id`, `admin_id`, `logo`, `video`, `color`, `name_of_file_show_logo`, `name_of_file_show_video`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 1, '11162021164258266193923a79bed.jpeg', '1116202113204630619362d606b03.mp4', '#0039f2', 'userPhotos-1624877002293-637.jpg', 'file_example_MP4_480_1_5MG.mp4', '2021-10-27 18:30:00', '2021-11-16 11:13:30', NULL);
+(1, 1, '030820221223434662274acf533cd.jpeg', '03082022054708126226eddc377ca.mp4', '#16dfeb', 'Penguins - Copy.jpg', 'SampleVideo_1280x720_2mb.mp4', '2021-10-27 18:30:00', '2022-03-08 06:55:06', NULL);
 
 -- --------------------------------------------------------
 
@@ -170,11 +164,11 @@ CREATE TABLE `application_images` (
 --
 
 INSERT INTO `application_images` (`id`, `application_data_id`, `image`, `name_of_file_show`, `image_type`, `uniq_id`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 1, '111620211643059061939241872b7.jpeg', 'userPhotos-1624877002293-637.jpg', 'Welcome Screen Image', 5, NULL, '2021-11-16 11:13:05', NULL),
-(2, 1, '111620211611568561938af45ae15.jpeg', '1622019961133.jpg', 'Welcome Screen Image 2', 6, NULL, '2021-11-16 10:41:56', NULL),
-(3, 1, '111620211612026461938afa822f6.jpeg', '1286d0868fea81b08b8379d9ba626829.jpg', 'Welcome Screen Image 3', 7, NULL, '2021-11-16 10:42:02', NULL),
-(4, 1, '1116202116432168619392510cb70.jpeg', 'userPhotos-1624877002293-637.jpg', 'Welcome Screen Image 4', 8, NULL, '2021-11-16 11:13:21', NULL),
-(5, 1, '111620211642419261939229cad38.jpeg', 'userPhotos-1624877002293-637.jpg', 'Offer Image', 3, '2021-11-11 05:35:36', '2021-11-16 11:12:41', NULL);
+(1, 1, '03212022105505356238598904a31.png', 'Screenshot 2022-03-21 at 1.10.04 PM.png', 'Welcome Screen Image', 5, NULL, '2022-03-21 05:25:05', NULL),
+(2, 1, '030820221224063162274ae618e1d.jpeg', 'Hydrangeas - Copy - Copy.jpg', 'Welcome Screen Image 2', 6, NULL, '2022-03-08 06:54:06', NULL),
+(3, 1, '030820221224456662274b0dc180f.jpeg', 'WWWWWW~1.JPG', 'Welcome Screen Image 3', 7, NULL, '2022-03-08 06:54:46', NULL),
+(4, 1, '030820221224535962274b1570169.jpeg', 'Lighthouse - Copy - Copy.jpg', 'Welcome Screen Image 4', 8, NULL, '2022-03-08 06:54:53', NULL),
+(5, 1, '030820221223275162274abf9b307.jpeg', 'Koala - Copy (2).jpg', 'Offer Image', 3, '2021-11-11 05:35:36', '2022-03-08 06:53:27', NULL);
 
 -- --------------------------------------------------------
 
@@ -186,7 +180,7 @@ CREATE TABLE `assign_badges` (
   `id` int(10) UNSIGNED NOT NULL,
   `user_id` int(10) UNSIGNED NOT NULL,
   `badge_id` int(10) UNSIGNED NOT NULL,
-  `comment` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `comment` text COLLATE utf8mb4_unicode_ci,
   `status` enum('Active','Inactive') COLLATE utf8mb4_unicode_ci NOT NULL,
   `when_day` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `from_date` date NOT NULL,
@@ -641,15 +635,16 @@ CREATE TABLE `general_settings` (
 --
 
 INSERT INTO `general_settings` (`id`, `uniq_id`, `setting_content`, `setting_type`, `setting_enabled_disbaled`, `deleted_at`, `created_at`, `updated_at`) VALUES
-(1, 1, 'dev@yopmail.com', 'Contact Email', NULL, NULL, '2021-11-11 11:02:46', '2021-11-16 11:12:04'),
-(4, 2, '8708869543', 'Contact Number', NULL, NULL, '2021-11-11 11:09:23', '2021-11-16 11:12:16'),
-(6, 11, '<p>Hey user please use our app.</p>\n\n<p>www.yahoo.com</p>', 'About our loyalty program', NULL, NULL, '2021-11-11 11:09:54', '2021-11-16 11:09:06'),
-(7, 12, '<blockquote>\n<h1>User please read all the FAQ</h1>\n</blockquote>', 'faq\'s', NULL, NULL, '2021-11-11 11:10:12', '2021-11-16 11:09:08'),
-(8, 13, '<p><strong>Please read terms and conditions.</strong></p>', 'Terms & conditions', NULL, NULL, '2021-11-11 11:10:26', '2021-11-16 11:09:33'),
-(9, 14, '<p><strong>Privacy policy of the app.</strong></p>', 'Privacy policy', NULL, NULL, '2021-11-11 11:10:28', '2021-11-16 11:09:51'),
-(10, 15, '10', 'Unique venue invoice no', NULL, NULL, '2021-11-11 11:10:48', '2021-11-15 07:52:59'),
-(11, 16, '200', 'Venue timeout', NULL, NULL, '2021-11-11 11:10:53', '2021-11-16 10:23:21'),
-(12, 17, '300', 'Sms otp validity', 'Enabled', NULL, '2021-11-11 11:11:11', '2021-11-16 10:29:01');
+(1, 1, 'sameer@yopmail.com', 'Contact Email', NULL, NULL, '2021-11-11 11:02:46', '2022-03-08 06:45:46'),
+(4, 2, '222333444555', 'Contact Number', NULL, NULL, '2021-11-11 11:09:23', '2022-03-08 00:10:48'),
+(6, 11, '<p>This is a test data for the user to read the about us text.</p>\n\n<p><a href=\"http://www.google.com\">www.google.com</a></p>\n\n<p>+917060424887</p>\n\n<p>+917060424997</p>\n\n<p>https://yopmail.com/en/wm</p>\n\n<p>dev@yopmail.com</p>\n\n<p>www.gmail.com</p>\n\n<p>www.gmail.com</p>', 'About our loyalty program', NULL, NULL, '2021-11-11 11:09:54', '2022-03-08 06:52:35'),
+(7, 12, '<p>&nbsp;</p>\n\n<p>These are the test faqs for the test users to read the information</p>\n\n<p>www.yopmail.com</p>\n\n<p>www.google.com&nbsp;</p>\n\n<p><a href=\"http://www.google.com\">http://www.google.com</a></p>\n\n<p>+91568970604248852</p>\n\n<p>https://yopmail.com/en/wm</p>\n\n<p>dev@yopmail.com</p>', 'faq\'s', NULL, NULL, '2021-11-11 11:10:12', '2022-03-08 06:52:02'),
+(8, 13, '<p>testing user data&nbsp;</p>\n\n<p>www.google.com</p>', 'Terms & conditions', NULL, NULL, '2021-11-11 11:10:26', '2022-03-08 06:31:22'),
+(9, 14, '<p>hello users this is a privacy policy fro the app to the users app and data</p>\n\n<p><a href=\"http://www.google.com\">www.google</a>.com</p>\n\n<p>&nbsp;</p>', 'Privacy policy', NULL, NULL, '2021-11-11 11:10:28', '2022-03-08 06:30:52'),
+(10, 15, '10', 'Unique venue invoice no', NULL, NULL, '2021-11-11 11:10:48', '2022-03-22 01:32:19'),
+(11, 16, '200', 'Venue timeout', NULL, NULL, '2021-11-11 11:10:53', '2022-03-07 04:52:40'),
+(12, 17, '180', 'Sms otp validity', 'Enabled', NULL, '2021-11-11 11:11:11', '2021-12-08 10:46:03'),
+(13, 18, 'Mohali', 'Address', NULL, NULL, '2021-11-29 10:32:57', '2022-03-08 06:49:57');
 
 -- --------------------------------------------------------
 
@@ -721,48 +716,6 @@ CREATE TABLE `migrations` (
   `migration` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `batch` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `migrations`
---
-
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
-(1, '2014_10_12_100000_create_password_resets_table', 1),
-(2, '2016_06_01_000001_create_oauth_auth_codes_table', 1),
-(3, '2016_06_01_000002_create_oauth_access_tokens_table', 1),
-(4, '2016_06_01_000003_create_oauth_refresh_tokens_table', 1),
-(5, '2016_06_01_000004_create_oauth_clients_table', 1),
-(6, '2016_06_01_000005_create_oauth_personal_access_clients_table', 1),
-(11, '2021_07_07_102805_create_users_table', 2),
-(12, '2021_07_12_053943_create_otps_table', 2),
-(13, '2021_07_12_092052_create_admins_table', 3),
-(18, '2021_07_13_090942_create_tier_settings_table', 4),
-(19, '2021_07_13_091013_create_tier_conditions_table', 4),
-(21, '2021_07_27_104625_create_application_images_table', 6),
-(22, '2021_07_28_121136_create_venus_table', 7),
-(23, '2021_07_28_125108_create_venue_users_table', 8),
-(24, '2021_07_29_120346_create_wallet_cashbacks_table', 9),
-(28, '2021_07_30_113524_create_cashbacks_table', 10),
-(29, '2021_08_18_051023_create_events_table', 11),
-(36, '2021_08_18_114627_create_offers_table', 12),
-(37, '2021_08_18_115055_create_offer_settings_table', 12),
-(38, '2021_08_18_115812_create_cities_table', 12),
-(40, '2021_09_01_063812_create_login_requests_table', 13),
-(43, '2021_09_10_063651_create_user_assign_offers_table', 14),
-(44, '2021_09_16_120913_create_badges_table', 15),
-(46, '2021_09_16_122515_create_assign_badges_table', 16),
-(48, '2021_09_24_104903_create_assign_user_venues_table', 17),
-(49, '2021_10_01_052623_create_wallet_transactions_table', 18),
-(50, '2021_10_01_070826_create_admin_notifications_table', 19),
-(51, '2021_10_01_072908_create_admin_criteria_notifications_table', 19),
-(52, '2021_10_12_110145_create_jobs_table', 20),
-(53, '2021_10_13_123229_create_failed_jobs_table', 21),
-(54, '2021_10_20_125747_create_login_poses_table', 22),
-(55, '2021_10_26_135654_create_general_settings_table', 23),
-(56, '2021_07_27_104038_create_application_datas_table', 24),
-(58, '2021_11_09_100150_create_wallet_details_table', 25),
-(59, '2021_11_10_053929_create_event_sent_notifications_table', 26),
-(60, '2021_11_10_092435_create_noti_records_table', 27);
 
 -- --------------------------------------------------------
 
@@ -972,18 +925,6 @@ CREATE TABLE `tier_conditions` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `tier_conditions`
---
-
-INSERT INTO `tier_conditions` (`id`, `unique_id_by_tier`, `tier_setting_id`, `tier_name`, `from_amount`, `to_amount`, `color_code`, `percentage`, `deleted_at`, `created_at`, `updated_at`) VALUES
-(1, '1', 1, 'Silver', 0, 100, '#df357c', 10, NULL, NULL, '2021-11-16 10:22:57'),
-(2, '2', 1, 'Platinum', 700, 1500, '#ff0000', 20, '2021-10-15 10:46:53', '2021-10-08 09:13:51', '2021-10-15 10:46:53'),
-(3, '3', 1, 'Gold', 1501, 2501, '#ff0000', 30, '2021-10-15 10:46:47', '2021-10-08 09:14:10', '2021-10-15 10:46:47'),
-(4, '4', 1, 'Diamond', 2502, 3501, '#ff0000', 40, '2021-10-15 10:46:42', '2021-10-08 09:14:31', '2021-10-15 10:46:42'),
-(5, '5', 1, 'Gold', 101, 500, '#2c26dd', 20, NULL, '2021-10-21 10:40:05', '2021-11-16 11:02:20'),
-(6, '6', 1, 'Platinum', 501, 1000, '#9d1c1c', 0, NULL, '2021-11-16 08:07:02', '2021-11-16 08:53:04');
-
 -- --------------------------------------------------------
 
 --
@@ -999,13 +940,6 @@ CREATE TABLE `tier_settings` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `tier_settings`
---
-
-INSERT INTO `tier_settings` (`id`, `admin_id`, `transaction_amount_check_last_days`, `customer_tier_validity_check`, `deleted_at`, `created_at`, `updated_at`) VALUES
-(1, 9, 10, 1, NULL, NULL, '2021-11-16 11:01:53');
 
 -- --------------------------------------------------------
 
@@ -1046,6 +980,7 @@ CREATE TABLE `users` (
   `tier_update_date` date DEFAULT NULL,
   `refer_amount` double DEFAULT '0',
   `refer_amount_used` int(11) NOT NULL DEFAULT '0',
+  `request_change_email` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL
@@ -1189,6 +1124,7 @@ CREATE TABLE `wallet_transactions` (
   `invoice_number` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `offer_product_ids` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `cashier_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT 'Admin',
+  `user_wallet_cash` double NOT NULL DEFAULT '0',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL,
@@ -1472,7 +1408,7 @@ ALTER TABLE `wallet_transactions`
 -- AUTO_INCREMENT for table `admins`
 --
 ALTER TABLE `admins`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 --
 -- AUTO_INCREMENT for table `admin_criteria_notifications`
 --
@@ -1542,7 +1478,7 @@ ALTER TABLE `failed_jobs`
 -- AUTO_INCREMENT for table `general_settings`
 --
 ALTER TABLE `general_settings`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 --
 -- AUTO_INCREMENT for table `jobs`
 --
@@ -1562,7 +1498,7 @@ ALTER TABLE `login_requests`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `noti_records`
 --
@@ -1597,12 +1533,12 @@ ALTER TABLE `otps`
 -- AUTO_INCREMENT for table `tier_conditions`
 --
 ALTER TABLE `tier_conditions`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `tier_settings`
 --
 ALTER TABLE `tier_settings`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `users`
 --
@@ -1643,140 +1579,10 @@ ALTER TABLE `wallet_transactions`
 --
 
 --
--- Constraints for table `admin_criteria_notifications`
---
-ALTER TABLE `admin_criteria_notifications`
-  ADD CONSTRAINT `admin_criteria_notifications_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
-
---
 -- Constraints for table `application_datas`
 --
 ALTER TABLE `application_datas`
   ADD CONSTRAINT `application_datas_admin_id_foreign` FOREIGN KEY (`admin_id`) REFERENCES `admins` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `application_images`
---
-ALTER TABLE `application_images`
-  ADD CONSTRAINT `application_images_application_data_id_foreign` FOREIGN KEY (`application_data_id`) REFERENCES `application_datas` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `assign_badges`
---
-ALTER TABLE `assign_badges`
-  ADD CONSTRAINT `assign_badges_badge_id_foreign` FOREIGN KEY (`badge_id`) REFERENCES `badges` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `assign_badges_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `assign_user_venues`
---
-ALTER TABLE `assign_user_venues`
-  ADD CONSTRAINT `assign_user_venues_venu_id_foreign` FOREIGN KEY (`venu_id`) REFERENCES `venus` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `assign_user_venues_venue_user_id_foreign` FOREIGN KEY (`venue_user_id`) REFERENCES `venue_users` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `badges`
---
-ALTER TABLE `badges`
-  ADD CONSTRAINT `badges_admin_id_foreign` FOREIGN KEY (`admin_id`) REFERENCES `admins` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `cashbacks`
---
-ALTER TABLE `cashbacks`
-  ADD CONSTRAINT `cashbacks_admin_id_foreign` FOREIGN KEY (`admin_id`) REFERENCES `admins` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `cashbacks_venu_id_foreign` FOREIGN KEY (`venu_id`) REFERENCES `venus` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `events`
---
-ALTER TABLE `events`
-  ADD CONSTRAINT `events_admin_id_foreign` FOREIGN KEY (`admin_id`) REFERENCES `admins` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `events_venu_id_foreign` FOREIGN KEY (`venu_id`) REFERENCES `venus` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `event_sent_notifications`
---
-ALTER TABLE `event_sent_notifications`
-  ADD CONSTRAINT `event_sent_notifications_event_id_foreign` FOREIGN KEY (`event_id`) REFERENCES `events` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `event_sent_notifications_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `login_requests`
---
-ALTER TABLE `login_requests`
-  ADD CONSTRAINT `login_requests_venu_id_foreign` FOREIGN KEY (`venu_id`) REFERENCES `venus` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `login_requests_venue_user_id_foreign` FOREIGN KEY (`venue_user_id`) REFERENCES `venue_users` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `noti_records`
---
-ALTER TABLE `noti_records`
-  ADD CONSTRAINT `noti_records_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `offers`
---
-ALTER TABLE `offers`
-  ADD CONSTRAINT `offers_admin_id_foreign` FOREIGN KEY (`admin_id`) REFERENCES `admins` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `offers_venu_id_foreign` FOREIGN KEY (`venu_id`) REFERENCES `venus` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `offer_settings`
---
-ALTER TABLE `offer_settings`
-  ADD CONSTRAINT `offer_settings_offer_id_foreign` FOREIGN KEY (`offer_id`) REFERENCES `offers` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `tier_conditions`
---
-ALTER TABLE `tier_conditions`
-  ADD CONSTRAINT `tier_conditions_tier_setting_id_foreign` FOREIGN KEY (`tier_setting_id`) REFERENCES `tier_settings` (`id`);
-
---
--- Constraints for table `tier_settings`
---
-ALTER TABLE `tier_settings`
-  ADD CONSTRAINT `tier_settings_admin_id_foreign` FOREIGN KEY (`admin_id`) REFERENCES `admins` (`id`);
-
---
--- Constraints for table `user_assign_offers`
---
-ALTER TABLE `user_assign_offers`
-  ADD CONSTRAINT `user_assign_offers_offer_id_foreign` FOREIGN KEY (`offer_id`) REFERENCES `offers` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `user_assign_offers_offer_setting_id_foreign` FOREIGN KEY (`offer_setting_id`) REFERENCES `offer_settings` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `user_assign_offers_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `venue_users`
---
-ALTER TABLE `venue_users`
-  ADD CONSTRAINT `venue_users_venu_id_foreign` FOREIGN KEY (`venu_id`) REFERENCES `venus` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `venus`
---
-ALTER TABLE `venus`
-  ADD CONSTRAINT `venus_admin_id_foreign` FOREIGN KEY (`admin_id`) REFERENCES `admins` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `wallet_cashbacks`
---
-ALTER TABLE `wallet_cashbacks`
-  ADD CONSTRAINT `wallet_cashbacks_admin_id_foreign` FOREIGN KEY (`admin_id`) REFERENCES `admins` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `wallet_details`
---
-ALTER TABLE `wallet_details`
-  ADD CONSTRAINT `wallet_details_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
-
---
--- Constraints for table `wallet_transactions`
---
-ALTER TABLE `wallet_transactions`
-  ADD CONSTRAINT `wallet_transactions_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `wallet_transactions_venue_user_id_foreign` FOREIGN KEY (`venue_user_id`) REFERENCES `venue_users` (`id`) ON DELETE CASCADE;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

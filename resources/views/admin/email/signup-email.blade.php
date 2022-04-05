@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta http-equiv="refresh" content="30">
-<title>{{$admin_signup_notification_email->title}}</title>
+<title>{{$admin_signup_notification_email->is_title == 1 ? $admin_signup_notification_email->title : 'Welcome user'}}</title>
 <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Signika:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 

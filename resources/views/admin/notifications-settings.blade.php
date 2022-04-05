@@ -595,7 +595,7 @@
 						<div class="d-flex">
 							<div>
 								<label class="app_checkboxes welcome_title_checkbox" uniq-id="7">
-									<input type="checkbox" class="welcome_title_checkbox" uniq-id="7">
+									<input type="checkbox" class="welcome_title_checkbox" name="welcome_title_checkbox" uniq-id="7">
 									<span class="checkmark welcome_title_checkbox" uniq-id="7" style="top: 48px"></span>
 								</label>
 							</div>
@@ -619,7 +619,7 @@
 						<div class="d-flex mt-3">
 							<div>
 								<label class="app_checkboxes app_checkboxes_upload" uniq-id="7">
-									<input type="checkbox" class="app_checkboxes_upload" uniq-id="7">
+									<input type="checkbox" class="app_checkboxes_upload" name="app_checkboxes_upload" uniq-id="7">
 									<span class="checkmark" class="app_checkboxes_upload" uniq-id="7" style="top: 48px"></span>
 								</label>
 							</div>
@@ -1143,7 +1143,7 @@
 				  			$('.notify_message[uniq-id='+val.uniq_id+']').text(val.message);
 
 				  			if(val.uniq_id == 7){
-				  				if(val.title){
+				  				if(val.is_title == 1){
 				  					$(`.welcome_title_checkbox input[uniq-id=${7}]`).prop('checked',true);
 				  				}
 				  				$('.welcome_title').val(val.title);
@@ -1158,7 +1158,10 @@
 									}else{
 										var slice_name = valu;
 									}
-				  					$(`.app_checkboxes_upload input[uniq-id=${7}]`).prop('checked',true);
+
+									if(val.is_attachment == 1){
+				  						$(`.app_checkboxes_upload input[uniq-id=${7}]`).prop('checked',true);
+									}
 					  				$('.attachment_upload[uniq-id=7]').attr('value',slice_name);
 					  				$('.attachment_upload[uniq-id=7]').attr('src',val.image);
 					  				$('#img_upload[uniq-id=7]').attr('value',val.name_of_file_show);

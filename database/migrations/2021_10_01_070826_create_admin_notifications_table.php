@@ -24,6 +24,8 @@ class CreateAdminNotificationsTable extends Migration
             $table->integer('push_type')->nullable()->default(0);
             $table->integer('sms_type')->nullable()->default(0);
             $table->integer('email_type')->nullable()->default(0);
+            $table->integer('is_title')->nullable()->default(0);
+            $table->integer('is_attachment')->nullable()->default(0);
             $table->string('notification_type');
             $table->timestamps();
             $table->softDeletes();
