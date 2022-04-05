@@ -1888,8 +1888,8 @@
     	let invoice_number_wallet = $(".invoice_number_wallet").val();
     	let venu_username_id_wallet = $(".venu_username_wallet").val();
 
-    	if(joined_from > joined_to){
-			$("#alert_text").text("Transaction from date should be greater than transaction to date");
+    	if(joined_from > joined_to && (joined_from != null && joined_to != '')){
+			$("#alert_text").text("Transaction from date should be less than or equal to transaction to date");
 			$("#validationModel").modal("show");
 			$("#validationModel").unbind("click");
 			return false;
@@ -2021,8 +2021,8 @@
 				return false;
 			}
 
-	    	if(joined_from > joined_to){
-				$("#alert_text").text("Transaction from date should be greater than transaction to date");
+	    	if(joined_from > joined_to && (joined_from != '' && joined_to != '')){
+				$("#alert_text").text("Transaction from date should be less than or equal to transaction to date");
 				$("#validationModel").modal("show");
 				$("#validationModel").unbind("click");
 				return false;

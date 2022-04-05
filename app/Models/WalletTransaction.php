@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\UserAssignOffer;
+use Carbon\Carbon;
 
 class WalletTransaction extends Model
 {
@@ -34,5 +35,10 @@ class WalletTransaction extends Model
         return $this->hasMany(UserAssignOffer::class,'offer_id','offer_product_ids');
     }
 
+    public function getCreatedAtAttribute($value){
+        if($value){
+           return $date_and_time = Carbon::parse($value,'UTC')->timezone('Asia/Dubai');
+        }
+    }
     
 }
