@@ -540,7 +540,7 @@
 		var currentDate = new Date();
 		var before7Daysdate= new Date(currentDate.setDate(currentDate.getDate() - 7)).toISOString().split('T')[0];
 
-		$('.joining_from_date').attr('value',before7Daysdate);
+		$('.joining_from_date').attr('value',todayDate_today);
 		$('.joining_to_date').attr('value',todayDate_today);
 
 

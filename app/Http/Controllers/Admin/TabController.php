@@ -525,11 +525,11 @@ class TabController extends ResponseController
                 ->where(function($query) use ($request, $tier_find){
                     $query->whereDeletedAt(null);
                     if($request->joined_from && $request->joined_to){
-                        $query->whereBetween(DB::raw('date(created_at)'),[$request->joined_from, $request->joined_to]);
+                        $query->whereBetween(DB::raw('date(created_at + interval 4 hour)'),[$request->joined_from, $request->joined_to]);
                     }else if($request->joined_from){
-                        $query->where(DB::raw('date(created_at)'),'>=', $request->joined_from);
+                        $query->where(DB::raw('date(created_at + interval 4 hour)'),'>=', $request->joined_from);
                     }else if($request->joined_to){
-                        $query->where(DB::raw('date(created_at)'),'<=', $request->joined_to);
+                        $query->where(DB::raw('date(created_at + interval 4 hour)'),'<=', $request->joined_to);
                     }
 
                     if($request->gender){
@@ -715,11 +715,11 @@ class TabController extends ResponseController
             ->where(function($query) use ($request){
 
                 if($request->joined_from && $request->joined_to){
-                    $query->whereBetween(DB::raw('date(created_at)'),[$request->joined_from, $request->joined_to]);
+                    $query->whereBetween(DB::raw('date(created_at + interval 4 hour)'),[$request->joined_from, $request->joined_to]);
                 }else if($request->joined_from){
-                    $query->where(DB::raw('date(created_at)'),'>=', $request->joined_from);
+                    $query->where(DB::raw('date(created_at + interval 4 hour)'),'>=', $request->joined_from);
                 }else if($request->joined_to){
-                    $query->where(DB::raw('date(created_at)'),'<=', $request->joined_to);
+                    $query->where(DB::raw('date(created_at + interval 4 hour)'),'<=', $request->joined_to);
                 }
 
                 if($request->mobile_number){
@@ -805,11 +805,11 @@ class TabController extends ResponseController
                 ->where(function($query) use ($request, $tier_find){
                     $query->whereDeletedAt(null);
                     if($request->joined_from && $request->joined_to){
-                        $query->whereBetween(DB::raw('date(created_at)'),[$request->joined_from, $request->joined_to]);
+                        $query->whereBetween(DB::raw('date(created_at + interval 4 hour)'),[$request->joined_from, $request->joined_to]);
                     }else if($request->joined_from){
-                        $query->where(DB::raw('date(created_at)'),'>=', $request->joined_from);
+                        $query->where(DB::raw('date(created_at + interval 4 hour)'),'>=', $request->joined_from);
                     }else if($request->joined_to){
-                        $query->where(DB::raw('date(created_at)'),'<=', $request->joined_to);
+                        $query->where(DB::raw('date(created_at + interval 4 hour)'),'<=', $request->joined_to);
                     }
 
                     if($request->gender){
@@ -4499,11 +4499,11 @@ class TabController extends ResponseController
         ->where(function($query) use ($request){
 
                 if($request->joined_from && $request->joined_to){
-                    $query->whereBetween(DB::raw('date(created_at)'),[$request->joined_from, $request->joined_to]);
+                    $query->whereBetween(DB::raw('date(created_at + interval 4 hour)'),[$request->joined_from, $request->joined_to]);
                 }else if($request->joined_from){
-                    $query->where(DB::raw('date(created_at)'),'>=', $request->joined_from);
+                    $query->where(DB::raw('date(created_at + interval 4 hour)'),'>=', $request->joined_from);
                 }else if($request->joined_to){
-                    $query->where(DB::raw('date(created_at)'),'<=', $request->joined_to);
+                    $query->where(DB::raw('date(created_at + interval 4 hour)'),'<=', $request->joined_to);
                 }
 
                 if($request->venue_id_wallet){
@@ -4642,11 +4642,11 @@ class TabController extends ResponseController
         ->where(function($query) use ($request){
 
                 if($request->joined_from && $request->joined_to){
-                    $query->whereBetween(DB::raw('date(created_at)'),[$request->joined_from, $request->joined_to]);
+                    $query->whereBetween(DB::raw('date(created_at + interval 4 hour)'),[$request->joined_from, $request->joined_to]);
                 }else if($request->joined_from){
-                    $query->where(DB::raw('date(created_at)'),'>=', $request->joined_from);
+                    $query->where(DB::raw('date(created_at + interval 4 hour)'),'>=', $request->joined_from);
                 }else if($request->joined_to){
-                    $query->where(DB::raw('date(created_at)'),'<=', $request->joined_to);
+                    $query->where(DB::raw('date(created_at + interval 4 hour)'),'<=', $request->joined_to);
                 }
 
                 if($request->venue_id_wallet){

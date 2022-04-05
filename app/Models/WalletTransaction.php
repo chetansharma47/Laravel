@@ -34,11 +34,5 @@ class WalletTransaction extends Model
     public function offerProductIds(){
         return $this->hasMany(UserAssignOffer::class,'offer_id','offer_product_ids');
     }
-
-    public function getCreatedAtAttribute($value){
-        if($value){
-           return $date_and_time = Carbon::parse($value,'UTC')->timezone('Asia/Dubai');
-        }
-    }
     
 }
