@@ -2921,8 +2921,8 @@ class TabController extends ResponseController
             ->orderBy('x', 'asc')
             ->get();
 
-        $users = User::whereDate('created_at','>=',$request->from_date)
-            ->whereDate('created_at','<=',$request->to_date);
+        $users = User::where(DB::raw('date(created_at + interval 4 hour)'),'>=',$request->from_date)
+            ->where(DB::raw('date(created_at + interval 4 hour)'),'<=',$request->to_date);
         $get_all_customers = $users->pluck('id');
 
 
