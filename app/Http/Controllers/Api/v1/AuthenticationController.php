@@ -57,7 +57,16 @@ class AuthenticationController extends ResponseController
 
     public function register(Request $request){
         $this->is_validationRule(Validation::userAppRegister($Validation = "", $message = "") , $request);
+        $data = $request->all();
+        if($data['mobile_number'][0] == 0){
+            $data['mobile_number'] = substr($data['mobile_number'], 1);
+        }
 
+        $check_mobile_number = User::whereMobileNumber($data['mobile_number'])->whereCountryCode($data['country_code'])->first();
+
+        if(!empty($check_mobile_number)){
+            $this->responseWithErrorValidation("Mobile number already registered with us. Please use another mobile number.");
+        }
         date_default_timezone_set($request->timezone);
         $profile = $request->file('image');
         if($profile){
@@ -187,7 +196,19 @@ class AuthenticationController extends ResponseController
      public function updateUser(Request $request){
         $user = Auth::guard()->user();
         $user_id = $user->id;
+
+
         $this->is_validationRule(Validation::userAppUpdateUser($Validation = "", $message = "", $user_id) , $request);
+        $data = $request->all();
+        if($data['mobile_number'][0] == 0){
+            $data['mobile_number'] = substr($data['mobile_number'], 1);
+        }
+
+        $check_mobile_number = User::whereMobileNumber($data['mobile_number'])->whereCountryCode($data['country_code'])->first();
+
+        if(!empty($check_mobile_number)){
+            $this->responseWithErrorValidation("Mobile number already registered with us. Please use another mobile number.");
+        }
 
         $profile = $request->file('image');
         if($profile){

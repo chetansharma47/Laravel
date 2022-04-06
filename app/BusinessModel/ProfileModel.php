@@ -68,6 +68,9 @@ class ProfileModel extends Model
         $id = $user->id;
 
         if(!empty($data['mobile_number']) && !empty($data['country_code']) && !empty($data['otp'])){
+            if($data['mobile_number'][0] == 0){
+                $data['mobile_number'] = substr($data['mobile_number'], 1);
+            }
            $find_otp = Otp::whereOtp($data['otp'])->whereMobileNumber($data['mobile_number'])->whereCountryCode($data['country_code'])->first();
             if($find_otp){
             $find_otp->delete();
@@ -207,6 +210,11 @@ class ProfileModel extends Model
 
     public function register($request, $id){
         $data = $request->all();
+
+        if($data['mobile_number'][0] == 0){
+            $data['mobile_number'] = substr($data['mobile_number'], 1);
+        }
+
         $data['customer_id'] = mt_rand(10000000000,99999999999);
 
         $bonus = 0;

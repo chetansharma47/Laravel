@@ -2889,8 +2889,8 @@ class TabController extends ResponseController
             // selectRaw("DATE_FORMAT(created_at, '%Y-%m-%e') x, COUNT(*) y")
 
         $customer_registrations_trends = User::selectRaw("DATE_FORMAT(created_at, '%Y-%m-%d') x, COUNT(*) y")
-            ->whereDate('created_at','>=',$request->from_date)
-            ->whereDate('created_at','<=',$request->to_date)
+            ->where(DB::raw('date(created_at + interval 4 hour'),'>=',$request->from_date)
+            ->where(DB::raw('date(created_at + interval 4 hour'),'<=',$request->to_date)
             ->groupBy('x')
             ->orderBy('x', 'asc')
             ->get();
@@ -2921,8 +2921,8 @@ class TabController extends ResponseController
             ->orderBy('x', 'asc')
             ->get();
 
-        $users = User::whereDate('created_at','>=',$request->from_date)
-            ->whereDate('created_at','<=',$request->to_date);
+        $users = User::where(DB::raw('date(created_at + interval 4 hour'),'>=',$request->from_date)
+            ->where(DB::raw('date(created_at + interval 4 hour'),'<=',$request->to_date);
         $get_all_customers = $users->pluck('id');
 
 
