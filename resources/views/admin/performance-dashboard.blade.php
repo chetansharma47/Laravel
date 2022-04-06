@@ -466,7 +466,7 @@
 		},
 		axisX:{
 			interval: intervalCustom,
-			intervalType: "day",
+			intervalType: "month",
 			valueFormatString: "DD MMM YYYY"
 		},
 		axisY: {
