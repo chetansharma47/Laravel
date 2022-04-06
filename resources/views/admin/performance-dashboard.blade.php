@@ -380,6 +380,8 @@
 			text: ""
 		},
 		axisX:{
+			interval: 1,
+			intervalType: "day",
 			valueFormatString: "DD MMM YYYY"
 		},
 		axisY: {
@@ -414,7 +416,9 @@
 			text: ""
 		},
 		axisX:{
-			valueFormatString: "DD MMM YYYY"
+			interval: 1,
+			intervalType: "day",
+			valueFormatString: "DD MMM YYYY",
 		},
 		axisY: {
 			title: "Total Number of Sales",
@@ -448,6 +452,8 @@
 			text: ""
 		},
 		axisX:{
+			interval: 1,
+			intervalType: "day",
 			valueFormatString: "DD MMM YYYY"
 		},
 		axisY: {
@@ -482,6 +488,8 @@
 			text: ""
 		},
 		axisX:{
+			interval: 1,
+			intervalType: "day",
 			valueFormatString: "DD MMM YYYY"
 		},
 		axisY: {
