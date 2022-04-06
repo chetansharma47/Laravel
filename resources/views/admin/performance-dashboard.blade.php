@@ -369,9 +369,14 @@
 
 	}
 	function registeredusers(response){
+		var arr = [];
 		for (var i = 0; i < response.length; i++){
+			arr.push(response[i]["x"]);
 			response[i]["x"] = new Date(response[i]["x"]);
 		}
+
+		let intervalCustom = arr.length <= 1 ? 0 : 1;
+
 		var chart = new CanvasJS.Chart("chartContainer", {
 		animationEnabled: true,
 		exportEnabled: true,
@@ -380,7 +385,7 @@
 			text: ""
 		},
 		axisX:{
-			interval: 1,
+			interval: intervalCustom,
 			intervalType: "day",
 			valueFormatString: "DD MMM YYYY"
 		},
@@ -405,9 +410,14 @@
 	}
 
 	function totalsales(response){
+		var arr = [];
 		for (var i = 0; i < response.length; i++){
+			arr.push(response[i]["x"]);
 			response[i]["x"] = new Date(response[i]["x"]);
 		}
+
+		let intervalCustom = arr.length <= 1 ? 0 : 1;
+
 		var chart = new CanvasJS.Chart("chartContainer1", {
 		animationEnabled: true,
 		exportEnabled: true,
@@ -416,7 +426,7 @@
 			text: ""
 		},
 		axisX:{
-			interval: 1,
+			interval: intervalCustom ,
 			intervalType: "day",
 			valueFormatString: "DD MMM YYYY",
 		},
@@ -441,9 +451,12 @@
 	}
 
 	function customer_dirshams_wallet_cash(response){
+		var arr = [];
 		for (var i = 0; i < response.length; i++){
+			arr.push(response[i]["x"]);
 			response[i]["x"] = new Date(response[i]["x"]);
 		}
+		let intervalCustom = arr.length <= 1 ? 0 : 1;
 		var chart = new CanvasJS.Chart("chartContainer2", {
 		animationEnabled: true,
 		exportEnabled: true,
@@ -452,7 +465,7 @@
 			text: ""
 		},
 		axisX:{
-			interval: 1,
+			interval: intervalCustom,
 			intervalType: "day",
 			valueFormatString: "DD MMM YYYY"
 		},
@@ -477,9 +490,12 @@
 	}
 
 	function redeemed_amount_trends(response){
+		var arr = [];
 		for (var i = 0; i < response.length; i++){
+			arr.push(response[i]["x"]);
 			response[i]["x"] = new Date(response[i]["x"]);
 		}
+		let intervalCustom = arr.length <= 1 ? 0 : 1;
 		var chart = new CanvasJS.Chart("chartContainer3", {
 		animationEnabled: true,
 		exportEnabled: true,
@@ -488,7 +504,7 @@
 			text: ""
 		},
 		axisX:{
-			interval: 1,
+			interval: intervalCustom,
 			intervalType: "day",
 			valueFormatString: "DD MMM YYYY"
 		},

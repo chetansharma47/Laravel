@@ -1498,7 +1498,6 @@ class TabController extends ResponseController
 
 
             $check_event = Event::whereDeletedAt(null)->where('unique_id','!=',$data['uniq'])->where('venu_id','=', $data['eventvenueid'])->whereEventName($data['eventname'])->first();
-
             if(!empty($check_event)){
                 return response()->json(['event_name_err' => "Event name already exists."],422);
             }
@@ -2896,20 +2895,28 @@ class TabController extends ResponseController
             ->orderBy('x', 'asc')
             ->get();
 
-        $customer_dirshams_wallet_cash_trends = User::selectRaw("SUM(wallet_cash) y, DATE_FORMAT(created_at, '%Y-%m-%d') x")->whereDate('created_at','>=',$request->from_date)
-            ->whereDate('created_at','<=',$request->to_date)
+        $customer_dirshams_wallet_cash_trends = User::selectRaw("SUM(wallet_cash) y, DATE_FORMAT(created_at, '%Y-%m-%d') x")
+            // ->whereDate('created_at','>=',$request->from_date)
+            // ->whereDate('created_at','<=',$request->to_date)
             ->groupBy('x')
             ->orderBy('x', 'asc')
             ->get();
 
-        $totalsales_amount_trends = WalletTransaction::selectRaw("SUM(pay_bill_amount) y, DATE_FORMAT(created_at, '%Y-%m-%d') x")->whereDate('created_at','>=',$request->from_date)
-            ->whereDate('created_at','<=',$request->to_date)
+
+        // $totalsales_amount_trends_ids = WalletTransaction::where(DB::raw('date(created_at + interval 4 hour)'),'>=',$request->from_date)
+        //     ->where(DB::raw('date(created_at + interval 4 hour)'),'<=',$request->to_date)
+        //     ->whereIn('is_cross_verify',[1,3])
+        //     ->pluck('id');
+
+        $totalsales_amount_trends = WalletTransaction::selectRaw("SUM(total_bill_amount) y, DATE_FORMAT(created_at, '%Y-%m-%d') x")->where(DB::raw('date(created_at + interval 4 hour)'),'>=',$request->from_date)
+            ->where(DB::raw('date(created_at + interval 4 hour)'),'<=',$request->to_date)
             ->groupBy('x')
             ->orderBy('x', 'asc')
+            ->whereIn('is_cross_verify',[1,3])
             ->get();
 
-        $redeemed_amount_trends = WalletTransaction::selectRaw("SUM(redeemed_amount) y, DATE_FORMAT(created_at, '%Y-%m-%d') x")->whereDate('created_at','>=',$request->from_date)
-            ->whereDate('created_at','<=',$request->to_date)
+        $redeemed_amount_trends = WalletTransaction::selectRaw("SUM(redeemed_amount) y, DATE_FORMAT(created_at, '%Y-%m-%d') x")->where(DB::raw('date(created_at + interval 4 hour)'),'>=',$request->from_date)
+            ->where(DB::raw('date(created_at + interval 4 hour)'),'<=',$request->to_date)
             ->groupBy('x')
             ->orderBy('x', 'asc')
             ->get();
@@ -2925,32 +2932,29 @@ class TabController extends ResponseController
         $customer_registrations = $users->count();
         $customer_referal = $users->whereNotNull('reference_by')->count();
 
-        $user_ids_from_wallet_transactions = WalletTransaction::whereDate('created_at','>=',$request->from_date)
-                ->whereDate('created_at','<=',$request->to_date)->pluck('user_id');
+        $user_ids_from_wallet_transactions = WalletTransaction::where(DB::raw('date(created_at + interval 4 hour)'),'>=',$request->from_date)
+                ->where(DB::raw('date(created_at + interval 4 hour)'),'<=',$request->to_date)->pluck('user_id');
 
         $referral_first_transaction_done = User::whereIn("id", $user_ids_from_wallet_transactions)->where('refer_amount_used', '=', 1)->count();
 
-        $total_sales_verified = WalletTransaction::whereDate('created_at','>=',$request->from_date)->whereDate('created_at','<=',$request->to_date)->whereIsCrossVerify(1)->sum('total_bill_amount');
-        $total_sales_verified_pos = WalletTransaction::whereDate('created_at','>=',$request->from_date)->whereDate('created_at','<=',$request->to_date)->whereIsCrossVerify(3)->sum('total_bill_amount');
+        $total_sales = WalletTransaction::where(DB::raw('date(created_at + interval 4 hour)'),'>=',$request->from_date)->where(DB::raw('date(created_at + interval 4 hour)'),'<=',$request->to_date)->whereIn('is_cross_verify',[1,3])->sum('total_bill_amount');
 
-        $total_sales = $total_sales_verified + $total_sales_verified_pos;
+        $cashback_earned = WalletTransaction::whereIn('is_cross_verify',[1,3])->where(DB::raw('date(created_at + interval 4 hour)'),'>=',$request->from_date)
+                ->where(DB::raw('date(created_at + interval 4 hour)'),'<=',$request->to_date)->sum(DB::raw('ROUND(cashback_earned,2)'));
 
-        $cashback_earned = WalletTransaction::where('is_cross_verify','=',1)->whereDate('created_at','>=',$request->from_date)
-                ->whereDate('created_at','<=',$request->to_date)->sum(DB::raw('ROUND(cashback_earned,2)'));
+        $cashback_earned_pluck_id = WalletTransaction::where(DB::raw('date(created_at + interval 4 hour)'),'>=',$request->from_date)->where(DB::raw('date(created_at + interval 4 hour)'),'<=',$request->to_date)->groupBy('user_id')->get(['user_id'])->pluck('user_id');
 
-        $cashback_earned_pluck_id = WalletTransaction::whereDate('created_at','>=',$request->from_date)->whereDate('created_at','<=',$request->to_date)->groupBy('user_id')->get(['user_id'])->pluck('user_id');
-
-        $cashbak_earned_wallet_other = WalletDetail::whereIn('user_id',$cashback_earned_pluck_id)->whereDate('created_at','>=',$request->from_date)
-                ->whereDate('created_at','<=',$request->to_date)->sum(DB::raw('ROUND(cashback_earned,2)'));
+        $cashbak_earned_wallet_other = WalletDetail::whereIn('user_id',$cashback_earned_pluck_id)->where(DB::raw('date(created_at + interval 4 hour)'),'>=',$request->from_date)
+                ->where(DB::raw('date(created_at + interval 4 hour)'),'<=',$request->to_date)->sum(DB::raw('ROUND(cashback_earned,2)'));
 
         $cashback_earned = $cashback_earned + $cashbak_earned_wallet_other;
 
-        $redeemed_amount = WalletTransaction::whereDate('created_at','>=',$request->from_date)
-                ->whereDate('created_at','<=',$request->to_date)->sum('redeemed_amount');
+        $redeemed_amount = WalletTransaction::where(DB::raw('date(created_at + interval 4 hour)'),'>=',$request->from_date)
+                ->where(DB::raw('date(created_at + interval 4 hour)'),'<=',$request->to_date)->sum('redeemed_amount');
 
-       $repeat_customers = WalletTransaction::select('user_id',DB::raw('COUNT(user_id) count'))->whereDate('created_at','>=',$request->from_date)->whereDate('created_at','<=',$request->to_date)->groupBy('user_id')->havingRaw('COUNT(count) > 1')->get()->count();
+       $repeat_customers = WalletTransaction::select('user_id',DB::raw('COUNT(user_id) count'))->where(DB::raw('date(created_at + interval 4 hour)'),'>=',$request->from_date)->where(DB::raw('date(created_at + interval 4 hour)'),'<=',$request->to_date)->groupBy('user_id')->havingRaw('COUNT(count) > 1')->get()->count();
 
-      $fraud_check = WalletTransaction::select('user_id',DB::raw('COUNT(user_id) count'))->whereDate('created_at','>=',$request->from_date)->whereDate('created_at','<=',$request->to_date)->groupBy('user_id')->havingRaw('COUNT(count) > 1')->orderBy('count','desc')->first();
+      $fraud_check = WalletTransaction::select('user_id',DB::raw('COUNT(user_id) count'))->where(DB::raw('date(created_at + interval 4 hour)'),'>=',$request->from_date)->where(DB::raw('date(created_at + interval 4 hour)'),'<=',$request->to_date)->groupBy('user_id')->havingRaw('COUNT(count) > 1')->orderBy('count','desc')->first();
 
       if($fraud_check != null){
         $fraud_check = $fraud_check->count;
@@ -2959,8 +2963,8 @@ class TabController extends ResponseController
       }
       
         $wallet_transactions_offers = WalletTransaction::whereDeletedAt(null)
-                                    ->whereDate('created_at','>=',$request->from_date)
-                                    ->whereDate('created_at','<=',$request->to_date)
+                                    ->where(DB::raw('date(created_at + interval 4 hour)'),'>=',$request->from_date)
+                                    ->where(DB::raw('date(created_at + interval 4 hour)'),'<=',$request->to_date)
                                     ->pluck('offer_product_ids')->toArray();
 
         $implode_wallet_transactions_offers = implode(",", $wallet_transactions_offers);
