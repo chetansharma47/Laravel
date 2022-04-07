@@ -4692,9 +4692,9 @@ class TabController extends ResponseController
         ->where('wallet_transactions.deleted_at',null)
         ->with('offerProductIds');
 
-        if($request->selected_user_id != null){
-            $selected_ids = explode(',',$request->selected_user_id );
-            $data->whereIn('wallet_transactions.user_id',$selected_ids);
+        if($request->selected_wallet_ids_txn != null){
+            $selected_ids = explode(',',$request->selected_wallet_ids_txn );
+            $data->whereIn('wallet_transactions.id',$selected_ids);
         }
 
         if(!empty($request->search_txt)){

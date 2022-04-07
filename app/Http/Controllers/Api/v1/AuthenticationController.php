@@ -647,7 +647,7 @@ class AuthenticationController extends ResponseController
                         $query->whereIn('venu_id', $active_venue_ids);
                         $query->whereRaw("FIND_IN_SET(?, when_day) > 0", $today_days);
                         // $query->whereIn("id", $event_notification_ids);
-                    })->with('venu')->orderBy('to_time','asc')->get();
+                    })->with('venu')->orderBy('event_time','asc')->get();
 
         // $tier = TierCondition::whereTierName($user->customer_tier)->orderBy('id','desc')->first();
 

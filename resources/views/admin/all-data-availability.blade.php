@@ -235,6 +235,7 @@
 						<span class="navbar-toggler-icon"></span>
 					</button>
 					<input type="hidden" id="selected_id_input">
+					<input type="hidden" id="selected_id_input_wallet_ids">
 					<div class="collapse navbar-collapse" id="navbarSupportedContent">
 						<div class="row w-100">
 							<div class="col-md-5 col-sm-12">
@@ -956,6 +957,14 @@
 
         $('.reset-selection-btn').click(function(){
         	localStorage.setItem("search_click","true");
+        	$("#joined_from").val('');
+        	$("#joined_to").val('');
+        	$("#gender").val('');
+        	$("#status").val('');
+        	$("#tier").val('');
+        	$("#email").val('');
+        	$("#mobile_number").val('');
+        	$(".form-control[type='search']").val('');
         	getData();
         });
 
@@ -1931,10 +1940,13 @@
 						let result = data.responseJSON;
 	                	let results = result['data']
 	                	let arr = [];
+	                	let arr_ids = [];
 	                	for(var i=0; i < results.length; i++){
 	                		arr.push(results[i]['user_id']);
+	                		arr_ids.push(results[i]['id']);
 	                	}
 	                	$('#selected_id_input').val(arr.join());
+	                	$('#selected_id_input_wallet_ids').val(arr_ids.join())
 	                	// search_results_multiple();  
 						tdClick();
 						$("#basic-datatables2").dataTable().fnDestroy();
@@ -2013,6 +2025,7 @@
 	    	let venu_username_id_wallet = $(".venu_username_wallet").val();
 			let search_txt = $(".form-control[type='search'][aria-controls='basic-datatables4']").val();
 			let selected_user_id = $('#selected_id_input').val();
+			let selected_wallet_ids_txn = $('#selected_id_input_wallet_ids').val();
 
 			if(selected_user_id == ''){
 				$("#alert_text").text("Please select or search at least one customer from customer list.");
@@ -2028,7 +2041,7 @@
 				return false;
 			}
 			
-			var data_value = {joined_from,joined_to,venue_id_wallet,txn_status_wallet,offers_product_wallet_id,email,invoice_number_wallet,venu_username_id_wallet,customer_name_wallet,mobile_number,search_txt,selected_user_id,'_token':'{{csrf_token()}}'}
+			var data_value = {joined_from,joined_to,venue_id_wallet,txn_status_wallet,offers_product_wallet_id,email,invoice_number_wallet,venu_username_id_wallet,customer_name_wallet,mobile_number,search_txt,selected_user_id,selected_wallet_ids_txn,'_token':'{{csrf_token()}}'}
 
 			$.ajax({
 				url:"{{ route('admin.ExcelDownloadCustomerTransactions') }}",
