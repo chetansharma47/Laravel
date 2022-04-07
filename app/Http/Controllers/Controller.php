@@ -573,7 +573,8 @@ class Controller extends BaseController
 
                 $event_ids = Arr::pluck($events, "id");
                 $assign_events = EventSentNotification::whereUserId($user_find->id)->whereIn("event_id", $event_ids)->pluck("event_id");
-                $events_getting = Event::whereIn("id", $event_ids)->whereNotIn("id", $assign_events)->get();
+                $events_getting = Event::whereIn("id", $event_ids)->get();
+                // $events_getting = Event::whereIn("id", $event_ids)->whereNotIn("id", $assign_events)->get();
 
                 foreach ($events as $find_event) {
                     $check_already_send_noti = EventSentNotification::whereUserId($user_find->id)->whereDate('created_at',Carbon::now('Asia/Dubai'))->first();

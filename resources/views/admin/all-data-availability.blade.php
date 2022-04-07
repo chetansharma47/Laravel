@@ -235,7 +235,7 @@
 						<span class="navbar-toggler-icon"></span>
 					</button>
 					<input type="hidden" id="selected_id_input">
-					<input type="hidden" id="selected_id_input_wallet_ids">
+					<input type="hidden" id="selected_wallet_id_input">
 					<div class="collapse navbar-collapse" id="navbarSupportedContent">
 						<div class="row w-100">
 							<div class="col-md-5 col-sm-12">
@@ -1004,6 +1004,7 @@
                 },
                 complete:function(data){
                 	let result = data.responseJSON;
+                	console.log(result);
                 	let results = result['data']
                 	let arr = [];
                 	for(var i=0; i < results.length; i++){
@@ -1938,15 +1939,15 @@
 					data:{'_token':'{{csrf_token()}}',joined_from,joined_to,venue_id_wallet,txn_status_wallet,offers_product_wallet_id,email,mobile_number,customer_name_wallet,invoice_number_wallet,venu_username_id_wallet,select_user_id,get_parent_class,'first_time':first_time},
 					complete:function(data){
 						let result = data.responseJSON;
-	                	let results = result['data']
-	                	let arr = [];
-	                	let arr_ids = [];
-	                	for(var i=0; i < results.length; i++){
-	                		arr.push(results[i]['user_id']);
-	                		arr_ids.push(results[i]['id']);
+	                	let results = result['data'];
+	                	// let arr = [];
+	                	// for(var i=0; i < results.length; i++){
+	                	// 	arr.push(results[i]['user_id']);
+	                	// }
+	                	if(results.length != 0){
+		                	$('#selected_id_input').val(results[0].user_ids_txn);
+		                	$('#selected_wallet_id_input').val(results[0].pluck_txn);
 	                	}
-	                	$('#selected_id_input').val(arr.join());
-	                	$('#selected_id_input_wallet_ids').val(arr_ids.join())
 	                	// search_results_multiple();  
 						tdClick();
 						$("#basic-datatables2").dataTable().fnDestroy();
@@ -2025,7 +2026,7 @@
 	    	let venu_username_id_wallet = $(".venu_username_wallet").val();
 			let search_txt = $(".form-control[type='search'][aria-controls='basic-datatables4']").val();
 			let selected_user_id = $('#selected_id_input').val();
-			let selected_wallet_ids_txn = $('#selected_id_input_wallet_ids').val();
+			let selected_wallet_id_input = $('#selected_wallet_id_input').val();
 
 			if(selected_user_id == ''){
 				$("#alert_text").text("Please select or search at least one customer from customer list.");
@@ -2041,7 +2042,7 @@
 				return false;
 			}
 			
-			var data_value = {joined_from,joined_to,venue_id_wallet,txn_status_wallet,offers_product_wallet_id,email,invoice_number_wallet,venu_username_id_wallet,customer_name_wallet,mobile_number,search_txt,selected_user_id,selected_wallet_ids_txn,'_token':'{{csrf_token()}}'}
+			var data_value = {joined_from,joined_to,venue_id_wallet,txn_status_wallet,offers_product_wallet_id,email,invoice_number_wallet,venu_username_id_wallet,customer_name_wallet,mobile_number,search_txt,selected_user_id,selected_wallet_id_input,'_token':'{{csrf_token()}}'}
 
 			$.ajax({
 				url:"{{ route('admin.ExcelDownloadCustomerTransactions') }}",
@@ -2065,6 +2066,12 @@
 
 		$('.selected_download_transactions').click(function(){
 			let selected_user = $('#selected_id_input').val();
+			let joined_from = $(".joined_from_date").val();
+	    	let joined_to = $(".joined_to_date").val();
+	    	let mobile_number = $(".mobile_number_wallet").val();
+	    	let customer_name_wallet = $(".customer_name_wallet").val();
+	    	let email = $(".email_wallet").val();
+
 			let search_txt = $(".form-control[type='search'][aria-controls='basic-datatables2']").val();
 			if(selected_user == ''){
 				$("#alert_text").text("Please select at least one customer from customer list.");
@@ -2072,7 +2079,7 @@
 				$("#validationModel").unbind("click");
 				return false;
 			}
-			var data_value = {selected_user,search_txt,'_token':'{{csrf_token()}}'}
+			var data_value = {selected_user,joined_from,joined_to,mobile_number,customer_name_wallet,email,search_txt,'_token':'{{csrf_token()}}'}
 			$.ajax({
 				url:"{{ route('admin.downloadWalletTransactions') }}",
 				type:"POST",

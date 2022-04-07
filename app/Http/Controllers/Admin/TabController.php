@@ -905,7 +905,30 @@ class TabController extends ResponseController
 
         $selected_ids = explode(',', $request->selected_user);
 
-       $wallet_transactions = WalletDetail::select(DB::raw("(select customer_id from users where id = wallet_details.user_id) AS 'Customer ID'"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where id = wallet_details.user_id) AS 'Customer Name'"),DB::raw("(select CONCAT(users.country_code, users.mobile_number) from users where id = wallet_details.user_id) AS 'Mobile Number'"),DB::raw("(select email from users where id = wallet_details.user_id) AS 'Email'"),"description as Description","cashback_earned as Cashback Earn","user_wallet_cash as Wallet Cash",DB::raw("DATE_FORMAT(date_and_time, '%d-%M-%Y %H:%i %p') AS 'Date and Time Added'"),"id")->whereIn('wallet_details.user_id',$selected_ids);
+       $wallet_transactions = WalletDetail::select(DB::raw("(select customer_id from users where id = wallet_details.user_id) AS 'Customer ID'"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where id = wallet_details.user_id) AS 'Customer Name'"),DB::raw("(select CONCAT(users.country_code, users.mobile_number) from users where id = wallet_details.user_id) AS 'Mobile Number'"),DB::raw("(select email from users where id = wallet_details.user_id) AS 'Email'"),"description as Description","cashback_earned as Cashback Earn","user_wallet_cash as Wallet Cash",DB::raw("DATE_FORMAT(date_and_time, '%d-%M-%Y %H:%i %p') AS 'Date and Time Added'"),"id")->whereIn('wallet_details.user_id',$selected_ids)
+           ->where(function($query) use ($request){
+
+                    if($request->joined_from && $request->joined_to){
+                        $query->whereBetween(DB::raw('date(created_at + interval 4 hour)'),[$request->joined_from, $request->joined_to]);
+                    }else if($request->joined_from){
+                        $query->where(DB::raw('date(created_at + interval 4 hour)'),'>=', $request->joined_from);
+                    }else if($request->joined_to){
+                        $query->where(DB::raw('date(created_at + interval 4 hour)'),'<=', $request->joined_to);
+                    }
+
+                    if($request->mobile_number){
+                        $query->where(DB::raw("(select CONCAT(users.country_code, users.mobile_number) from users where users.id = wallet_details.user_id)"), 'Like', '%' . $request->mobile_number . '%');
+                    }
+
+                    if($request->customer_name_wallet){
+                        $query->where(DB::raw("(select CONCAT(users.first_name,' ',users.last_name) from users where users.id = wallet_details.user_id)"), 'Like', '%' . $request->customer_name_wallet . '%');
+                    }
+
+                    if($request->email){
+                        $query->where(DB::raw("(select email from users where users.id = wallet_details.user_id)"), 'Like', '%' . $request->email . '%');
+                    }
+
+            });
        
        if(!empty($request->search_txt)){
             $search = $request->search_txt;
@@ -4582,7 +4605,9 @@ class TabController extends ResponseController
                 });
 
         }
-            $filter = $data->get()->count();
+        $pluck_txn = $data->pluck('id');
+        $user_ids_txn = $data->pluck('user_id');
+        $filter = $data->get()->count();
 
         $data = $data->offset($request->start);
         $data = $data->take($request->length);
@@ -4595,7 +4620,6 @@ class TabController extends ResponseController
         if($start_from % 10 == 0){
             $start_from = $start_from + 1;
         }
-
         foreach($data as $da){
             if($da->offer_product_ids){
                 $pluck_offer_ids = explode(",", $da->offer_product_ids);
@@ -4614,6 +4638,8 @@ class TabController extends ResponseController
             $da->updated_at =  $this->convert_to_user_date($da->updated_at, 'Y-m-d H:i:s');
 
             $da->user_wallet_cash = round($da->user_wallet_cash,2);
+            $da->pluck_txn = implode(",",$pluck_txn->toArray());
+            $da->user_ids_txn = implode(",",$user_ids_txn->toArray());
         }
         if($request->first_time == 'true' && empty($search)){
             $return_data = [
@@ -4692,9 +4718,9 @@ class TabController extends ResponseController
         ->where('wallet_transactions.deleted_at',null)
         ->with('offerProductIds');
 
-        if($request->selected_wallet_ids_txn != null){
-            $selected_ids = explode(',',$request->selected_wallet_ids_txn );
-            $data->whereIn('wallet_transactions.id',$selected_ids);
+        if($request->selected_user_id != null){
+            $selected_ids = explode(',',$request->selected_user_id );
+            $data->whereIn('wallet_transactions.user_id',$selected_ids);
         }
 
         if(!empty($request->search_txt)){
