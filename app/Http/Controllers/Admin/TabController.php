@@ -521,11 +521,13 @@ class TabController extends ResponseController
 
             $tier_find = TierCondition::whereId($request->tier)->first();
 
-            $data = User::select("*",DB::raw('CONCAT(users.first_name, " ", users.last_name) AS full_name'),DB::raw('CONCAT(users.country_code,users.mobile_number) AS country_code_with_phone_number'),DB::raw("DATE_FORMAT(dob, '%d-%M-%Y') AS dob"),DB::raw("DATE_FORMAT(created_at, '%d-%M-%Y') AS join_date"))
+            $data = User::select("*",DB::raw('CONCAT(users.first_name, " ", users.last_name) AS full_name'),DB::raw('CONCAT(users.country_code,users.mobile_number) AS country_code_with_phone_number'),DB::raw("DATE_FORMAT(dob, '%d-%M-%Y') AS dob"),DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d %h:%i') AS join_date"))
                 ->where(function($query) use ($request, $tier_find){
                     $query->whereDeletedAt(null);
                     if($request->joined_from && $request->joined_to){
-                        $query->whereBetween(DB::raw('date(created_at + interval 4 hour)'),[$request->joined_from, $request->joined_to]);
+                        $query->where(DB::raw('date(created_at + interval 4 hour)'),'>=', $request->joined_from);
+                        // $query->whereBetween(DB::raw('date(created_at + interval 4 hour)'),[$request->joined_from, $request->joined_to]);
+                        $query->where(DB::raw('date(created_at + interval 4 hour)'),'<=', $request->joined_to);
                     }else if($request->joined_from){
                         $query->where(DB::raw('date(created_at + interval 4 hour)'),'>=', $request->joined_from);
                     }else if($request->joined_to){
@@ -575,7 +577,7 @@ class TabController extends ResponseController
                         $query->orWhereDate(DB::raw("DATE_FORMAT(dob, '%d-%M-%Y')"), 'Like', '%' . $search . '%');
                         $query->orWhere('gender', 'Like', '%' . $search . '%');
                         $query->orWhere('is_active', 'Like', '%' . $search . '%');
-                        $query->orWhereDate(DB::raw("DATE_FORMAT(created_at, '%d-%M-%Y')"), 'Like', '%' . $search . '%');
+                        $query->orWhereDate(DB::raw('date(created_at + interval 4 hour)'), 'Like', '%' . $search . '%');
                         $query->orWhere('customer_tier', 'Like', '%' . $search . '%');
                         $query->orWhere('wallet_cash', 'Like', '%' . $search . '%');
                         $query->orWhere('reference_code', 'Like', '%' . $search . '%');
@@ -605,6 +607,8 @@ class TabController extends ResponseController
 
 
         foreach ($data as $k => $user_select) {
+
+            $user_select->created_at =  $this->convert_to_user_date($user_select->created_at, 'Y-m-d H:i:s');
                 
 
                 /*$view_user = url('admin/view_user').'/'.base64_encode($user_select->id);
