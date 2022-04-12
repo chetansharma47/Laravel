@@ -208,17 +208,19 @@ label.error {
               <div class="col-lg-12">
                 <div class="pt-5 pb-5 form-middle">
 				@include('admin.notification')
-                  <form class="user" method="POST" id="validate-form">
+                  <form class="user" method="POST" id="validate-form" autocomplete="off">
                   	{{@csrf_field()}}
                     <div class="form-group" style="padding-right: 0; padding-left: 0">
                     	<label>Login</label>
-                      <input type="text" class="form-control form-control-user" id="exampleInputEmail" onkeypress="return AvoidSpace(event)" aria-describedby="emailHelp" name="email" placeholder="Email Address">
+                      <input autocomplete="off" readonly="" onclick="this.removeAttribute(
+                    'readOnly')"; type="text" class="form-control form-control-user" id="exampleInputEmail" onkeypress="return AvoidSpace(event)" aria-describedby="emailHelp" name="email" placeholder="Email Address">
                     </div>
                     <div class="form-group" style="padding-right: 0; padding-left: 0">
                     	<label>Password</label>
                     	 <img src="{{url('public/admin/assets/img/eye.png')}}" id="eye" alt="eye"/>
                     	 <img src="{{url('public/admin/assets/img/eye-hide.png')}}" id="eye_hide" alt="eye_hide"/>
-                      <input type="password" class="form-control form-control-user" id="exampleInputPassword" onkeypress="return AvoidSpace(event)" placeholder="Password" name="password" style="font-family: 'Lato', sans-serif !important; padding-right: 50px;">
+                      <input type="password" readonly="" onclick="this.removeAttribute(
+                    'readOnly')"; class="form-control form-control-user" id="exampleInputPassword" onkeypress="return AvoidSpace(event)" placeholder="Password" name="password" style="font-family: 'Lato', sans-serif !important; padding-right: 50px;">
                     </div>
                     <div class="text-right">
                     	<a href="{{route('admin.forgotPassword')}}" style="color:#3ABD6F">Forgot Password?</a>

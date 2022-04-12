@@ -254,13 +254,13 @@ select.form-control.form-group.status_select:focus{
 							Username
 						</label>
 						<input type="hidden" name="token" value="{{ csrf_token() }}" id="token">
-						<input type="text" name="venue_username" id="venue_username" class="form-control form-control-user input-control" placeholder="Username" maxlength="30"/>
+						<input type="text" name="venue_username" id="venue_username" autocomplete="off" readonly onclick="this.removeAttribute('readOnly');" class="form-control form-control-user input-control" placeholder="Username" maxlength="30"/>
 					</div>
 					<div class="venue_inputs mb-3 px-2 pl-3">
 						<label style="font-weight: 400;">
 							Password
 						</label>
-						<input name="venue_user_password" id="venue_user_password" type="password" class="form-control form-control-user input-control" placeholder="Password"/>
+						<input name="venue_user_password"  autocomplete="off" readonly onclick="this.removeAttribute('readOnly');" id="venue_user_password" type="password" class="form-control form-control-user input-control" placeholder="Password"/>
 					</div>
 					<div class="venue_inputs mb-3 px-2 pl-3">
 						<label style="font-weight: 400;">

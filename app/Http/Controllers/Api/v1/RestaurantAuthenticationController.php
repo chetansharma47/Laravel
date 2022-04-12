@@ -72,7 +72,7 @@ class RestaurantAuthenticationController extends ResponseController
         }elseif($user_details['status'] == 5){
             return $this->responseWithErrorCode($user_details['error_msg'], 406);
         }elseif($user_details['status'] == 4){
-            return $this->responseWithErrorCode($user_details['error_msg'], 407);
+            return $this->responseWithErrorCode($user_details['error_msg'], 403);
         }else{
             return $this->responseOk('User has been logged in successfully.', ['login' => $user_details['data']]);
         }

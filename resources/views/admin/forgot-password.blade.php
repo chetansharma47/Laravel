@@ -194,11 +194,12 @@ label.error {
               <div class="col-lg-12">
                 <div class="pt-5 pb-5 form-middle">
 					@include('admin.notification')
-                  <form class="user" method="POST" id="validate-form">
+                  <form class="user" method="POST" id="validate-form" autocomplete="off">
                   	{{@csrf_field()}}
                     <div class="form-group" style="padding-right: 0; padding-left: 0">
                     	<label>Forgot Password</label>
-                      <input type="email" class="form-control form-control-user" id="exampleInputEmail" onkeypress="return AvoidSpace(event)" aria-describedby="emailHelp" name="email" placeholder="Email Address">
+                      <input type="email" readonly="" onclick="this.removeAttribute(
+                    'readOnly')"; class="form-control form-control-user" id="exampleInputEmail" onkeypress="return AvoidSpace(event)" aria-describedby="emailHelp" name="email" placeholder="Email Address">
                     </div>
                     
                     <button type="submit" class="btn btn-primary btn-user btn-block common_btn mt-5" id="submit_btn">

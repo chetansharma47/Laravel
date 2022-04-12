@@ -2966,15 +2966,13 @@ class TabController extends ResponseController
 
         $total_sales = WalletTransaction::where(DB::raw('date(created_at + interval 4 hour)'),'>=',$request->from_date)->where(DB::raw('date(created_at + interval 4 hour)'),'<=',$request->to_date)->whereIn('is_cross_verify',[1,3])->sum('total_bill_amount');
 
-        $cashback_earned = WalletTransaction::whereIn('is_cross_verify',[1,3])->where(DB::raw('date(created_at + interval 4 hour)'),'>=',$request->from_date)
-                ->where(DB::raw('date(created_at + interval 4 hour)'),'<=',$request->to_date)->sum(DB::raw('ROUND(cashback_earned,2)'));
+        // $cashback_earned = WalletTransaction::whereIn('is_cross_verify',[1,3])->where(DB::raw('date(created_at + interval 4 hour)'),'>=',$request->from_date)
+        //         ->where(DB::raw('date(created_at + interval 4 hour)'),'<=',$request->to_date)->sum(DB::raw('ROUND(cashback_earned,2)'));
 
         $cashback_earned_pluck_id = WalletTransaction::where(DB::raw('date(created_at + interval 4 hour)'),'>=',$request->from_date)->where(DB::raw('date(created_at + interval 4 hour)'),'<=',$request->to_date)->groupBy('user_id')->get(['user_id'])->pluck('user_id');
 
-        $cashbak_earned_wallet_other = WalletDetail::whereIn('user_id',$cashback_earned_pluck_id)->where(DB::raw('date(created_at + interval 4 hour)'),'>=',$request->from_date)
+        $cashback_earned = WalletDetail::whereIn('user_id',$cashback_earned_pluck_id)->where(DB::raw('date(created_at + interval 4 hour)'),'>=',$request->from_date)
                 ->where(DB::raw('date(created_at + interval 4 hour)'),'<=',$request->to_date)->sum(DB::raw('ROUND(cashback_earned,2)'));
-
-        $cashback_earned = $cashback_earned + $cashbak_earned_wallet_other;
 
         $redeemed_amount = WalletTransaction::where(DB::raw('date(created_at + interval 4 hour)'),'>=',$request->from_date)
                 ->where(DB::raw('date(created_at + interval 4 hour)'),'<=',$request->to_date)->sum('redeemed_amount');

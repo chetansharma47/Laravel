@@ -274,7 +274,7 @@
 						<label style="font-weight: 400;">
 							Username
 						</label>
-						<input type="text" class="form-control form-control-user admin_username" value="" maxlength="30" placeholder="Username" value="" style="border-radius: 10px"/>
+						<input type="text" autocomplete="off" readonly onclick="this.removeAttribute('readOnly');" class="form-control form-control-user admin_username" value="" maxlength="30" placeholder="Username" value="" style="border-radius: 10px"/>
 					</div>
 					<div class="venue_inputs mb-3 px-2 pl-3">
 						<label style="font-weight: 400;">
@@ -283,7 +283,7 @@
 						<div class="form-control-group">
 						<img src="{{url('public/admin/assets/img/eye.png')}}" id="eye" alt="eye"/>
                     	 <img src="{{url('public/admin/assets/img/eye-hide.png')}}" id="eye_hide" alt="eye_hide"/>
-						<input type="password" class="form-control form-control-user admin_password" id="admin_password" maxlength="65" placeholder="Password" value="" style="border-radius: 10px; font-family: 'Lato', sans-serif; padding-right: 35px!important;"/>
+						<input type="password" autocomplete="off" readonly onclick="this.removeAttribute('readOnly');" class="form-control form-control-user admin_password" id="admin_password" maxlength="65" placeholder="Password" value="" style="border-radius: 10px; font-family: 'Lato', sans-serif; padding-right: 35px!important;"/>
 							
 						</div>
 					</div>
