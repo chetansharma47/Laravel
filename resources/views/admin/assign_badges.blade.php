@@ -410,13 +410,13 @@ table#basic-datatables {
 							<label>
 								From Date
 							</label>
-							<input type="date" class="form-control form-control-user" placeholder="From Date" value="" id="from_date" min="{{$current_date}}">
+							<input type="date" class="form-control form-control-user" placeholder="From Date" value="" id="from_date" >
 						</div>
 						<div class="col-md-3 venue_inputs">
 							<label>
 								To Date
 							</label>
-							<input type="date" class="form-control form-control-user" placeholder="To Date" value="" id="to_date" min="{{$current_date}}">
+							<input type="date" class="form-control form-control-user" placeholder="To Date" value="" id="to_date">
 						</div>
 						<div class="col-md-6 venue_inputs">
 							<div class="">
