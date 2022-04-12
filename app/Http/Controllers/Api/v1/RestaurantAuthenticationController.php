@@ -1449,7 +1449,7 @@ class RestaurantAuthenticationController extends ResponseController
             $wallet_transaction3->type_of_transactions = "Refer";
             $wallet_transaction3->refer_amount = $user_find->refer_amount;
             $wallet_transaction3->wallet_amount_user = $refer_user_find->wallet_cash;
-            $wallet_transaction2->save();
+            $wallet_transaction3->save();
 
 
             if($admin_refer_notification->push_type == 1){
