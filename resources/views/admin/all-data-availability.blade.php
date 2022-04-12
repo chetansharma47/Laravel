@@ -2201,6 +2201,13 @@
 		$('input[type="Date"]').on('change',function(){
 			$(this).blur();
 		});
+
+		$('input[type=search][aria-controls=basic-datatables4]').on('keyup',function(){
+			$('#selected_id_input').attr('value','');
+			$('#selected_wallet_id_input').attr('value','');
+			$("#basic-datatables2").dataTable().fnDestroy();
+			selected_customer_wallet_transactions();
+		});
 	});
 	
 

@@ -243,7 +243,7 @@
 			<div class="d-flex justify-content-between graph_text graph_text_dirham_earn">
 				<h3></h3>
 				<h3 class="text-center">
-					Dirhams Earnings
+					Customer Dirhams
 					<span class="value">0</span>
 				</h3>
 			</div>	
@@ -452,11 +452,26 @@
 
 	function customer_dirshams_wallet_cash(response){
 		var arr = [];
+		let year = [];
 		for (var i = 0; i < response.length; i++){
 			arr.push(response[i]["x"]);
 			response[i]["x"] = new Date(response[i]["x"]);
+			var year_set = response[i]["x"];
+			year.push(year_set.getFullYear());
 		}
+		uniqueItems = [... new Set(year)];
+
+		console.log(uniqueItems);
+
+		uniqueItemsLength = uniqueItems.length;
+
+		get_actual_month = uniqueItemsLength * 12;
+
+		console.log(get_actual_month);
+
+
 		let intervalCustom = arr.length <= 1 ? 0 : 1;
+
 		var chart = new CanvasJS.Chart("chartContainer2", {
 		animationEnabled: true,
 		exportEnabled: true,
@@ -509,7 +524,7 @@
 			valueFormatString: "DD MMM YYYY"
 		},
 		axisY: {
-			title: "Total Dirhams Earned",
+			title: "Total Dirhams Redeemed",
 			titleFontColor: "#4F81BC",
 			includeZero: true,
 			crosshair:{
