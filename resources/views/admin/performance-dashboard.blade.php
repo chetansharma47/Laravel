@@ -370,12 +370,38 @@
 	}
 	function registeredusers(response){
 		var arr = [];
+		var year = [];
+		var diffDays, date2, date1;
 		for (var i = 0; i < response.length; i++){
 			arr.push(response[i]["x"]);
 			response[i]["x"] = new Date(response[i]["x"]);
+			var year_set = response[i]["x"];
+			year.push(year_set.getFullYear());
+
+			if(response.length > 1){
+				date1 = new Date(response[0]["x"]);
+				date2 = new Date(response[i]["x"]);
+				diffDays = parseInt((date2 - date1) / (1000 * 60 * 60 * 24), 10); 
+			}
 		}
 
-		let intervalCustom = arr.length <= 1 ? 0 : 1;
+		if(diffDays == undefined || diffDays < 30 ){
+			intervalCustom = 0;
+			intervalTypeCustom = 'day';
+		}else if(diffDays >= 30 || diffDays <= 365){
+			intervalCustom = 1;
+			intervalTypeCustom = 'month';
+		}else if(diffDays > 365){
+			uniqueItems = [... new Set(year)];
+			uniqueItemsLength = uniqueItems.length;
+			monthLength = uniqueItemsLength * 12;
+			
+			if(monthLength > 12){
+				intervalCustom = monthLength / 12;
+				intervalTypeCustom = 'month';
+			}
+
+		}
 
 		var chart = new CanvasJS.Chart("chartContainer", {
 		animationEnabled: true,
@@ -386,7 +412,7 @@
 		},
 		axisX:{
 			interval: intervalCustom,
-			intervalType: "day",
+			intervalType: intervalTypeCustom,
 			valueFormatString: "DD MMM YYYY"
 		},
 		axisY: {
@@ -411,12 +437,32 @@
 
 	function totalsales(response){
 		var arr = [];
+		var month = [];
 		for (var i = 0; i < response.length; i++){
 			arr.push(response[i]["x"]);
 			response[i]["x"] = new Date(response[i]["x"]);
+			var month_set = response[i]["x"];
+			month.push(month_set.getMonth());
 		}
 
-		let intervalCustom = arr.length <= 1 ? 0 : 1;
+		uniqueItems = [... new Set(month)];
+
+		monthLength = uniqueItems.length;
+		if(monthLength <= 12 && monthLength > 1){
+			intervalCustom = 1;
+			intervalTypeCustom = 'month';
+		}else if(monthLength >= 12){
+			intervalCustom = monthLength / 12;
+			intervalTypeCustom = 'month';
+		}else if(monthLength == 1){
+			intervalCustom = 1;
+			intervalTypeCustom = 'day';
+		}else{
+			intervalCustom = 0;
+			intervalTypeCustom = 'day';
+		}
+
+		// let intervalCustom = arr.length <= 1 ? 0 : 1;
 
 		var chart = new CanvasJS.Chart("chartContainer1", {
 		animationEnabled: true,
@@ -427,7 +473,7 @@
 		},
 		axisX:{
 			interval: intervalCustom ,
-			intervalType: "day",
+			intervalType: intervalTypeCustom ,
 			valueFormatString: "DD MMM YYYY",
 		},
 		axisY: {
@@ -461,16 +507,20 @@
 		}
 		uniqueItems = [... new Set(year)];
 
-		console.log(uniqueItems);
-
 		uniqueItemsLength = uniqueItems.length;
 
 		get_actual_month = uniqueItemsLength * 12;
 
-		console.log(get_actual_month);
+		if(get_actual_month <= 12 && get_actual_month >= 1){
+			intervalCustom = 1;
+		}else if(get_actual_month >= 12){
+			intervalCustom = get_actual_month / 12;
+		}else{
+			intervalCustom = 0;
+		}
 
 
-		let intervalCustom = arr.length <= 1 ? 0 : 1;
+		// let intervalCustom = arr.length <= 1 ? 0 : 1;
 
 		var chart = new CanvasJS.Chart("chartContainer2", {
 		animationEnabled: true,
@@ -506,11 +556,33 @@
 
 	function redeemed_amount_trends(response){
 		var arr = [];
+		var month = [];
 		for (var i = 0; i < response.length; i++){
 			arr.push(response[i]["x"]);
 			response[i]["x"] = new Date(response[i]["x"]);
+			var month_set = response[i]["x"];
+			month.push(month_set.getMonth());
 		}
-		let intervalCustom = arr.length <= 1 ? 0 : 1;
+
+
+		uniqueItems = [... new Set(month)];
+
+		monthLength = uniqueItems.length;
+		if(monthLength <= 12 && monthLength > 1){
+			intervalCustom = 1;
+			intervalTypeCustom = 'month';
+		}else if(monthLength >= 12){
+			intervalCustom = monthLength / 12;
+			intervalTypeCustom = 'month';
+		}else if(monthLength == 1){
+			intervalCustom = 1;
+			intervalTypeCustom = 'day';
+		}else{
+			intervalCustom = 0;
+			intervalTypeCustom = 'day';
+		}
+
+		// let intervalCustom = arr.length <= 1 ? 0 : 1;
 		var chart = new CanvasJS.Chart("chartContainer3", {
 		animationEnabled: true,
 		exportEnabled: true,
@@ -520,7 +592,7 @@
 		},
 		axisX:{
 			interval: intervalCustom,
-			intervalType: "day",
+			intervalType: intervalTypeCustom,
 			valueFormatString: "DD MMM YYYY"
 		},
 		axisY: {

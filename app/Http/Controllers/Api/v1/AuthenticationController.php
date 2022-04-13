@@ -67,7 +67,7 @@ class AuthenticationController extends ResponseController
         if(!empty($check_mobile_number)){
             $this->responseWithErrorValidation("Mobile number already registered with us. Please use another mobile number.");
         }
-        date_default_timezone_set($request->timezone);
+        // date_default_timezone_set($request->timezone);
         $profile = $request->file('image');
         if($profile){
 
