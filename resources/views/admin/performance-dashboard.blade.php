@@ -386,7 +386,7 @@
 		}
 
 		if(diffDays == undefined || diffDays < 30 ){
-			intervalCustom = 0;
+			intervalCustom = 1;
 			intervalTypeCustom = 'day';
 		}else if(diffDays >= 30 || diffDays <= 365){
 			intervalCustom = 1;
