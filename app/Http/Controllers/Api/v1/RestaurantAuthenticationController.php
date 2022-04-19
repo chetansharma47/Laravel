@@ -1441,15 +1441,26 @@ class RestaurantAuthenticationController extends ResponseController
             $refer_user_find->wallet_cash = $refer_user_find->wallet_cash + $user_find->refer_amount;
             $refer_user_find->update();
 
-            $wallet_transaction3 = new WalletTransaction();
-            $wallet_transaction3->user_id = $refer_user_find->id;
-            $wallet_transaction3->venu_id = $venue_find->id;
-            $wallet_transaction3->description = "Referral Earnings";
-            $wallet_transaction3->date_and_time = Carbon::now()->toDateString(). " ". Carbon::now()->toTimeString();
-            $wallet_transaction3->type_of_transactions = "Refer";
-            $wallet_transaction3->refer_amount = $user_find->refer_amount;
-            $wallet_transaction3->wallet_amount_user = $refer_user_find->wallet_cash;
-            $wallet_transaction3->save();
+            // $wallet_transaction3 = new WalletTransaction();
+            // $wallet_transaction3->user_id = $refer_user_find->id;
+            // $wallet_transaction3->venu_id = $venue_find->id;
+            // $wallet_transaction3->description = "Referral Earnings";
+            // $wallet_transaction3->date_and_time = Carbon::now()->toDateString(). " ". Carbon::now()->toTimeString();
+            // $wallet_transaction3->type_of_transactions = "Refer";
+            // $wallet_transaction3->refer_amount = $user_find->refer_amount;
+            // $wallet_transaction3->wallet_amount_user = $refer_user_find->wallet_cash;
+            // $wallet_transaction3->save();
+
+            if($user_find->refer_amount > 0){
+                $wallet_detail3 = new WalletDetail();
+                $wallet_detail3->user_id = $refer_user_find->id;
+                $wallet_detail3->description = "Referral Earnings";
+                $wallet_detail3->cashback_earned = $user_find->refer_amount;
+                $wallet_detail3->date_and_time = Carbon::now()->toDateString(). " ". Carbon::now()->toTimeString();
+                $wallet_detail3->type_of_transaction = "Refer";
+                $wallet_detail3->user_wallet_cash = $refer_user_find->wallet_cash;
+                $wallet_detail3->save();
+            }
 
 
             if($admin_refer_notification->push_type == 1){

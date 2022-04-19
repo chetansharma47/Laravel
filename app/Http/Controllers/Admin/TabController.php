@@ -2915,7 +2915,7 @@ class TabController extends ResponseController
 
             // selectRaw("DATE_FORMAT(created_at, '%Y-%m-%e') x, COUNT(*) y")
 
-        $customer_registrations_trends = User::selectRaw("DATE_FORMAT(created_at, '%Y-%m-%d') x, COUNT(*) y")
+        $customer_registrations_trends = User::selectRaw("DATE_FORMAT(created_at + interval 4 hour, '%Y-%m-%d') x, COUNT(*) y")
             ->where(DB::raw('date(created_at + interval 4 hour)'),'>=',$request->from_date)
             ->where(DB::raw('date(created_at + interval 4 hour)'),'<=',$request->to_date)
             ->groupBy('x')
@@ -2935,14 +2935,14 @@ class TabController extends ResponseController
         //     ->whereIn('is_cross_verify',[1,3])
         //     ->pluck('id');
 
-        $totalsales_amount_trends = WalletTransaction::selectRaw("SUM(total_bill_amount) y, DATE_FORMAT(created_at, '%Y-%m-%d') x")->where(DB::raw('date(created_at + interval 4 hour)'),'>=',$request->from_date)
+        $totalsales_amount_trends = WalletTransaction::selectRaw("SUM(total_bill_amount) y, DATE_FORMAT(created_at + interval 4 hour, '%Y-%m-%d') x")->where(DB::raw('date(created_at + interval 4 hour)'),'>=',$request->from_date)
             ->where(DB::raw('date(created_at + interval 4 hour)'),'<=',$request->to_date)
             ->groupBy('x')
             ->orderBy('x', 'asc')
             ->whereIn('is_cross_verify',[1,3])
             ->get();
 
-        $redeemed_amount_trends = WalletTransaction::selectRaw("SUM(redeemed_amount) y, DATE_FORMAT(created_at, '%Y-%m-%d') x")->where(DB::raw('date(created_at + interval 4 hour)'),'>=',$request->from_date)
+        $redeemed_amount_trends = WalletTransaction::selectRaw("SUM(redeemed_amount) y, DATE_FORMAT(created_at + interval 4 hour, '%Y-%m-%d') x")->where(DB::raw('date(created_at + interval 4 hour)'),'>=',$request->from_date)
             ->where(DB::raw('date(created_at + interval 4 hour)'),'<=',$request->to_date)
             ->groupBy('x')
             ->orderBy('x', 'asc')

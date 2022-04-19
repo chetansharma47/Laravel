@@ -35,7 +35,7 @@ class AssignBadgeMail extends Mailable
     {
         $general_setting = GeneralSetting::all();
         return $this->from(env('MAIL_USERNAME'), 'Capital Motion')
-        ->subject('Assign Badge')
+        ->subject($this->find_badge->badge_name.' Badge Assigned')
         ->view('admin.email.assign-badge-email')
         ->with([
             'find_user'   => $this->find_user,
