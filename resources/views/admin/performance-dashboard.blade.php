@@ -388,10 +388,10 @@
 		if(diffDays == undefined ){
 			intervalCustom = 0;
 			intervalTypeCustom = 'day';
-		}else if(diffDays < 30 || diffDays > 1){
+		}else if(diffDays < 30 && diffDays > 1){
 			intervalCustom = 1;
 			intervalTypeCustom = 'day';
-		}else if(diffDays >= 30 || diffDays <= 365){
+		}else if(diffDays >= 30 && diffDays <= 365){
 			intervalCustom = 1;
 			intervalTypeCustom = 'month';
 		}else if(diffDays > 365){
@@ -574,32 +574,41 @@
 	function redeemed_amount_trends(response){
 		var arr = [];
 		var month = [];
+		var diffDays, date2, date1;
 		for (var i = 0; i < response.length; i++){
 			arr.push(response[i]["x"]);
 			response[i]["x"] = new Date(response[i]["x"]);
 			var month_set = response[i]["x"];
 			month.push(month_set.getMonth());
-		}
 
+			if(response.length > 1){
+				date1 = new Date(response[0]["x"]);
+				date2 = new Date(response[i]["x"]);
+				diffDays = parseInt((date2 - date1) / (1000 * 60 * 60 * 24), 10); 
+			}
+		}
 
 		uniqueItems = [... new Set(month)];
 
 		monthLength = uniqueItems.length;
-		if(monthLength <= 12 && monthLength > 1){
+
+		if(diffDays == undefined ){
+			intervalCustom = 0;
+			intervalTypeCustom = 'day';
+		}else if(monthLength == 1){
+			intervalCustom = 1;
+			intervalTypeCustom = 'day';
+		}else if(monthLength <= 12 && monthLength > 1){
 			intervalCustom = 1;
 			intervalTypeCustom = 'month';
 		}else if(monthLength >= 12){
 			intervalCustom = monthLength / 12;
 			intervalTypeCustom = 'month';
-		}else if(monthLength == 1){
-			intervalCustom = 1;
-			intervalTypeCustom = 'day';
 		}else{
 			intervalCustom = 0;
 			intervalTypeCustom = 'day';
 		}
 
-		// let intervalCustom = arr.length <= 1 ? 0 : 1;
 		var chart = new CanvasJS.Chart("chartContainer3", {
 		animationEnabled: true,
 		exportEnabled: true,
