@@ -734,8 +734,8 @@
 				  		var users_referral = thousand_format(data.customer_referal);
 				  		$('.user_referrals h3').text(users_referral);
 				  		
-				  		var cashback_earned = thousand_format(data.cashback_earned);
-				  		$('.customer_dirham_earned h3').text(cashback_earned);
+				  		var customer_dirhams_wallet = thousand_format(data.customer_dirhams_wallet);
+				  		$('.customer_dirham_earned h3').text(customer_dirhams_wallet);
 				  		$('.graph_text_dirham_earn h3 span.value').text(data.cashback_earned);
 				  		customer_dirshams_wallet_cash(data.cashback_earnings_trends);
 
