@@ -243,7 +243,7 @@
 			<div class="d-flex justify-content-between graph_text graph_text_dirham_earn">
 				<h3></h3>
 				<h3 class="text-center">
-					Customer Dirhams
+					Customer Dirhams Earned
 					<span class="value">0</span>
 				</h3>
 			</div>	
@@ -385,10 +385,12 @@
 			}
 		}
 
+		console.log(diffDays);	
+
 		if(diffDays == undefined ){
 			intervalCustom = 0;
 			intervalTypeCustom = 'day';
-		}else if(diffDays < 30 && diffDays > 1){
+		}else if(diffDays < 30 && diffDays >= 1){
 			intervalCustom = 1;
 			intervalTypeCustom = 'day';
 		}else if(diffDays >= 30 && diffDays <= 365){
@@ -405,6 +407,8 @@
 			}
 
 		}
+
+		console.log(intervalCustom , intervalTypeCustom);
 
 		var chart = new CanvasJS.Chart("chartContainer", {
 		animationEnabled: true,
@@ -515,25 +519,42 @@
 
 	function customer_dirshams_wallet_cash(response){
 		var arr = [];
-		let year = [];
+		var month = [];
+		var year = [];
+		var diffDays, date2, date1;
 		for (var i = 0; i < response.length; i++){
 			arr.push(response[i]["x"]);
 			response[i]["x"] = new Date(response[i]["x"]);
+			var month_set = response[i]["x"];
+			month.push(month_set.getMonth());
+
 			var year_set = response[i]["x"];
 			year.push(year_set.getFullYear());
+
+			if(response.length > 1){
+				date1 = new Date(response[0]["x"]);
+				date2 = new Date(response[i]["x"]);
+				diffDays = parseInt((date2 - date1) / (1000 * 60 * 60 * 24), 10); 
+			}
 		}
-		uniqueItems = [... new Set(year)];
+		uniqueItems = [... new Set(month)];
 
-		uniqueItemsLength = uniqueItems.length;
-
-		get_actual_month = uniqueItemsLength * 12;
-
-		if(get_actual_month <= 12 && get_actual_month >= 1){
+		monthLength = uniqueItems.length;
+		if(diffDays == undefined ){
+			intervalCustom = 0;
+			intervalTypeCustom = 'day';
+		}else if(monthLength == 1){
 			intervalCustom = 1;
-		}else if(get_actual_month >= 12){
-			intervalCustom = get_actual_month / 12;
+			intervalTypeCustom = 'day';
+		}else if(monthLength <= 12 && monthLength > 1){
+			intervalCustom = 1;
+			intervalTypeCustom = 'month';
+		}else if(monthLength >= 12){
+			intervalCustom = monthLength / 12;
+			intervalTypeCustom = 'month';
 		}else{
 			intervalCustom = 0;
+			intervalTypeCustom = 'day';
 		}
 
 
@@ -548,11 +569,11 @@
 		},
 		axisX:{
 			interval: intervalCustom,
-			intervalType: "month",
+			intervalType: intervalTypeCustom,
 			valueFormatString: "DD MMM YYYY"
 		},
 		axisY: {
-			title: "Total Number of Customer Dirhams",
+			title: "Total No. of Customer Dirhams Earned",
 			titleFontColor: "#4F81BC",
 			includeZero: true,
 			crosshair:{
@@ -713,10 +734,10 @@
 				  		var users_referral = thousand_format(data.customer_referal);
 				  		$('.user_referrals h3').text(users_referral);
 				  		
-				  		var customer_dirhams_wallet = thousand_format(data.customer_dirhams_wallet);
-				  		$('.customer_dirham_earned h3').text(customer_dirhams_wallet);
-				  		$('.graph_text_dirham_earn h3 span.value').text(data.customer_dirhams_wallet);
-				  		customer_dirshams_wallet_cash(data.customer_dirshams_wallet_cash_trends);
+				  		var cashback_earned = thousand_format(data.cashback_earned);
+				  		$('.customer_dirham_earned h3').text(cashback_earned);
+				  		$('.graph_text_dirham_earn h3 span.value').text(data.cashback_earned);
+				  		customer_dirshams_wallet_cash(data.cashback_earnings_trends);
 
 				  		var total_sales = thousand_format(data.total_sales);
 				  		$('.total_sales h3').text(total_sales);
