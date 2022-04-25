@@ -1514,8 +1514,9 @@ class RestaurantAuthenticationController extends ResponseController
             }
 
             if($admin_refer_notification->email_type == 1){
+                $message = $admin_refer_notification->message;
                 try{
-                    \Mail::to($refer_user_find->email)->send(new ReferralEmail($admin_refer_notification, $refer_user_find));
+                    \Mail::to($refer_user_find->email)->send(new ReferralEmail($admin_refer_notification, $refer_user_find, $message));
                 }catch(\Exception $ex){
                     //return $ex->getMessage();
                 }
