@@ -466,22 +466,49 @@
 		uniqueItems = [... new Set(month)];
 
 		monthLength = uniqueItems.length;
+		// if(diffDays == undefined ){
+		// 	intervalCustom = 0;
+		// 	intervalTypeCustom = 'day';
+		// }else if(monthLength == 1){
+		// 	intervalCustom = 1;
+		// 	intervalTypeCustom = 'day';
+		// }else if(monthLength <= 12 && monthLength > 1){
+		// 	intervalCustom = 1;
+		// 	intervalTypeCustom = 'month';
+		// }else if(monthLength >= 12){
+		// 	intervalCustom = monthLength / 12;
+		// 	intervalTypeCustom = 'month';
+		// }else{
+		// 	intervalCustom = 0;
+		// 	intervalTypeCustom = 'day';
+		// }
+
+
 		if(diffDays == undefined ){
 			intervalCustom = 0;
 			intervalTypeCustom = 'day';
-		}else if(monthLength == 1){
+		}else if(diffDays < 30 && diffDays >= 1){
 			intervalCustom = 1;
 			intervalTypeCustom = 'day';
-		}else if(monthLength <= 12 && monthLength > 1){
+		}else if(diffDays >= 30 && diffDays <= 365){
 			intervalCustom = 1;
 			intervalTypeCustom = 'month';
-		}else if(monthLength >= 12){
-			intervalCustom = monthLength / 12;
-			intervalTypeCustom = 'month';
+		}else if(diffDays > 365){
+			uniqueItems = [... new Set(year)];
+			uniqueItemsLength = uniqueItems.length;
+			monthLength = uniqueItemsLength * 12;
+			
+			if(monthLength > 12){
+				intervalCustom = monthLength / 12;
+				intervalTypeCustom = 'month';
+			}
 		}else{
 			intervalCustom = 0;
 			intervalTypeCustom = 'day';
 		}
+
+
+
 
 		// let intervalCustom = arr.length <= 1 ? 0 : 1;
 
@@ -540,18 +567,41 @@
 		uniqueItems = [... new Set(month)];
 
 		monthLength = uniqueItems.length;
+		// if(diffDays == undefined ){
+		// 	intervalCustom = 0;
+		// 	intervalTypeCustom = 'day';
+		// }else if(monthLength == 1){
+		// 	intervalCustom = 1;
+		// 	intervalTypeCustom = 'day';
+		// }else if(monthLength <= 12 && monthLength > 1){
+		// 	intervalCustom = 1;
+		// 	intervalTypeCustom = 'month';
+		// }else if(monthLength >= 12){
+		// 	intervalCustom = monthLength / 12;
+		// 	intervalTypeCustom = 'month';
+		// }else{
+		// 	intervalCustom = 0;
+		// 	intervalTypeCustom = 'day';
+		// }
+
 		if(diffDays == undefined ){
 			intervalCustom = 0;
 			intervalTypeCustom = 'day';
-		}else if(monthLength == 1){
+		}else if(diffDays < 30 && diffDays >= 1){
 			intervalCustom = 1;
 			intervalTypeCustom = 'day';
-		}else if(monthLength <= 12 && monthLength > 1){
+		}else if(diffDays >= 30 && diffDays <= 365){
 			intervalCustom = 1;
 			intervalTypeCustom = 'month';
-		}else if(monthLength >= 12){
-			intervalCustom = monthLength / 12;
-			intervalTypeCustom = 'month';
+		}else if(diffDays > 365){
+			uniqueItems = [... new Set(year)];
+			uniqueItemsLength = uniqueItems.length;
+			monthLength = uniqueItemsLength * 12;
+			
+			if(monthLength > 12){
+				intervalCustom = monthLength / 12;
+				intervalTypeCustom = 'month';
+			}
 		}else{
 			intervalCustom = 0;
 			intervalTypeCustom = 'day';
@@ -613,18 +663,41 @@
 
 		monthLength = uniqueItems.length;
 
+		// if(diffDays == undefined ){
+		// 	intervalCustom = 0;
+		// 	intervalTypeCustom = 'day';
+		// }else if(monthLength == 1){
+		// 	intervalCustom = 1;
+		// 	intervalTypeCustom = 'day';
+		// }else if(monthLength <= 12 && monthLength > 1){
+		// 	intervalCustom = 1;
+		// 	intervalTypeCustom = 'month';
+		// }else if(monthLength >= 12){
+		// 	intervalCustom = monthLength / 12;
+		// 	intervalTypeCustom = 'month';
+		// }else{
+		// 	intervalCustom = 0;
+		// 	intervalTypeCustom = 'day';
+		// }
+
 		if(diffDays == undefined ){
 			intervalCustom = 0;
 			intervalTypeCustom = 'day';
-		}else if(monthLength == 1){
+		}else if(diffDays < 30 && diffDays >= 1){
 			intervalCustom = 1;
 			intervalTypeCustom = 'day';
-		}else if(monthLength <= 12 && monthLength > 1){
+		}else if(diffDays >= 30 && diffDays <= 365){
 			intervalCustom = 1;
 			intervalTypeCustom = 'month';
-		}else if(monthLength >= 12){
-			intervalCustom = monthLength / 12;
-			intervalTypeCustom = 'month';
+		}else if(diffDays > 365){
+			uniqueItems = [... new Set(year)];
+			uniqueItemsLength = uniqueItems.length;
+			monthLength = uniqueItemsLength * 12;
+			
+			if(monthLength > 12){
+				intervalCustom = monthLength / 12;
+				intervalTypeCustom = 'month';
+			}
 		}else{
 			intervalCustom = 0;
 			intervalTypeCustom = 'day';

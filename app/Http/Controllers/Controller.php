@@ -561,7 +561,7 @@ class Controller extends BaseController
                 //->whereDate('from_date','<=',Carbon::now()->toDateString())
                 ->whereDate('to_date','>=',Carbon::now()->toDateString())
                 ->where('status','=','Active')
-                ->whereRaw("FIND_IN_SET(?, when_day) > 0", $today_days)
+                // ->whereRaw("FIND_IN_SET(?, when_day) > 0", $today_days)
                 ->get();
 
         $users = User::whereDeletedAt(null)->where('is_block','=',0)->where("is_active", "=", 'Active')->pluck('id');
