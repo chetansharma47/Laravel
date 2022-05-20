@@ -2727,6 +2727,7 @@ class TabController extends ResponseController
                     }
 
                     if($is_send == 1){
+                         $data['user_id'] = $user->id;
                         $noti_record_find = NotiRecord::whereUserId($user->id)->first();
 
                         if(empty($noti_record_find)){
