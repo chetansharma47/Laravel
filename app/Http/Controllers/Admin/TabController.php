@@ -136,7 +136,7 @@ class TabController extends ResponseController
 
                 $tier_cond_find->deleted_at = Carbon::now();
                 $tier_cond_find->update();
-             
+
                 $transaction_amount_check_last_days = 30;
                 $customer_tier_validity_check = 30;
                 $tier_setting = TierSetting::first();
@@ -222,7 +222,7 @@ class TabController extends ResponseController
 
             $tier_cond = TierCondition::where("unique_id_by_tier","=",$data['unique_id_by_tier'])->whereTierSettingId($tier_find->id)->first();
         }
-        
+
         if(!empty($tier_find)){
 
             if(!empty($tier_cond)){
@@ -291,7 +291,7 @@ class TabController extends ResponseController
         if ($request->isMethod('POST')) {
             $column = "id";
             $asc_desc = $request->get("order")[0]['dir'];
-         
+
             if($asc_desc == "asc"){
                 $asc_desc = "desc";
             }else{
@@ -322,7 +322,7 @@ class TabController extends ResponseController
 
         if($search){
             $data  = $data->where(function($query) use($search){
-                            
+
                             $query->orWhereHas('venueUser', function($insideQuery) use ($search){
                                 return $insideQuery->where('username', 'like', '%'.$search.'%');
                             });
@@ -338,7 +338,7 @@ class TabController extends ResponseController
                     });
 
             $filter = $data->get()->count();
-                            
+
         }
 
         $data = $data->offset($request->start);
@@ -356,7 +356,7 @@ class TabController extends ResponseController
 
 
         foreach ($data as $k => $user_select) {
-                
+
 
                 /*$view_user = url('admin/view_user').'/'.base64_encode($user_select->id);
                 $edit_user = url('admin/edit-user').'/'.base64_encode($user_select->id);
@@ -479,7 +479,7 @@ class TabController extends ResponseController
             $admin = Auth()->guard('admin')->user();
             $column = "id";
             $asc_desc = $request->get("order")[0]['dir'];
-         
+
             if($asc_desc == "asc"){
                 $asc_desc = "desc";
             }else{
@@ -552,7 +552,7 @@ class TabController extends ResponseController
 
                     if($request->mobile_number){
                         $query->where(DB::raw('CONCAT(users.country_code,users.mobile_number)'), 'Like', '%' . $request->mobile_number . '%');
-    
+
                     }
                 })->orderBy($column,$asc_desc);
         $total = $data->get()->count();
@@ -589,7 +589,7 @@ class TabController extends ResponseController
                     });
 
             $filter = $data->get()->count();
-                            
+
         }
 
         $data = $data->offset($request->start);
@@ -609,7 +609,7 @@ class TabController extends ResponseController
         foreach ($data as $k => $user_select) {
 
             // $user_select->created_at =  $this->convert_to_user_date($user_select->created_at, 'Y-m-d H:i:s');
-                
+
 
                 /*$view_user = url('admin/view_user').'/'.base64_encode($user_select->id);
                 $edit_user = url('admin/edit-user').'/'.base64_encode($user_select->id);
@@ -647,9 +647,9 @@ class TabController extends ResponseController
                         }
                     }else{
                         $user_select->customer_tier = "N/A";
-                    } 
+                    }
                 }
-                
+
                 $user_select->wallet_cash = round($user_select->wallet_cash,2);
             }
 
@@ -673,7 +673,7 @@ class TabController extends ResponseController
             }
             return response()->json($return_data);
         }
-        
+
 
     }
 
@@ -682,7 +682,7 @@ class TabController extends ResponseController
         $admin = Auth()->guard('admin')->user();
         $column = "id";
         $asc_desc = $request->get("order")[0]['dir'];
-         
+
         if($asc_desc == "asc"){
             $asc_desc = "desc";
         }else{
@@ -713,7 +713,7 @@ class TabController extends ResponseController
         }
 
         $selected_ids = explode(',', $request->selected_wallet_id);
-        
+
 
         $data = WalletDetail::select("id","description","cashback_earned","redeemed_amount","user_wallet_cash",DB::raw("DATE_FORMAT(date_and_time  + interval 4 hour, '%Y-%m-%d %H:%i:%s') AS date_and_time"),DB::raw("(select customer_id from users where id = wallet_details.user_id) AS customer_id"),DB::raw("(select email from users where id = wallet_details.user_id) AS email"),DB::raw("(select CONCAT(users.country_code, users.mobile_number) from users where id = wallet_details.user_id) AS mobile_number"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where id = wallet_details.user_id) AS full_name"))->whereIn('wallet_details.user_id',$selected_ids)
             ->where(function($query) use ($request){
@@ -740,7 +740,7 @@ class TabController extends ResponseController
 
         })->orderBy($column,$asc_desc);
 
-            
+
         $total = $data->get()->count();
 
         if(!empty($request->get("search")["value"])){
@@ -765,7 +765,7 @@ class TabController extends ResponseController
                     });
 
             $filter = $data->get()->count();
-                            
+
         }
 
         $data = $data->offset($request->start);
@@ -783,7 +783,7 @@ class TabController extends ResponseController
 
 
         foreach ($data as $k => $user_select) {
-                
+
             $user_select->DT_RowIndex = $start_from++;
 
             $user_select->user_wallet_cash = round($user_select->user_wallet_cash,2);
@@ -834,7 +834,7 @@ class TabController extends ResponseController
 
                     if($request->mobile_number){
                         $query->where(DB::raw('CONCAT(users.country_code, " ", users.mobile_number)'), 'Like', '%' . $request->mobile_number . '%');
-    
+
                     }
                 });
 
@@ -865,13 +865,13 @@ class TabController extends ResponseController
                     });
 
                 $data = $data->get()->pluck('id');
-                                
+
             }
         }else{
             $data = $data->get()->pluck('id');
 
         }
-
+        $request->session()->put('ids_data', $data);
         return response()->json(['ids_data' => $data]);
 
         // $users = User::whereDeletedAt(null)->select('customer_id as Customer Id', 'mobile_number as Mobile Number','first_name as First Name','last_name as Last Name','email as Email Id','nationality as Nationality','dob as DOB', 'gender as Gender','is_active as Status',DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d') AS Join_On"),'customer_tier as Customer Tier','wallet_cash as Wallet Cash','reference_code as Customer Referral Code','reference_by as Referral By')->orderBy("id","desc")->get()->toArray();
@@ -889,7 +889,12 @@ class TabController extends ResponseController
     }
 
     public function downloadUserAfterCriteria(Request $request,$ids_data){
-        $ids_data = explode(",", base64_decode($request->ids_data));
+        // $ids_data = explode(",", base64_decode($request->ids_data));
+        $ids_data = $request->session()->get('ids_data');
+        if(!$ids_data){
+            return abort(404);
+        }
+        $request->session()->pull('ids_data');
         $users = User::whereDeletedAt(null)->select('customer_id as Customer ID', DB::raw('CONCAT(users.country_code, users.mobile_number) AS "Mobile Number"'),'first_name as First Name','last_name as Last Name','email as Email ID','nationality as Nationality','dob as DOB', 'gender as Gender','is_active as Status',DB::raw("DATE_FORMAT(created_at + interval 4 hour, '%Y-%m-%d %H:%i:%s') AS Join_On"),'customer_tier as Customer Tier',DB::raw("ROUND(wallet_cash,2) AS 'Wallet Cash'"),'reference_code as Customer Referral Code','reference_by as Referral By')->orderBy("id","desc")->whereIn('users.id',$ids_data)->get()->toArray();
 
          return $download =  Excel::create('export-users', function($excel) use ($users){
@@ -933,7 +938,7 @@ class TabController extends ResponseController
                     }
 
             });
-       
+
        if(!empty($request->search_txt)){
             $search = $request->search_txt;
 
@@ -950,17 +955,23 @@ class TabController extends ResponseController
                             $query->orWhere(DB::raw("DATE_FORMAT(date_and_time  + interval 4 hour, '%d-%M-%Y %H:%i:%s')"), 'Like', '%' . $search . '%');
                         });
 
-                $wallet_transactions = $wallet_transactions->get()->pluck('id');               
+                $wallet_transactions = $wallet_transactions->get()->pluck('id');
             }
        }else{
             $wallet_transactions = $wallet_transactions->get()->pluck('id');
        }
 
+       $request->session()->put('ids_data' ,$wallet_transactions);
        return response()->json(['ids_data' => $wallet_transactions]);
     }
 
     public function downloadWalletTransactionsAfterSelectedUser(Request $request,$ids_data){
-        $ids_data = explode(",", base64_decode($request->ids_data));
+        // $ids_data = explode(",", base64_decode($request->ids_data));
+        $ids_data = $request->session()->get('ids_data');
+        if(!$ids_data){
+            return abort(404);
+        }
+        $request->session()->pull('ids_data');
         $wallet_transactions = WalletDetail::select(DB::raw("(select customer_id from users where id = wallet_details.user_id) AS 'Customer ID'"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where id = wallet_details.user_id) AS 'Customer Name'"),DB::raw("(select CONCAT(users.country_code, users.mobile_number) from users where id = wallet_details.user_id) AS 'Mobile Number'"),DB::raw("(select email from users where id = wallet_details.user_id) AS 'Email ID'"),"description as Description",DB::raw("ROUND(cashback_earned,2) AS 'Cashback Earned'"),DB::raw("ROUND(redeemed_amount,2) AS 'Redeemed Amount'"),DB::raw('ROUND(user_wallet_cash,2) as "Wallet Cash"'),DB::raw("DATE_FORMAT(date_and_time  + interval 4 hour, '%Y-%m-%d %H:%i:%s') AS 'Date and Time Added'"))->orderBy("wallet_details.id","desc")->whereIn('wallet_details.id',$ids_data)->get();
 
         foreach ($wallet_transactions as $value) {
@@ -984,7 +995,7 @@ class TabController extends ResponseController
         foreach ($data as $d) {
             $user_find = User::find($d['selected_data_id']);
             $user_find->update([ $d['selected_key_name'] => $d['text'] ]);
-            
+
             if(isset($d['selected_key_name']) && $d['selected_key_name'] == "first_name"){
                 User::whereIn('reference_code',array($user_find->self_reference_code))->update(['reference_by' => $user_find->first_name . " " . $user_find->last_name]);
             }else if(isset($d['selected_key_name']) && $d['selected_key_name'] == "last_name"){
@@ -1249,18 +1260,18 @@ class TabController extends ResponseController
     //              $data  = $data->where(function($query) use($search){
     //                     $query->orWhere(DB::raw("(select username from venue_users where id = assign_user_venues.venue_user_id)"), 'Like', '%'. $search . '%');
     //                     $query->orWhere(DB::raw("(select venue_name from venus where id = assign_user_venues.venu_id)"), 'Like', '%'. $search . '%');
-                       
+
     //                     $query->orWhere(DB::raw("(select status from venue_users where id = assign_user_venues.venue_user_id)"), 'Like', '%' . $search . '%');
     //                    /* $query->orWhere(DB::raw("DATE_FORMAT((select created_at from venue_users where id = assign_user_venues.venue_user_id),'%Y %M %d %H:%i:%s %p')"), 'Like', '%' . $search . '%');
     //                     $query->orWhere(DB::raw("DATE_FORMAT((select updated_at from venue_users where id = assign_user_venues.venue_user_id),'%Y %M %d %H:%i:%s %p')"), 'Like', '%' . $search . '%');*/
 
     //                      $query->orWhere(DB::raw("(select created_at from venue_users where id = assign_user_venues.venue_user_id)"), 'Like', '%' . $search . '%');
     //                     $query->orWhere(DB::raw("(select updated_at from venue_users where id = assign_user_venues.venue_user_id)"), 'Like', '%' . $search . '%');
-                        
+
     //                     $query->orWhere(DB::raw("(select created_by from venue_users where id = assign_user_venues.venue_user_id)"), 'Like', '%'. $search . '%');
     //                     $query->orWhere(DB::raw("(select updated_by from venue_users where id = assign_user_venues.venue_user_id)"), 'Like', '%'. $search . '%');
     //                 });
-            
+
 
 
     //             $filter = $data->get()->count();
@@ -1357,7 +1368,7 @@ class TabController extends ResponseController
                         // $query->orWhere('created_by', 'Like', '%'. $search . '%');
                         // $query->orWhere('updated_by', 'Like', '%'. $search . '%');
                     });
-            
+
 
 
                 $filter = $data->get()->count();
@@ -1406,7 +1417,7 @@ class TabController extends ResponseController
 
                     $venu_user_duplicate = VenueUser::where('id','!=', $v['data_id'])->where('username','=', $v['text'])->first();
                     if($venu_user_duplicate){
-                        
+
                         return response()->json(['venue_username_err' => "Username already exists."], 422);
                     }
                 }
@@ -1607,7 +1618,7 @@ class TabController extends ResponseController
                 return response()->json($saveOffer);
             }
                 return response()->json('Something went wrong.');
-            
+
         }
     }
 
@@ -1627,12 +1638,12 @@ class TabController extends ResponseController
              $data = $request->all();
              $offer_remove = Offer::whereUniqueId($request->uniq_id)->first();
              $user_assign_offer = UserAssignOffer::whereOfferId($offer_remove->id)->get();
-             
+
              foreach ($user_assign_offer as $key => $value){
                 $value->deleted_at = Carbon::now();
                 $value->update();
              }
-             
+
              if(!empty($offer_remove)){
                 $offer_remove->deleted_at = Carbon::now();
                 $offer_remove->update();
@@ -1759,7 +1770,7 @@ class TabController extends ResponseController
         $admin = Auth()->guard('admin')->user();
         $column = "id";
         $asc_desc = $request->get("order")[0]['dir'];
-     
+
         if($asc_desc == "asc"){
             $asc_desc = "desc";
         }else{
@@ -1806,7 +1817,7 @@ class TabController extends ResponseController
                     });
 
             $filter = $data->get()->count();
-                            
+
         }
 
         $data = $data->offset($request->start);
@@ -1824,7 +1835,7 @@ class TabController extends ResponseController
 
 
         foreach ($data as $k => $user_select) {
-                
+
 
                 /*$view_user = url('admin/view_user').'/'.base64_encode($user_select->id);
                 $edit_user = url('admin/edit-user').'/'.base64_encode($user_select->id);
@@ -1843,7 +1854,7 @@ class TabController extends ResponseController
 
 
                 $user_select->action = $btn;*/
-                
+
                 $user_select->DT_RowIndex = $start_from++;
             }
 
@@ -1870,11 +1881,11 @@ class TabController extends ResponseController
         if(!empty($find_user)){
 
             $badge_ids = AssignBadge::whereUserId($find_user->id)->pluck('badge_id');
-            $user_id[] = $find_user->id; 
+            $user_id[] = $find_user->id;
         }
         $column = "id";
         $asc_desc = $request->get("order")[0]['dir'];
-     
+
         if($asc_desc == "asc"){
             $asc_desc = "desc";
         }else{
@@ -1945,7 +1956,7 @@ class TabController extends ResponseController
                     });
 
             $filter = $data->get()->count();
-                            
+
         }
 
         $data = $data->offset($request->start);
@@ -1963,7 +1974,7 @@ class TabController extends ResponseController
 
 
         foreach ($data as $k => $user_select) {
-                
+
             $user_select->DT_RowIndex = $start_from++;
         }
 
@@ -2081,7 +2092,7 @@ class TabController extends ResponseController
                                 'noti_type' => 8,
                             ];
                             // AdminCriteriaNotification::create($criteria_data);
-                       
+
                        }
                     }
 
@@ -2101,11 +2112,11 @@ class TabController extends ResponseController
                                 'message'   => $message,
                                 'noti_type' => 8,
                             ];
-                        
+
                        }
                     }
                         AdminCriteriaNotification::create($criteria_data);
-                
+
             // }
 
 
@@ -2270,7 +2281,7 @@ class TabController extends ResponseController
     }
 
     public function editBadges(Request $request){
-        
+
         $admin = Auth::guard('admin')->user();
         if($admin->role_type == 'Staff'){
             return response()->json(['badge_name_error' => "Staff cannot be update badge."],422);
@@ -2550,9 +2561,9 @@ class TabController extends ResponseController
                     $destinationPath = storage_path(). DIRECTORY_SEPARATOR . env('ATTACHMENT_MAIL_STORAGE');
                     $imageName = date('mdYHis') . rand(10,100) . uniqid(). '.' . $extension;
                     $img_new = Image::make($file)->stream($extension, 50);
-            
+
                     file_put_contents($destinationPath. '/' . $imageName, $img_new);
-                    
+
                     //$file->move($destinationPath, $imageName);
                 }catch(\Exception $ex){
                     return response()->json(['message' => 'Please upload valid file.']);
@@ -2589,7 +2600,7 @@ class TabController extends ResponseController
         //             $destinationPath = storage_path(). DIRECTORY_SEPARATOR . env('ATTACHMENT_MAIL_STORAGE');
         //             $imageName = date('mdYHis') . rand(10,100) . uniqid().'.'.$extension;
         //         }
-                
+
         //         file_put_contents($destinationPath. '/' . $imageName, base64_decode($image1));
         //     }else{
         //         $imageName = null;
@@ -2637,7 +2648,7 @@ class TabController extends ResponseController
                return response()->json(['message' =>'Welcome email notification message updated successfully.']);
             }
         }
-        
+
     }
 
 
@@ -2647,16 +2658,16 @@ class TabController extends ResponseController
         $admin = Auth()->guard('admin')->user();
 
          date_default_timezone_set("UTC");
-         
-        ($request->msg_type == "Push") ? $push_type = 1 : $push_type = 0;  
-        ($request->msg_type == "Sms") ? $sms_type = 1 : $sms_type = 0;  
+
+        ($request->msg_type == "Push") ? $push_type = 1 : $push_type = 0;
+        ($request->msg_type == "Sms") ? $sms_type = 1 : $sms_type = 0;
 
         if($request->gender == "All"){
 
             if(!empty($request->nationality) && !empty($request->city_name)){
 
                 $users_notify = User::whereCityOfResidence($request->city_name)->whereNationality($request->nationality)->where('is_block','=',0)->where("is_active", "=", 'Active')->get();
-                
+
             }else if(!empty($request->city_name)){
                 $users_notify = User::whereCityOfResidence($request->city_name)->where('is_block','=',0)->where("is_active", "=", 'Active')->get();
             }else if(!empty($request->nationality)){
@@ -2701,16 +2712,16 @@ class TabController extends ResponseController
 
         if(!empty($users_notify)){
             if($request->msg_type == "Push"){
-                
+
                 foreach ($users_notify as $user){
                     $is_send = 1;
                     if(!empty($request->txn_start_date) && !empty($request->txn_end_date) && !empty($request->txn_amount_condition) && !empty($request->txn_from_price)){
                         $is_send = 0;
                         $wallet_transactions = WalletTransaction::whereUserId($user->id)->whereDate('created_at','>=',$request->txn_start_date)->whereDate('created_at','<=',$request->txn_end_date)->first();
-                        
+
                         if(!empty($wallet_transactions)){
                             if($request->txn_amount_condition == 'Greater Than'){
-                        
+
                                 if($wallet_transactions->pay_bill_amount >= $request->txn_from_price){
                                     $is_send = 1;
                                 }
@@ -2778,7 +2789,7 @@ class TabController extends ResponseController
                 }
 
                 return response()->json(['message' => $request->msg_type.' notification send successfully.']);
-                
+
             }
 
             if($request->msg_type == "Sms"){
@@ -2787,10 +2798,10 @@ class TabController extends ResponseController
                     if(!empty($request->txn_start_date) && !empty($request->txn_end_date) && !empty($request->txn_amount_condition) && !empty($request->txn_from_price)){
                         $is_send = 0;
                         $wallet_transactions = WalletTransaction::whereUserId($user->id)->whereDate('created_at','>=',$request->txn_start_date)->whereDate('created_at','<=',$request->txn_end_date)->first();
-                        
+
                         if(!empty($wallet_transactions)){
                             if($request->txn_amount_condition == 'Greater Than'){
-                        
+
                                 if($wallet_transactions->pay_bill_amount >= $request->txn_from_price){
                                     $is_send = 1;
                                 }
@@ -2823,11 +2834,11 @@ class TabController extends ResponseController
                         $save_notification = AdminCriteriaNotification::create($data);
                     }
                 }
-                
-                
+
+
 
                 return response()->json(['message' => $request->msg_type.' notification send successfully.']);
-                
+
             }
         }else{
             return response()->json(['message' => $request->msg_type.' notification criteria not match with any user.']);
@@ -2994,7 +3005,7 @@ class TabController extends ResponseController
       }else{
         $fraud_check = 0;
       }
-      
+
         $wallet_transactions_offers = WalletTransaction::whereDeletedAt(null)
                                     ->where(DB::raw('date(created_at + interval 4 hour)'),'>=',$request->from_date)
                                     ->where(DB::raw('date(created_at + interval 4 hour)'),'<=',$request->to_date)
@@ -3050,7 +3061,7 @@ class TabController extends ResponseController
         if(!empty($checkUser)){
             return response()->json(['username_err' => 'Username already exists.'],422);
         }
-        
+
         $delete_assign_user_venue = AssignUserVenue::whereVenueUserId($request->v_updateid)->delete();
         $find_venue_user = VenueUser::whereId($request->v_updateid)->first();
         $find_venue_user->username = $request->v_user ? $request->v_user : $find_venue_user->username;
@@ -3307,7 +3318,7 @@ class TabController extends ResponseController
                                             if (!empty($admin_cashback_notification_find->message)) {
                                                 $admin_cashback_notification_find->message = $admin_cashback_notification_find->message;
                                             }else{
-                                                $admin_cashback_notification_find->push_type = 0; 
+                                                $admin_cashback_notification_find->push_type = 0;
                                             }
                                         }
 
@@ -3328,7 +3339,7 @@ class TabController extends ResponseController
                                         // }else{
                                         //     $admin_cashback_notification_find->message = $admin_cashback_notification_find->message;
                                         //     if(empty($admin_cashback_notification_find->message)){
-                                        //         $admin_cashback_notification_find->push_type = 0; 
+                                        //         $admin_cashback_notification_find->push_type = 0;
                                         //     }
                                         // }
 
@@ -3364,7 +3375,7 @@ class TabController extends ResponseController
                                                         'updated_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString(),
                                                     ];
                                                     // AdminCriteriaNotification::create($criteria_data);
-                                               
+
                                                }
                                             }
 
@@ -3385,7 +3396,7 @@ class TabController extends ResponseController
                                                         'updated_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString()
                                                     ];
                                                     // AdminCriteriaNotification::create($criteria_data);
-                                                
+
                                                }
                                             }
                                                     AdminCriteriaNotification::create($criteria_data);
@@ -3443,7 +3454,7 @@ class TabController extends ResponseController
 
                                      $total_amount_transaction = $total_amount_transaction;
 
-                                     $amount_between_tier_find = TierCondition::whereDeletedAt(null)->where('from_amount', '<=', 
+                                     $amount_between_tier_find = TierCondition::whereDeletedAt(null)->where('from_amount', '<=',
                                     $total_amount_transaction)->where('to_amount', '>=', $total_amount_transaction)->first();
                                     if(empty($amount_between_tier_find)){
 
@@ -3451,7 +3462,7 @@ class TabController extends ResponseController
                                         $amount_between_tier_find = TierCondition::whereDeletedAt(null)->where('to_amount','<=', $total_amount_transaction)->orderBy('to_amount','desc')->first();
 
                                         if(!empty($amount_between_tier_find)){
-                                            
+
                                             $last_tier_update_date = Carbon::parse($user_find->tier_update_date);
                                             $diffrence_in_days_for_tier = $last_tier_update_date->diffInDays(Carbon::now());
 
@@ -3519,80 +3530,81 @@ class TabController extends ResponseController
                                             $wallet_detail3->type_of_transaction = "Refer";
                                             $wallet_detail3->user_wallet_cash = $refer_user_find->wallet_cash;
                                             $wallet_detail3->save();
+
+                                            if($admin_refer_notification->push_type == 1){
+                                                $noti_record_find = NotiRecord::whereUserId($refer_user_find->id)->first();
+
+                                                if(empty($noti_record_find)){
+                                                    $save_noti_record = new NotiRecord();
+                                                    $save_noti_record->user_id = $refer_user_find->id;
+                                                    $save_noti_record->wallet = 1;
+                                                    $save_noti_record->save();
+
+                                                }else{
+                                                    $noti_record_find->wallet = $noti_record_find->wallet + 1;
+                                                    $noti_record_find->update();
+                                                }
+
+                                                if($refer_user_find->device_type == 'Android'){
+                                                    if($refer_user_find->device_token && strlen($refer_user_find->device_token) > 20){
+
+                                                        $total_noti_record = NotiRecord::whereUserId($refer_user_find->id)->sum(DB::raw('wallet + offer + event + normal'));
+                                                        try{
+                                                       $android_notify =  $this->send_android_notification_new($refer_user_find->device_token, $admin_refer_notification->message, $notmessage = "Referral Bonus Notification", $noti_type = 4, null, null, $total_noti_record);
+                                                       } catch (\Exception $e) {
+                                                            continue;
+                                                        }
+
+                                                       $criteria_data = [
+                                                            'user_id'   => $refer_user_find->id,
+                                                            'message'   => $admin_refer_notification->message,
+                                                            'noti_type' => 4
+                                                        ];
+                                                        // AdminCriteriaNotification::create($criteria_data);
+
+                                                   }
+                                                }
+
+                                                if($refer_user_find->device_type == 'Ios' && strlen($refer_user_find->device_token) > 20){
+                                                    if($refer_user_find->device_token){
+
+                                                        $total_noti_record = NotiRecord::whereUserId($refer_user_find->id)->sum(DB::raw('wallet + offer + event + normal'));
+                                                        try{
+                                                        $ios_notify =  $this->iphoneNotification($refer_user_find->device_token, $admin_refer_notification->message, $notmessage = "Referral Bonus Notification", $noti_type = 4, null, null, $total_noti_record);
+                                                        } catch (\Exception $e) {
+                                                            continue;
+                                                        }
+
+                                                        $criteria_data = [
+                                                            'user_id'   => $refer_user_find->id,
+                                                            'message'   => $admin_refer_notification->message,
+                                                            'noti_type' => 4
+                                                        ];
+                                                        // AdminCriteriaNotification::create($criteria_data);
+                                                   }
+                                                }
+                                                        AdminCriteriaNotification::create($criteria_data);
+                                            }
+
+                                            if($admin_refer_notification->email_type == 1){
+                                                $message = $admin_refer_notification->message;
+                                                $notificationJobR = (new ReferMailSend($admin_refer_notification, $refer_user_find, $message))->delay(Carbon::now()->addSeconds(3));
+                                                dispatch($notificationJobR);
+                                            }
+
+                                            if($admin_refer_notification->sms_type == 1){
+                                                \SMSGlobal\Credentials::set(env('SMS_GLOBAL_API'),env('SMS_GLOBAL_SECERET'));
+                                                $sms = new \SMSGlobal\Resource\Sms();
+                                                $message = $admin_refer_notification->message;
+                                                try {
+                                                    $response = $sms->sendToOne($refer_user_find->country_code.$refer_user_find->mobile_number, $message,'CM-Society');
+                                                } catch (\Exception $e) {
+                                                    continue;
+                                                }
+                                            }
                                         }
 
 
-                                        if($admin_refer_notification->push_type == 1){
-                                            $noti_record_find = NotiRecord::whereUserId($refer_user_find->id)->first();
-
-                                            if(empty($noti_record_find)){
-                                                $save_noti_record = new NotiRecord();
-                                                $save_noti_record->user_id = $refer_user_find->id;
-                                                $save_noti_record->wallet = 1;
-                                                $save_noti_record->save();
-
-                                            }else{
-                                                $noti_record_find->wallet = $noti_record_find->wallet + 1;
-                                                $noti_record_find->update();
-                                            }
-
-                                            if($refer_user_find->device_type == 'Android'){
-                                                if($refer_user_find->device_token && strlen($refer_user_find->device_token) > 20){
-
-                                                    $total_noti_record = NotiRecord::whereUserId($refer_user_find->id)->sum(DB::raw('wallet + offer + event + normal'));
-                                                    try{
-                                                   $android_notify =  $this->send_android_notification_new($refer_user_find->device_token, $admin_refer_notification->message, $notmessage = "Referral Bonus Notification", $noti_type = 4, null, null, $total_noti_record);
-                                                   } catch (\Exception $e) {
-                                                        continue;
-                                                    }
-
-                                                   $criteria_data = [
-                                                        'user_id'   => $refer_user_find->id,
-                                                        'message'   => $admin_refer_notification->message,
-                                                        'noti_type' => 4
-                                                    ];
-                                                    // AdminCriteriaNotification::create($criteria_data);
-                                               
-                                               }
-                                            }
-
-                                            if($refer_user_find->device_type == 'Ios' && strlen($refer_user_find->device_token) > 20){
-                                                if($refer_user_find->device_token){
-
-                                                    $total_noti_record = NotiRecord::whereUserId($refer_user_find->id)->sum(DB::raw('wallet + offer + event + normal'));
-                                                    try{
-                                                    $ios_notify =  $this->iphoneNotification($refer_user_find->device_token, $admin_refer_notification->message, $notmessage = "Referral Bonus Notification", $noti_type = 4, null, null, $total_noti_record);
-                                                    } catch (\Exception $e) {
-                                                        continue;
-                                                    }
-
-                                                    $criteria_data = [
-                                                        'user_id'   => $refer_user_find->id,
-                                                        'message'   => $admin_refer_notification->message,
-                                                        'noti_type' => 4
-                                                    ];
-                                                    // AdminCriteriaNotification::create($criteria_data);
-                                               }
-                                            }
-                                                    AdminCriteriaNotification::create($criteria_data);
-                                        }
-
-                                        if($admin_refer_notification->email_type == 1){
-                                            $message = $admin_refer_notification->message;
-                                            $notificationJobR = (new ReferMailSend($admin_refer_notification, $refer_user_find, $message))->delay(Carbon::now()->addSeconds(3));
-                                            dispatch($notificationJobR);
-                                        }
-
-                                        if($admin_refer_notification->sms_type == 1){
-                                            \SMSGlobal\Credentials::set(env('SMS_GLOBAL_API'),env('SMS_GLOBAL_SECERET'));
-                                            $sms = new \SMSGlobal\Resource\Sms();
-                                            $message = $admin_refer_notification->message;
-                                            try {
-                                                $response = $sms->sendToOne($refer_user_find->country_code.$refer_user_find->mobile_number, $message,'CM-Society');
-                                            } catch (\Exception $e) {
-                                                continue;
-                                            }
-                                        }
                                     }
 
 
@@ -3601,15 +3613,15 @@ class TabController extends ResponseController
                                     $wallet_txn->check_amount_pos = $val['check_amount'];
                                     $wallet_txn->updated_by = $admin_user->name;
                                     $wallet_txn->update();
-                                } 
+                                }
                             }
                         // }
                     }
                 }
-                
+
         }
             return response()->json(['message' => "File has been uploaded successfully.", 'ids_data' => $ids_data]);
-       }     
+       }
 
     }
 
@@ -3625,7 +3637,7 @@ class TabController extends ResponseController
         //         ->whereIn('wallet_transactions.id',$ids_data)
         //         ->where('is_cross_verify','!=',0)
         //         ->get()->toArray();
-                    
+
         //     foreach ($data_ecxel as $key => $value) {
         //         unset($value->id);
         //     }
@@ -3704,7 +3716,7 @@ class TabController extends ResponseController
 
 
 
-                
+
         // foreach ($data as $key => $value) {
         //     unset($value->id);
         // }
@@ -3736,7 +3748,7 @@ class TabController extends ResponseController
                 $admin_refer_notification = AdminNotification::where("uniq_id","=",4)->first();
 
                 $admin_cashback_notification_find = AdminNotification::where("uniq_id","=",2)->first();
-                
+
                 $user_wallet_txn = WalletTransaction::whereId($value->id)->first();
                 $user_wallet_txn->is_cross_verify = 1;
                 $user_wallet_txn->check_amount_pos = $user_wallet_txn->total_bill_amount;
@@ -3771,7 +3783,7 @@ class TabController extends ResponseController
 
                  $total_amount_transaction = $total_amount_transaction;
 
-                 $amount_between_tier_find = TierCondition::whereDeletedAt(null)->where('from_amount', '<=', 
+                 $amount_between_tier_find = TierCondition::whereDeletedAt(null)->where('from_amount', '<=',
                 $total_amount_transaction)->where('to_amount', '>=', $total_amount_transaction)->first();
                 if(empty($amount_between_tier_find)){
 
@@ -3779,7 +3791,7 @@ class TabController extends ResponseController
                     $amount_between_tier_find = TierCondition::whereDeletedAt(null)->where('to_amount','<=', $total_amount_transaction)->orderBy('to_amount','desc')->first();
 
                     if(!empty($amount_between_tier_find)){
-                        
+
                         $last_tier_update_date = Carbon::parse($user_find->tier_update_date);
                         $diffrence_in_days_for_tier = $last_tier_update_date->diffInDays(Carbon::now());
 
@@ -3830,7 +3842,7 @@ class TabController extends ResponseController
                         $admin_refer_notification->message = "Congratulations you have earned referral bonus of ".$user_find->refer_amount." AED. ".$admin_refer_notification->message;
                     }else{
                         $admin_refer_notification->message = "Congratulations you have earned referral bonus of ".$user_find->refer_amount." AED. ";
-                        
+
                     }
 
                     $user_find->refer_amount_used = 1;
@@ -3881,7 +3893,7 @@ class TabController extends ResponseController
                                     'noti_type' => 4
                                 ];
                                 // AdminCriteriaNotification::create($criteria_data);
-                           
+
                            }
                         }
 
@@ -3901,7 +3913,7 @@ class TabController extends ResponseController
                                     'noti_type' => 4
                                 ];
                                 // AdminCriteriaNotification::create($criteria_data);
-                            
+
                            }
                         }
                                 AdminCriteriaNotification::create($criteria_data);
@@ -3915,7 +3927,7 @@ class TabController extends ResponseController
                         try {
                             $response = $sms->sendToOne($refer_user_find->country_code.$refer_user_find->mobile_number, $message,'CM-Society');
                         } catch (\Exception $e) {
-                            
+
                         }
 
                     }
@@ -3927,7 +3939,7 @@ class TabController extends ResponseController
 
                     }
 
-                    
+
                 }
 
                 if(!empty($admin_cashback_notification_find)){
@@ -3962,7 +3974,7 @@ class TabController extends ResponseController
                         if (!empty($admin_cashback_notification_find->message)) {
                             $admin_cashback_notification_find->message = $admin_cashback_notification_find->message;
                         }else{
-                            $admin_cashback_notification_find->push_type = 0; 
+                            $admin_cashback_notification_find->push_type = 0;
                         }
                     }
 
@@ -3974,7 +3986,7 @@ class TabController extends ResponseController
                     //             $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$value->cashback_earned." AED. Your wallet usage is ".$vaue->redeemed_amount." AED. ".$admin_cashback_notification_find->message;
                     //         }else{
                     //             $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$value->cashback_earned." AED. Your wallet usage is ".$vaue->redeemed_amount." AED. ";
-                                
+
                     //         }
                     //     }else{
                     //          if(!empty($admin_cashback_notification_find->message)){
@@ -3982,7 +3994,7 @@ class TabController extends ResponseController
 
                     //          }else{
                     //             $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$value->cashback_earned." AED. ";
-                                
+
                     //          }
                     //     }
                     // }else{
@@ -3992,7 +4004,7 @@ class TabController extends ResponseController
                     //     }
                     // }
 
-                    
+
                     if($admin_cashback_notification_find->push_type == 1){
 
                         $noti_record_find = NotiRecord::whereUserId($find_user->id)->first();
@@ -4025,7 +4037,7 @@ class TabController extends ResponseController
                                     'updated_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString(),
                                 ];
                                 // AdminCriteriaNotification::create($criteria_data);
-                           
+
                            }
                         }
 
@@ -4044,7 +4056,7 @@ class TabController extends ResponseController
                                     'created_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString(),
                                     'updated_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString()
                                 ];
-                            
+
                            }
                         }
                                 AdminCriteriaNotification::create($criteria_data);
@@ -4081,7 +4093,7 @@ class TabController extends ResponseController
 
                 return response()->json(['msg' => 'Force verified the all pending sales transaction successfully.']);
             // }
-        }  
+        }
     }
     public function DeleteSelectedTransactions(Request $request){
         $admin_user = Auth::guard('admin')->user();
@@ -4171,7 +4183,7 @@ class TabController extends ResponseController
 
              $total_amount_transaction = $total_amount_transaction;
 
-             $amount_between_tier_find = TierCondition::whereDeletedAt(null)->where('from_amount', '<=', 
+             $amount_between_tier_find = TierCondition::whereDeletedAt(null)->where('from_amount', '<=',
             $total_amount_transaction)->where('to_amount', '>=', $total_amount_transaction)->first();
             if(empty($amount_between_tier_find)){
 
@@ -4179,7 +4191,7 @@ class TabController extends ResponseController
                 $amount_between_tier_find = TierCondition::whereDeletedAt(null)->where('to_amount','<=', $total_amount_transaction)->orderBy('to_amount','desc')->first();
 
                 if(!empty($amount_between_tier_find)){
-                    
+
                     $last_tier_update_date = Carbon::parse($user_find->tier_update_date);
                     $diffrence_in_days_for_tier = $last_tier_update_date->diffInDays(Carbon::now());
 
@@ -4232,7 +4244,7 @@ class TabController extends ResponseController
                     $admin_refer_notification->message = "Congratulations you have earned referral bonus of ".$user_find->refer_amount." AED. ".$admin_refer_notification->message;
                 }else{
                     $admin_refer_notification->message = "Congratulations you have earned referral bonus of ".$user_find->refer_amount." AED. ";
-                    
+
                 }
 
 
@@ -4284,7 +4296,7 @@ class TabController extends ResponseController
                                 'noti_type' => 4
                             ];
                             // AdminCriteriaNotification::create($criteria_data);
-                       
+
                        }
                     }
 
@@ -4302,7 +4314,7 @@ class TabController extends ResponseController
                                 'message'   => $admin_refer_notification->message,
                                 'noti_type' => 4
                             ];
-                        
+
                        }
                     }
                             AdminCriteriaNotification::create($criteria_data);
@@ -4316,7 +4328,7 @@ class TabController extends ResponseController
                     try {
                         $response = $sms->sendToOne($refer_user_find->country_code.$refer_user_find->mobile_number, $message,'CM-Society');
                     } catch (\Exception $e) {
-                        
+
                     }
 
                 }
@@ -4327,9 +4339,9 @@ class TabController extends ResponseController
 
                     $notificationJobR = (new ReferMailSend($admin_refer_notification, $refer_user_find,$show_message))->delay(Carbon::now()->addSeconds(3));
                     dispatch($notificationJobR);
-                        
+
                 }
-                
+
             }
 
             if(!empty($admin_cashback_notification_find)){
@@ -4364,7 +4376,7 @@ class TabController extends ResponseController
                     if (!empty($admin_cashback_notification_find->message)) {
                         $admin_cashback_notification_find->message = $admin_cashback_notification_find->message;
                     }else{
-                        $admin_cashback_notification_find->push_type = 0; 
+                        $admin_cashback_notification_find->push_type = 0;
                     }
                 }
 
@@ -4378,10 +4390,10 @@ class TabController extends ResponseController
                 //         }else{
                 //             if(!empty($admin_cashback_notification_find->message)){
                 //             $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$user_wallet_txn->cashback_earned." AED. ".$admin_cashback_notification_find->message;
-                                
+
                 //             }else{
                 //             $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$user_wallet_txn->cashback_earned." AED. ";
-                                
+
                 //             }
                 //         }
                 // }else{
@@ -4422,7 +4434,7 @@ class TabController extends ResponseController
                                 'updated_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString(),
                             ];
                             // AdminCriteriaNotification::create($criteria_data);
-                       
+
                        }
                     }
 
@@ -4442,7 +4454,7 @@ class TabController extends ResponseController
                                 'updated_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString()
                             ];
                             // AdminCriteriaNotification::create($criteria_data);
-                        
+
                        }
                     }
                             AdminCriteriaNotification::create($criteria_data);
@@ -4701,7 +4713,7 @@ class TabController extends ResponseController
                 }else if($request->txn_status_wallet == 'micros_verified'){
                     $query->where('wallet_transactions.is_cross_verify',3);
                 }
-                
+
                 if($request->customer_name_wallet){
                     $query->where(DB::raw("(select CONCAT(users.first_name,' ',users.last_name) from users where users.id = wallet_transactions.user_id)"), 'Like', '%' . $request->customer_name_wallet . '%');
                 }
@@ -4764,11 +4776,12 @@ class TabController extends ResponseController
              $data = $data->get()->pluck('id');
         }
 
+        $request->session()->put('ids_data' ,$data);
         return response()->json(['ids_data' => $data]);
 
 
        // $data = WalletTransaction::select(DB::raw("(select customer_id from users where id = wallet_transactions.user_id) AS 'Customer id'"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where users.id = wallet_transactions.user_id) AS 'Mobile Number'"),"wallet_transactions.invoice_number AS Invoice Number","wallet_transactions.total_bill_amount AS Check Amount","wallet_transactions.check_amount_pos AS Check Amount POS",DB::raw("CONCAT(case wallet_transactions.is_cross_verify when '0' then 'Not Verified' when '1' then 'Verified' else 'Mismatch' end) AS 'Transaction Status'"),"wallet_transactions.id","wallet_transactions.cashback_percentage AS Cashback Percentage",DB::raw("(select wallet_cash from users where id = wallet_transactions.user_id) AS 'Redeemed Wallet'"),"wallet_transactions.redeemed_amount AS Redemption From Loylaty","wallet_transactions.id",DB::raw("(select venue_name from venus where id = wallet_transactions.venu_id) AS 'Restaurant Name'"),DB::raw("(select username from venue_users where id = wallet_transactions.venue_user_id) AS 'Restaurant User'"),DB::raw("DATE_FORMAT(wallet_transactions.date_and_time, '%Y-%m-%d') AS Date"))->whereDeletedAt(null)->get()->toArray();
-                
+
        //  foreach ($data as $key => $value) {
        //      unset($value->id);
        //  }
@@ -4786,7 +4799,12 @@ class TabController extends ResponseController
     public function downloadWalletTransactionsAfterCriteriaMatch(Request $request, $ids_data){
 
 
-        $ids_data = explode(",", base64_decode($request->ids_data));
+        // $ids_data = explode(",", base64_decode($request->ids_data));
+        $ids_data = $request->session()->get('ids_data');
+        if(!$ids_data){
+            return abort(404);
+        }
+        $request->session()->pull('ids_data');
         // $data = WalletTransaction::select(DB::raw("(select customer_id from users where id = wallet_transactions.user_id) AS 'Customer ID'"),DB::raw("(select CONCAT(users.first_name,' ', users.last_name) from users where users.id = wallet_transactions.user_id) AS 'Customer Name'"),DB::raw("(select CONCAT(users.country_code,' ', users.mobile_number) from users where users.id = wallet_transactions.user_id) AS 'Mobile Number'"),DB::raw("(select email from users where id = wallet_transactions.user_id) AS 'Email ID'"),"wallet_transactions.invoice_number AS Invoice Number","wallet_transactions.total_bill_amount AS Check Amount","wallet_transactions.check_amount_pos AS Check Amount POS",DB::raw("CONCAT(case wallet_transactions.is_cross_verify when '0' then 'Not Verified' when '1' then 'Verified' else 'Mismatch' end) AS 'Transaction Status'"),"wallet_transactions.cashback_percentage AS Cashback Percentage",DB::raw("ROUND((select wallet_cash from users where id = wallet_transactions.user_id),1) AS 'Redeemed Wallet'"),"wallet_transactions.redeemed_amount AS Redemption From Loyalty",DB::raw("(select venue_name from venus where id = wallet_transactions.venu_id) AS 'Restaurant Name'"),DB::raw("(select username from venue_users where id = wallet_transactions.venue_user_id) AS 'Restaurant User'"),DB::raw("DATE_FORMAT(wallet_transactions.date_and_time, '%Y-%m-%d') AS Date"))->orderBy('wallet_transactions.id','desc')->whereIn('id',$ids_data)
         //     ->get()->toArray();
 
@@ -4814,7 +4832,7 @@ class TabController extends ResponseController
             unset($da->cashier_name);
             unset($da->offer_product_ids);
         }
-             
+
 
            $data = json_decode( json_encode($data), true);
             return $download =  Excel::create('Customer Wallet Transations', function($excel) use ($data){
@@ -4884,10 +4902,10 @@ class TabController extends ResponseController
                 $destinationPath = storage_path(). DIRECTORY_SEPARATOR . env('APPLICATION_DATA_STORAGE');
                 $imageName = date('mdYHis') . rand(10,100) . uniqid().'.jpeg';
             }
-            
+
             // file_put_contents($destinationPath. '/' . $imageName, base64_decode($image1));
             $img_new = Image::make(base64_decode($image1))->stream($extension, 50);
-            
+
             file_put_contents($destinationPath. '/' . $imageName, $img_new);
             }catch(\Exception $ex){
                 return response()->json(['image_name_err' => "Please upload valid image." ],422);
@@ -4896,7 +4914,7 @@ class TabController extends ResponseController
 
 
 
-        
+
         $application_data = ApplicationData::first();
 
         $find_application_image = ApplicationImage::whereApplicationDataId($application_data->id)->whereUniqId($request->uniq_id)->first();
@@ -4954,13 +4972,13 @@ class TabController extends ResponseController
                     $destinationPath = storage_path(). DIRECTORY_SEPARATOR . env('APPLICATION_DATA_STORAGE');
                     $imageName = date('mdYHis') . rand(10,100) . uniqid().'.jpeg';
                 }
-                
+
                 $img_new = Image::make(base64_decode($image1))->stream($extension, 50);
                 file_put_contents($destinationPath. '/' . $imageName, $img_new);
             }catch(\Exception $ex){
                return response()->json(['image_name_err' => 'Please upload valid image.'],422);
             }
-                
+
                 $application_data->logo = $imageName;
                 $application_data->name_of_file_show_logo = $request->name_of_file_show;
                 $application_data->update();
@@ -5076,7 +5094,7 @@ class TabController extends ResponseController
     public function getAdminUsersList(Request $request){
         $column = "id";
             $asc_desc = $request->get("order")[0]['dir'];
-         
+
             if($asc_desc == "asc"){
                 $asc_desc = "desc";
             }else{
@@ -5110,7 +5128,7 @@ class TabController extends ResponseController
 
         if($search){
             $data  = $data->where(function($query) use($search){
-                            
+
                 $query->orWhere('name', 'Like', '%' . $search . '%');
                 $query->orWhere('role_type', 'Like', '%' . $search . '%');
                 $query->orWhere('created_at', 'Like', '%' . $search . '%');
@@ -5121,7 +5139,7 @@ class TabController extends ResponseController
             });
 
             $filter = $data->get()->count();
-                            
+
         }
 
         $data = $data->offset($request->start);
@@ -5152,7 +5170,7 @@ class TabController extends ResponseController
                 "input" => $request->all()
         ];
         return response()->json($return_data);
-        
+
     }
 }
 
