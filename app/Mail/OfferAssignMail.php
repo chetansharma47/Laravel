@@ -42,7 +42,7 @@ class OfferAssignMail extends Mailable
         $general_setting = GeneralSetting::all();
 
         if($offer->offer_type == "BirthdayOffer"){
-            $path = public_path('/') . $offer_image;
+            $path = public_path('/storage/venue')."/" . $offer_image;
         }else{
             $path = public_path('/storage/venue') . "/" . $offer_image;
         }
