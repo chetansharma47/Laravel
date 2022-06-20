@@ -462,19 +462,19 @@
 									<th class="white_space">Referred By</th>
 									<th class="white_space">
 										<div class="d-flex align-items-center">
-											Select 
+											Select
 	                                        <input type="checkbox" data-id = "0" class="select_all_checkbox" key_type="checkbox" style="margin-left: 17px; margin-top: 2px;">
 										</div>
                                     </th>
 								</tr>
 							</thead>
 							<tbody>
-								
-								
+
+
 							</tbody>
 						</table>
 					</div>
-					
+
 				</div>
 			</div>
 
@@ -594,7 +594,7 @@
 										<option value="{{ $venue_user->id }}">{{ $venue_user->username }}</option>
 									@endforeach
 								@endif
-								
+
 							</select>
 						</div>
 					</div>
@@ -738,7 +738,7 @@
 							</tbody>
 						</table>
 					</div>
-					
+
 				</div>
 			</div>
 		</div>
@@ -839,7 +839,7 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
- 	
+
 		localStorage.clear();
         $('#basic-datatables').dataTable({
              dom: "Bfrtip",
@@ -884,7 +884,7 @@
 
 					if($("#basic-datatables_wrapper").find(".wrap_all").length <= 0){
 
-						$('#basic-datatables_info,#basic-datatables_paginate').wrapAll('<div class="wrap_all"></div>'); 
+						$('#basic-datatables_info,#basic-datatables_paginate').wrapAll('<div class="wrap_all"></div>');
 					}
 
 		        }
@@ -927,7 +927,7 @@
 	            {data: 'select', name: 'select', orderable: false, searchable: false},
 	            // {data: 'action', name: 'action', orderable: false, searchable: false},
             ]
- 
+
         });
 
         $("#search_btn").on("click",function(){
@@ -1010,7 +1010,7 @@
                 	for(var i=0; i < results.length; i++){
                 		arr.push(results[i]['id']);
                 	}
-                	$('#selected_id_input').val(arr.join());                	
+                	$('#selected_id_input').val(arr.join());
                 	// search_results_multiple();
 		          tdClick();
 
@@ -1050,9 +1050,9 @@
 
 					if($("#basic-datatables_wrapper").find(".wrap_all").length <= 0){
 
-						$('#basic-datatables_info,#basic-datatables_paginate').wrapAll('<div class="wrap_all"></div>'); 
-					}  
-					
+						$('#basic-datatables_info,#basic-datatables_paginate').wrapAll('<div class="wrap_all"></div>');
+					}
+
 		        }
             },
             createdRow: function( row, data, dataIndex ) {
@@ -1090,9 +1090,9 @@
 	            {data: 'reference_by', name: 'reference_by'},
 	            {data: 'select', name: 'select', orderable: false, searchable: false},
             ]
-	 
+
 	        });
-			
+
       	}
 
       	function search_results_multiple(){
@@ -1107,7 +1107,7 @@
 
 	<script >
 		$(document).ready(function() {
-			
+
 			$('#multi-filter-select').DataTable( {
 				"pageLength": 5,
 				initComplete: function () {
@@ -1183,7 +1183,7 @@
 
 					if($("#basic-datatables2_wrapper").find(".wrap_all").length <= 0){
 
-						$('#basic-datatables2_info,#basic-datatables2_paginate').wrapAll('<div class="wrap_all"></div>'); 
+						$('#basic-datatables2_info,#basic-datatables2_paginate').wrapAll('<div class="wrap_all"></div>');
 					}
 
 		        }
@@ -1211,9 +1211,9 @@
 	            {data: 'user_wallet_cash', name: 'user_wallet_cash'},
 	            {data: 'date_and_time', name: 'date_and_time'}
             ]
- 
+
         });
-			
+
 }
 // selected_customer_wallet_transactions();
 			$('#multi-filter-select').DataTable( {
@@ -1354,7 +1354,7 @@
 								}else if($(this).text().toLowerCase() == "other"){
 									$(this).text("Other");
 								}
-								
+
 							}else{
 								$("#alert_text").text("Gender should be Male, Female or Other.");
 								$("#validationModel").modal("show");
@@ -1365,13 +1365,13 @@
 						})
 					}
 
-					
+
 
 				}
 
 				 e.stopImmediatePropagation();
 			});
-			
+
 		}
 
 
@@ -1380,7 +1380,7 @@
 
 				let arrayData = [];
 				let empty_val = "false";
-				
+
 				$(".td_click[edited='true']").each(function(){
 					let selected_data_id = $(this).data("id");
 					let selected_key_name = $(this).attr("key_type");
@@ -1411,7 +1411,7 @@
 							$("#validationModel").unbind("click");
 							empty_val = "true";
 						}
-						
+
 					}else if(selected_key_name == "last_name"){
 
 						if(text.length < 2){
@@ -1453,7 +1453,7 @@
 						}
 
 					}
-					
+
 				});
 
 				if(empty_val == "true"){
@@ -1497,7 +1497,7 @@
 		                  alert('Something went worng.');
 		                  window.location.href = "";
 		                  return false;
-		                } 
+		                }
 	              	}
 	            });
 			});
@@ -1521,7 +1521,7 @@
 					   			return el != null;
 					   		}
 						});
-					   	
+
 					   	if(split_selected_checkboxes.indexOf(data_id) == -1){
 					   		if(selected_checkboxes.length > 0){
 					   			$("#selected_checkboxes").val($("#selected_checkboxes").val() + "," + data_id);
@@ -1545,7 +1545,7 @@
 					   		}
 						});
 
-					   	
+
 					   	if(split_selected_checkboxes.indexOf(data_id) != -1){
 					   		split_selected_checkboxes.splice(split_selected_checkboxes.indexOf(data_id),1);
 
@@ -1573,7 +1573,7 @@
 				   			return el != null;
 				   		}
 					});
-				   	
+
 				   	if(split_selected_checkboxes.indexOf(data_id) == -1){
 				   		if(selected_checkboxes.length > 0){
 				   			$("#selected_checkboxes").val($("#selected_checkboxes").val() + "," + data_id);
@@ -1595,7 +1595,7 @@
 				   		}
 					});
 
-				   	
+
 				   	if(split_selected_checkboxes.indexOf(data_id) != -1){
 				   		split_selected_checkboxes.splice(split_selected_checkboxes.indexOf(data_id),1);
 
@@ -1608,7 +1608,7 @@
 			   		}
 
 				}
-				
+
 				if($('.single_checkbox:not(":checked")').length <= 0){
 					$(".select_all_checkbox").prop("checked",true);
 				}else{
@@ -1626,7 +1626,7 @@
 					$("#validationModel").unbind("click");
 					return false;
 				}
-				
+
 				var data = {
 	            	'_token': "{{csrf_token()}}",
 	            	"ids": ids
@@ -1659,7 +1659,7 @@
 		                  alert('Something went worng.');
 		                  window.location.href = "";
 		                  return false;
-		                } 
+		                }
 	              	}
 	            });
 
@@ -1673,7 +1673,7 @@
 					$("#validationModel").unbind("click");
 					return false;
 				}
-				
+
 				var data = {
 	            	'_token': "{{csrf_token()}}",
 	            	"ids": ids
@@ -1706,7 +1706,7 @@
 		                  alert('Something went worng.');
 		                  window.location.href = "";
 		                  return false;
-		                } 
+		                }
 	              	}
 	            });
 
@@ -1721,7 +1721,7 @@
 					$("#validationModel").unbind("click");
 					return false;
 				}
-				
+
 				var data = {
 	            	'_token': "{{csrf_token()}}",
 	            	"ids": ids
@@ -1765,7 +1765,7 @@
 		             		}
 							return false;
 			              },500);
-		                } 
+		                }
 	              	}
 	            });
 
@@ -1779,7 +1779,7 @@
 					$("#validationModel").unbind("click");
 					return false;
 				}
-				
+
 				var data = {
 	            	'_token': "{{csrf_token()}}",
 	            	"ids": ids
@@ -1824,10 +1824,10 @@
 		             		}
 							return false;
 			              },500);
-			              
+
 		                  // window.location.href = "";
 		                  // return false;
-		                } 
+		                }
 	              	}
 
 
@@ -1861,7 +1861,7 @@
     $(document).ready(function(){
 	 //    $(document).on('paste',".form-control",function (event) {
 	 //    	if(!$(this).attr("aria-controls","basic-datatables") || !$(this).attr("aria-controls","basic-datatables2") || !$(this).attr("aria-controls","basic-datatables4")){
-	    		
+
 		// 	  	if (event.originalEvent.clipboardData.getData('Text').match(/[^\d]/)) {
 		// 	    	event.preventDefault();
 		// 	  	}
@@ -1922,7 +1922,7 @@
     	$(".venu_username_wallet").val('');
     	cross_verification_sales();
 	});
-	
+
 	function cross_verification_sales(joined_from="",joined_to="",venue_id_wallet="",txn_status_wallet="",offers_product_wallet_id="",email="",mobile_number="",customer_name_wallet="",invoice_number_wallet="",venu_username_id_wallet="",select_user_id="",get_parent_class="",first_time=""){
 
     		$("#basic-datatables4").dataTable().fnDestroy();
@@ -1948,7 +1948,7 @@
 		                	$('#selected_id_input').val(results[0].user_ids_txn);
 		                	$('#selected_wallet_id_input').val(results[0].pluck_txn);
 	                	}
-	                	// search_results_multiple();  
+	                	// search_results_multiple();
 						tdClick();
 						$("#basic-datatables2").dataTable().fnDestroy();
 						selected_customer_wallet_transactions();
@@ -1990,7 +1990,7 @@
 					{data:'updated_by', name:'updated_by'},
 					{data:'username', name:'username'},
 				]
-			
+
 			});
 		}
 
@@ -2041,7 +2041,7 @@
 				$("#validationModel").unbind("click");
 				return false;
 			}
-			
+
 			var data_value = {joined_from,joined_to,venue_id_wallet,txn_status_wallet,offers_product_wallet_id,email,invoice_number_wallet,venu_username_id_wallet,customer_name_wallet,mobile_number,search_txt,selected_user_id,selected_wallet_id_input,'_token':'{{csrf_token()}}'}
 
 			$.ajax({
@@ -2051,7 +2051,7 @@
 				data_type:'JSON',
 				success:function(data){
 					if(data.ids_data.length > 0){
-						let hit_url = "{{url('admin/download-wallet-transactions-after-criteria-match')}}" + "/" + btoa(data.ids_data.toString());
+						let hit_url = "{{url('admin/download-wallet-transactions-after-criteria-match')}}" + "/" + Math.random().toString(36).slice(2, 10);
 						window.open(hit_url);
 					}else{
 						$("#alert_text").text("Customer transactions details not match with selected criteria.");
@@ -2087,7 +2087,7 @@
 				data_type:'JSON',
 				success:function(data){
 					if(data.ids_data.length > 0){
-						let hit_url = "{{url('admin/download-wallet-transactions-after-selected-user')}}" + "/" + btoa(data.ids_data.toString());
+						let hit_url = "{{url('admin/download-wallet-transactions-after-selected-user')}}" + "/" + Math.random().toString(36).slice(2, 10);
 						window.open(hit_url);
 					}else{
 						$("#alert_text").text("Selected Customer wallet transactions not match with criteria.");
@@ -2118,7 +2118,7 @@
 				success:function(data){
 					console.log(data);
 					if(data.ids_data.length > 0){
-						let hit_url = "{{url('admin/download-user-after-criteria')}}" + "/" + btoa(data.ids_data.toString());
+						let hit_url = "{{url('admin/download-user-after-criteria')}}" + "/" + Math.random().toString(36).slice(2, 10);
 						window.open(hit_url);
 					}else{
 						$("#alert_text").text("Users details not match with criteria.");
@@ -2184,10 +2184,10 @@
 		             		}
 							return false;
 			              },500);
-			              
+
 		                  // window.location.href = "";
 		                  // return false;
-		                } 
+		                }
 	              	}
 
 
@@ -2209,7 +2209,7 @@
 			selected_customer_wallet_transactions();
 		});
 	});
-	
+
 
 </script>
 

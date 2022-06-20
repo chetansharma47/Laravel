@@ -101,7 +101,7 @@ class RestaurantAuthenticationController extends ResponseController
 
         $token = $_SERVER['HTTP_TOKEN'];
         $login_user = VenueUser::whereAccessToken($token)->first();
-        $venue_login_id = $request->venue_login_id; 
+        $venue_login_id = $request->venue_login_id;
 
         $this->is_validationRule(Validation::getUserDataValidation($Validation = "", $message = "") , $request);
         $timezone = $request->timezone;
@@ -110,7 +110,7 @@ class RestaurantAuthenticationController extends ResponseController
                 ->orWhere(function($query) use ($request){
                     $query->where(DB::raw("CONCAT(users.country_code,users.mobile_number)"),'=',"+".$request->user_id);
                 })->first();
-                
+
         if(!empty($user)){
 
             if($user->is_active == 'Inactive' || $user->is_block == 1){
@@ -161,7 +161,7 @@ class RestaurantAuthenticationController extends ResponseController
                 $user->valid_time = (string)$find_venue_timeout_time->setting_content;
             }else{
 
-                $user->valid_time = (string)$now_time->diffInSeconds($time_after_10mins);   //10 min = 600 secs 
+                $user->valid_time = (string)$now_time->diffInSeconds($time_after_10mins);   //10 min = 600 secs
             }
             return $this->responseOk("User Data",['user_data' => $user]);
 
@@ -263,9 +263,9 @@ class RestaurantAuthenticationController extends ResponseController
         if($find_otp_timeout_time->setting_enabled_disbaled == 'Enabled'){
             $otp_save->otp_valid_time = $find_otp_timeout_time->setting_content;
         }else{
-           $otp_save->otp_valid_time = (string)600; 
+           $otp_save->otp_valid_time = (string)600;
         }
-        
+
         return $this->responseOk("OTP has been sent successfully to selected user.", ["otp_data" => $otp_save]);
     }
 
@@ -299,7 +299,7 @@ class RestaurantAuthenticationController extends ResponseController
 
         $find_otp->delete();
         return $this->responseOk("OTP has been verified successfully.");
-        
+
     }
 
     public function venueUserlogout(Request $request){
@@ -383,7 +383,7 @@ class RestaurantAuthenticationController extends ResponseController
         }
 
         if(!empty($check_exists_invoice_number)){
-            return $this->responseWithErrorCode("Invoice number already exists.",406); 
+            return $this->responseWithErrorCode("Invoice number already exists.",406);
         }
 
         /*End*/
@@ -559,7 +559,7 @@ class RestaurantAuthenticationController extends ResponseController
                     if($user_find->device_token){
 
                         $total_noti_record = NotiRecord::whereUserId($user_find->id)->sum(DB::raw('wallet + offer + event + normal'));
-                        $ios_notify =  $this->iphoneNotification($user_find->device_token, $admin_transaction_notification->message, $notmessage = "Transaction Notification", $noti_type = 1,null,null,$total_noti_record);                    
+                        $ios_notify =  $this->iphoneNotification($user_find->device_token, $admin_transaction_notification->message, $notmessage = "Transaction Notification", $noti_type = 1,null,null,$total_noti_record);
                    }
                 }
                 AdminCriteriaNotification::create($criteria_data);
@@ -573,7 +573,7 @@ class RestaurantAuthenticationController extends ResponseController
                 try {
                     $response = $sms->sendToOne($user_find->country_code.$user_find->mobile_number, $message,'CM-Society');
                 } catch (\Exception $e) {
-                    
+
                 }
             }
 
@@ -610,7 +610,7 @@ class RestaurantAuthenticationController extends ResponseController
                             'noti_type' => 4
                         ];
                         AdminCriteriaNotification::create($criteria_data);
-                   
+
                    }
                 }
 
@@ -624,7 +624,7 @@ class RestaurantAuthenticationController extends ResponseController
                             'noti_type' => 4
                         ];
                         AdminCriteriaNotification::create($criteria_data);
-                    
+
                    }
                 }
 
@@ -637,7 +637,7 @@ class RestaurantAuthenticationController extends ResponseController
                 try {
                     $response = $sms->sendToOne($refer_user_find->country_code.$refer_user_find->mobile_number, $message,'CM-Society');
                 } catch (\Exception $e) {
-                    
+
                 }
 
             }
@@ -725,7 +725,7 @@ class RestaurantAuthenticationController extends ResponseController
         $now_time = Carbon::now();
         $time_after_10mins = Carbon::now()->addMinutes(10);
         $user->wallet_cash =  floor($user->wallet_cash);
-        $user->valid_time = $now_time->diffInSeconds($time_after_10mins);   //10 min = 600 secs 
+        $user->valid_time = $now_time->diffInSeconds($time_after_10mins);   //10 min = 600 secs
         return $this->responseOk("User Data",['user_data' => $user]);
     }
 
@@ -746,7 +746,7 @@ class RestaurantAuthenticationController extends ResponseController
             return $this->responseWithErrorCode("Please enter valid user id or customer id.",406);
         }
 
-        
+
 
 
         $venue_find = Venu::wherePosVenueId($request->venue_pos_id)->first();
@@ -756,7 +756,7 @@ class RestaurantAuthenticationController extends ResponseController
         // date_default_timezone_set($data['timezone']);
          // date_default_timezone_set("UTC");
 
-        
+
         $tier_find = TierCondition::whereTierName($user_find->customer_tier)->whereDeletedAt(null)->first();
         if(empty($tier_find)){
             $tier_find = TierCondition::whereDeletedAt(null)->first();
@@ -811,7 +811,7 @@ class RestaurantAuthenticationController extends ResponseController
         }
 
         if(!empty($check_exists_invoice_number)){
-            return $this->responseWithErrorCode("Invoice number already exists.",406); 
+            return $this->responseWithErrorCode("Invoice number already exists.",406);
         }*/
 
         /*End*/
@@ -888,7 +888,7 @@ class RestaurantAuthenticationController extends ResponseController
                         $query->whereDate('to_date','>=', $today_date);
                         $query->whereTime('from_time', '<=', $today_time);
                         $query->whereTime('to_time','>=', $today_time);
-                        $query->where('venu_id', $active_venue_id); 
+                        $query->where('venu_id', $active_venue_id);
                         $query->whereRaw("FIND_IN_SET(?, day_on) > 0", $today_days);
                         $query->where("status","=","Active");
                     })->first();
@@ -929,7 +929,7 @@ class RestaurantAuthenticationController extends ResponseController
 
             }
         }
-        
+
         /*Second Entry in wallet transaction table for redeemed*/
         if($data['redeemed_amount'] > 0){
             $wallet_detail1 = new WalletDetail();
@@ -985,7 +985,7 @@ class RestaurantAuthenticationController extends ResponseController
 
             $push_type = 0;
             $sms_type = 0;
-            $email_type = 0;    
+            $email_type = 0;
 
             //For Push Notification
             if($admin_transaction_notification->push_type == 1) { //If Transaction Notification is ON
@@ -998,13 +998,13 @@ class RestaurantAuthenticationController extends ResponseController
                         }
                         else if($data['cashback_earned'] > 0 && $data['redeemed_amount'] == 0) {
                             $notification_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
-                        } 
+                        }
                         else if($data['cashback_earned'] == 0 && $data['redeemed_amount'] > 0) {
                             $notification_text = $admin_transaction_notification->message."Your wallet usage is ".$data['redeemed_amount']." AED. \n".$admin_cashback_notification->message;
                         }
                     }
                     else { //Only Transaction and Cashback Admin Message will go
-                        $notification_text = $admin_transaction_notification->message . $admin_cashback_notification->message;                            
+                        $notification_text = $admin_transaction_notification->message . $admin_cashback_notification->message;
                     }
                 }
                 else { //Only Transaction Admin Message will go
@@ -1018,14 +1018,14 @@ class RestaurantAuthenticationController extends ResponseController
                         }
                         else if($data['cashback_earned'] > 0 && $data['redeemed_amount'] == 0) {
                             $notification_text = " Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
-                        } 
+                        }
                         else if($data['cashback_earned'] == 0 && $data['redeemed_amount'] > 0) {
                             $notification_text = "Your wallet usage is ".$data['redeemed_amount']." AED. \n".$admin_cashback_notification->message;
                         }
                     }
                     else { //Only Cashback Admin Message will go
                         if (!empty($admin_cashback_notification->message)) {
-                            $notification_text = $admin_cashback_notification->message;                            
+                            $notification_text = $admin_cashback_notification->message;
                         }
                         else { //Nothing will go
                             $push_type = 0;
@@ -1036,7 +1036,7 @@ class RestaurantAuthenticationController extends ResponseController
                  $push_type = 0;
             }
 
-            //For SMS 
+            //For SMS
              if($admin_transaction_notification->sms_type == 1) { //If Transaction Notification is ON
                 $sms_type = 1;
                 if($admin_cashback_notification->sms_type == 1) { //If Cashback Notification is ON
@@ -1047,13 +1047,13 @@ class RestaurantAuthenticationController extends ResponseController
                         }
                         else if($data['cashback_earned'] > 0 && $data['redeemed_amount'] == 0) {
                             $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
-                        } 
+                        }
                         else if($data['cashback_earned'] == 0 && $data['redeemed_amount'] > 0) {
                             $message_text = $admin_transaction_notification->message."Your wallet usage is ".$data['redeemed_amount']." AED. \n".$admin_cashback_notification->message;
                         }
                     }
                     else { //Only Transaction and Cashback Admin Message will go
-                        $message_text = $admin_transaction_notification->message . $admin_cashback_notification->message;                            
+                        $message_text = $admin_transaction_notification->message . $admin_cashback_notification->message;
                     }
                 }
                 else { //Only Transaction Admin Message will go
@@ -1067,14 +1067,14 @@ class RestaurantAuthenticationController extends ResponseController
                         }
                         else if($data['cashback_earned'] > 0 && $data['redeemed_amount'] == 0) {
                             $message_text = " Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
-                        } 
+                        }
                         else if($data['cashback_earned'] == 0 && $data['redeemed_amount'] > 0) {
                             $message_text = "Your wallet usage is ".$data['redeemed_amount']." AED. \n".$admin_cashback_notification->message;
                         }
                     }
                     else { //Only Cashback Admin Message will go
                         if (!empty($admin_cashback_notification->message)) {
-                            $message_text = $admin_cashback_notification->message;                            
+                            $message_text = $admin_cashback_notification->message;
                         }
                         else { //Nothing will go
                             $sms_type = 0;
@@ -1086,7 +1086,7 @@ class RestaurantAuthenticationController extends ResponseController
             }
 
 
-            //For Email 
+            //For Email
              if($admin_transaction_notification->email_type == 1) { //If Transaction Notification is ON
                 $email_type = 1;
                 if($admin_cashback_notification->email_type == 1) { //If Cashback Notification is ON
@@ -1097,13 +1097,13 @@ class RestaurantAuthenticationController extends ResponseController
                         }
                         else if($data['cashback_earned'] > 0 && $data['redeemed_amount'] == 0) {
                             $email_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
-                        } 
+                        }
                         else if($data['cashback_earned'] == 0 && $data['redeemed_amount'] > 0) {
                             $email_text = $admin_transaction_notification->message."Your wallet usage is ".$data['redeemed_amount']." AED. \n".$admin_cashback_notification->message;
                         }
                     }
                     else { //Only Transaction and Cashback Admin Message will go
-                        $email_text = $admin_transaction_notification->message . $admin_cashback_notification->message;                            
+                        $email_text = $admin_transaction_notification->message . $admin_cashback_notification->message;
                     }
                 }
                 else { //Only Transaction Admin Message will go
@@ -1117,14 +1117,14 @@ class RestaurantAuthenticationController extends ResponseController
                         }
                         else if($data['cashback_earned'] > 0 && $data['redeemed_amount'] == 0) {
                             $email_text = " Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. \n".$admin_cashback_notification->message;
-                        } 
+                        }
                         else if($data['cashback_earned'] == 0 && $data['redeemed_amount'] > 0) {
                             $email_text = "Your wallet usage is ".$data['redeemed_amount']." AED. \n".$admin_cashback_notification->message;
                         }
                     }
                     else { //Only Cashback Admin Message will go
                         if (!empty($admin_cashback_notification->message)) {
-                            $email_text = $admin_cashback_notification->message;                            
+                            $email_text = $admin_cashback_notification->message;
                         }
                         else { //Nothing will go
                             $email_type = 0;
@@ -1152,7 +1152,7 @@ class RestaurantAuthenticationController extends ResponseController
 
             //                 }else{
             //                     $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. Your wallet usage is ".$data['redeemed_amount']." AED. ";
-                                
+
             //                 }
             //             }else{
             //                 if(!empty($admin_cashback_notification->message)){
@@ -1245,7 +1245,7 @@ class RestaurantAuthenticationController extends ResponseController
                             'message'   => $notification_text,
                             'noti_type' => 1
                         ];
-                    
+
                    }
                 }
                         AdminCriteriaNotification::create($criteria_data);
@@ -1280,7 +1280,7 @@ class RestaurantAuthenticationController extends ResponseController
             //     }else{
             //         $message_text = $admin_transaction_notification->message;
             //     }
-                
+
             // }elseif($admin_cashback_notification->sms_type == 1){
             //     $sms_type = 1;
             //     if($admin_transaction_notification->sms_type == 1){
@@ -1308,7 +1308,7 @@ class RestaurantAuthenticationController extends ResponseController
             //     }else{
             //         $message_text = $admin_cashback_notification->message;
             //     }
-                
+
             // }
 
             //For Sending SMS
@@ -1319,7 +1319,7 @@ class RestaurantAuthenticationController extends ResponseController
                 try {
                     $response = $sms->sendToOne($user_find->country_code.$user_find->mobile_number, $message_text,'CM-Society');
                 } catch (\Exception $e) {
-                    
+
                 }
             }
 
@@ -1332,7 +1332,7 @@ class RestaurantAuthenticationController extends ResponseController
             //                     $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. Your wallet usage is ".$data['redeemed_amount']." AED. \n".$admin_cashback_notification->message;
             //                 }else{
             //                     $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. Your wallet usage is ".$data['redeemed_amount']." AED. ";
-                                
+
             //                 }
             //             }else{
             //                 if(!empty($admin_cashback_notification->message)){
@@ -1351,7 +1351,7 @@ class RestaurantAuthenticationController extends ResponseController
             //     }else{
             //         $message_text = $admin_transaction_notification->message;
             //     }
-                
+
             // }elseif($admin_cashback_notification->email_type == 1){
             //     $email_type = 1;
             //     if($admin_transaction_notification->email_type == 1){
@@ -1370,7 +1370,7 @@ class RestaurantAuthenticationController extends ResponseController
 
             //                 }else{
             //                     $message_text = $admin_transaction_notification->message." Congratulations you have earned cashback amount of ".$data['cashback_earned']." AED. ";
-                                
+
             //                 }
             //             }
             //         }else{
@@ -1386,7 +1386,7 @@ class RestaurantAuthenticationController extends ResponseController
             //             $message_text = $admin_transaction_notification->message;
             //         }
             //     }
-                
+
             // }
 
             if($email_type == 1){
@@ -1405,7 +1405,7 @@ class RestaurantAuthenticationController extends ResponseController
                 try {
                     $response = $sms->sendToOne($user_find->country_code.$user_find->mobile_number, $message,'CM-Society');
                 } catch (\Exception $e) {
-                    
+
                 }
             }*/
 
@@ -1460,69 +1460,70 @@ class RestaurantAuthenticationController extends ResponseController
                 $wallet_detail3->type_of_transaction = "Refer";
                 $wallet_detail3->user_wallet_cash = $refer_user_find->wallet_cash;
                 $wallet_detail3->save();
+
+                if($admin_refer_notification->push_type == 1){
+
+                    $noti_record_find = NotiRecord::whereUserId($refer_user_find->id)->first();
+
+                    if(empty($noti_record_find)){
+                        $save_noti_record = new NotiRecord();
+                        $save_noti_record->user_id = $refer_user_find->id;
+                        $save_noti_record->wallet = 1;
+                        $save_noti_record->save();
+
+                    }else{
+                        $noti_record_find->wallet = $noti_record_find->wallet + 1;
+                        $noti_record_find->update();
+                    }
+                   $criteria_data = [
+                        'user_id'   => $refer_user_find->id,
+                        'message'   => $admin_refer_notification->message,
+                        'noti_type' => 4
+                    ];
+                    if($refer_user_find->device_type == 'Android'){
+                        if($refer_user_find->device_token && strlen($refer_user_find->device_token) > 20){
+
+                            $total_noti_record = NotiRecord::whereUserId($refer_user_find->id)->sum(DB::raw('wallet + offer + event + normal'));
+                           $android_notify =  $this->send_android_notification_new($refer_user_find->device_token, $admin_refer_notification->message, $notmessage = "Referral Bonus Notification", $noti_type = 4,null,null,$total_noti_record);
+
+                       }
+                    }
+
+                    if($refer_user_find->device_type == 'Ios' && strlen($refer_user_find->device_token) > 20){
+                        if($refer_user_find->device_token){
+                            $total_noti_record = NotiRecord::whereUserId($refer_user_find->id)->sum(DB::raw('wallet + offer + event + normal'));
+                            $ios_notify =  $this->iphoneNotification($refer_user_find->device_token, $admin_refer_notification->message, $notmessage = "Referral Bonus Notification", $noti_type = 4,null,null,$total_noti_record);
+                       }
+                    }
+                    AdminCriteriaNotification::create($criteria_data);
+
+                }
+
+                if($admin_refer_notification->sms_type == 1){
+                    \SMSGlobal\Credentials::set(env('SMS_GLOBAL_API'),env('SMS_GLOBAL_SECERET'));
+                    $sms = new \SMSGlobal\Resource\Sms();
+                    $message = $admin_refer_notification->message;
+                    try {
+                        $response = $sms->sendToOne($refer_user_find->country_code.$refer_user_find->mobile_number, $message,'CM-Society');
+                    } catch (\Exception $e) {
+
+                    }
+
+                }
+
+                if($admin_refer_notification->email_type == 1){
+                    $message = $admin_refer_notification->message;
+                    try{
+                        \Mail::to($refer_user_find->email)->send(new ReferralEmail($admin_refer_notification, $refer_user_find, $message));
+                    }catch(\Exception $ex){
+                        //return $ex->getMessage();
+                    }
+                }
             }
 
 
-            if($admin_refer_notification->push_type == 1){
 
-                $noti_record_find = NotiRecord::whereUserId($refer_user_find->id)->first();
 
-                if(empty($noti_record_find)){
-                    $save_noti_record = new NotiRecord();
-                    $save_noti_record->user_id = $refer_user_find->id;
-                    $save_noti_record->wallet = 1;
-                    $save_noti_record->save();
-
-                }else{
-                    $noti_record_find->wallet = $noti_record_find->wallet + 1;
-                    $noti_record_find->update();
-                }
-               $criteria_data = [
-                    'user_id'   => $refer_user_find->id,
-                    'message'   => $admin_refer_notification->message,
-                    'noti_type' => 4
-                ];
-                if($refer_user_find->device_type == 'Android'){
-                    if($refer_user_find->device_token && strlen($refer_user_find->device_token) > 20){
-
-                        $total_noti_record = NotiRecord::whereUserId($refer_user_find->id)->sum(DB::raw('wallet + offer + event + normal'));
-                       $android_notify =  $this->send_android_notification_new($refer_user_find->device_token, $admin_refer_notification->message, $notmessage = "Referral Bonus Notification", $noti_type = 4,null,null,$total_noti_record);
-                   
-                   }
-                }
-
-                if($refer_user_find->device_type == 'Ios' && strlen($refer_user_find->device_token) > 20){
-                    if($refer_user_find->device_token){
-                        $total_noti_record = NotiRecord::whereUserId($refer_user_find->id)->sum(DB::raw('wallet + offer + event + normal'));
-                        $ios_notify =  $this->iphoneNotification($refer_user_find->device_token, $admin_refer_notification->message, $notmessage = "Referral Bonus Notification", $noti_type = 4,null,null,$total_noti_record);
-                   }
-                }
-                AdminCriteriaNotification::create($criteria_data);
-
-            }
-
-            if($admin_refer_notification->sms_type == 1){
-                \SMSGlobal\Credentials::set(env('SMS_GLOBAL_API'),env('SMS_GLOBAL_SECERET'));
-                $sms = new \SMSGlobal\Resource\Sms();
-                $message = $admin_refer_notification->message;
-                try {
-                    $response = $sms->sendToOne($refer_user_find->country_code.$refer_user_find->mobile_number, $message,'CM-Society');
-                } catch (\Exception $e) {
-                    
-                }
-
-            }
-
-            if($admin_refer_notification->email_type == 1){
-                $message = $admin_refer_notification->message;
-                try{
-                    \Mail::to($refer_user_find->email)->send(new ReferralEmail($admin_refer_notification, $refer_user_find, $message));
-                }catch(\Exception $ex){
-                    //return $ex->getMessage();
-                }
-            }
-
-            
         }
 
 
@@ -1556,7 +1557,7 @@ class RestaurantAuthenticationController extends ResponseController
                             'noti_type' => 1
                        ];
                        AdminCriteriaNotification::create($criteria_data);
-                   
+
                    }
                 }
 
@@ -1584,7 +1585,7 @@ class RestaurantAuthenticationController extends ResponseController
                             'noti_type' => 1
                         ];
                         AdminCriteriaNotification::create($criteria_data);
-                    
+
                    }
                 }
 
@@ -1597,7 +1598,7 @@ class RestaurantAuthenticationController extends ResponseController
                 try {
                     $response = $sms->sendToOne($user_find->country_code.$user_find->mobile_number, $message,'CM-Society');
                 } catch (\Exception $e) {
-                    
+
                 }
             }
 
