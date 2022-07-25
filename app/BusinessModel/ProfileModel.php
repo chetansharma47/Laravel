@@ -391,8 +391,10 @@ class ProfileModel extends Model
 
 
     public function forgot($request){
-        $email = $request->email;
-        $user = User::whereEmail($email)->first();
+        $email_mobile_number = $request->email;
+        // $user = User::whereEmail($email)->first();
+        $user = User::whereEmail($email_mobile_number)->orWhere(DB::raw("CONCAT(users.country_code,users.mobile_number)"),'=',"+".$email_mobile_number)->first();
+        if(empty($user)) return ["status" => 3, "data" => null, "error_msg" => "Invalid mobile number / email address."];
         if($user->is_blocked == 1){
           return ["status" => 3, "data" => null, "error_msg" => "Your account has been blocked by admin."];
         }
@@ -413,17 +415,19 @@ class ProfileModel extends Model
         try {
             $response = $sms->sendToOne($user->country_code.$user->mobile_number,$message_text,'CM-Society');
         } catch (\Exception $e) {
+            \Log::error($e);
             // continue;
         }
         try{
           \Mail::to($user->email)->send(new UserForgotPassword($user, $link));
 
-          DB::table('password_resets')->whereEmail($email)->delete();
+          DB::table('password_resets')->whereEmail($email_mobile_number)->delete();
 
           DB::table('password_resets')->insert(['email' => $user->email, 'token' => $reset_password_token,
                 'created_at' => Carbon::now()]);
         }catch(\Exception $ex){
-          return ["status" => 0, "data" => null, "error_msg" => "Something went wrong."];
+            \Log::error($ex);
+        //   return ["status" => 0, "data" => null, "error_msg" => "Something went wrong."];
         }
         return ["status" => 8, "data" => $user, "msg" => "A reset password link has been sent to your registered email address."];
     }

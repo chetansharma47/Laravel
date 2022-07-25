@@ -84,7 +84,7 @@ class Validation extends Model
 
 
         $validation =  [
-            'email' => 'required|email|exists:users,email'
+            'email' => 'required'
         ];
 
         $message = [
