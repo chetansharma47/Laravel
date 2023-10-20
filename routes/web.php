@@ -145,6 +145,7 @@ Route::group(['middleware' => 'TimeZone','namespace' => 'Admin','prefix'=>'/admi
 
         Route::post('activate-users','TabController@activateUsers')->name('activateUsers');
         Route::post('deactivate-users','TabController@deactivateUsers')->name('deactivateUsers');
+        Route::post('verify-users','TabController@verifyUsers')->name('verifyUsers');
         Route::post('reset-password-send-link','TabController@resetPasswordSendLink')->name('resetPasswordSendLink');
 
         Route::post('total-transaction-amount-for-tier','TabController@totalTransactionAmountForDays')->name('totalTransactionAmountForDays');

@@ -1676,6 +1676,20 @@ class TabController extends ResponseController
         return ['status' => "success","ids" => $ids];
     }
 
+
+    public function verifyUsers(Request $request){
+        $ids = explode(",", $request->ids);
+
+        $check_verified_user = User::whereIn("id", $ids)->where("is_verify", "=", '1')->first();
+
+        if(!empty($check_verified_user)){
+            return response()->json(['user_action_err' => 'Selected user has been already verified.'],422);
+        }
+        User::whereIn("id", $ids)->update(['is_verify' => "1"]);
+        return ['status' => "success","ids" => $ids];
+    }
+
+
     public function resetPasswordSendLink(Request $request){
         $ids = explode(",", $request->ids);
 
