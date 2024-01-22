@@ -49,7 +49,7 @@ use App\Models\NotiRecord;
 use App\Models\GeneralSetting;
 use DateTime;
 use DateTimeZone;
-require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
+// require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
 date_default_timezone_set('Asia/Dubai');
 class RestaurantAuthenticationController extends ResponseController
 {

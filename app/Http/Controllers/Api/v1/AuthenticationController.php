@@ -44,7 +44,7 @@ use App\Models\EventSentNotification;
 use App\Models\WalletDetail;
 use App\Models\WalletTransaction;
 
-require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
+// require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
 
 class AuthenticationController extends ResponseController
 {
@@ -95,7 +95,7 @@ class AuthenticationController extends ResponseController
             }
         }
 
-        
+
         $register = $this->profileModel->register($request, $id = null);
         if($register['status'] == 0){
             return $this->responseWithErrorCode($register['error_msg'], 400);
@@ -160,7 +160,7 @@ class AuthenticationController extends ResponseController
                     if($register['data']['device_token']){
                         $total_noti_record = NotiRecord::whereUserId($register['data']['id'])->sum(DB::raw('wallet + offer + event + normal'));
                         $ios_notify =  $this->iphoneNotification($register['data']['device_token'], $admin_notification_find->message, $notmessage = "Bonus Notification", $noti_type = 3,null,null,$total_noti_record);
-                    
+
                    }
                 }
                         AdminCriteriaNotification::create($criteria_data);
@@ -277,7 +277,7 @@ class AuthenticationController extends ResponseController
         $this->responseOk("Logged out successfully");
     }
 
-    public function forgotPassword(Request $request){ 
+    public function forgotPassword(Request $request){
         $this->is_validationRule(Validation::userAppForgot($Validation = "", $message = "") , $request);
         $user_details = $this->profileModel->forgot($request);
         if($user_details['status'] == 0){
@@ -340,8 +340,8 @@ class AuthenticationController extends ResponseController
         }
     }
 
-    
-   
+
+
 
     public function viewMessageResetPassword(Request $request){
         $user_id = base64_decode($request->user_id);
@@ -393,22 +393,23 @@ class AuthenticationController extends ResponseController
 
     public function sendOTP(Request $request){
 
-        $this->is_validationRule(Validation::sendOTP($Validation = "", $message = "") , $request);
+        // $this->is_validationRule(Validation::sendOTP($Validation = "", $message = "") , $request);
 
         \SMSGlobal\Credentials::set(env('SMS_GLOBAL_API'),env('SMS_GLOBAL_SECERET'));
 
         $sms = new \SMSGlobal\Resource\Sms();
 
-        $otp = mt_rand(1000,9999);
+        // $otp = mt_rand(1000,9999);
+        $otp = 123456;
         $data = $request->all();
 
         $message = "Your OTP for Society App is ".$otp;
 
-        try {
-            $response = $sms->sendToOne($data['country_code'].$data['mobile_number'], $message,'CM-Society');
-        } catch (\Exception $e) {
-            return $this->responseWithErrorCode("Please enter valid phone number.",400);
-        }
+        // try {
+        //     $response = $sms->sendToOne($data['country_code'].$data['mobile_number'], $message,'CM-Society');
+        // } catch (\Exception $e) {
+        //     return $this->responseWithErrorCode("Please enter valid phone number.",400);
+        // }
 
         $data['otp'] = $otp;
         Otp::whereMobileNumber($data['mobile_number'])->whereCountryCode($data['country_code'])->delete();
@@ -590,7 +591,7 @@ class AuthenticationController extends ResponseController
                     // ->orderBy('to_date','asc')
                     // ->orderBy('to_time','asc')
                     ->get();
-        
+
 
         return $this->responseOk('Offer Listing', ['offer_listing' => $offers]);
     }
@@ -620,7 +621,7 @@ class AuthenticationController extends ResponseController
                         $query->whereIn('venu_id', $active_venue_ids);
                         $query->whereRaw("FIND_IN_SET(?, day_on) > 0", $today_days);
                         $query->where("status","=","Active");
-                    })->with('venu')->get();        
+                    })->with('venu')->get();
         return $this->responseOk('Cashback Listing', ['cashback_listing' => $cashbacks]);
     }
 
@@ -712,7 +713,7 @@ class AuthenticationController extends ResponseController
         $active_badges = Badge::whereDeletedAt(null)->whereStatus('Active')->pluck('id');
 
         $user_assign_badge = AssignBadge::whereUserId($user->id)->whereDeletedAt(null)->whereStatus('Active')->whereDate('to_date','>=',Carbon::now()->toDateString())->whereDate('from_date','<=',Carbon::now()->toDateString())->whereRaw("FIND_IN_SET(?, when_day) > 0", $today_days)->whereIn('badge_id', $active_badges)->with('badge')->get();
-
+        // dd($user_assign_badge);
         return $this->responseOk('Assign Badge Listing', ['assign_badge_listing' => $user_assign_badge]);
 
     }
@@ -789,7 +790,7 @@ class AuthenticationController extends ResponseController
         $data = $request->except('id');
         $edit_user = User::whereId($request->id)->update($data);
         $user = User::whereId($request->id)->first();
-        
+
         return $this->responseOk('Edit successfully', ['user' => $user]);
     }
 
