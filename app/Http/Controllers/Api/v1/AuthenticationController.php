@@ -401,6 +401,7 @@ class AuthenticationController extends ResponseController
         // $sms = new \SMSGlobal\Resource\Sms();
 
         // $otp = mt_rand(1000,9999);
+        $otp = 123456;
         $data = $request->all();
         $findUser = User::whereCountryCode($data['country_code'])->whereMobileNumber($data['mobile_number'])->first();
         if($findUser) $this->responseWithErrorValidation("Mobile number already registered with us. Please use another mobile number.");
@@ -609,6 +610,7 @@ class AuthenticationController extends ResponseController
                     // ->orderBy('to_date','asc')
                     // ->orderBy('to_time','asc')
                     ->get();
+
 
         return $this->responseOk('Offer Listing', ['offer_listing' => $offers]);
     }
