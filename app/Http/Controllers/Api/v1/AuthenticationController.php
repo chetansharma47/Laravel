@@ -980,10 +980,15 @@ class AuthenticationController extends ResponseController
             return $each->venue_id;
         })->reverse();
         $direction = 'asc';
-        $venues = Venu::whereIn("id", $favList)
-        ->orderByRaw("FIELD(id, " . implode(",", $favList->toArray()) . ") $direction")
-        ->get();
+        if(!empty($favList->toArray())){
+            $venues = Venu::whereIn("id", $favList)
+            ->orderByRaw("FIELD(id, " . implode(",", $favList->toArray()) . ") $direction")
+            ->get();
+        }else{
+            $venues = [];
+        }
         return $this->responseOk("Venue Listing", ['venue_listing' => $venues]);
+
     }
 
     // public function listUser(){
