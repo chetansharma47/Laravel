@@ -6,6 +6,9 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Passport\HasApiTokens;
+use App\Models\Like;
+use App\Models\Music;
+
 
 class User extends Authenticatable
 {
@@ -50,6 +53,8 @@ class User extends Authenticatable
         'refer_amount_used',
         'request_change_email',
         'id',
+        'do_you_drink',
+        'do_you_smoke',
     ];
 
     /**
@@ -155,4 +160,19 @@ class User extends Authenticatable
             return "N/A";
         }
     }
+
+    public function getLikeListAttribute($value){
+        $ids = explode(",", $value ?? "");
+        $likes = Like::whereIn("id", $ids)->get();
+        return $likes;
+    }
+
+    
+    public function getMusicListAttribute($value){
+        $ids = explode(",", $value ?? "");
+        $likes = Music::whereIn("id", $ids)->get();
+        return $likes;
+    }
+    
+
 }

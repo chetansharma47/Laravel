@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Controllers\Api\v1;
-
+use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Validator;
+// use Validator;
 use Illuminate\Support\Facades\Auth;
 use App\BusinessModel\ProfileModel;
 use App\Mail\EmailVerify;
@@ -13,6 +13,10 @@ use Illuminate\Support\Facades\Storage;
 use GuzzleHttp\Exception\RequestException;
 use App\Http\Controllers\Api\v1\ResponseController;
 use App\Validation;
+use App\Models\Like;
+use App\Models\Music;
+use App\Models\UserVenueFavorites;
+use App\Models\NewVenues;
 use App\User;
 use Hash;
 use Crypt;
@@ -44,7 +48,7 @@ use App\Models\EventSentNotification;
 use App\Models\WalletDetail;
 use App\Models\WalletTransaction;
 
-require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
+// require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
 
 class AuthenticationController extends ResponseController
 {
@@ -68,6 +72,7 @@ class AuthenticationController extends ResponseController
             $this->responseWithErrorValidation("Mobile number already registered with us. Please use another mobile number.");
         }
         // date_default_timezone_set($request->timezone);
+
         $profile = $request->file('image');
         if($profile){
 
@@ -95,7 +100,7 @@ class AuthenticationController extends ResponseController
             }
         }
 
-        
+
         $register = $this->profileModel->register($request, $id = null);
         if($register['status'] == 0){
             return $this->responseWithErrorCode($register['error_msg'], 400);
@@ -120,13 +125,13 @@ class AuthenticationController extends ResponseController
                 }
             }
 
-            // if(!empty($admin_notification_find) && $admin_notification_find->email_type == 1){
-            //     try{
-            //         \Mail::to($register['data']['email'])->send(new BonusEmail($admin_notification_find, $register['data']));
-            //     }catch(\Exception $ex){
-            //       //  return $ex->getMessage();
-            //     }
-            // }
+            if(!empty($admin_notification_find) && $admin_notification_find->email_type == 1){
+                try{
+                    \Mail::to($register['data']['email'])->send(new BonusEmail($admin_notification_find, $register['data']));
+                }catch(\Exception $ex){
+                  //  return $ex->getMessage();
+                }
+            }
 
             if(!empty($admin_notification_find) && $admin_notification_find->push_type == 1){
                 $noti_record_find = NotiRecord::whereUserId($register['data']['id'])->first();
@@ -160,19 +165,18 @@ class AuthenticationController extends ResponseController
                     if($register['data']['device_token']){
                         $total_noti_record = NotiRecord::whereUserId($register['data']['id'])->sum(DB::raw('wallet + offer + event + normal'));
                         $ios_notify =  $this->iphoneNotification($register['data']['device_token'], $admin_notification_find->message, $notmessage = "Bonus Notification", $noti_type = 3,null,null,$total_noti_record);
-                    
+
                    }
                 }
                         AdminCriteriaNotification::create($criteria_data);
             }
-
 
         }
 
         $register['data']['wallet_cash'] =  floor($register['data']['wallet_cash']);
 
         // return $this->responseOk("Now login with your mobile number, to login with email address Please verify the email address.", ['register' => $register['data']]);
-        return $this->responseOk("Now you can login with your mobile number, please verify your email address to login with the email address.", ['register' => $register['data']]);
+        return $this->responseOk("Now you can login with your mobile number, Please verify your email ID to login with the email ID.", ['register' => $register['data']]);
     }
 
     public function login(Request $request){
@@ -210,8 +214,6 @@ class AuthenticationController extends ResponseController
                 $this->responseWithErrorValidation("Mobile number already registered with us. Please use another mobile number.");
             }
         }
-
-
         $profile = $request->file('image');
         if($profile){
 
@@ -277,7 +279,7 @@ class AuthenticationController extends ResponseController
         $this->responseOk("Logged out successfully");
     }
 
-    public function forgotPassword(Request $request){ 
+    public function forgotPassword(Request $request){
         $this->is_validationRule(Validation::userAppForgot($Validation = "", $message = "") , $request);
         $user_details = $this->profileModel->forgot($request);
         if($user_details['status'] == 0){
@@ -288,10 +290,9 @@ class AuthenticationController extends ResponseController
             return $this->responseWithErrorCode($user_details['error_msg'], 406);
         }else{
             $user_detail = collect($user_details['data'])->only(['email','mobile_number','country_code']);
-            return $this->responseOk('A reset password link has been sent to your registered email address.',['user_details' => $user_detail]);
+            return $this->responseOk('A reset password link has been sent to your registered email ID.',['user_details' => $user_detail]);
         }
     }
-
 
     public function resetPassword(Request $request){
         if($request->isMethod('GET')) {
@@ -340,8 +341,8 @@ class AuthenticationController extends ResponseController
         }
     }
 
-    
-   
+
+
 
     public function viewMessageResetPassword(Request $request){
         $user_id = base64_decode($request->user_id);
@@ -393,22 +394,25 @@ class AuthenticationController extends ResponseController
 
     public function sendOTP(Request $request){
 
-        $this->is_validationRule(Validation::sendOTP($Validation = "", $message = "") , $request);
+        // $this->is_validationRule(Validation::sendOTP($Validation = "", $message = "") , $request);
 
-        \SMSGlobal\Credentials::set(env('SMS_GLOBAL_API'),env('SMS_GLOBAL_SECERET'));
+        // \SMSGlobal\Credentials::set(env('SMS_GLOBAL_API'),env('SMS_GLOBAL_SECERET'));
 
-        $sms = new \SMSGlobal\Resource\Sms();
+        // $sms = new \SMSGlobal\Resource\Sms();
 
-        $otp = mt_rand(1000,9999);
+        // $otp = mt_rand(1000,9999);
         $data = $request->all();
+        $findUser = User::whereCountryCode($data['country_code'])->whereMobileNumber($data['mobile_number'])->first();
+        if($findUser) $this->responseWithErrorValidation("Mobile number already registered with us. Please use another mobile number.");
+        $otp = 1234;
 
         $message = "Your OTP for Society App is ".$otp;
 
-        try {
-            $response = $sms->sendToOne($data['country_code'].$data['mobile_number'], $message,'CM-Society');
-        } catch (\Exception $e) {
-            return $this->responseWithErrorCode("Please enter valid phone number.",400);
-        }
+        // try {
+        //     $response = $sms->sendToOne($data['country_code'].$data['mobile_number'], $message,'CM-Society');
+        // } catch (\Exception $e) {
+        //     return $this->responseWithErrorCode("Please enter valid phone number.",400);
+        // }
 
         $data['otp'] = $otp;
         Otp::whereMobileNumber($data['mobile_number'])->whereCountryCode($data['country_code'])->delete();
@@ -454,7 +458,7 @@ class AuthenticationController extends ResponseController
         if(empty($check_email)){
             return $this->responseOk("Email address not found.");
         }else{
-            return $this->responseWithErrorCode("Email address already exists, Please try a different email address.",406);
+            return $this->responseWithErrorCode("Email ID already exists, Please try a different email ID.",406);
         }
     }
 
@@ -463,6 +467,11 @@ class AuthenticationController extends ResponseController
         $venues = Venu::select("id","venue_name","image")->whereDeletedAt(null)->whereStatus('Active')->orderBy('venue_name','asc')->get();
         return $this->responseOk("Venue Listing", ['venue_listing' => $venues]);
     }
+
+
+
+
+
 
     public function venueDetails(Request $request, $venue_id){
 
@@ -477,8 +486,18 @@ class AuthenticationController extends ResponseController
                     ->orderBy('updated_at','desc')
                     ->get();
 
+
+
         if(!empty($venue)){
             $venue->events = $events;
+            $user = auth()->user()->id;
+            $details=UserVenueFavorites::where('venue_id',$venue_id)->where('user_id',$user)->first();
+            if($details){
+                $venue->isFav = true;
+            }else{
+                $venue->isFav = false;
+            }
+
             return $this->responseOk('Venue Details', ['venue_details' => $venue]);
         }else{
             return $this->responseWithErrorCode("Venue has been inactivated or deleted by admin.",407);
@@ -590,7 +609,6 @@ class AuthenticationController extends ResponseController
                     // ->orderBy('to_date','asc')
                     // ->orderBy('to_time','asc')
                     ->get();
-        
 
         return $this->responseOk('Offer Listing', ['offer_listing' => $offers]);
     }
@@ -620,7 +638,7 @@ class AuthenticationController extends ResponseController
                         $query->whereIn('venu_id', $active_venue_ids);
                         $query->whereRaw("FIND_IN_SET(?, day_on) > 0", $today_days);
                         $query->where("status","=","Active");
-                    })->with('venu')->get();        
+                    })->with('venu')->get();
         return $this->responseOk('Cashback Listing', ['cashback_listing' => $cashbacks]);
     }
 
@@ -712,7 +730,7 @@ class AuthenticationController extends ResponseController
         $active_badges = Badge::whereDeletedAt(null)->whereStatus('Active')->pluck('id');
 
         $user_assign_badge = AssignBadge::whereUserId($user->id)->whereDeletedAt(null)->whereStatus('Active')->whereDate('to_date','>=',Carbon::now()->toDateString())->whereDate('from_date','<=',Carbon::now()->toDateString())->whereRaw("FIND_IN_SET(?, when_day) > 0", $today_days)->whereIn('badge_id', $active_badges)->with('badge')->get();
-
+        // dd($user_assign_badge);
         return $this->responseOk('Assign Badge Listing', ['assign_badge_listing' => $user_assign_badge]);
 
     }
@@ -789,7 +807,7 @@ class AuthenticationController extends ResponseController
         $data = $request->except('id');
         $edit_user = User::whereId($request->id)->update($data);
         $user = User::whereId($request->id)->first();
-        
+
         return $this->responseOk('Edit successfully', ['user' => $user]);
     }
 
@@ -827,6 +845,179 @@ class AuthenticationController extends ResponseController
     //     UserAssignOffer::query()->delete();
     //     return $this->responseOk('Reset customer details successfully');
     // }
+
+//  ==================================================================================================================================
+
+    // new code
+
+    // like list function
+
+    public function likeList(){
+        $like=Like::get(['id','name','image']);
+        $userLikeList = auth()->user()->getOriginal("like_list");
+        if($userLikeList){
+            $userLikeList = explode(",", $userLikeList);
+            $like = $like->map(function($each) use ($userLikeList){
+                if(in_array($each->id, $userLikeList)){
+                    $each->isSelected = true;
+                }else{
+                    $each->isSelected = false;
+                }
+                return $each;
+            });
+        }
+        return $this->responseOk('Like list fetched successfully.', ["like_list" => $like]);
+    }
+
+    // like music function
+
+    public function likeMusic(){
+        $like=Music::get(['id','name','image']);
+        $userLikeList = auth()->user()->getOriginal("music_list");
+        if($userLikeList){
+            $userLikeList = explode(",", $userLikeList);
+            $like = $like->map(function($each) use ($userLikeList){
+
+                if(in_array($each->id, $userLikeList)){
+                    $each->isSelected = true;
+                }else{
+                    $each->isSelected = false;
+                }
+                return $each;
+            });
+        }
+        return $this->responseOk('Music list fetched successfully.', ["music_list" => $like]);
+    }
+
+
+
+
+    // public function music(){
+    //     $music=Music::get(['id','name','image']);
+    //     return $this->responseOk('Music list fetched successfully.',["music_list"=>$music]);
+    // }
+
+    // like-list-updatecode
+
+    public function updatelikelist(Request $request){
+
+        $this->is_validationRule(Validation::likeList($Validation = "", $message = "") , $request);
+        $user = Auth::guard()->user();
+        $user->like_list= implode(",",$request->like_list);
+        $user->save();
+
+        return $this->responseOk('Like-List updated',["user"=>$user]);
+    }
+
+    // music-list-updatecode
+
+    public function updatemusiclist(Request $request){
+        $this->is_validationRule(Validation::musicList($Validation="",$message=""),$request);
+        $user=Auth::guard()->user();
+        $user->music_list=implode(",",$request->music_list);
+        $user->save();
+        return $this->responseOk('Music-List updated',["user"=>$user]);
+    }
+
+    public function uservanue(Request $request){
+
+            $validator= Validator::make($request->all(),[
+                'venue_id'=>'required',
+
+            ]);
+            if($validator->fails()){
+                $result = array( 'message' => 'validation error occured', 'error_message' => $validator->errors());
+                return response()->json($result, 400); //bad request
+            }
+
+        $user=Auth::guard()->user()->id;
+       $users=UserVenueFavorites::where('venue_id',$request->venue_id)->where('user_id',$user)->first();
+       if($users){
+        $users->delete();
+        return $this->responseOk('Venue removed from favorites successfully');
+       }
+        $list= new UserVenueFavorites;
+        $list->user_id=$user;
+        $list->venue_id	=$request->venue_id;
+        $list->save();
+        return $this->responseOk('Venue added to favorites successfully',["data"=>$list]);
+
+    }
+
+// =============================================================================================
+
+// public function listingvenue(Request $request){
+//     $validator= Validator::make($request->all(),[
+//         'new_venue_id'=>'required',
+
+//     ]);
+//     if($validator->fails()){
+//         $result = array( 'message' => 'validation error occured', 'error_message' => $validator->errors());
+//         return response()->json($result, 400); //bad request
+//     }
+//     $user = Auth::guard()->user()->id;
+//     $uvfav=UserVenueFavorites::get(['id']);
+//     // $uvfav = UserVenueFavorites::where('id', $id)->first();
+//     // $venue = Venu::where('id', $id)->first();
+//     $venue=Venu::get(['id']);
+//     $list=new NewVenues;
+//     $list->user_id=$user;
+//     $list->u_v_fav_id=$uvfav;
+//     $list->venue_id=$venue;
+//     $list->new_venue_id=$request->new_venue_id;
+//     $list->save();
+//     return $this->responseOk('Data added successfully',["data"=>$list]);
+// }
+// ============================================================================================
+
+
+    public function favVenueList(){
+        $user = auth()->user()->id;
+        $favList = UserVenueFavorites::where("user_id", $user)->get();
+        $favList = $favList->map(function($each){
+            return $each->venue_id;
+        })->reverse();
+        $direction = 'asc';
+        $venues = Venu::whereIn("id", $favList)
+        ->orderByRaw("FIELD(id, " . implode(",", $favList->toArray()) . ") $direction")
+        ->get();
+        return $this->responseOk("Venue Listing", ['venue_listing' => $venues]);
+    }
+
+    // public function listUser(){
+    //     $user = auth()->user()->id;
+    //     $users=User::where('id','!=',$user)
+
+    //     ->select(['id','first_name','last_name','email','mobile_number','dob','gender',
+    //     ])
+    //     ->paginate(10);
+    //     return $this->responseOk("users List",["user_data"=>$users]);
+
+    // }
+
+    public function listUser() {
+        $user = auth()->user()->id;
+        // $users = User::where('id', '!=', $user)paginate(10)->get([ 'id','first_name','last_name','image','mobile_number','dob','gender']);
+        $users=User::where('id','!=',$user)
+            ->select([
+                'id',
+                'first_name',
+                'last_name',
+                'email',
+                'mobile_number',
+                'dob',
+                'gender',
+               'image'
+            ])
+            ->paginate(10);
+        return $this->responseOk("Users List", ["user_data" => $users]);
+    }
+
+
+
+
+
+
 
 }
 

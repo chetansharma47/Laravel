@@ -3,7 +3,6 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-
 class Validation extends Model
 {
 
@@ -13,7 +12,7 @@ class Validation extends Model
     	$validation = [
             'image'             => 'sometimes|nullable',
             'country_code'      => 'required',
-            'mobile_number'     => 'required|numeric|digits_between:8,15|unique:users,mobile_number',
+            'mobile_number'     => 'required|numeric|digits_between:8,15',
             'first_name'        => 'required|max:50',
     		    'last_name'         => 'required|max:50',
             'email'        	    => 'required|max:100|unique:users,email',
@@ -25,10 +24,12 @@ class Validation extends Model
             'dob'               => 'required|date_format:Y-m-d',
             'gender'            => 'required|in:Male,Female,Other',
             'reference_code'    => 'sometimes|nullable|max:12',
-            'timezone'          => 'required'
+            'timezone'          => 'required',
+            // new validation
+            // 'do_you_drink'      =>'required',
+            // 'do_you_smoke' =>'required'
 
     	];
-
     	$message = [
               'country_code.required'       =>  "Please enter country code",
               'mobile_number.required'      =>  "Please enter mobile number.",
@@ -50,12 +51,17 @@ class Validation extends Model
               'dob.date_format'             =>  "DOB should be Y-m-d format only.",
               'gender.required'             =>  "Please enter gender.",
               'gender.in'                   =>  "Gender should be male,female,other only.",
-              'reference_code.max'          =>  "Referral code should be less than or equal to 12 characters."
+              'reference_code.max'          =>  "Referral code should be less than or equal to 12 characters.",
+              // new validation
+              // 'do_you_drink.required'=>"Please enter drink",
+              // 'do_you_smoke.required'=>"please enter smoke"
+
     	];
 
     	return $data = ['validation' => $validation, 'message' => $message];
 
     }
+
 
     public static function userAppLogin($validation = null, $message = null){
 
@@ -139,12 +145,10 @@ class Validation extends Model
 
     }
 
-  public static function userAppUpdateUser($validation = null, $message = null){
-
-
+    public static function userAppUpdateUser($validation = null, $message = null){
       $validation = [
             'country_code'      => 'sometimes|nullable',
-            'mobile_number'     => 'sometimes|nullable|numeric|digits_between:8,15|unique:users,mobile_number',
+            'mobile_number'     => 'sometimes|nullable|numeric|digits_between:8,15',
             'email'             => 'sometimes|nullable|email|max:100|unique:users,email',
             'city_of_residence' => 'sometimes|nullable|max:100',
             'password'  => ['sometimes','nullable','max:100','min:6'],
@@ -156,8 +160,8 @@ class Validation extends Model
             'dob'               => 'sometimes|date_format:Y-m-d',
             'gender'            => 'sometimes|in:Male,Female,Other',
             'image'             => 'sometimes|nullable',
-
-
+            'do_you_drink' => 'sometimes|in:No,Regular,Occasional',
+            'do_you_smoke' => 'sometimes|in:No,Regular,Occasional',
       ];
 
       $message = [
@@ -166,7 +170,7 @@ class Validation extends Model
               'mobile_number.numeric'         =>  "Mobile number should be numeric only.",
               'mobile_number.digits_between'  =>  "Mobile number should be between 8 to 15 digits only.",
               'mobile_number.unique'        =>  "Mobile number already registered with us. Please use another mobile number.",
-              'email.unique'                  =>  "Email address already registered with us. Please use another email address.",
+              'email.unique'                  =>  "Email ID already registered with us. Please use another email ID.",
               'email.email'       => 'Please enter valid email address.',
               'city_of_residence.max'         =>  "City of residence should be less than 100 characters.",
               'password.required'             => 'Please enter new password.',
@@ -176,7 +180,7 @@ class Validation extends Model
               'password.min'                  => 'The new password must be at least 6 characters.',
               'password.max'                  => 'The new password may not be greater than 100 characters.',
               'otp.required'                  =>  "Please enter OTP.",
-              'otp.min'                  =>  "Please enter valid OTP.",
+              'otp.min'                       =>  "Please enter valid OTP.",
               'first_name.required'         =>  "Please enter first name.",
               'last_name.required'          =>  "Please enter last name.",
               'nationality.required'        =>  "Please enter nationality.",
@@ -186,6 +190,11 @@ class Validation extends Model
               'gender.required'             =>  "Please enter gender.",
               'gender.in'                   =>  "Gender should be male,female,other only.",
               'image.required'              =>  "Please enter image.",
+              
+              // new validation             
+            'do_you_drink.required'      =>" Select drink",
+            'do_you_smoke.required' =>"Select smoke",
+            
 
               
       ];
@@ -559,6 +568,44 @@ class Validation extends Model
 
       return $data = ['validation' => $validation, 'message' => $message];
     }
+
+
+       
+    // like list validation
+
+    public static function likeList($validation = null, $message = null){
+      $validation = [
+            'like_list'      => 'array',
+            'like_list.*' => "integer"
+      ];
+
+      $message = [
+        'message.required'       =>  "Please enter like list.",
+      ];
+      return $data = ['validation' => $validation, 'message' => $message];
+    }
+  
+
+    // music list validation
+    public static function musicList($validation=null,$message =null){
+      $validation=[
+        'music_list'=>'array',
+        'music_list.*'=>"integer"
+      ];
+      $message=[
+        'message.required'=>"please enter music list.",
+
+      ];
+      return $data=['validation'=>$validation,'message'=>$message];
+
+    }
+
+
+
+
+
+
+
 
     
 

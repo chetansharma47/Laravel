@@ -43,7 +43,7 @@ use Illuminate\Support\Arr;
 // date_default_timezone_set("Asia/Kolkata");
  date_default_timezone_set("UTC");
 // date_default_timezone_set('Asia/Dubai');
-require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
+// require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
 
 class Controller extends BaseController
 {
@@ -78,8 +78,6 @@ class Controller extends BaseController
         // return $offers;
 
         foreach ($offers as $offer) {
-
-
             $user_match_with_offers = User::select('id','email','dob','first_name','last_name','device_type','device_token','country_code','mobile_number')->whereDeletedAt(null)->where('is_block','=',0)->where("is_active", "=", 'Active');
 
             if(!empty($offer->offerSetting->city_id)) { //If City is not empty
@@ -90,9 +88,6 @@ class Controller extends BaseController
                 $user_match_with_offers = $user_match_with_offers->where("gender","=",$offer->offerSetting->gender);
             }
             $user_match_with_offers = $user_match_with_offers->get();
-
-
-
 
          // //  return $offer;
          //    if(!empty($offer->offerSetting->city_id) && !empty($offer->offerSetting->gender)){
@@ -216,8 +211,8 @@ class Controller extends BaseController
                                         $total_noti_record = NotiRecord::whereUserId($user_match_with_offer->id)->sum(DB::raw('wallet + offer + event + normal'));
                                        $android_notify =  $this->send_android_notification_new($user_match_with_offer->device_token, "Special Offer: ".$offer->offer_name." at ".$offer->venu->venue_name."\n".$admin_offer_notification->message,"Offer Assign Notification", $noti_type = 6, null,$offer_id = $offer_assign->offer_id,$total_noti_record);
 
-                                        
-                                   
+
+
                                    }
                                 }
 
@@ -226,7 +221,7 @@ class Controller extends BaseController
 
                                         $total_noti_record = NotiRecord::whereUserId($user_match_with_offer->id)->sum(DB::raw('wallet + offer + event + normal'));
                                         $ios_notify =  $this->iphoneNotification($user_match_with_offer->device_token, "Special Offer: ".$offer->offer_name." at ".$offer->venu->venue_name."\n".$admin_offer_notification->message,"Offer Assign Notification", $noti_type = 6, null,$offer_id = $offer_assign->offer_id,$total_noti_record);
-                                    
+
                                    }
                                 }
 
@@ -353,7 +348,7 @@ class Controller extends BaseController
                                                 'noti_type' => 6,
                                                 'offer_id'  => $offer_assign->offer_id
                                             ];
-                                        
+
                                        }
                                     }
                                             AdminCriteriaNotification::create($criteria_data);
@@ -378,7 +373,7 @@ class Controller extends BaseController
 
 
             }
-            
+
         }
             return $this->responseOk('Offer Assign', ['message' => 'Offer assigned successfully']);
         /*End*/
@@ -388,8 +383,8 @@ class Controller extends BaseController
      public  function iphoneNotification($device_token,$message,$notfy_message, $noti_type = "", $event_id = "", $offer_id = "", $total_noti_record = ""){
         $PATH = public_path('pemfile/user_push.pem');
         $deviceToken = $device_token;
-        
-            
+
+
         $body['title'] = $message;
         $body['Notifykey'] = $notfy_message;
         $body['noti_type'] = $noti_type;
@@ -468,7 +463,7 @@ class Controller extends BaseController
         curl_setopt( $ch,CURLOPT_HTTPHEADER, $headers );
         curl_setopt( $ch,CURLOPT_RETURNTRANSFER, true );
         curl_setopt( $ch,CURLOPT_SSL_VERIFYPEER, false );
-        
+
         curl_setopt( $ch,CURLOPT_POSTFIELDS, json_encode($fields) );
         $result = curl_exec($ch);
 
@@ -482,9 +477,9 @@ class Controller extends BaseController
     }
 
     /*public function transferToWallet(Request $request){
-        
+
         date_default_timezone_set("Asia/Kolkata");
-            
+
         $WalletTransaction = WalletTransaction::where('is_cross_verify','=',0)->get();
         $admin_cashback_notification_find = AdminNotification::where("uniq_id","=",2)->first();
         foreach ($WalletTransaction as $WalletTransaction) {
@@ -508,7 +503,7 @@ class Controller extends BaseController
                                 'updated_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString()
                             ];
                             AdminCriteriaNotification::create($criteria_data);
-                       
+
                        }
                     }
 
@@ -523,7 +518,7 @@ class Controller extends BaseController
                                 'updated_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString()
                             ];
                             AdminCriteriaNotification::create($criteria_data);
-                        
+
                        }
                     }
 
@@ -536,7 +531,7 @@ class Controller extends BaseController
                     try {
                         $response = $sms->sendToOne($find_user->country_code.$find_user->mobile_number, $message,'CM-Society');
                     } catch (\Exception $e) {
-                        
+
                     }
                 }
 
@@ -546,7 +541,7 @@ class Controller extends BaseController
                     }catch(\Exception $ex){
                         //return $ex->getMessage();
                     }
-                }                
+                }
             }
         }
 
@@ -615,7 +610,7 @@ class Controller extends BaseController
                                     $total_noti_record = NotiRecord::whereUserId($user_find->id)->sum(DB::raw('wallet + offer + event + normal'));
 
                                     $android_notify =  $this->send_android_notification_new($user_find->device_token, $admin_event_notification->message,"Event Create Notification", $noti_type = 5, $event_id = $find_event->id,null,$total_noti_record);
-                               
+
                                }
                             }
 
@@ -625,7 +620,7 @@ class Controller extends BaseController
                                     $total_noti_record = NotiRecord::whereUserId($user_find->id)->sum(DB::raw('wallet + offer + event + normal'));
 
                                     $ios_notify =  $this->iphoneNotification($user_find->device_token,$admin_event_notification->message,"Event Create Notification", $noti_type = 5, $event_id = $find_event->id,null,$total_noti_record);
-                                
+
                                }
                             }
 
@@ -645,7 +640,7 @@ class Controller extends BaseController
                             }
                         }
                     }
-                    
+
                 }
 
 
@@ -693,7 +688,7 @@ class Controller extends BaseController
 
             $assign_badge_mail = (new UserAssignBadgeJob($user_find, $find_badge, $value))->delay(Carbon::now()->addSeconds(3));
             dispatch($assign_badge_mail);
-            
+
         }
 
         return "success";
@@ -832,7 +827,7 @@ class Controller extends BaseController
     //             $amount_between_tier_find_previous = TierCondition::whereDeletedAt(null)->where('to_amount','<=', $total_amount_transaction)->orderBy('to_amount','desc')->first();
 
     //             if(!empty($amount_between_tier_find_previous)){
-                    
+
     //                 $last_tier_update_date = Carbon::parse($user_find->tier_update_date);
     //                 $diffrence_in_days_for_tier = $last_tier_update_date->diffInDays(Carbon::now());
 
@@ -859,7 +854,7 @@ class Controller extends BaseController
     //                 }else{
     //                     return $this->responseWithErrorCode("No tier add from admin.",400);
     //                 }
-                    
+
     //             }
 
     //         }else{

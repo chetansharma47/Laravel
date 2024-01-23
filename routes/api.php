@@ -1,6 +1,9 @@
 <?php
 
 use Illuminate\Http\Request;
+use App\Http\Controllers\API\v1\LikeController;
+use Illuminate\Support\Facades\Route;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -44,16 +47,31 @@ Route::group(['namespace' => 'Api\v1','prefix'=>'v1'], function() {
 
     Route::group(['middleware' => ['auth:api','checkBlockDelete']], function(){
 
-        Route::get('logout', 'AuthenticationController@logout');
+    Route::get('logout', 'AuthenticationController@logout');
 
-        Route::get('profile/{id?}', 'AuthenticationController@getProfile');
+    Route::get('profile/{id?}', 'AuthenticationController@getProfile');
 
-         Route::post('update-user', 'AuthenticationController@updateUser');
+    Route::post('update-user', 'AuthenticationController@updateUser');
 
-        Route::get('venue-listing','AuthenticationController@venueListing');
-        Route::get('venue-details/{venue_id}','AuthenticationController@venueDetails');
 
-        Route::get('event-listing','AuthenticationController@eventListing');
+    // update like list
+    Route::post('update-like','AuthenticationController@updatelikelist');   
+    // update music list
+    Route::post('update-music','AuthenticationController@updatemusiclist');
+     // new api
+     Route::get('like-list','AuthenticationController@likeList');
+     Route::get('music-list','AuthenticationController@likeMusic');
+
+     Route::post('user-venue','AuthenticationController@uservanue');
+     
+     Route::get('fav-venue-list','AuthenticationController@favVenueList');
+     Route::get('list-user','AuthenticationController@listUser');
+
+    Route::get('venue-listing','AuthenticationController@venueListing');
+
+    Route::get('venue-details/{venue_id}','AuthenticationController@venueDetails');
+
+    Route::get('event-listing','AuthenticationController@eventListing');
         Route::post('today-events','AuthenticationController@todayEvent');
         Route::get('event-details/{event_id}','AuthenticationController@eventDetails');
         Route::post('offer-listing','AuthenticationController@offerListing');
@@ -69,7 +87,6 @@ Route::group(['namespace' => 'Api\v1','prefix'=>'v1'], function() {
         Route::get('noti-records','AuthenticationController@notiRecords');
         Route::post('read-noti-records','AuthenticationController@readNotiRecords');
         
-
     });
 
 
@@ -87,6 +104,8 @@ Route::group(['namespace' => 'Api\v1','prefix'=>'v1'], function() {
         Route::post('search-user-data','RestaurantAuthenticationController@searchUserData');
         Route::post('pay-amount','RestaurantAuthenticationController@payAmount');
         Route::post('redeem-offer','RestaurantAuthenticationController@redeemOffer');
+      
+
     });
 
 
@@ -98,6 +117,9 @@ Route::group(['namespace' => 'Api\v1','prefix'=>'v1'], function() {
         Route::post('scan-pos','RestaurantAuthenticationController@scanPos');
         Route::post('pos-pay-bill','RestaurantAuthenticationController@posPayBill');
     });
+
     
+
+
 
 });

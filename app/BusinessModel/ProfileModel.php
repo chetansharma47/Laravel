@@ -18,6 +18,8 @@ use App\Models\LoginRequest;
 use App\Models\Venu;
 use App\Models\AssignUserVenue;
 use App\Models\WalletCashback;
+use App\Models\UserVenueFavorites;
+
 use Picqer;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use App\Mail\SignupMail;
@@ -147,7 +149,7 @@ class ProfileModel extends Model
             return ["status" => 11, "success_msg" => "DOB has been updated successfully."];
         }
 
-        if($data['image']){
+        if(!empty($data['image'])){
             $destinationPath = storage_path() . DIRECTORY_SEPARATOR . env('IMG_STORAGE');
             $image_name = self::uploadImage($data['image'], $destinationPath);
             if($image_name == "Unable to init from given binary data."){
@@ -157,9 +159,22 @@ class ProfileModel extends Model
             return ["status" => 12, "success_msg" => "Profile image has been updated successfully."];
             // $data['image'] = $image_name;
         }
-        
+// =============================================================================================
+        // new update function
+
+        if(!empty($data['do_you_drink'])){
+            $update_user = $user->update(['do_you_drink' => $data['do_you_drink']]);
+            return ["status" => 7, "success_msg" => "Data updated successfully."];
+        }
+
+        if(!empty($data['do_you_smoke'])){
+            $update_user = $user->update(['do_you_smoke' => $data['do_you_smoke']]);
+            return ["status" => 7, "success_msg" => "Data updated successfully."];
+        }
+
         return User::find($id);
     }
+
 
     public static function updateUser($data, $user){
         $id = $user->id;
@@ -183,19 +198,36 @@ class ProfileModel extends Model
     }
 
     public function getProfile($id){
+
         if(empty($id)){
             $user = Auth::guard()->user();
-            $tier = TierCondition::whereTierName($user->customer_tier)->orderBy('id','desc')->first();
-            $user->tier = $tier;
-            $user->wallet_cash = floor($user->wallet_cash);
-            return $user;
         }else{
             $user = User::whereId($id)->first();
-            $tier = TierCondition::whereTierName($user->customer_tier)->orderBy('id','desc')->first();
-            $user->tier = $tier;
-            $user->wallet_cash = floor($user->wallet_cash);
-            return $user;
         }
+        
+        $tier = TierCondition::whereTierName($user->customer_tier)->orderBy('id','desc')->first();
+        $user->tier = $tier;
+        $user->wallet_cash = floor($user->wallet_cash);
+
+        $favList = UserVenueFavorites::where("user_id", $user->id)->get();
+        $favList = $favList->map(function($each){
+            return $each->venue_id;
+        })->reverse();
+        // dd($favList);
+
+        $direction = 'asc'; 
+        
+        if($favList->count() > 0){
+            $venues = Venu::whereIn("id", $favList)
+            ->orderByRaw("FIELD(id, " . implode(",", $favList->toArray()) . ") $direction")
+            ->limit(3)
+            ->get(['id', 'venue_name']);
+        }else{
+            $venues = [];
+        }
+
+        $user->venue_listing = $venues;
+        return $user;
     }
 
     public function logout($request, $user){
@@ -214,7 +246,7 @@ class ProfileModel extends Model
         if($data['mobile_number'][0] == 0){
             $data['mobile_number'] = substr($data['mobile_number'], 1);
         }
-
+        
         $data['customer_id'] = mt_rand(10000000000,99999999999);
 
         $bonus = 0;
@@ -238,12 +270,12 @@ class ProfileModel extends Model
             $data['tier_update_date'] = Carbon::now()->toDateString();
         }
         $token = str_random(64);
-        // try{
-        //     $link = url("confirm-account/$token");
-        //     \Mail::to($data['email'])->send(new UserVerifyMail($data, $link));
-        // }catch(\Exception $ex){
-        //     return ["status" => 0, "data" => null, "error_msg" => "Something went wrong."];
-        // }
+        try{
+            $link = url("confirm-account/$token");
+            \Mail::to($data['email'])->send(new UserVerifyMail($data, $link));
+        }catch(\Exception $ex){
+            return ["status" => 0, "data" => null, "error_msg" => "Something went wrong."];
+        }
 
         if($request->file('image')){
             $destinationPath = storage_path() . DIRECTORY_SEPARATOR . env('IMG_STORAGE');
@@ -382,24 +414,23 @@ class ProfileModel extends Model
                 $user_data->wallet_cash = floor($user_data->wallet_cash);
                 return ["status" => 8, "data" => $user_data, "error_msg" => ""];
             }else{
-                return ["status" => 5, "data" => null, "error_msg" => "Invalid mobile number / email address or password."];
+                return ["status" => 5, "data" => null, "error_msg" => "Invalid mobile number / email ID or password."];
             }
         }else{
-            return ["status" => 5, "data" => null, "error_msg" => "Invalid mobile number / email address or password."];
+            return ["status" => 5, "data" => null, "error_msg" => "Invalid mobile number / email ID or password."];
         }
     }
-
-
+    
     public function forgot($request){
         $email_mobile_number = $request->email;
         // $user = User::whereEmail($email)->first();
         $user = User::whereEmail($email_mobile_number)->orWhere(DB::raw("CONCAT(users.country_code,users.mobile_number)"),'=',"+".$email_mobile_number)->first();
-        if(empty($user)) return ["status" => 3, "data" => null, "error_msg" => "Invalid mobile number / email address."];
+        if(empty($user)) return ["status" => 3, "data" => null, "error_msg" => "This email ID is not registered with us."];
         if($user->is_blocked == 1){
           return ["status" => 3, "data" => null, "error_msg" => "Your account has been blocked by admin."];
         }
         if($user->is_verify == 0){
-          return ["status" => 3, "data" => null, "error_msg" => "Please verify the email address first to reset the password."];
+          return ["status" => 3, "data" => null, "error_msg" => "Please verify the email ID first to reset the password."];
         }
         if($user->deleted_at != null){
           return ["status" => 3, "data" => null, "error_msg" => "Your account has been deleted by admin."];

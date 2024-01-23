@@ -67,7 +67,7 @@ use App\Models\Admin;
 use DateTime;
 use DateTimeZone;
 use App\Mail\AssignBadgeMail;
-require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
+// require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
 date_default_timezone_set('Asia/Dubai');
 class TabController extends ResponseController
 {

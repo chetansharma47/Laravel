@@ -19,7 +19,6 @@ class ResponseController extends Controller
 			'result'  => 'Failure1',
 			'message' => $field." field is required",
 		];
-
 		if($data){
 			return $data;
 		}
@@ -82,6 +81,7 @@ class ResponseController extends Controller
             return $this->responseWithError($validator->errors()->first());
         }
     }
+
 
     public function is_validationRuleWeb($data, $request){
     	//return $data['validation'];
