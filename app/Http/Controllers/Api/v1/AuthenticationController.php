@@ -17,6 +17,7 @@ use App\Models\Like;
 use App\Models\Music;
 use App\Models\UserVenueFavorites;
 use App\Models\NewVenues;
+use App\Models\AddFriend;
 use App\User;
 use Hash;
 use Crypt;
@@ -838,19 +839,8 @@ class AuthenticationController extends ResponseController
 
     }
 
-    // public function resetUser(Request $request){
-    //     $tier_find = TierCondition::first();
-    //     $user = User::query()->update(['wallet_cash' => 50, 'customer_tier' => $tier_find->tier_name, 'reference_by' => null, 'refer_amount_used' => 0, 'refer_amount' => 0]);
-    //     AdminCriteriaNotification::query()->delete();
-    //     WalletDetail::query()->delete();
-    //     WalletTransaction::query()->delete();
-    //     UserAssignOffer::query()->delete();
-    //     return $this->responseOk('Reset customer details successfully');
-    // }
 
-//  ==================================================================================================================================
-
-    // new code
+    // new code garuav
 
     // like list function
 
@@ -892,13 +882,6 @@ class AuthenticationController extends ResponseController
     }
 
 
-
-
-    // public function music(){
-    //     $music=Music::get(['id','name','image']);
-    //     return $this->responseOk('Music list fetched successfully.',["music_list"=>$music]);
-    // }
-
     // like-list-updatecode
 
     public function updatelikelist(Request $request){
@@ -908,7 +891,7 @@ class AuthenticationController extends ResponseController
         $user->like_list= implode(",",$request->like_list);
         $user->save();
 
-        return $this->responseOk('Like-List updated',["user"=>$user]);
+        return $this->responseOk('Like-List Updated.',["user"=>$user]);
     }
 
     // music-list-updatecode
@@ -918,7 +901,7 @@ class AuthenticationController extends ResponseController
         $user=Auth::guard()->user();
         $user->music_list=implode(",",$request->music_list);
         $user->save();
-        return $this->responseOk('Music-List updated',["user"=>$user]);
+        return $this->responseOk('Music-List Updated.',["user"=>$user]);
     }
 
     public function uservanue(Request $request){
@@ -929,49 +912,22 @@ class AuthenticationController extends ResponseController
             ]);
             if($validator->fails()){
                 $result = array( 'message' => 'validation error occured', 'error_message' => $validator->errors());
-                return response()->json($result, 400); //bad request
+                return response()->json($result);
             }
 
         $user=Auth::guard()->user()->id;
        $users=UserVenueFavorites::where('venue_id',$request->venue_id)->where('user_id',$user)->first();
        if($users){
         $users->delete();
-        return $this->responseOk('Venue removed from favorites successfully');
+        return $this->responseOk('Venue removed from favorites successfully.');
        }
         $list= new UserVenueFavorites;
         $list->user_id=$user;
         $list->venue_id	=$request->venue_id;
         $list->save();
-        return $this->responseOk('Venue added to favorites successfully',["data"=>$list]);
+        return $this->responseOk('Venue added to favorites successfully.',["data"=>$list]);
 
     }
-
-// =============================================================================================
-
-// public function listingvenue(Request $request){
-//     $validator= Validator::make($request->all(),[
-//         'new_venue_id'=>'required',
-
-//     ]);
-//     if($validator->fails()){
-//         $result = array( 'message' => 'validation error occured', 'error_message' => $validator->errors());
-//         return response()->json($result, 400); //bad request
-//     }
-//     $user = Auth::guard()->user()->id;
-//     $uvfav=UserVenueFavorites::get(['id']);
-//     // $uvfav = UserVenueFavorites::where('id', $id)->first();
-//     // $venue = Venu::where('id', $id)->first();
-//     $venue=Venu::get(['id']);
-//     $list=new NewVenues;
-//     $list->user_id=$user;
-//     $list->u_v_fav_id=$uvfav;
-//     $list->venue_id=$venue;
-//     $list->new_venue_id=$request->new_venue_id;
-//     $list->save();
-//     return $this->responseOk('Data added successfully',["data"=>$list]);
-// }
-// ============================================================================================
-
 
     public function favVenueList(){
         $user = auth()->user()->id;
@@ -987,44 +943,192 @@ class AuthenticationController extends ResponseController
         }else{
             $venues = [];
         }
-        return $this->responseOk("Venue Listing", ['venue_listing' => $venues]);
-
+        return $this->responseOk("Venue Listing.", ['venue_listing' => $venues]);
     }
 
-    // public function listUser(){
-    //     $user = auth()->user()->id;
-    //     $users=User::where('id','!=',$user)
-
-    //     ->select(['id','first_name','last_name','email','mobile_number','dob','gender',
-    //     ])
-    //     ->paginate(10);
-    //     return $this->responseOk("users List",["user_data"=>$users]);
-
-    // }
-
-    public function listUser() {
-        $user = auth()->user()->id;
-        // $users = User::where('id', '!=', $user)paginate(10)->get([ 'id','first_name','last_name','image','mobile_number','dob','gender']);
-        $users=User::where('id','!=',$user)
-            ->select([
-                'id',
-                'first_name',
-                'last_name',
-                'email',
-                'mobile_number',
-                'dob',
-                'gender',
-               'image'
-            ])
-            ->paginate(10);
-        return $this->responseOk("Users List", ["user_data" => $users]);
+    
+    public function listUser(Request $request) {
+    $user = auth()->user()->id;
+    // $userss=User::get(['id']);
+    // $list=AddFriend::get(['to_user_id',$userss]);  
+    // $lists = AddFriend::get(['from_user_id']); 
+    $list = AddFriend::where(function ($query) use ($user) {
+        $query->where('from_user_id', $user)
+              ->orWhere('to_user_id', $user);
+    })
+    ->get();
+    $lists = $list->pluck("to_user_id");
+    $detail = $list->pluck("from_user_id");
+    $search = $request->search;
+    $users = User::where('id', '!=', $user)
+        ->whereNotIn('id', $lists)
+        ->whereNotIn('id',$detail)
+        ->where(function ($query) use ($search) {
+            $query->where('first_name', 'LIKE', '%' . $search . '%')
+                ->orWhere('last_name', 'LIKE', '%' . $search . '%')
+                ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ['%' . $search . '%']);
+                // ->orWhere('mobile_number', 'LIKE', '%' . $search . '%')
+                // ->orWhere('email', 'LIKE', '%' . $search . '%');
+        })
+        ->latest()
+        ->select([
+            'id',           
+             'first_name',
+            'last_name',
+            'email',
+            'mobile_number',
+            'dob',
+            'gender',
+            'image'
+        ])
+        ->paginate(30);
+        return $this->responseOk("Search.", ["user_data" =>  $users]);
     }
 
 
+public function addfriend(Request $request) {
+    $this->is_validationRule(Validation::adduserfriend($Validation="", $message=""), $request);  
+
+    $user = auth()->user()->id;
+    $toUserId = $request->to_user_id;
+
+    $existingFriendship = AddFriend::where(function($query) use ($user, $toUserId) {
+            $query->where('from_user_id', $user)
+                ->where('to_user_id', $toUserId);
+        })
+        ->orWhere(function($query) use ($user, $toUserId) {
+            $query->where('from_user_id', $toUserId)
+                ->where('to_user_id', $user);
+        })
+
+
+        ->first();
+if($existingFriendship) {
+    if($existingFriendship->to_user_id==$user){
+        return $this->responseOk('User has already sent you a friend request.');
+    }
+
+    elseif($existingFriendship->status=="Accepted"){
+        return $this->responseOk('You both are already friends.');
+    }
+
+    else{
+        return $this->responseOk('Friend request already sent to user.');
+    }
+
+} else {
+   $list = new AddFriend();
+   $list->to_user_id = $toUserId;
+   $list->from_user_id = $user;
+   $list->status = 'Pending';
+   $list->save();
+
+    return $this->responseOk('Your friend request has been sent.', ["data" =>$list]);     
+ }
+ 
+}
+
+
+
+       
+        public function friendlist(Request $request){
+            $user = auth()->user()->id;
+                
+                if($request->input('type') == "Pending"){
+                
+                    $users = AddFriend::where(function($query) use ($user, $request) {
+                        $query->where('to_user_id', $user)
+                              ->where('status', $request->input('type'));
+                    })->get();
+                }else{
+                    $users = AddFriend::where(function($query) use ($user, $request) {
+                        $query->where('to_user_id', $user)
+                              ->where('status', $request->input('type'));
+                    })
+                    ->orWhere(function($query) use ($user,$request) {
+                        $query->where('from_user_id', $user)
+                              ->where('status',$request->input('type'));
+                    })                 
+                    ->get();
+    
+                }
+                
+            // merge both id's on array
+            $userid=[];
+            foreach($users as $userss){
+                $userid[]=$userss->to_user_id;
+                $userid[]=$userss->from_user_id;
+            }
+    
+            $list=User::where('id', '!=', $user)    
+            ->whereIn('id',$userid)
+                ->select(['id','first_name','last_name','image'])
+                ->latest()
+                ->paginate(10); 
+            return $this->responseOk('Friend List.',['friend'=>$list]);
+        }
+        
 
 
 
 
+
+        public function updatestatus(Request $request){ 
+            $this->is_validationRule(Validation::updateuserstatus($Validation="",$message=""),$request);  
+                $user = auth()->user()->id;
+
+                // $list = AddFriend::where('from_user_id', $request->from_user_id)
+                // ->where('to_user_id',$user)
+            
+                $list = AddFriend::where(function($query) use ($user, $request) {
+                    $query->where('from_user_id', $request->from_user_id)
+                        ->where('to_user_id', $user)
+                        ->where("status" ,"!=" ,"Blocked");
+            
+                })
+                ->orWhere(function($query) use ($user,$request) {
+                    
+                    $query->where('from_user_id', $user)
+                    ->where('to_user_id', $request->from_user_id)
+                    ->where("status" ,"!=" ,"Blocked");
+                })
+
+                ->first();
+                if(!$list){
+                return $this->responseOk('User Not Found.');
+                }else{
+                    $list->status=$request->status;
+                    if($list->status=='Rejected'){
+                        $list->delete();
+                        return $this->responseOk('Friend request rejected successfully.');
+                    }
+                    else 
+                    if($list->status=='Blocked'){
+                        $list->save();      
+                        return $this->responseOk('User blocked successfully.');
+
+                        
+                    }
+                    
+                    else 
+                         {
+                        $list->save();      
+                        return $this->responseOk('Friend request accepted successfully.');
+
+                    }
+
+                   // return $this->responseOk('Friend request accepted successfully.');
+                }
+            }
+  
 
 }
+
+
+
+
+
+
+
+
 

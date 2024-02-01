@@ -600,6 +600,32 @@ class Validation extends Model
 
     }
 
+    public static function adduserfriend($validation=null,$message =null){
+      $validation=[
+        'to_user_id'=>'integer'
+      ];
+      $message=[
+        'message.required'=>"please enter to_user_id",
+
+      ];
+      return $data=['validation'=>$validation,'message'=>$message];
+
+    }
+
+    public static function updateuserstatus($validation=null,$message =null){
+      $validation=[
+
+        'status'=>"string"
+      ];
+      $message=[
+        'message.required'=>"please enter status",
+
+      ];
+      return $data=['validation'=>$validation,'message'=>$message];
+
+    }
+
+
 
 
 

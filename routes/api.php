@@ -65,7 +65,22 @@ Route::group(['namespace' => 'Api\v1','prefix'=>'v1'], function() {
      Route::post('user-venue','AuthenticationController@uservanue');
      
      Route::get('fav-venue-list','AuthenticationController@favVenueList');
+        
      Route::get('list-user','AuthenticationController@listUser');
+
+     Route::post('add-friend','AuthenticationController@addfriend');
+     
+  
+
+
+     Route::post('friend-list','AuthenticationController@friendlist');
+
+   
+
+     
+     Route::post('update-status','AuthenticationController@updatestatus');
+
+
 
     Route::get('venue-listing','AuthenticationController@venueListing');
 
