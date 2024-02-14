@@ -19,14 +19,14 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request){
     return $request->user();
 });
-    
-Route::get('transfer-to-wallet','Controller@transferToWallet');   
+
+Route::get('transfer-to-wallet','Controller@transferToWallet');
 Route::get('offer-assign-user-cron-job','Controller@OfferAssignUserCronJob');
 Route::get('evenet-notification-cron-job','Controller@eventNotificationCronJob');
 Route::get('user-verify-email-cron-job','Controller@UserVerifyEmailCronJob');
 Route::get('assign-badges-email-cron-job','Controller@AssignBadgesEmailCronJob');
 Route::get('customer-tier-update-cron-job','Controller@CustomerTierUpdateCronJob');
-  
+
 Route::group(['namespace' => 'Api\v1','prefix'=>'v1'], function() {
 
 
@@ -34,8 +34,8 @@ Route::group(['namespace' => 'Api\v1','prefix'=>'v1'], function() {
     Route::post('send-otp','AuthenticationController@sendOTP');
     Route::post('verify-otp','AuthenticationController@verifyOTP');
     Route::post('register', 'AuthenticationController@register');
-    Route::post('login', 'AuthenticationController@login'); 
-    Route::post('check-email', 'AuthenticationController@checkEmail'); 
+    Route::post('login', 'AuthenticationController@login');
+    Route::post('check-email', 'AuthenticationController@checkEmail');
     Route::post('forgot-password','AuthenticationController@forgotPassword');
     Route::get('application-data','AuthenticationController@applicationData');
     Route::get('city-listing','AuthenticationController@cityListing');
@@ -55,7 +55,7 @@ Route::group(['namespace' => 'Api\v1','prefix'=>'v1'], function() {
 
 
     // update like list
-    Route::post('update-like','AuthenticationController@updatelikelist');   
+    Route::post('update-like','AuthenticationController@updatelikelist');
     // update music list
     Route::post('update-music','AuthenticationController@updatemusiclist');
      // new api
@@ -63,21 +63,21 @@ Route::group(['namespace' => 'Api\v1','prefix'=>'v1'], function() {
      Route::get('music-list','AuthenticationController@likeMusic');
 
      Route::post('user-venue','AuthenticationController@uservanue');
-     
+
      Route::get('fav-venue-list','AuthenticationController@favVenueList');
-        
+
      Route::get('list-user','AuthenticationController@listUser');
 
      Route::post('add-friend','AuthenticationController@addfriend');
-     
-  
+
+
 
 
      Route::post('friend-list','AuthenticationController@friendlist');
 
-   
 
-     
+
+
      Route::post('update-status','AuthenticationController@updatestatus');
 
 
@@ -101,7 +101,7 @@ Route::group(['namespace' => 'Api\v1','prefix'=>'v1'], function() {
 
         Route::get('noti-records','AuthenticationController@notiRecords');
         Route::post('read-noti-records','AuthenticationController@readNotiRecords');
-        
+
     });
 
 
@@ -119,7 +119,7 @@ Route::group(['namespace' => 'Api\v1','prefix'=>'v1'], function() {
         Route::post('search-user-data','RestaurantAuthenticationController@searchUserData');
         Route::post('pay-amount','RestaurantAuthenticationController@payAmount');
         Route::post('redeem-offer','RestaurantAuthenticationController@redeemOffer');
-      
+
 
     });
 
@@ -131,9 +131,11 @@ Route::group(['namespace' => 'Api\v1','prefix'=>'v1'], function() {
 
         Route::post('scan-pos','RestaurantAuthenticationController@scanPos');
         Route::post('pos-pay-bill','RestaurantAuthenticationController@posPayBill');
+        Route::post("send-pos-otp", 'RestaurantAuthenticationController@sendPosOTP');
+        Route::post("verify-pos-otp", 'RestaurantAuthenticationController@verifyPosOTP');
     });
 
-    
+
 
 
 

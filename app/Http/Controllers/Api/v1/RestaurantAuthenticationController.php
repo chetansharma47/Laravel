@@ -1620,4 +1620,53 @@ class RestaurantAuthenticationController extends ResponseController
 
 
     }
+
+
+    public function sendPosOTP(Request $request){
+
+        \SMSGlobal\Credentials::set(env('SMS_GLOBAL_API'),env('SMS_GLOBAL_SECERET'));
+
+        $sms = new \SMSGlobal\Resource\Sms();
+
+        $otp = mt_rand(1000,9999);
+        $user = User::whereId($request->user_id)->first();
+        if(!$user){
+            return $this->responseWithErrorCode("Please enter valid OTP.",406);
+        }
+        $message = "Your OTP for Society App is ".$otp;
+
+        try {
+            $response = $sms->sendToOne($user['country_code'].$user['mobile_number'], $message,'CM-Society');
+        } catch (\Exception $e) {
+            return $this->responseWithErrorCode("Invalid user phonenumber.",400);
+        }
+        $data = [
+            'otp'=>$otp,
+            "country_code" => $user['country_code'],
+            "mobile_number" => $user['mobile_number'],
+        ];
+        Otp::whereMobileNumber($user['mobile_number'])->whereCountryCode($user['country_code'])->delete();
+        $otp_save = new Otp();
+        $otp_save->fill($data);
+        $otp_save->save();
+        return $this->responseOk("OTP has been sent successfully on your registered mobile number.");
+
+    }
+
+    public function verifyPosOTP(Request $request){
+        $user = User::whereId($request->user_id)->first();
+        if(!$user) return $this->responseWithErrorCode("User not found.",406);
+        $find_otp = Otp::whereOtp($request->otp)->whereMobileNumber($user->mobile_number)->whereCountryCode($user->country_code)->first();
+
+        if($find_otp){
+            $find_otp->delete();
+            return $this->responseOk("OTP has been verified successfully.");
+        }else{
+            return $this->responseWithErrorCode("Please enter valid OTP.",406);
+        }
+    }
+
+
 }
+
+
