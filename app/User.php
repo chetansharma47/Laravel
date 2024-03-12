@@ -48,6 +48,7 @@ class User extends Authenticatable
         'bar_code',
         'self_reference_code',
         'qr_code',
+        'socket_id',
         'tier_update_date',
         'refer_amount',
         'refer_amount_used',
@@ -55,6 +56,9 @@ class User extends Authenticatable
         'id',
         'do_you_drink',
         'do_you_smoke',
+        'display_name',
+        'latitude',
+        'longitude'
     ];
 
     /**
@@ -173,6 +177,7 @@ class User extends Authenticatable
         $likes = Music::whereIn("id", $ids)->get();
         return $likes;
     }
+    
     
 
 }

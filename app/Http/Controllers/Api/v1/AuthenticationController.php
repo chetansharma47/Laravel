@@ -15,13 +15,16 @@ use App\Http\Controllers\Api\v1\ResponseController;
 use App\Validation;
 use App\Models\Like;
 use App\Models\Music;
+use App\Models\Contact;
 use App\Models\UserVenueFavorites;
 use App\Models\NewVenues;
 use App\Models\AddFriend;
 use App\User;
 use Hash;
 use Crypt;
-use DB;
+// use DB;
+use Illuminate\Support\Facades\DB;
+
 use App\Models\Otp;
 use App\Models\ApplicationData;
 use App\Models\ApplicationImage;
@@ -48,6 +51,7 @@ use App\Mail\ContactUsAdmin;
 use App\Models\EventSentNotification;
 use App\Models\WalletDetail;
 use App\Models\WalletTransaction;
+
 
 // require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
 
@@ -843,7 +847,7 @@ class AuthenticationController extends ResponseController
     // new code garuav
 
     // like list function
-
+    
     public function likeList(){
         $like=Like::get(['id','name','image']);
         $userLikeList = auth()->user()->getOriginal("like_list");
@@ -946,44 +950,59 @@ class AuthenticationController extends ResponseController
         return $this->responseOk("Venue Listing.", ['venue_listing' => $venues]);
     }
 
-    
-    public function listUser(Request $request) {
+public function listUser(Request $request) {
     $user = auth()->user()->id;
-    // $userss=User::get(['id']);
-    // $list=AddFriend::get(['to_user_id',$userss]);  
-    // $lists = AddFriend::get(['from_user_id']); 
+    $gender = $request->input('gender'); 
+
     $list = AddFriend::where(function ($query) use ($user) {
         $query->where('from_user_id', $user)
               ->orWhere('to_user_id', $user);
     })
     ->get();
+
     $lists = $list->pluck("to_user_id");
     $detail = $list->pluck("from_user_id");
     $search = $request->search;
-    $users = User::where('id', '!=', $user)
-        ->whereNotIn('id', $lists)
-        ->whereNotIn('id',$detail)
-        ->where(function ($query) use ($search) {
-            $query->where('first_name', 'LIKE', '%' . $search . '%')
-                ->orWhere('last_name', 'LIKE', '%' . $search . '%')
-                ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ['%' . $search . '%']);
-                // ->orWhere('mobile_number', 'LIKE', '%' . $search . '%')
-                // ->orWhere('email', 'LIKE', '%' . $search . '%');
-        })
-        ->latest()
-        ->select([
-            'id',           
-             'first_name',
-            'last_name',
-            'email',
-            'mobile_number',
-            'dob',
-            'gender',
-            'image'
-        ])
-        ->paginate(30);
-        return $this->responseOk("Search.", ["user_data" =>  $users]);
+    $age1= $request->age1;
+    $age2=$request->age2;
+    
+    $usersQuery = User::where('id', '!=', $user)
+                    ->whereNotIn('id', $lists)
+                    ->whereNotIn('id', $detail)
+                    ->where(function ($query) use ($search) {
+                        $query->where('first_name', 'LIKE', '%' . $search . '%')
+                            ->orWhere('last_name', 'LIKE', '%' . $search . '%')
+                            ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ['%' . $search . '%']);
+                            // ->orWhere('mobile_number', 'LIKE', '%' . $search . '%')
+                            // ->orWhere('email', 'LIKE', '%' . $search . '%');
+                    })
+                    ->where(function ($query) use ($age1,$age2) {
+                        if (!empty($age1) && !empty($age2)) {
+                            // Calculate birth date range based on provided age
+                            $fromDate = now()->subYears($age1)->addDay(); // Adjusting for leap years
+                            $toDate = now()->subYears($age2 + 1)->addDay(); // Adjusting for leap years
+                            $query->whereBetween('dob', [$toDate, $fromDate]);
+                        }
+                    });
+
+    if ($gender && $gender !== 'all' && in_array($gender, ['male', 'female'])) {
+        $usersQuery->where('gender', $gender);
     }
+
+    $users = $usersQuery->latest()
+                ->select([
+                    'id',           
+                    'first_name',
+                    'last_name',
+                    'email',
+                    'mobile_number',
+                    'dob',
+                    'gender',
+                    'image'
+                ])
+                ->paginate(30);
+    return $this->responseOk("Search.", ["user_data" =>  $users]);
+}
 
 
 public function addfriend(Request $request) {
@@ -1030,17 +1049,24 @@ if($existingFriendship) {
 
 
 
-       
-        public function friendlist(Request $request){
+
+  public function friendlist(Request $request){
             $user = auth()->user()->id;
                 
-                if($request->input('type') == "Pending"){
-                
-                    $users = AddFriend::where(function($query) use ($user, $request) {
+            if ($request->input('type') == "Pending") {
+                $users = AddFriend::where(function($query) use ($user) {
                         $query->where('to_user_id', $user)
-                              ->where('status', $request->input('type'));
-                    })->get();
-                }else{
+                            ->where('status', 'Pending');
+                    })
+                    ->orWhere(function($query) use ($user) {
+                        $query->where('from_user_id', $user)
+                            ->where('status', 'Pending');
+                    })
+                    ->latest()
+                    ->get();
+            }
+            
+                else{
                     $users = AddFriend::where(function($query) use ($user, $request) {
                         $query->where('to_user_id', $user)
                               ->where('status', $request->input('type'));
@@ -1048,31 +1074,31 @@ if($existingFriendship) {
                     ->orWhere(function($query) use ($user,$request) {
                         $query->where('from_user_id', $user)
                               ->where('status',$request->input('type'));
-                    })                 
+                    })     
+                    ->latest()         
                     ->get();
-    
                 }
                 
             // merge both id's on array
             $userid=[];
+            $fromIds = [];
+            $toIds = [];
             foreach($users as $userss){
                 $userid[]=$userss->to_user_id;
                 $userid[]=$userss->from_user_id;
+                $fromIds[]=$userss->from_user_id;
+                $toIds[]=$userss->to_user_id;
             }
     
-            $list=User::where('id', '!=', $user)    
+            $list=User::where('id', '!=', $user)
+
+            ->select(['id','first_name','last_name','image',DB::raw("(CASE WHEN id In (".implode(',', $toIds).") THEN 1 ELSE 0 END) as is_my_request")])
             ->whereIn('id',$userid)
-                ->select(['id','first_name','last_name','image'])
                 ->latest()
                 ->paginate(10); 
             return $this->responseOk('Friend List.',['friend'=>$list]);
         }
-        
-
-
-
-
-
+            
         public function updatestatus(Request $request){ 
             $this->is_validationRule(Validation::updateuserstatus($Validation="",$message=""),$request);  
                 $user = auth()->user()->id;
@@ -1120,15 +1146,86 @@ if($existingFriendship) {
                    // return $this->responseOk('Friend request accepted successfully.');
                 }
             }
-  
+
+
+
+public function updateContactList(Request $request){
+    $user=auth()->user()->id;
+    $contactsdata=$request->input('contacts');
+    $contacts=[];
+    foreach($contactsdata as  $contactdata){
+
+        $validator=Validator::make($contactdata,[
+            'name'=>'required|string',
+            // 'country_code'=>'required|string',
+            'phone_number' => 'required|string'
+        ],
+      [
+        'name.required'=>'name is required',
+        // 'country_code.required'=>'country_code is required',
+        'phone_number.required'=>'phone_number is required',
+      ]);
+        if($validator->fails()){
+            return $this->responseOk(['error' => $validator->errors()]);
+        }
+        $contacts[]=[
+            "user_id"=>$user,
+            "name"=>$contactdata['name'],
+            // "country_code"=>$contactdata["country_code"],
+            "phone_number"=>$contactdata["phone_number"],
+        ];
+    }
+    Contact::whereUserId($user)->delete();
+    Contact::insert($contacts);
+    return $this->responseOk('Contacts updated successfully.');
 
 }
 
 
+public function contactUserList(Request $request){
+    $user = auth()->user()->id;
 
+    // Fetch matched users
+    $matchedUsers = DB::table('contacts')
+        
+        ->join('users', DB::raw('CONCAT(users.country_code, users.mobile_number)'), '=', 'contacts.phone_number')
+        ->select('users.id','users.first_name', 'users.last_name', 'users.image', 'users.mobile_number', 'users.country_code')
+        ->where('contacts.user_id', $user)
+        ->get();
+    $matchedUsers = $matchedUsers->map(function($each){
+        if(!empty($each->image)){
+    
+            $path_img = public_path(). '/storage/users' . '/' . $each->image;
+    
+            if(file_exists($path_img)){
+                $each->image =  url('/') . '/' . env('IMG_STORAGE_VIEW') . '/' . $each->image;
+            }else{
+    
+                $each->image =  "";
+            } 
+        }
+        return $each;
+    });
+    // Fetch non-matched users
+    $nonMatchedUsers = DB::table('contacts')
+    ->leftjoin('users', DB::raw('CONCAT(users.country_code, users.mobile_number)'), '=', 'contacts.phone_number')
+        ->select('contacts.name', 'contacts.phone_number')
+        // ->select('contacts.*')
+        ->where('contacts.user_id', $user)
+        ->whereNull('users.mobile_number') // Filter out non-matched users
+        ->get()
+        ->toArray();
 
+    // Combine both matched and non-matched users into a single array
+    $data = [
+        'matched_both_table' => $matchedUsers,
+        'non_matched_table' => $nonMatchedUsers
+    ];
 
+    return $this->responseOk("Contact user list.", ["list" => $data]);
+}
 
+}
 
 
 

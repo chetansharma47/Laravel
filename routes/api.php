@@ -66,7 +66,14 @@ Route::group(['namespace' => 'Api\v1','prefix'=>'v1'], function() {
 
      Route::get('fav-venue-list','AuthenticationController@favVenueList');
 
-     Route::get('list-user','AuthenticationController@listUser');
+     Route::post('list-user','AuthenticationController@listUser');
+
+     Route::post('user-chat','ChatController@userChat');
+
+     Route::post('delete-msg/{id}','ChatController@deleteChat');
+
+     Route::post('delete-chat-msg','ChatController@deletemsgChat');
+
 
      Route::post('add-friend','AuthenticationController@addfriend');
 
@@ -74,6 +81,17 @@ Route::group(['namespace' => 'Api\v1','prefix'=>'v1'], function() {
 
 
      Route::post('friend-list','AuthenticationController@friendlist');
+
+     Route::post('friend-msg','ChatController@latestmessage');
+
+     Route::post('filter-data','AuthenticationController@filterdata');
+
+     Route::post('update-contact-list','AuthenticationController@updateContactList');
+
+     Route::post('contact-user-list','AuthenticationController@contactUserList');
+
+
+
 
 
 

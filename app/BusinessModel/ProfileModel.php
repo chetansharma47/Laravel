@@ -172,6 +172,18 @@ class ProfileModel extends Model
             return ["status" => 7, "success_msg" => "Data updated successfully."];
         }
 
+        if(!empty($data['display_name'])){
+            $update_user = $user->update(['display_name' => $data['display_name']]);
+            return ["status" => 7, "success_msg" => "Data updated successfully."];
+        }
+
+        if(!empty($data['latitude'])){
+            $user_user=$user->update(['latitude'=>$data,'longitude'=>$data['longitude']]);
+            return ["status" => 7, "success_msg" => "Data updated successfully."];
+
+        }
+
+
         return User::find($id);
     }
 
