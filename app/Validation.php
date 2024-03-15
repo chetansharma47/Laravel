@@ -162,6 +162,8 @@ class Validation extends Model
             'image'             => 'sometimes|nullable',
             'do_you_drink' => 'sometimes|in:No,Regular,Occasional',
             'do_you_smoke' => 'sometimes|in:No,Regular,Occasional',
+            // 'latitude' => 'required|regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/',
+            // 'longitude'=>'required|regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/',
       ];
 
       $message = [
@@ -194,6 +196,9 @@ class Validation extends Model
               // new validation             
             'do_you_drink.required'      =>" Select drink",
             'do_you_smoke.required' =>"Select smoke",
+            // 'latitude.required'=>'Latitude value appears to be incorrect format.',
+            // 'longitude.required'=>'Longitude value appears to be incorrect format.',
+
             
 
               

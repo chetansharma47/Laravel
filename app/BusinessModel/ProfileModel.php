@@ -178,11 +178,30 @@ class ProfileModel extends Model
         }
 
         if(!empty($data['latitude'])){
-            $user_user=$user->update(['latitude'=>$data,'longitude'=>$data['longitude']]);
+            $user_user=$user->update(['latitude'=>$data["latitude"],'longitude'=>$data['longitude']]);
             return ["status" => 7, "success_msg" => "Data updated successfully."];
 
         }
+        if(!empty($data['like_list'])){
+            $user_user=$user->update(['like_list'=>$data['like_list']]);
+            return["status" => 7,"success_msg" => "Data updated successfully."];
+        }
 
+        if(!empty($data['music_list'])){
+            $user_user=$user->update(['music_list'=>$data['music_list']]);
+            return["status" => 7,"success_msg" => "Data updated successfully."];
+        }
+
+        if(array_key_exists("new_buddies", $data)){
+            $user_user=$user->update(['new_buddies'=>$data['new_buddies']]);
+            return["status" => 7,"success_msg" => "Data updated successfully."];
+        }
+
+        if(array_key_exists("invite_table", $data)){
+            $user_user=$user->update(['invite_table'=>$data['invite_table']]);
+            return["status" => 7,"success_msg" => "Data updated successfully."];
+        }
+        
 
         return User::find($id);
     }
@@ -209,38 +228,48 @@ class ProfileModel extends Model
         return User::find($id);
     }
 
-    public function getProfile($id){
 
-        if(empty($id)){
-            $user = Auth::guard()->user();
-        }else{
-            $user = User::whereId($id)->first();
+  public function getProfile($id){
+
+    if(empty($id)){
+        $user = Auth::guard()->user();
+    }else{
+        $user = User::whereId($id)->first();
+        // dd($user);
+        if($user->socket_id){
+            $user->status = 1;
         }
-        
-        $tier = TierCondition::whereTierName($user->customer_tier)->orderBy('id','desc')->first();
-        $user->tier = $tier;
-        $user->wallet_cash = floor($user->wallet_cash);
-
-        $favList = UserVenueFavorites::where("user_id", $user->id)->get();
-        $favList = $favList->map(function($each){
-            return $each->venue_id;
-        })->reverse();
-        // dd($favList);
-
-        $direction = 'asc'; 
-        
-        if($favList->count() > 0){
-            $venues = Venu::whereIn("id", $favList)
-            ->orderByRaw("FIELD(id, " . implode(",", $favList->toArray()) . ") $direction")
-            ->limit(3)
-            ->get(['id', 'venue_name']);
-        }else{
-            $venues = [];
+        else{
+            $user->status = 0;
         }
 
-        $user->venue_listing = $venues;
-        return $user;
     }
+    $tier = TierCondition::whereTierName($user->customer_tier)->orderBy('id','desc')->first();
+    $user->tier = $tier;
+    $user->wallet_cash = floor($user->wallet_cash);
+
+    $favList = UserVenueFavorites::where("user_id", $user->id)->get();
+    $favList = $favList->map(function($each){
+        return $each->venue_id;
+    })->reverse();
+    // dd($favList);
+
+    $direction = 'asc'; 
+    
+    if($favList->count() > 0){
+        $venues = Venu::whereIn("id", $favList)
+        ->orderByRaw("FIELD(id, " . implode(",", $favList->toArray()) . ") $direction")
+        ->limit(3)
+        
+        ->get(['id', 'venue_name']);
+    }else{
+        $venues = [];
+    }
+
+    $user->venue_listing = $venues;
+    return $user;
+}
+
 
     public function logout($request, $user){
         DB::table("oauth_access_tokens")

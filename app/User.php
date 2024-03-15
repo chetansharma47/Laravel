@@ -57,8 +57,12 @@ class User extends Authenticatable
         'do_you_drink',
         'do_you_smoke',
         'display_name',
+        'like_list',
+        'music_list',
         'latitude',
-        'longitude'
+        'longitude',
+        'new_buddies',
+        'invite_table'
     ];
 
     /**

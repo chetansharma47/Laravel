@@ -273,7 +273,7 @@ class AuthenticationController extends ResponseController
         $id = $request->id;
         if(empty($id)){
             $id = Auth::guard()->user()->id;
-        }
+        }       
         $get_profile=$this->profileModel->getProfile($id);
         return $this->responseOk("User Profile", ['profile' => $get_profile]);
     }
@@ -473,11 +473,6 @@ class AuthenticationController extends ResponseController
         $venues = Venu::select("id","venue_name","image")->whereDeletedAt(null)->whereStatus('Active')->orderBy('venue_name','asc')->get();
         return $this->responseOk("Venue Listing", ['venue_listing' => $venues]);
     }
-
-
-
-
-
 
     public function venueDetails(Request $request, $venue_id){
 
@@ -851,6 +846,7 @@ class AuthenticationController extends ResponseController
     public function likeList(){
         $like=Like::get(['id','name','image']);
         $userLikeList = auth()->user()->getOriginal("like_list");
+        // dd($userLikeList)
         if($userLikeList){
             $userLikeList = explode(",", $userLikeList);
             $like = $like->map(function($each) use ($userLikeList){
@@ -950,6 +946,7 @@ class AuthenticationController extends ResponseController
         return $this->responseOk("Venue Listing.", ['venue_listing' => $venues]);
     }
 
+
 public function listUser(Request $request) {
     $user = auth()->user()->id;
     $gender = $request->input('gender'); 
@@ -964,9 +961,32 @@ public function listUser(Request $request) {
     $detail = $list->pluck("from_user_id");
     $search = $request->search;
     $age1= $request->age1;
-    $age2=$request->age2;
-    
-    $usersQuery = User::where('id', '!=', $user)
+    $age2=$request->age2 == "65" ? "1000" : $request->age2;
+    $lat = auth()->user()->latitude;
+    $lng = auth()->user()->longitude;
+    $distance1 = $request->distance1 == "1" ? '0' : $request->distance1;
+    $distance2 = $request->distance2;
+    $dQuery = "(6371 * acos( 
+        cos( radians(users.latitude) ) 
+    * cos( radians( $lat ) ) 
+    * cos( radians( $lng ) - radians(users.longitude) ) 
+    + sin( radians(users.latitude) ) 
+    * sin( radians( $lat ) )
+) )";
+    $usersQuery = User::select([
+                        'id',           
+                        'first_name',
+                        'last_name',
+                        'email',
+                        'mobile_number',
+                        'dob',
+                        'gender',
+                        'image',
+                        'display_name',
+                        DB::raw('CASE WHEN users.socket_id IS NOT NULL THEN 1 ELSE 0 END as status')
+                        // DB::raw('users.socket_id =' . $user . ' as status')
+                    ])
+                    ->where('id', '!=', $user)
                     ->whereNotIn('id', $lists)
                     ->whereNotIn('id', $detail)
                     ->where(function ($query) use ($search) {
@@ -989,20 +1009,18 @@ public function listUser(Request $request) {
         $usersQuery->where('gender', $gender);
     }
 
+    if ($distance1 && $distance2 && $lat && $lng) {
+        $usersQuery->whereRaw("$dQuery > $distance1")->whereRaw("$dQuery < $distance2");
+    }
     $users = $usersQuery->latest()
-                ->select([
-                    'id',           
-                    'first_name',
-                    'last_name',
-                    'email',
-                    'mobile_number',
-                    'dob',
-                    'gender',
-                    'image'
-                ])
+    
+
+                
                 ->paginate(30);
     return $this->responseOk("Search.", ["user_data" =>  $users]);
 }
+
+
 
 
 public function addfriend(Request $request) {
@@ -1092,7 +1110,11 @@ if($existingFriendship) {
     
             $list=User::where('id', '!=', $user)
 
-            ->select(['id','first_name','last_name','image',DB::raw("(CASE WHEN id In (".implode(',', $toIds).") THEN 1 ELSE 0 END) as is_my_request")])
+            ->select(['id','first_name','last_name','display_name','image',DB::raw("(CASE WHEN id In (".implode(',', $toIds).") THEN 1 ELSE 0 END) as is_my_request"),
+            DB::raw('CASE WHEN users.socket_id IS NOT NULL THEN 1 ELSE 0 END as status')
+
+
+            ])
             ->whereIn('id',$userid)
                 ->latest()
                 ->paginate(10); 
@@ -1184,13 +1206,27 @@ public function updateContactList(Request $request){
 
 public function contactUserList(Request $request){
     $user = auth()->user()->id;
+    $list = AddFriend::where(function ($query) use ($user) {
+        $query->where('from_user_id', $user)
+              ->orWhere('to_user_id', $user);
+    })
+    ->get();
+
+    $lists = $list->pluck("to_user_id");
+    $detail = $list->pluck("from_user_id");
+
 
     // Fetch matched users
     $matchedUsers = DB::table('contacts')
         
         ->join('users', DB::raw('CONCAT(users.country_code, users.mobile_number)'), '=', 'contacts.phone_number')
-        ->select('users.id','users.first_name', 'users.last_name', 'users.image', 'users.mobile_number', 'users.country_code')
+        ->select('users.id','users.first_name', 'users.last_name','users.display_name', 'users.image', 'users.mobile_number', 'users.country_code',
+        DB::raw('CASE WHEN users.socket_id IS NOT NULL THEN 1 ELSE 0 END as status')
+        )
         ->where('contacts.user_id', $user)
+        ->where('users.id', '!=', $user)
+        ->whereNotIn('users.id', $lists)
+        ->whereNotIn('users.id', $detail)
         ->get();
     $matchedUsers = $matchedUsers->map(function($each){
         if(!empty($each->image)){
