@@ -8,7 +8,9 @@ use App\Models\VenueUser;
 use GuzzleHttp;
 use Auth;
 use Mail;
-use DB;
+// use DB;
+use Illuminate\Support\Facades\DB;
+
 use Carbon\Carbon;
 use App\Mail\UserVerifyMail;
 use App\Mail\ChangeEmailAddress;
@@ -19,6 +21,10 @@ use App\Models\Venu;
 use App\Models\AssignUserVenue;
 use App\Models\WalletCashback;
 use App\Models\UserVenueFavorites;
+use App\Models\Message;
+use App\Models\AddFriend;
+
+
 
 use Picqer;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
@@ -43,7 +49,7 @@ class ProfileModel extends Model
       6 => 201,
       7=> 202,
       8 => 200
-    
+
     */
 
     public static function uploadImage($image, $destinationPath){
@@ -53,9 +59,9 @@ class ProfileModel extends Model
             //$image->move($destinationPath, $imageName);
 
             $img_new = Image::make($image)->stream($image->getClientOriginalExtension(), 50);
-            
+
             file_put_contents($destinationPath. '/' . $imageName, $img_new);
-            
+
             return $imageName;
         }catch(\Exception $ex){
             return $ex->getMessage();
@@ -201,7 +207,7 @@ class ProfileModel extends Model
             $user_user=$user->update(['invite_table'=>$data['invite_table']]);
             return["status" => 7,"success_msg" => "Data updated successfully."];
         }
-        
+
 
         return User::find($id);
     }
@@ -223,52 +229,111 @@ class ProfileModel extends Model
         if(!empty($data['first_name']) && !empty($data['last_name'])){
             User::whereReferenceCode($user->customer_id)->update(['reference_by' => $data['first_name'] . " " . $data['last_name']]);
         }
-        
+
         $update_user = $user->update($data);
         return User::find($id);
     }
+// ================
 
-
-  public function getProfile($id){
-
-    if(empty($id)){
-        $user = Auth::guard()->user();
-    }else{
-        $user = User::whereId($id)->first();
-        // dd($user);
-        if($user->socket_id){
-            $user->status = 1;
-        }
-        else{
-            $user->status = 0;
-        }
-
+public function getProfile($id)
+{
+    if (empty($id)) {
+        $user = Auth::user();
+    } else {
+        $user = User::findOrFail($id);
+        $user->status = $user->socket_id ? 1 : 0;
     }
-    $tier = TierCondition::whereTierName($user->customer_tier)->orderBy('id','desc')->first();
+
+    // Fetch friend list with unread messages excluding the authenticated user
+    $userId = auth()->user()->id;
+
+    $friends = AddFriend::where(function($query) use ($userId) {
+        $query->where('to_user_id', $userId)
+              ->where('status', 'Accepted');
+    })
+    ->orWhere(function($query) use ($userId) {
+        $query->where('from_user_id', $userId)
+              ->where('status', 'Accepted');
+    })
+    ->latest()
+    ->get();
+
+    $tier = TierCondition::whereTierName($user->customer_tier)->orderBy('id', 'desc')->first();
     $user->tier = $tier;
-    $user->wallet_cash = floor($user->wallet_cash);
+    $user->wallet_cash = (int) floor($user->wallet_cash);
 
-    $favList = UserVenueFavorites::where("user_id", $user->id)->get();
-    $favList = $favList->map(function($each){
-        return $each->venue_id;
-    })->reverse();
-    // dd($favList);
+    $favList = UserVenueFavorites::where("user_id", $user->id)->pluck('venue_id')->reverse()->toArray();
 
-    $direction = 'asc'; 
-    
-    if($favList->count() > 0){
-        $venues = Venu::whereIn("id", $favList)
-        ->orderByRaw("FIELD(id, " . implode(",", $favList->toArray()) . ") $direction")
-        ->limit(3)
-        
-        ->get(['id', 'venue_name']);
-    }else{
-        $venues = [];
+    $direction = 'asc';
+    $venues = [];
+
+    if (!empty($favList)) {
+        $venues = Venue::whereIn("id", $favList)
+            ->orderByRaw("FIELD(id, " . implode(",", $favList) . ") $direction")
+            ->limit(3)
+            ->get(['id', 'venue_name']);
     }
 
     $user->venue_listing = $venues;
+    $user->friend = $friends->count(); // Count of friends with unread messages
+
+    // Count distinct to_user_id entries from messages where is_read is 0
+    $unreadCount = Message::where('is_read', 0)
+        ->distinct('to_user_id')
+        ->count('to_user_id');
+
+    $user->unread_user = $unreadCount;
     return $user;
 }
+
+
+
+
+
+
+// ===========================
+//   public function getProfile($id){
+
+//     if(empty($id)){
+//         $user = Auth::guard()->user();
+//     }else{
+//         $user = User::whereId($id)->first();
+//         // dd($user);
+//         if($user->socket_id){
+//             $user->status = 1;
+//         }
+//         else{
+//             $user->status = 0;
+//         }
+
+//     }
+
+//     $tier = TierCondition::whereTierName($user->customer_tier)->orderBy('id','desc')->first();
+//     $user->tier = $tier;
+//     $user->wallet_cash = floor($user->wallet_cash);
+
+//     $favList = UserVenueFavorites::where("user_id", $user->id)->get();
+//     $favList = $favList->map(function($each){
+//         return $each->venue_id;
+//     })->reverse();
+//     // dd($favList);
+
+//     $direction = 'asc';
+
+//     if($favList->count() > 0){
+//         $venues = Venu::whereIn("id", $favList)
+//         ->orderByRaw("FIELD(id, " . implode(",", $favList->toArray()) . ") $direction")
+//         ->limit(3)
+
+//         ->get(['id', 'venue_name']);
+//     }else{
+//         $venues = [];
+//     }
+
+//     $user->venue_listing = $venues;
+//     return $user;
+// }
+
 
 
     public function logout($request, $user){
@@ -287,7 +352,7 @@ class ProfileModel extends Model
         if($data['mobile_number'][0] == 0){
             $data['mobile_number'] = substr($data['mobile_number'], 1);
         }
-        
+
         $data['customer_id'] = mt_rand(10000000000,99999999999);
 
         $bonus = 0;
@@ -379,7 +444,7 @@ class ProfileModel extends Model
 
                 if(!empty($admin_notification_find)){
                     if($admin_notification_find->message != null){
-                        $admin_notification_find->message = "Congratulations you have earned welcome bonus of ".$save_user->wallet_cash." AED. ".$admin_notification_find->message;   
+                        $admin_notification_find->message = "Congratulations you have earned welcome bonus of ".$save_user->wallet_cash." AED. ".$admin_notification_find->message;
                     }else{
                         $admin_notification_find->message = "Congratulations you have earned welcome bonus of ".$save_user->wallet_cash." AED. ";
                     }
@@ -395,7 +460,7 @@ class ProfileModel extends Model
                     }
 
                 }
-               
+
                 $prefix = "attachment_mail/";
                 $index = strpos($admin_signup_notification_email->image, $prefix) + strlen($prefix);
                 $file_name = substr($admin_signup_notification_email->image, $index);
@@ -410,7 +475,7 @@ class ProfileModel extends Model
 
 
         $save_user->access_token = $save_user->createToken('andrew')->accessToken;
-        $user_get = $save_user;            
+        $user_get = $save_user;
         return ["status" => 8, "data" => $user_get, "error_msg" => ""];
     }
 
@@ -449,7 +514,7 @@ class ProfileModel extends Model
                 $data['device_type'] = $device_type ? $device_type : 'None';
                 $data['device_token'] = $device_token ? $device_token : null;
                 //$data['is_active'] = 'Active';
-                
+
                 $user_data = self::updateUser($data,$user);
                 $user_data->access_token = $user_data->createToken('andrew')->accessToken;
                 $user_data->wallet_cash = floor($user_data->wallet_cash);
@@ -461,7 +526,7 @@ class ProfileModel extends Model
             return ["status" => 5, "data" => null, "error_msg" => "Invalid mobile number / email ID or password."];
         }
     }
-    
+
     public function forgot($request){
         $email_mobile_number = $request->email;
         // $user = User::whereEmail($email)->first();

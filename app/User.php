@@ -25,8 +25,8 @@ class User extends Authenticatable
         'mobile_number',
         'image',
         'first_name',
-        'last_name', 
-        'email', 
+        'last_name',
+        'email',
         'password',
         'city_of_residence',
         'nationality',
@@ -97,11 +97,13 @@ class User extends Authenticatable
             }else{
 
                 return "";
-            } 
+            }
         }else{
             return $value;
         }
     }
+
+
 
 
     public function getBarCodeAttribute($value){
@@ -115,7 +117,7 @@ class User extends Authenticatable
             }else{
 
                 return "";
-            } 
+            }
         }else{
             return $value;
         }
@@ -132,7 +134,7 @@ class User extends Authenticatable
             }else{
 
                 return "";
-            } 
+            }
         }else{
             return $value;
         }
@@ -175,13 +177,13 @@ class User extends Authenticatable
         return $likes;
     }
 
-    
+
     public function getMusicListAttribute($value){
         $ids = explode(",", $value ?? "");
         $likes = Music::whereIn("id", $ids)->get();
         return $likes;
     }
-    
-    
+
+
 
 }

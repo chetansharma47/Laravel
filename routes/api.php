@@ -89,6 +89,7 @@ Route::group(['namespace' => 'Api\v1','prefix'=>'v1'], function() {
      Route::post('update-contact-list','AuthenticationController@updateContactList');
 
      Route::post('contact-user-list','AuthenticationController@contactUserList');
+     Route::post('upload-file','AuthenticationController@uploadFile');
 
 
 

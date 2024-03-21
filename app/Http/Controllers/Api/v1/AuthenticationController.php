@@ -273,7 +273,7 @@ class AuthenticationController extends ResponseController
         $id = $request->id;
         if(empty($id)){
             $id = Auth::guard()->user()->id;
-        }       
+        }
         $get_profile=$this->profileModel->getProfile($id);
         return $this->responseOk("User Profile", ['profile' => $get_profile]);
     }
@@ -842,7 +842,7 @@ class AuthenticationController extends ResponseController
     // new code garuav
 
     // like list function
-    
+
     public function likeList(){
         $like=Like::get(['id','name','image']);
         $userLikeList = auth()->user()->getOriginal("like_list");
@@ -949,7 +949,7 @@ class AuthenticationController extends ResponseController
 
 public function listUser(Request $request) {
     $user = auth()->user()->id;
-    $gender = $request->input('gender'); 
+    $gender = $request->input('gender');
 
     $list = AddFriend::where(function ($query) use ($user) {
         $query->where('from_user_id', $user)
@@ -966,15 +966,15 @@ public function listUser(Request $request) {
     $lng = auth()->user()->longitude;
     $distance1 = $request->distance1 == "1" ? '0' : $request->distance1;
     $distance2 = $request->distance2;
-    $dQuery = "(6371 * acos( 
-        cos( radians(users.latitude) ) 
-    * cos( radians( $lat ) ) 
-    * cos( radians( $lng ) - radians(users.longitude) ) 
-    + sin( radians(users.latitude) ) 
+    $dQuery = "(6371 * acos(
+        cos( radians(users.latitude) )
+    * cos( radians( $lat ) )
+    * cos( radians( $lng ) - radians(users.longitude) )
+    + sin( radians(users.latitude) )
     * sin( radians( $lat ) )
 ) )";
     $usersQuery = User::select([
-                        'id',           
+                        'id',
                         'first_name',
                         'last_name',
                         'email',
@@ -1013,9 +1013,9 @@ public function listUser(Request $request) {
         $usersQuery->whereRaw("$dQuery > $distance1")->whereRaw("$dQuery < $distance2");
     }
     $users = $usersQuery->latest()
-    
 
-                
+
+
                 ->paginate(30);
     return $this->responseOk("Search.", ["user_data" =>  $users]);
 }
@@ -1024,7 +1024,7 @@ public function listUser(Request $request) {
 
 
 public function addfriend(Request $request) {
-    $this->is_validationRule(Validation::adduserfriend($Validation="", $message=""), $request);  
+    $this->is_validationRule(Validation::adduserfriend($Validation="", $message=""), $request);
 
     $user = auth()->user()->id;
     $toUserId = $request->to_user_id;
@@ -1060,9 +1060,9 @@ if($existingFriendship) {
    $list->status = 'Pending';
    $list->save();
 
-    return $this->responseOk('Your friend request has been sent.', ["data" =>$list]);     
+    return $this->responseOk('Your friend request has been sent.', ["data" =>$list]);
  }
- 
+
 }
 
 
@@ -1070,7 +1070,7 @@ if($existingFriendship) {
 
   public function friendlist(Request $request){
             $user = auth()->user()->id;
-                
+
             if ($request->input('type') == "Pending") {
                 $users = AddFriend::where(function($query) use ($user) {
                         $query->where('to_user_id', $user)
@@ -1083,7 +1083,7 @@ if($existingFriendship) {
                     ->latest()
                     ->get();
             }
-            
+
                 else{
                     $users = AddFriend::where(function($query) use ($user, $request) {
                         $query->where('to_user_id', $user)
@@ -1092,11 +1092,11 @@ if($existingFriendship) {
                     ->orWhere(function($query) use ($user,$request) {
                         $query->where('from_user_id', $user)
                               ->where('status',$request->input('type'));
-                    })     
-                    ->latest()         
+                    })
+                    ->latest()
                     ->get();
                 }
-                
+
             // merge both id's on array
             $userid=[];
             $fromIds = [];
@@ -1107,7 +1107,7 @@ if($existingFriendship) {
                 $fromIds[]=$userss->from_user_id;
                 $toIds[]=$userss->to_user_id;
             }
-    
+
             $list=User::where('id', '!=', $user)
 
             ->select(['id','first_name','last_name','display_name','image',DB::raw("(CASE WHEN id In (".implode(',', $toIds).") THEN 1 ELSE 0 END) as is_my_request"),
@@ -1117,25 +1117,25 @@ if($existingFriendship) {
             ])
             ->whereIn('id',$userid)
                 ->latest()
-                ->paginate(10); 
+                ->paginate(10);
             return $this->responseOk('Friend List.',['friend'=>$list]);
         }
-            
-        public function updatestatus(Request $request){ 
-            $this->is_validationRule(Validation::updateuserstatus($Validation="",$message=""),$request);  
+
+        public function updatestatus(Request $request){
+            $this->is_validationRule(Validation::updateuserstatus($Validation="",$message=""),$request);
                 $user = auth()->user()->id;
 
                 // $list = AddFriend::where('from_user_id', $request->from_user_id)
                 // ->where('to_user_id',$user)
-            
+
                 $list = AddFriend::where(function($query) use ($user, $request) {
                     $query->where('from_user_id', $request->from_user_id)
                         ->where('to_user_id', $user)
                         ->where("status" ,"!=" ,"Blocked");
-            
+
                 })
                 ->orWhere(function($query) use ($user,$request) {
-                    
+
                     $query->where('from_user_id', $user)
                     ->where('to_user_id', $request->from_user_id)
                     ->where("status" ,"!=" ,"Blocked");
@@ -1150,17 +1150,17 @@ if($existingFriendship) {
                         $list->delete();
                         return $this->responseOk('Friend request rejected successfully.');
                     }
-                    else 
+                    else
                     if($list->status=='Blocked'){
-                        $list->save();      
+                        $list->save();
                         return $this->responseOk('User blocked successfully.');
 
-                        
+
                     }
-                    
-                    else 
+
+                    else
                          {
-                        $list->save();      
+                        $list->save();
                         return $this->responseOk('Friend request accepted successfully.');
 
                     }
@@ -1218,7 +1218,7 @@ public function contactUserList(Request $request){
 
     // Fetch matched users
     $matchedUsers = DB::table('contacts')
-        
+
         ->join('users', DB::raw('CONCAT(users.country_code, users.mobile_number)'), '=', 'contacts.phone_number')
         ->select('users.id','users.first_name', 'users.last_name','users.display_name', 'users.image', 'users.mobile_number', 'users.country_code',
         DB::raw('CASE WHEN users.socket_id IS NOT NULL THEN 1 ELSE 0 END as status')
@@ -1230,15 +1230,15 @@ public function contactUserList(Request $request){
         ->get();
     $matchedUsers = $matchedUsers->map(function($each){
         if(!empty($each->image)){
-    
+
             $path_img = public_path(). '/storage/users' . '/' . $each->image;
-    
+
             if(file_exists($path_img)){
                 $each->image =  url('/') . '/' . env('IMG_STORAGE_VIEW') . '/' . $each->image;
             }else{
-    
+
                 $each->image =  "";
-            } 
+            }
         }
         return $each;
     });
@@ -1260,6 +1260,48 @@ public function contactUserList(Request $request){
 
     return $this->responseOk("Contact user list.", ["list" => $data]);
 }
+
+
+// public function uploadImage(Request $request)
+// {
+//     // Validation rules for the image
+//     $validator = Validator::make($request->all(), [
+//         'image' => 'required|mimes:png,jpg,jpeg,gif'
+//     ]);
+
+//     // Check if validation fails
+//     if ($validator->fails()) {
+//         return response()->json([
+//             'status' => false,
+//             'message' => 'Please fix the errors',
+//             'errors' => $validator->errors()
+//         ]);
+//     }
+
+//     // Handle image upload
+//     $img = $request->file('image'); // Retrieving the uploaded image
+//     $ext = $img->getClientOriginalExtension(); // Get the original extension of the file
+//     $imageName = time() . '.' . $ext; // Generate a unique name for the image
+//     $img->move(public_path('uploads'), $imageName); // Move the image to the 'public/uploads' directory
+
+//     // Create a new Image model instance
+//     $image = new Image;
+//     $image->image = $imageName; // Assign the image name to the 'image' property of the Image model
+//     $image->save(); // Save the model instance to the database
+
+//     // Return response with success message and image details
+//     return response()->json([
+//         'status' => true,
+//         'message' => 'Image uploaded successfully.',
+//         'path' => asset('uploads/' . $imageName), // Provide the URL to access the uploaded image
+//         'data' => $image // Provide the Image model data
+//     ]);
+
+
+
+
+
+// }
 
 }
 

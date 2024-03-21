@@ -70,7 +70,7 @@
 //                     created_at: datetime,
 //                     updated_at: datetime,
 //                 };
-                
+
 //                 socket.emit("chat_message", results);
 
 //                io.to(data[0][0].socket_id).emit("chat_message", results);
@@ -116,7 +116,7 @@ io.on("connection", async (socket) => {
             user_id,
         ]);
         socket.user_id = user_id
-        io.emit("userOnline", {user_id, status: 1})
+        io.emit("userOnline", { user_id, status: 1 })
 
         socket.on("chat_message", async (msg) => {
             // message query
@@ -125,7 +125,7 @@ io.on("connection", async (socket) => {
                 var datetime =
                     currentdate.getFullYear() +
                     "-" +
-                    currentdate.getMonth() +
+                    (currentdate.getMonth() + 1) +
                     "-" +
                     currentdate.getDate() +
                     " " +
@@ -136,12 +136,13 @@ io.on("connection", async (socket) => {
                     currentdate.getSeconds();
 
                 const result = await con.query(
-                    "INSERT INTO messages SET  message = ?, from_user_id = ?, to_user_id = ?, is_read = 0,created_at=?,updated_at=?",
+                    "INSERT INTO messages SET  message = ?, from_user_id = ?, to_user_id = ?,type=?, is_read = 0,created_at=?,updated_at=?",
 
                     [
                         msg.message,
                         msg.from_user_id,
                         msg.to_user_id,
+                        msg.type,
                         datetime,
                         datetime,
                     ]
@@ -149,27 +150,28 @@ io.on("connection", async (socket) => {
 
                 // console.log("this is inserted data", result);
 
-                console.log("Message inserted into database");
+                // console.log("Message inserted into database");
 
                 const data = await con.query(
                     "SELECT socket_id FROM users WHERE id = ?",
                     [msg.to_user_id]
                 );
-                console.log(data);
+                // console.log(data);
 
                 // socket.emit is use to  self send message except all
                 const results = {
                     id: result[0].insertId,
                     message: msg.message,
+                    type: msg.type,
                     from_user_id: msg.from_user_id,
                     to_user_id: msg.to_user_id,
                     created_at: datetime,
                     updated_at: datetime,
                 };
-                
+
                 socket.emit("chat_message", results);
 
-               io.to(data[0][0].socket_id).emit("chat_message", results);
+                io.to(data[0][0].socket_id).emit("chat_message", results);
             } catch (error) {
                 console.log("error", error);
             }
@@ -177,41 +179,70 @@ io.on("connection", async (socket) => {
     } catch (error) {
         console.log("error", error);
     }
-// =================
-    // message-read 
+    // =================
+    // message-read
 
-    socket.on("mark-as-read",async(data)=>{
-        try{
-          const  {userId,messageId} = data;
-          await con.query("UPDATE messages SET is_read = ? WHERE id = ?", [1, messageId, userId]);
-            io.emit('message-read',{userId,messageId})
+    socket.on("mark-as-read", async (data) => {
+        try {
+            const { userId, messageId } = data;
+
+            let user = await con.query("SELECT * FROM users WHERE id = ?", [userId])
+            user = user[0][0]
+
+            if (user) {
+
+                console.log("::::::::::::::read::::::::::::", user.socket_id)
+                await con.query("UPDATE messages SET is_read = ? WHERE id = ?", [1, messageId, userId]);
+                io.to(user.socket_id).emit('message-read', { userId: user_id, messageId })
                 console.log("message read")
             }
-            catch (error){
-                console.log('mark as read error:',error)
-            }
-        });
-        
+        }
+        catch (error) {
+            console.log('mark as read error:', error)
+        }
+    });
+
     // unread-message
-    socket.on("mark-as-unread",async(data)=>{
-        try{
-            const {userId,messageId} = data;
-            await con.query("UPDATE messages SET is_read = ? WHERE id = ? AND to_user_id = ?", [0, messageId, userId]);
-            io.emit('message-unread',{userId,messageId})
-                console.log("unread message ")
-            }
-            catch (error){
-                console.log('mark as error:',error)
-
-            }
-        });
-
-
-// ===========================
-    // When a client disconnects
-    socket.on("disconnect", async() => {
+    socket.on("mark-as-unread", async (data) => {
+        0
         try {
-            if(socket.user_id){
+            const { userId, messageId } = data;
+            await con.query("UPDATE messages SET is_read = ? WHERE id = ? AND to_user_id = ?", [0, messageId, userId]);
+            io.emit('message-unread', { userId, messageId })
+            console.log("unread message ")
+        }
+        catch (error) {
+            console.log('mark as error:', error)
+
+        }
+    });
+
+
+    //user chat update
+
+    socket.on("read-chat", async (data) => {
+        try {
+            const { userId } = data;
+
+            let user = await con.query("SELECT * FROM users WHERE id = ?", [userId])
+            user = user[0][0]
+
+            if (user) {
+                io.to(user.socket_id).emit('read-chat', { userId: user_id })
+            }
+        }
+        catch (error) {
+            console.log('mark as read error:', error)
+        }
+    });
+
+
+
+    // ===========================
+    // When a client disconnects
+    socket.on("disconnect", async () => {
+        try {
+            if (socket.user_id) {
                 io.emit("userOnline", { user_id: socket.user_id, status: 0 })
                 await con.query("UPDATE users SET socket_id=? WHERE id=?", [
                     null,
@@ -219,7 +250,7 @@ io.on("connection", async (socket) => {
                 ]);
             }
         } catch (error) {
-            
+
         }
         console.log("user disconnected");
     });
@@ -250,26 +281,26 @@ io.on("connection", async (socket) => {
     //     });
     // });
 
-    socket.on("delete-message", async (data)=>{
-        try{
-                    id=data.id
-                    const result=  await new Promise ((resolve, reject)=>{
-                        con.query("Delete from messages where id=?",[id],(error,result)=>{
-                            if(error){
-                                reject (error)
-                            }else{
-                                resolve(result)
-                            }
-                        });
-                    });
-                    io.emit("delete-message", { type: 'delete-message', id: id });
-                    console.log("Message deleted successfully!", result);
+    socket.on("delete-message", async (data) => {
+        try {
+            id = data.id
+            const result = await new Promise((resolve, reject) => {
+                con.query("Delete from messages where id=?", [id], (error, result) => {
+                    if (error) {
+                        reject(error)
+                    } else {
+                        resolve(result)
+                    }
+                });
+            });
+            io.emit("delete-message", { type: 'delete-message', id: id });
+            console.log("Message deleted successfully!", result);
         }
-            catch(error){
-            console.log("delete message",error)
-            }
+        catch (error) {
+            console.log("delete message", error)
+        }
     })
 
 });
-const PORT =3001
+const PORT = 3001
 server.listen(PORT, () => console.log("server started at port " + PORT));

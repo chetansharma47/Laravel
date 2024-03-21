@@ -1,3 +1,4 @@
 /storage
 /vendor/
 /public/storage
+/chat-node-socket/node_modules
