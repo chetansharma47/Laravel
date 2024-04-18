@@ -76,10 +76,6 @@ Route::group(['namespace' => 'Api\v1','prefix'=>'v1'], function() {
 
 
      Route::post('add-friend','AuthenticationController@addfriend');
-
-
-
-
      Route::post('friend-list','AuthenticationController@friendlist');
 
      Route::post('friend-msg','ChatController@latestmessage');
@@ -89,7 +85,35 @@ Route::group(['namespace' => 'Api\v1','prefix'=>'v1'], function() {
      Route::post('update-contact-list','AuthenticationController@updateContactList');
 
      Route::post('contact-user-list','AuthenticationController@contactUserList');
-     Route::post('upload-file','AuthenticationController@uploadFile');
+
+     Route::post('file-upload','AuthenticationController@uploadFile');
+
+     Route::post('add-invite','AuthenticationController@addinviteuser');
+
+     Route::get('pending-invites','AuthenticationController@inviteuserlist');
+
+     Route::get('my-invites','AuthenticationController@myInvites');
+
+     Route::post('update-invite-status','AuthenticationController@updateinvitestatus');
+
+     Route::get('my-reservations','AuthenticationController@myReservations');
+
+     Route::get('block-user-list','AuthenticationController@blockedUserslist');
+
+     Route::post('unblock-user','AuthenticationController@unblockUser');
+
+
+    /*Reservations*/
+    Route::post('create-reservation','AuthenticationController@createReservation');
+    Route::post('send-reservation-invite','AuthenticationController@sendReservationInvite');
+    Route::post('update-reservation-invite','AuthenticationController@updateReservationInvite');
+    Route::get('my-reservations-new','AuthenticationController@myReservationsNew');
+    Route::get('my-joined-reservations','AuthenticationController@myJoinedReservations');
+    Route::get('my-pending-reservations','AuthenticationController@myPendingReservations');
+    Route::post('reservation-details','AuthenticationController@reservationDetails');
+
+
+
 
 
 
@@ -153,6 +177,11 @@ Route::group(['namespace' => 'Api\v1','prefix'=>'v1'], function() {
         Route::post("send-pos-otp", 'RestaurantAuthenticationController@sendPosOTP');
         Route::post("verify-pos-otp", 'RestaurantAuthenticationController@verifyPosOTP');
     });
+
+
+
+
+
 
 
 

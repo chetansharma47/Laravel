@@ -126,7 +126,7 @@
 		    height: 450px;
 		    overflow-x: auto;
 		    margin-bottom: 0;
-		    
+
 		}
 
 		.menu-lisitng ul::-webkit-scrollbar {
@@ -154,7 +154,7 @@
 			width: 0px;
 			scrollbar-width: 0px;
 		}
-		
+
 	</style>
 
 	<!-- CSS Files -->
@@ -240,7 +240,7 @@
 				<div class="col-md-3">
 					<div class="pt-5 pb-3 pl-3 pr-3 menu-lisitng">
 						<ul class="listitem" style="margin-left: 0; background-color:#E3DFDF;">
-					
+
 						</ul>
 						<div class="d-flex justify-content-between">
 							<ul class="box_icon">
@@ -254,7 +254,7 @@
 										<img id="minus_icon" src="{{url('public/admin/assets/img/icon1.png')}}" alt="icon1"/>
 									</a>
 								</li>
-							</ul>			
+							</ul>
 						</div>
 					</div>
 				</div>
@@ -262,7 +262,7 @@
 					<div class="col-md-12 text-center no_data_found"><p>No data found</p></div>
 				</div>
 			</div>
-			
+
 		</div>
 		<!-- <div class="tab-content" id="pills-tabContent">
 			<div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">cvcvbcvbcbc</div>
@@ -338,7 +338,7 @@
         <p id="success_alert_text">Are you sure, you want to delete this venue?</p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary ok" style="background-color: #3ABD6F!important; border: none; border-radius: 50px; color: #fff;"  data-dismiss="modal">No</button> 
+        <button type="button" class="btn btn-secondary ok" style="background-color: #3ABD6F!important; border: none; border-radius: 50px; color: #fff;"  data-dismiss="modal">No</button>
         <button type="button" class="btn btn-secondary confirm_ok" style="background-color: #3ABD6F!important; border: none; border-radius: 50px; color: #fff;" onclick="removeVenue();"  data-dismiss="modal">Yes</button>
        <!--  <button type="button" class="btn btn-primary">Save changes</button> -->
       </div>
@@ -434,12 +434,27 @@
 										var slice = "";
 									}
 
-								
+                                    var logoname = list[i].logo_name;
+									if(logoname != null && logoname != "" && logoname != undefined){
+
+										var length = logoname.length;
+
+										if(length>24){
+											var slice2 = logoname.slice(0,24)+'...';
+										}else{
+											var slice2 = logoname;
+										}
+									}else{
+										var slice2 = "";
+									}
+
+
+
 
 								if(list[i].deleted_at==null){
 								$('.menu-lisitng ul.listitem').append(`<li class="venu_list" unique-id="${list[i].unique_id}" data-id="${list[i].id}" data-tab="uniq-${list[i].unique_id}"><input type="text" class="input_tier_name" maxlength="30" unique-id="${list[i].unique_id}" value="${list[i].venue_name}" placeholder="Enter Venue Name"></li>`);
 
-								$('.venuregister_append').append(venuform(list[i].unique_id,list[i].venue_name,list[i].address,list[i].venue_description,list[i].phone_number,list[i].google_map_location_link,list[i].book_now_link,slice,list[i].menu_link,list[i].status,list[i].id,list[i].image, list[i].pos_venue_id));
+								$('.venuregister_append').append(venuform(list[i].unique_id,list[i].venue_name,list[i].address,list[i].venue_description,list[i].phone_number,list[i].google_map_location_link,list[i].book_now_link,slice,list[i].menu_link,list[i].status,list[i].id,list[i].image, list[i].pos_venue_id,slice2,list[i].logo));
 							}
 						}
 						$('.menu-lisitng ul.listitem li').first().addClass('tab-active');
@@ -454,7 +469,7 @@
 						$('.venuregister_append').addClass('align-self-center');
 					}
 
-				
+
 			}
 
 			});
@@ -491,7 +506,7 @@
 				$('.venuregister_append .no_data_found').hide();
 				$('.venuregister_append').removeClass('align-items-center');
 				$('.venuregister_append').removeClass('align-self-center');
-				
+
 				var incattr = $('.last_db_id').attr('uniq-id');
 				var inc = 0;
 				if(!incattr){
@@ -572,7 +587,7 @@
 			                 	}
 			                  return false;
 			              },500);
-			            } 
+			            }
 			      	}
 				});
 			}else{
@@ -599,12 +614,18 @@
 			}
 		}
 
-function venuform(uniqueid,vname,vaddr,vdesc,vphone,vmap,vbook,vimage,vmenu,vstatus,dataId,imagename,posvenueid){
+function venuform(uniqueid,vname,vaddr,vdesc,vphone,vmap,vbook,vimage,vmenu,vstatus,dataId,imagename,posvenueid,limage,logoname){
 	if(imagename){
 		var imageurl = `<input name="venu_img" readonly type="text" class="form-control venu_img form-control-user" src="${imagename}" value="${(vimage) ? `${vimage}`: ''	}" unique-id="${uniqueid}" style="cursor:pointer;" />`
 	}else{
 		var imageurl = `<input name="venu_img" readonly type="text" class="form-control venu_img form-control-user" src="" value="" style="cursor:pointer;" unique-id="${uniqueid}"/>`
 	}
+    if(logoname){
+		var logourl = `<input name="logo_venue_img" readonly type="text" class="form-control logo_venue_img form-control-user" src="${logoname}" value="${(limage) ? `${limage}`: ''	}" unique-id="${uniqueid}" style="cursor:pointer;" />`
+	}else{
+		var logourl = `<input name="logo_venue_img" readonly type="text" class="form-control logo_venue_img form-control-user" src="" value="" style="cursor:pointer;" unique-id="${uniqueid}"/>`
+	}
+
 	return `<div class="formdata_show ${(uniqueid==1) ? 'tab-active':''}" id="uniq-${uniqueid}" unique-id="${uniqueid}">
 						<div class="row pr-5 pl-3 ">
 						<div class="col-md-6 venue_inputs">
@@ -613,7 +634,9 @@ function venuform(uniqueid,vname,vaddr,vdesc,vphone,vmap,vbook,vimage,vmenu,vsta
 							</label>
 							<input id="vname" name="venu_name" type="text"  maxlength="30" class="form-control venu_name form-control-user" value="${(vname) ? `${vname}` : ''}" unique-id="${uniqueid}" placeholder="Venue Name" />
 							<input type="text" hidden class="venu_imghidden" unique-id="${uniqueid}">
+							<input type="text" hidden class="logo_venue_img_hidden" unique-id="${uniqueid}">
 							<input type="text" hidden class="venue_imagehidden2" value="${(imagename)?imagename:''}" unique-id="${uniqueid}">
+                            <input type="text" hidden class="logo_venue_img_hidden2" value="${(imagename)?imagename:''}" unique-id="${uniqueid}">
 						</div>
 						<div class="col-md-6 venue_inputs">
 							<label>
@@ -661,6 +684,14 @@ function venuform(uniqueid,vname,vaddr,vdesc,vphone,vmap,vbook,vimage,vmenu,vsta
 							</label>
 							<input type="tel" name="venu_phone" value="${(vphone) ? `${vphone}` : ''}" class="form-control venu_phone form-control-user" minlength="1" maxlength="30" placeholder="Phone Contact" unique-id="${uniqueid}" />
 						</div>
+                        <div class="col-md-6 venue_inputs">
+							<label>
+								Logo
+							</label>
+							${logourl}
+							<label for="logo_upload" data-toggle="tooltip" data-placement="top" title="Click to upload image"><img unique-id="${uniqueid}"  src="{{url('public/upload_icon.png')}}" alt="upload-icon-img" class="upload_icon" style="width:30px; cursor:pointer;"></label>
+							<input type="file" unique-id="${uniqueid}" src="" id="logo_upload" class="logo_upload" hidden accept="image/*" />
+						</div>
 					</div>
 					<div class="row pr-5 pl-3 mt-3">
 						<div class="col-md-6 venue_inputs">
@@ -695,7 +726,7 @@ function venuform(uniqueid,vname,vaddr,vdesc,vphone,vmap,vbook,vimage,vmenu,vsta
 							<a href="javascript:void(0);" data-id="${(dataId) ? dataId : ''}" unique-id="`+uniqueid+`" class="btn btn-primary venuSave btn-user btn-block common_btn">
 	                      		Save
 	                    	</a>
-                    	</div>	
+                    	</div>
 							</div>
 						</div>`;
 
@@ -730,7 +761,7 @@ $(document).on('change','#img_upload',function(e){
 				$("#alert_text").text("Image should be less than or equal to 5 MB.");
 		        $("#validationModel").modal("show");
 		        $("#validationModel").unbind("click");
-        
+
 				return false;
 			}else{
 					var reader = new FileReader();
@@ -742,7 +773,7 @@ $(document).on('change','#img_upload',function(e){
 				$("#img_upload[unique-id="+form_activeid+"]").attr('src',e.target.result);
 			}
 			}
-		
+
 
 			reader.readAsDataURL(file);
 			$("#img_upload")[0].value = '';
@@ -754,6 +785,78 @@ $(document).on('change','#img_upload',function(e){
 		}
 	}
 });
+
+$(document).on('change','#logo_upload',function(e){
+	var file = event.target.files[0];
+	var file_nameshow = file.name;
+
+	var valu = file_nameshow;
+	var length = valu.length;
+	if(length>24){
+		var slice_name = valu.slice(0,24)+'...';
+	}else{
+		var slice_name = valu;
+	}
+
+	var form_activeid = $(".formdata_show.tab-active").attr('unique-id');
+
+	if(file){
+
+		if(file.type == "image/jpeg" || file.type == "image/png" || file.type == "image/jpg"){
+
+			var size = file.size;
+			if(size > 5242880){
+				// event.target.value="";
+				// $(".venu_img[unique-id="+form_activeid+"]").attr('src','');
+				// $(".venu_img[unique-id="+form_activeid+"]").attr('value','');
+				// $(".venu_imghidden[unique-id="+form_activeid+"]").val('');
+				// $("#logo_upload[unique-id="+form_activeid+"]").attr('src','');
+				$("#alert_text").text("Image should be less than or equal to 5 MB.");
+		        $("#validationModel").modal("show");
+		        $("#validationModel").unbind("click");
+
+				return false;
+			}else{
+					var reader = new FileReader();
+			reader.onload = function(e){
+				$(".logo_venue_img[unique-id="+form_activeid+"]").attr('src',e.target.result);
+				$(".logo_venue_img[unique-id="+form_activeid+"]").attr('value',slice_name);
+				$(".logo_venue_img_hidden[unique-id="+form_activeid+"]").attr('value',file_nameshow);
+				$(".logo_venue_img_hidden2[unique-id="+form_activeid+"]").val('');
+				$("#logo_upload[unique-id="+form_activeid+"]").attr('src',e.target.result);
+			}
+			}
+
+
+			reader.readAsDataURL(file);
+			$("#logo_upload")[0].value = '';
+
+		}else{
+			$("#alert_text").text("Please upload .jpg, .jpeg or .png format file only.");
+      $("#validationModel").modal("show");
+      $("#validationModel").unbind("click");
+		}
+	}
+});
+
+$(document).on('click','.logo_venue_img',function(){
+	// let uniqid = $('.formdata_show.tab-active').attr('unique-id');
+	var get_base64 = $(this).attr('src');
+	if(get_base64){
+	fetch(get_base64)
+   	.then(e => e.blob())
+   	.then(e => {
+        // console.log("-- ",e)
+        let obj = URL.createObjectURL(e);
+        // console.log("-- ",obj)
+        window.open(obj);
+   	})
+   	.catch(e => {
+   		console.log(e)
+   	});
+   }
+});
+
 
 $(document).on('click','.venu_img',function(){
 	// let uniqid = $('.formdata_show.tab-active').attr('unique-id');
@@ -792,6 +895,12 @@ $(document).on('click','.venuSave',function(){
 	let vimg_value = $('.venu_img[unique-id='+uniq+']').val();
 	let vimg_val = $('.venu_imghidden[unique-id='+uniq+']').val();
 	let hidevimg = $('#img_upload[unique-id='+uniq+']').attr('src');
+
+    let limg = $('.logo_venue_img[unique-id='+uniq+']').attr('src');
+	let limg_value = $('.logo_venue_img[unique-id='+uniq+']').val();
+	let limg_val = $('.logo_venue_img_hidden[unique-id='+uniq+']').val();
+	let hidelimg = $('#logo_upload[unique-id='+uniq+']').attr('src');
+
 	let vaddr = $('.venu_addr[unique-id='+uniq+']').val();
 	let vmenu = $('.venu_menu[unique-id='+uniq+']').val();
 	let posvenueid = $('.pos_venue_id[unique-id='+uniq+']').val();
@@ -801,6 +910,7 @@ $(document).on('click','.venuSave',function(){
 	let vbook = $('.venu_tab_book[unique-id='+uniq+']').val();
 	let vstatus = $('.venu_status[unique-id='+uniq+']').val();
 	let hidden_img2 =  $(".venue_imagehidden2[unique-id="+uniq+"]").val();
+	let hidden_logo_img2 =  $(".logo_venue_img_hidden2[unique-id="+uniq+"]").val();
 
 	if(vname == ""){
 		$("#alert_text").text("Please enter venue name.");
@@ -823,6 +933,13 @@ $(document).on('click','.venuSave',function(){
 		return false;
 	}
 
+    if(limg == "") {
+        $("#alert_text").text("Please upload Logo.");
+		$("#validationModel").modal("show");
+		$("#validationModel").unbind("click");
+		return false;
+    }
+
 	// hidden image validation value
 	if(vimg_value ==""){
 		$("#alert_text").text("Please upload image.");
@@ -830,6 +947,13 @@ $(document).on('click','.venuSave',function(){
 		$("#validationModel").unbind("click");
 		return false;
 	}
+    if(limg_value == "") {
+        $("#alert_text").text("Please upload logo.");
+		$("#validationModel").modal("show");
+		$("#validationModel").unbind("click");
+		return false;
+    }
+
 	if(vaddr == ""){
 		$("#alert_text").text("Please enter address.");
 		$("#validationModel").modal("show");
@@ -875,7 +999,7 @@ $(document).on('click','.venuSave',function(){
 		$("#validationModel").unbind("click");
 		return false;
 	}
-	
+
 	if(vphone == ""){
 		$("#alert_text").text("Please enter phone contact.");
 		$("#validationModel").modal("show");
@@ -934,7 +1058,7 @@ $(document).on('click','.venuSave',function(){
 	$.ajax({
 		url:'{{ route("admin.venusave") }}',
 		dataType:'JSON',
-		data:{uniq:uniq,vname:vname,vimg:vimg,vaddr:vaddr,vimg_val:vimg_val,vmenu:vmenu,pos_venue_id:posvenueid,vdesc:vdesc,vphone:vphone,vmap:vmap,vbook:vbook,vstatus:vstatus,dataId:dataId,hidden_img2:hidden_img2,'_token':'{{ csrf_token() }}'},
+		data:{uniq:uniq,vname:vname,vimg:vimg,limg:limg,vaddr:vaddr,vimg_val:vimg_val,limg_val:limg_val,vmenu:vmenu,pos_venue_id:posvenueid,vdesc:vdesc,vphone:vphone,vmap:vmap,vbook:vbook,vstatus:vstatus,dataId:dataId,hidden_img2:hidden_img2,hidden_logo_img2:hidden_logo_img2,'_token':'{{ csrf_token() }}'},
 		type:'POST',
 		beforeSend:function(){
       $("#loaderModel").modal("show");
@@ -963,14 +1087,14 @@ $(document).on('click','.venuSave',function(){
                  	}
                   return false;
               },500);
-            } 
+            }
       	}
 	});
 
 });
 
 	// for restrict first time blank space
-	
+
 		$(document).on('keydown','.venu_name, .venu_desc, .venu_addr, .venu_phone, .venu_menu, .venu_map, .venu_tab_book, .input_tier_name, .pos_venue_id',function(e){
 			if(e.which===32 && e.target.selectionStart===0){
 				return false;
@@ -997,5 +1121,5 @@ function process(input){
 // }
 
 </script>
-		
+
 </body>

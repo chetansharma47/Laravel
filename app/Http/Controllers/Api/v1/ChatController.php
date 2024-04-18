@@ -5,6 +5,10 @@ namespace App\Http\Controllers\Api\v1;
 use Illuminate\Http\Request;
 use App\Models\Message;
 use App\Models\AddFriend;
+use App\Models\NotiRecord;
+use App\Models\AdminCriteriaNotification;
+
+
 use App\User;
 use Illuminate\Support\Facades\DB;
 
@@ -36,7 +40,6 @@ class ChatController extends ResponseController
         })
         ->latest()
         ->paginate(25);
-
         return $this->responseOk("Messages fetched successfully.",["message" => $data]);
     }
 
@@ -57,6 +60,7 @@ class ChatController extends ResponseController
                 DB::raw('MAX(messages.created_at) as latest_message_date'),
                 DB::raw('messages.message as latest_message'),
                 DB::raw('messages.from_user_id as message_from'),
+                DB::raw('messages.type as type'),
                 DB::raw('messages.from_user_id =' . $user . ' as self_message'),
 
                 DB::raw("(CASE
@@ -94,18 +98,31 @@ class ChatController extends ResponseController
              OR (m.from_user_id = add_friends.to_user_id AND m.to_user_id = add_friends.from_user_id)) AS unread'),
             )
             ->where('status', 'Accepted')
+// ====================
+//  ->where('status', '<>', 'Blocked')
 
-            ->join('messages', function ($join) use ($user, $case) {
-                $join->where("messages.id", "=", DB::raw("(SELECT MAX(m.id) FROM messages m WHERE ($case) = m.from_user_id OR ($case) = m.to_user_id)"));
-            })
+
+//
+            // ==========
+            // ->join('messages', function ($join) use ($user, $case) {
+            //     $join->where("messages.id", "=", DB::raw("(SELECT MAX(m.id) FROM messages m WHERE ($case) = m.from_user_id OR ($case) = m.to_user_id)"));
+            // })
 
             // =========
+
             // ->join('messages', function ($join) use ($user) {
             //     $join->on(function ($query) use ($user) {
             //         $query->where('messages.id', '=', DB::raw('(SELECT MAX(m.id) FROM messages m WHERE m.from_user_id = ' . $user . ' AND m.to_user_id = add_friends.to_user_id)'));
             //         $query->orWhere('messages.id', '=', DB::raw('(SELECT MAX(m.id) FROM messages m WHERE m.from_user_id = add_friends.from_user_id AND m.to_user_id = ' . $user . ')'));
             //     });
             // })
+
+            ->join('messages', function ($join) use ($user) {
+                $join->on(function ($query) use ($user) {
+                    $query->where('messages.id', '=', DB::raw('(SELECT MAX(m.id) FROM messages m WHERE (m.from_user_id = add_friends.from_user_id AND m.to_user_id = add_friends.to_user_id) OR (m.from_user_id = add_friends.to_user_id AND m.to_user_id = add_friends.from_user_id))'));
+                });
+            })
+
 
             // =====
             ->leftJoin('users as from_user', function ($join) use ($user) {
@@ -118,7 +135,7 @@ class ChatController extends ResponseController
                 $query->where('add_friends.from_user_id', $user)
                     ->orWhere('add_friends.to_user_id', $user);
             })
-            ->groupBy('add_friends.id', 'messages.message', "messages.from_user_id", 'name')
+            ->groupBy('add_friends.id', 'messages.message', "messages.from_user_id", 'name','messages.type')
             ->orderBy('latest_message_date', 'desc');
 
         if ($search) {
@@ -146,50 +163,6 @@ class ChatController extends ResponseController
             ->delete();
         return $this->responseOk(["message deleted successfully!"]);
     }
-
-
-
-
-//     public function uploadImage(Request $request)
-// {
-//     // Validation rules for the image
-//     $validator = Validator::make($request->all(), [
-//         'image' => 'required|mimes:png,jpg,jpeg,gif'
-//     ]);
-
-//     // Check if validation fails
-//     if ($validator->fails()) {
-//         return response()->json([
-//             'status' => false,
-//             'message' => 'Please fix the errors',
-//             'errors' => $validator->errors()
-//         ]);
-//     }
-
-//     // Handle image upload
-//     $img = $request->file('image'); // Retrieving the uploaded image
-//     $ext = $img->getClientOriginalExtension(); // Get the original extension of the file
-//     $imageName = time() . '.' . $ext; // Generate a unique name for the image
-//     $img->move(public_path('uploads'), $imageName); // Move the image to the 'public/uploads' directory
-
-//     // Create a new Image model instance
-//     $image = new Image;
-//     $image->image = $imageName; // Assign the image name to the 'image' property of the Image model
-//     $image->save(); // Save the model instance to the database
-
-//     // Return response with success message and image details
-//     return response()->json([
-//         'status' => true,
-//         'message' => 'Image uploaded successfully.',
-//         'path' => asset('uploads/' . $imageName), // Provide the URL to access the uploaded image
-//         'data' => $image // Provide the Image model data
-//     ]);
-
-
-
-
-
-// }
 
 
 }

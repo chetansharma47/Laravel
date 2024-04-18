@@ -24,7 +24,10 @@ class Venu extends Model
         'name_of_file_show',
     	'menu_link',
         'status',
-    	'pos_venue_id'
+    	'pos_venue_id',
+        'shop_id',
+        'logo',
+        'logo_name'
     ];
 
     public function getImageAttribute($value){
@@ -38,11 +41,29 @@ class Venu extends Model
             }else{
 
                 return "";
-            } 
+            }
         }else{
             return $value;
         }
     }
+
+    public function getLogoAttribute($value){
+
+        if(!empty($value)){
+
+            $path_img = public_path(). '/storage/venue' . '/' . $value;
+
+            if(file_exists($path_img)){
+                return url('/') . '/' . env('VENUE_STORAGE_VIEW') . '/' . $value;
+            }else{
+
+                return "";
+            }
+        }else{
+            return $value;
+        }
+    }
+
 
     public function cashbacks(){
         return $this->hasMany(Cashback::class)->whereDeletedAt(null);

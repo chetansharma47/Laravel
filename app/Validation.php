@@ -71,21 +71,21 @@ class Validation extends Model
             'password'     	=> 'required',
             'device_type'   => 'required|in:Ios,Android',  //I=>IOS, A=>Android
             'device_token'  => 'required',
-           
+
         ];
-        
+
         $message = [
             'email.required'    => 'Please enter email or mobile number.',
             'password.required'  => 'Please enter password.',
             'device_type.required' => 'Please enter device type.',
             'device_token.required' => 'Please enter device token.',
-             
+
         ];
 
         return $data = ['validation' => $validation, 'message' => $message];
     }
 
-    
+
     public static function userAppForgot($validation = null, $message = null){
 
 
@@ -117,7 +117,7 @@ class Validation extends Model
             'new_password.min'                  =>  "New Password must be at 6 characters long.",
             'new_password.regex'                =>  "New Password must have at least 1 upper case character and 1 lower case character and 1 special character."
         ];
-        
+
         return $data = ['validation' => $validation, 'message' => $message];
 
     }
@@ -140,7 +140,7 @@ class Validation extends Model
              'password.min'               => 'The new password must be at least 6 characters.',
              'password.max'               => 'The new password may not be greater than 100 characters.'
         ];
-        
+
         return $data = ['validation' => $validation, 'message' => $message];
 
     }
@@ -192,16 +192,16 @@ class Validation extends Model
               'gender.required'             =>  "Please enter gender.",
               'gender.in'                   =>  "Gender should be male,female,other only.",
               'image.required'              =>  "Please enter image.",
-              
-              // new validation             
+
+              // new validation
             'do_you_drink.required'      =>" Select drink",
             'do_you_smoke.required' =>"Select smoke",
             // 'latitude.required'=>'Latitude value appears to be incorrect format.',
             // 'longitude.required'=>'Longitude value appears to be incorrect format.',
 
-            
 
-              
+
+
       ];
 
       return $data = ['validation' => $validation, 'message' => $message];
@@ -245,7 +245,7 @@ class Validation extends Model
               'mobile_number.required'      =>  "Please enter mobile number.",
               'mobile_number.numeric'       =>  "Mobile number should be numeric only.",
               'mobile_number.digits_between'=>  "Mobile number should be between 8 to 15 digits only.",
-              'otp.required'                =>  "Please enter OTP."  
+              'otp.required'                =>  "Please enter OTP."
       ];
 
       return $data = ['validation' => $validation, 'message' => $message];
@@ -448,9 +448,9 @@ class Validation extends Model
           'timezone'      => 'required',
           'device_type'   => 'required|in:Ipad',  //I=>IOS, A=>Android
           'device_token'  => 'required',
-         
+
       ];
-      
+
       $message = [
         'username.required'     => 'Please enter username.',
         'password.required'     => 'Please enter password.',
@@ -492,20 +492,20 @@ class Validation extends Model
           'email'  =>  'required',
         ];
         $message = [
-          'email.required'  => '* Please enter email address.',  
+          'email.required'  => '* Please enter email address.',
         ];
         return $data = ['validation' => $validation, 'message' => $message];
     }
 
     public static function adminValidationForResetPassword($validation = null, $message = null){
 
-        $validation = [ 
-          'new_password'  =>  'required', 
-          'confirm_password'  =>  'required', 
+        $validation = [
+          'new_password'  =>  'required',
+          'confirm_password'  =>  'required',
         ];
-        $message = [ 
+        $message = [
           'new_password.required'  => 'Please enter new password.',
-          'confirm_password.required'  => 'Please confirm new password.', 
+          'confirm_password.required'  => 'Please confirm new password.',
         ];
         return $data = ['validation' => $validation, 'message' => $message];
       }
@@ -522,9 +522,9 @@ class Validation extends Model
           'venue_pos_id' => 'required|exists:venus,pos_venue_id',
           'user_id'  => 'required',
           'timezone'  => 'required'
-         
+
       ];
-      
+
       $message = [
         'venue_pos_id.required' => 'Please enter venue POS ID.',
         'user_id.required'     => 'Please enter user ID.'
@@ -545,9 +545,9 @@ class Validation extends Model
           'redeemed_amount'  => 'sometimes|nullable|numeric|min:0|max:10000000',
           'total_bill_amount'    => 'required|numeric|max:10000000',
           'verify_offer_ids'    => 'sometimes|exists:offers,pos_product_id'
-         
+
       ];
-      
+
       $message = [
         'venue_pos_id.required' => 'Please enter venue POS ID.',
         'user_id.required'     => 'Please enter user ID.',
@@ -561,7 +561,7 @@ class Validation extends Model
 
       return $data = ['validation' => $validation, 'message' => $message];
     }
-    
+
     public static function contactUsEmail($validation = null, $message = null){
       $validation = [
             'message'      => 'required|max:500',
@@ -575,7 +575,7 @@ class Validation extends Model
     }
 
 
-       
+
     // like list validation
 
     public static function likeList($validation = null, $message = null){
@@ -589,7 +589,7 @@ class Validation extends Model
       ];
       return $data = ['validation' => $validation, 'message' => $message];
     }
-  
+
 
     // music list validation
     public static function musicList($validation=null,$message =null){
@@ -617,6 +617,8 @@ class Validation extends Model
 
     }
 
+
+
     public static function updateuserstatus($validation=null,$message =null){
       $validation=[
 
@@ -631,6 +633,104 @@ class Validation extends Model
     }
 
 
+    public static function adduserinvite($validation=null,$message =null){
+        $validation=[
+          'to_user_id'=>'integer'
+        ];
+        $message=[
+          'message.required'=>"please enter to_user_id",
+
+        ];
+        return $data=['validation'=>$validation,'message'=>$message];
+
+      }
+
+      public static function updateinvitestatus($validation=null,$message =null){
+        $validation=[
+
+          'status'=>"string"
+        ];
+        $message=[
+          'message.required'=>"please enter status",
+
+        ];
+        return $data=['validation'=>$validation,'message'=>$message];
+
+      }
+
+
+
+      public static function createReservation($validation=null,$message =null){
+        $validation=[
+
+          'reservation_id'=>"required|string",
+          'venue_id'=>"required|integer",
+          'shop_id'=>"required|string",
+          'pax'=>"required|integer",
+          'start_at' => 'required|date',
+        ];
+        $message=[
+          'message.required'=>"please enter reservation_id",
+          'message.required'=>"please enter venue_id",
+          'message.required'=>"please enter shop_id",
+          'message.required'=>"please enter pax",
+          'message.required'=>"please enter start_at",
+
+        ];
+        return $data=['validation'=>$validation,'message'=>$message];
+
+      }
+
+
+      public static function sendReservation($validation=null,$message =null){
+        $validation=[
+
+          'reservation_id'=>"required|integer",
+          'other_user_id'=>"required|integer",
+
+        ];
+        $message=[
+          'message.required'=>"please enter reservation_id",
+          'message.required'=>"please enter other_user_id",
+
+
+        ];
+        return $data=['validation'=>$validation,'message'=>$message];
+
+      }
+
+
+      public static function updateReservation($validation=null,$message =null){
+        $validation=[
+          'user_id'=>'required|integer',
+          'id'=>"required|integer",
+          'status'=>"required|string",
+
+        ];
+        $message=[
+          'message.required'=>"please enter user id",
+          'message.required'=>"please enter id",
+          'message.required'=>"please enter status",
+
+
+        ];
+        return $data=['validation'=>$validation,'message'=>$message];
+
+      }
+
+
+
+
+      public static function reservationDetails($validation=null,$message =null){
+        $validation=[
+            'reservation_id'=>'required|integer',
+        ];
+        $message=[
+            'message.required'=>"please enter reservation_id",
+        ];
+        return $data=['validation'=>$validation,'message'=>$message];
+
+      }
 
 
 
@@ -638,7 +738,10 @@ class Validation extends Model
 
 
 
-    
+
+
+
+
 
 }
 

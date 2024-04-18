@@ -8,8 +8,9 @@ use App\Models\VenueUser;
 use GuzzleHttp;
 use Auth;
 use Mail;
-// use DB;
-use Illuminate\Support\Facades\DB;
+use DB;
+// use Illuminate\Support\Facades\DB;
+
 
 use Carbon\Carbon;
 use App\Mail\UserVerifyMail;
@@ -237,54 +238,95 @@ class ProfileModel extends Model
 
 public function getProfile($id)
 {
-    if (empty($id)) {
-        $user = Auth::user();
-    } else {
-        $user = User::findOrFail($id);
-        $user->status = $user->socket_id ? 1 : 0;
-    }
+        if (empty($id)) {
+            $user = Auth::user();
+        } else {
+            $user = User::findOrFail($id);
+            $user->status = $user->socket_id ? 1 : 0;
+        }
 
-    // Fetch friend list with unread messages excluding the authenticated user
-    $userId = auth()->user()->id;
+        // Fetch friend list with unread messages excluding the authenticated user
+        $userId = auth()->user()->id;
 
-    $friends = AddFriend::where(function($query) use ($userId) {
-        $query->where('to_user_id', $userId)
-              ->where('status', 'Accepted');
-    })
-    ->orWhere(function($query) use ($userId) {
-        $query->where('from_user_id', $userId)
-              ->where('status', 'Accepted');
-    })
-    ->latest()
-    ->get();
+        // $friends = AddFriend::where(function($query) use ($userId) {
+        //     $query->where('to_user_id', $userId)
+        //         ->where('status', 'Accepted');
 
-    $tier = TierCondition::whereTierName($user->customer_tier)->orderBy('id', 'desc')->first();
-    $user->tier = $tier;
-    $user->wallet_cash = (int) floor($user->wallet_cash);
+        // })
+        // ->orWhere(function($query) use ($userId) {
+        //     $query->where('from_user_id', $userId)
+        //         ->where('status', 'Accepted');
+        // })
+        // ->get();
 
-    $favList = UserVenueFavorites::where("user_id", $user->id)->pluck('venue_id')->reverse()->toArray();
+        // $unuser= Message::where(function($query) use ($userId) {
+        //     $query->where('to_user_id', $userId)
+        //         ->where('is_read', 0);
+        // })
 
-    $direction = 'asc';
-    $venues = [];
+        // ->distinct('chat_id')
+        // ->count('chat_id');
 
-    if (!empty($favList)) {
-        $venues = Venue::whereIn("id", $favList)
-            ->orderByRaw("FIELD(id, " . implode(",", $favList) . ") $direction")
-            ->limit(3)
-            ->get(['id', 'venue_name']);
-    }
+        // ===
+        $unuser= Message::where(function($query) use ($userId) {
+            $query->where('to_user_id', $userId)
+                ->where('is_read', 0);
+        })
 
-    $user->venue_listing = $venues;
-    $user->friend = $friends->count(); // Count of friends with unread messages
+        ->distinct('chat_id')
+        ->count('chat_id');
 
-    // Count distinct to_user_id entries from messages where is_read is 0
-    $unreadCount = Message::where('is_read', 0)
-        ->distinct('to_user_id')
-        ->count('to_user_id');
 
-    $user->unread_user = $unreadCount;
-    return $user;
+        $chat= Message::where(function($query) use ($userId) {
+            $query->where('to_user_id', $userId)
+                ->where('is_read', 0);
+        })
+        ->select(['chat_id'])
+        ->first();
+        // ->first();
+
+        // ->first();
+        // ->latest()
+        // ->get();
+
+    //     foreach ($friends as $friend) {
+    //     $friend->total_unread_users = Message::where('to_user_id', $userId)
+    //         ->where('from_user_id', $friend->from_user_id)
+    //         ->where('is_read', 0)
+    //         ->count();
+    // }
+
+        $tier = TierCondition::whereTierName($user->customer_tier)->orderBy('id', 'desc')->first();
+        $user->tier = $tier;
+        $user->wallet_cash = (int) floor($user->wallet_cash);
+
+        $favList = UserVenueFavorites::where("user_id", $user->id)->pluck('venue_id')->reverse()->toArray();
+
+        $direction = 'asc';
+        $venues = [];
+
+        if (!empty($favList)) {
+            $venues = Venu::whereIn("id", $favList)
+                ->orderByRaw("FIELD(id, " . implode(",", $favList) . ") $direction")
+                ->limit(3)
+                ->get(['id', 'venue_name']);
+        }
+
+        $user->venue_listing = $venues;
+        // $user->data=$data;
+        // $user->friend = $friends->count(); // Count of friends with unread messages
+        // Count the total number of users whose messages are unread
+        // $totalUnreadUsers =[];
+        // $totalUnreadUsers = DB::raw('(SELECT COUNT(*) FROM messages WHERE is_read = 0 AND from_user_id != ' . $user->id . ' AND to_user_id = ' . $user->id . ') AS total_unread_users');
+        $user->unread_users =  $unuser;
+        $user->chat_id=$chat;
+
+
+        // $user->chat_id=$
+
+        return $user;
 }
+
 
 
 

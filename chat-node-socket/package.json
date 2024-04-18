@@ -11,7 +11,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "apn": "^2.2.0",
+    "apns": "^0.1.0",
     "express": "^4.18.3",
+    "firebase-admin": "^12.0.0",
     "mysql2": "^3.9.2",
     "promise": "^8.3.0",
     "socket.io": "^4.7.4"

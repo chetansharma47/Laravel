@@ -64,7 +64,6 @@ class User extends Authenticatable
         'new_buddies',
         'invite_table'
     ];
-
     /**
      * The attributes that should be hidden for arrays.
      *

@@ -31,13 +31,13 @@ class VenueBusinessModel extends Model
 		        $destinationPath = storage_path(). DIRECTORY_SEPARATOR . env('VENUE_STORAGE');
 	        	$imageName = date('mdYHis') . rand(10,100) . uniqid().'.jpeg';
 			}
-	        
+
 	        //file_put_contents($destinationPath. '/' . $imageName, base64_decode($image1));
 
 	        $img_new = Image::make(base64_decode($image1))->stream($extension, 50);
-	        
+
 	        file_put_contents($destinationPath. '/' . $imageName, $img_new);
-        
+
     		return $imageName;
     	}catch(\Exception $e){
     		return $e->getMessage();
@@ -57,7 +57,18 @@ class VenueBusinessModel extends Model
 		if($data['vimg'] == "Unable to init from given binary data."){
 			return ['message' => 'Please upload valid image.'];
 		}
-		
+
+		if(empty($data['hidden_logo_img2'])){
+			if($data['limg']){
+				$data['limg'] = $this->UploadBase64Data($data['limg'],$data['limg_val']);
+			}
+		}
+
+		if($data['limg'] == "Unable to init from given binary data."){
+			return ['message' => 'Please upload valid logo.'];
+		}
+
+
 
 		//exist query
 		$venue = Venu::whereUniqueId($data['uniq'])->first();
@@ -75,6 +86,8 @@ class VenueBusinessModel extends Model
 			$venue->book_now_link = $data['vbook'];
 			$venue->image = $data['vimg'];
 			$venue->name_of_file_show = $data['vimg_val'];
+            $venue->logo = $data['limg'];
+			$venue->logo_name = $data['limg_val'];
 			$venue->menu_link= $data['vmenu'];
 			$venue->status= $data['vstatus'];
 			$venue->pos_venue_id= $data['pos_venue_id'];
@@ -123,6 +136,11 @@ class VenueBusinessModel extends Model
 				$venue->image = $data['vimg'];
 				$venue->name_of_file_show = $data['vimg_val'];
 			}
+            if(empty($data['hidden_logo_img2'])){
+				$venue->logo = $data['limg'];
+				$venue->logo_name = $data['limg_val'];
+			}
+
 			$venue->menu_link= $data['vmenu'];
 			$venue->status= $data['vstatus'];
 			$venue->pos_venue_id= $data['pos_venue_id'];
@@ -188,7 +206,7 @@ class VenueBusinessModel extends Model
 					$event->name_of_file_show = $data['org_img_valu'];
 				}
 			}
-			
+
 			$event->status = $data['event_status'];
 			$event->deleted_at = null;
 			$event->update();

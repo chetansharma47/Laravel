@@ -19,6 +19,11 @@ use App\Models\Contact;
 use App\Models\UserVenueFavorites;
 use App\Models\NewVenues;
 use App\Models\AddFriend;
+use App\Models\Message;
+use App\Models\Invite;
+use App\Models\BlockUser;
+
+
 use App\User;
 use Hash;
 use Crypt;
@@ -51,7 +56,8 @@ use App\Mail\ContactUsAdmin;
 use App\Models\EventSentNotification;
 use App\Models\WalletDetail;
 use App\Models\WalletTransaction;
-
+use App\Models\Reservation;
+use App\Models\ReservationUser;
 
 // require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
 
@@ -157,6 +163,7 @@ class AuthenticationController extends ResponseController
                     'message'   => $admin_notification_find->message,
                     'noti_type' => 3
                 ];
+
                 if($register['data']['device_type'] == 'Android'){
                     if($register['data']['device_token'] && strlen($register['data']['device_token']) > 20){
 
@@ -173,6 +180,7 @@ class AuthenticationController extends ResponseController
 
                    }
                 }
+
                         AdminCriteriaNotification::create($criteria_data);
             }
 
@@ -470,7 +478,7 @@ class AuthenticationController extends ResponseController
 
     public function venueListing(Request $request){
         $user = Auth::guard()->user();
-        $venues = Venu::select("id","venue_name","image")->whereDeletedAt(null)->whereStatus('Active')->orderBy('venue_name','asc')->get();
+        $venues = Venu::select("id","venue_name","image","shop_id","logo",'address')->whereDeletedAt(null)->whereStatus('Active')->orderBy('venue_name','asc')->get();
         return $this->responseOk("Venue Listing", ['venue_listing' => $venues]);
     }
 
@@ -596,7 +604,7 @@ class AuthenticationController extends ResponseController
         $offers_not_in_birthday = Offer::where(function($query) use ($user_assign_offers, $active_venue_ids){
                         $query->whereDeletedAt(null);
                         $query->whereStatus('Active');
-                        $query->whereIn('id',$user_assign_offers);
+                        // $query->whereIn('id',$user_assign_offers);
                         $query->whereDate('to_date','>=',Carbon::now()->toDateString());
                         $query->whereIn('venu_id', $active_venue_ids);
 
@@ -614,7 +622,7 @@ class AuthenticationController extends ResponseController
 
         return $this->responseOk('Offer Listing', ['offer_listing' => $offers]);
     }
-
+    
     public function offerDetails(Request $request, $offer_id){
         $offer = Offer::whereId($offer_id)->whereDeletedAt(null)->whereStatus('Active')->with('offerSetting','venu')->first();
         if(empty($offer)){
@@ -947,6 +955,8 @@ class AuthenticationController extends ResponseController
     }
 
 
+
+
 public function listUser(Request $request) {
     $user = auth()->user()->id;
     $gender = $request->input('gender');
@@ -957,8 +967,21 @@ public function listUser(Request $request) {
     })
     ->get();
 
+    $blocked_users = BlockUser::where(function ($query) use ($user) {
+        $query->where('user_id',$user);
+    })
+    ->get();
+
+    $blocked_other_users = BlockUser::where(function ($query) use ($user) {
+        $query->where('blocked_user_id',$user);
+    })
+    ->get();
+
     $lists = $list->pluck("to_user_id");
     $detail = $list->pluck("from_user_id");
+    $blocked_users_id = $blocked_users->pluck("blocked_user_id");
+    $blocked_other_users_id = $blocked_users->pluck("user_id");
+
     $search = $request->search;
     $age1= $request->age1;
     $age2=$request->age2 == "65" ? "1000" : $request->age2;
@@ -983,12 +1006,15 @@ public function listUser(Request $request) {
                         'gender',
                         'image',
                         'display_name',
+                        'like_list',
                         DB::raw('CASE WHEN users.socket_id IS NOT NULL THEN 1 ELSE 0 END as status')
                         // DB::raw('users.socket_id =' . $user . ' as status')
                     ])
                     ->where('id', '!=', $user)
                     ->whereNotIn('id', $lists)
                     ->whereNotIn('id', $detail)
+                    ->whereNotIn('id',$blocked_users_id)
+                    ->whereNotIn('id',$blocked_other_users_id)
                     ->where(function ($query) use ($search) {
                         $query->where('first_name', 'LIKE', '%' . $search . '%')
                             ->orWhere('last_name', 'LIKE', '%' . $search . '%')
@@ -1013,9 +1039,6 @@ public function listUser(Request $request) {
         $usersQuery->whereRaw("$dQuery > $distance1")->whereRaw("$dQuery < $distance2");
     }
     $users = $usersQuery->latest()
-
-
-
                 ->paginate(30);
     return $this->responseOk("Search.", ["user_data" =>  $users]);
 }
@@ -1028,6 +1051,12 @@ public function addfriend(Request $request) {
 
     $user = auth()->user()->id;
     $toUserId = $request->to_user_id;
+
+    $device=User::where('id', $toUserId)
+    ->first();
+
+    $my_user=User::where('id', $user)
+    ->first();
 
     $existingFriendship = AddFriend::where(function($query) use ($user, $toUserId) {
             $query->where('from_user_id', $user)
@@ -1048,8 +1077,7 @@ if($existingFriendship) {
     elseif($existingFriendship->status=="Accepted"){
         return $this->responseOk('You both are already friends.');
     }
-
-    else{
+    else {
         return $this->responseOk('Friend request already sent to user.');
     }
 
@@ -1060,6 +1088,37 @@ if($existingFriendship) {
    $list->status = 'Pending';
    $list->save();
 
+   $message = 'You have received a friend notification from ' . $my_user->first_name;
+   $notification_key = 'Friend Request';
+   $notification_type = 4;
+
+   if($device->device_type == 'Android'){
+    if( $device->device_token && strlen( $device->device_token) > 20){
+
+        $total_noti_record = NotiRecord::whereUserId($toUserId)->sum(DB::raw('wallet + offer + event + normal'));
+
+       $android_notify =  $this->send_android_notification_new($device->device_token, $message, $notmessage = $notification_key, $noti_type = $notification_type,null,null,$total_noti_record);
+   }
+}
+
+if($device->device_type == 'Ios' && strlen($device->device_token) > 20){
+    if( $device->device_token){
+        $total_noti_record = NotiRecord::whereUserId($toUserId)->sum(DB::raw('wallet + offer + event + normal'));
+        $ios_notify =  $this->iphoneNotification($device->device_token, $message, $notmessage = $notification_key, $noti_type = $notification_type,null,null,$total_noti_record);
+
+   }
+}
+
+$criteria_data = [
+    'user_id'   => $toUserId,
+    'message'   => $message,
+    'noti_type' => $notification_type,
+    'sent_by'   => $user
+];
+
+        AdminCriteriaNotification::create($criteria_data);
+
+
     return $this->responseOk('Your friend request has been sent.', ["data" =>$list]);
  }
 
@@ -1068,76 +1127,114 @@ if($existingFriendship) {
 
 
 
-  public function friendlist(Request $request){
-            $user = auth()->user()->id;
-
-            if ($request->input('type') == "Pending") {
-                $users = AddFriend::where(function($query) use ($user) {
-                        $query->where('to_user_id', $user)
-                            ->where('status', 'Pending');
-                    })
-                    ->orWhere(function($query) use ($user) {
-                        $query->where('from_user_id', $user)
-                            ->where('status', 'Pending');
-                    })
-                    ->latest()
-                    ->get();
-            }
-
-                else{
-                    $users = AddFriend::where(function($query) use ($user, $request) {
-                        $query->where('to_user_id', $user)
-                              ->where('status', $request->input('type'));
-                    })
-                    ->orWhere(function($query) use ($user,$request) {
-                        $query->where('from_user_id', $user)
-                              ->where('status',$request->input('type'));
-                    })
-                    ->latest()
-                    ->get();
-                }
-
-            // merge both id's on array
-            $userid=[];
-            $fromIds = [];
-            $toIds = [];
-            foreach($users as $userss){
-                $userid[]=$userss->to_user_id;
-                $userid[]=$userss->from_user_id;
-                $fromIds[]=$userss->from_user_id;
-                $toIds[]=$userss->to_user_id;
-            }
-
-            $list=User::where('id', '!=', $user)
-
-            ->select(['id','first_name','last_name','display_name','image',DB::raw("(CASE WHEN id In (".implode(',', $toIds).") THEN 1 ELSE 0 END) as is_my_request"),
-            DB::raw('CASE WHEN users.socket_id IS NOT NULL THEN 1 ELSE 0 END as status')
+public function friendlist(Request $request){
+    $user = auth()->user()->id;
+    $search = $request->search;
 
 
-            ])
-            ->whereIn('id',$userid)
-                ->latest()
-                ->paginate(10);
-            return $this->responseOk('Friend List.',['friend'=>$list]);
-        }
+    $blocked_users = BlockUser::where(function ($query) use ($user) {
+        $query->where('user_id',$user);
+    })
+    ->get();
 
-        public function updatestatus(Request $request){
+    $blocked_users_id = $blocked_users->pluck("blocked_user_id");
+
+    if ($request->input('type') == "Pending") {
+        $users = AddFriend::where(function($query) use ($user) {
+                $query->where('to_user_id', $user)
+                    ->where('status', 'Pending');
+            })
+            ->orWhere(function($query) use ($user) {
+                $query->where('from_user_id', $user)
+                    ->where('status', 'Pending');
+            })
+            ->latest()
+            ->get();
+    } else {
+        $users = AddFriend::where(function($query) use ($user, $request) {
+                $query->where('to_user_id', $user)
+                      ->where('status', $request->input('type'));
+            })
+            ->orWhere(function($query) use ($user, $request) {
+                $query->where('from_user_id', $user)
+                      ->where('status', $request->input('type'));
+            })
+            ->latest()
+            ->get();
+
+    }
+
+    // merge both id's on array
+    $userid=[];
+    $fromIds = [];
+    $toIds = [];
+    $id=[];
+    foreach($users as $userss){
+        $userid[]=$userss->to_user_id;
+        $userid[]=$userss->from_user_id;
+        $fromIds[]=$userss->from_user_id;
+        $toIds[]=$userss->to_user_id;
+        $toIdss[]=$userss->id;
+    }
+    $list = User::where('id', '!=', $user)
+    ->select([
+        // $data = DB::table('add_friends')
+        // DB::raw('(SELECT id FROM add_friends ) AS chat_id'),
+        'id',
+        'first_name',
+        'last_name',
+        'display_name',
+        'image',
+        DB::raw("(CASE WHEN id In (".implode(',', $toIds).") THEN 1 ELSE 0 END) as is_my_request"),
+        DB::raw('CASE WHEN users.socket_id IS NOT NULL THEN 1 ELSE 0 END as status'),
+        // DB::raw("(SELECT id FROM add_friends WHERE (from_user_id = $user AND to_user_id = users.id) OR (from_user_id = users.id AND to_user_id = $user) LIMIT 1) as chat_id"),
+        DB::raw("(SELECT id FROM add_friends WHERE (from_user_id = $user AND to_user_id = users.id) OR (from_user_id = users.id AND to_user_id =$user) LIMIT 1)as chat_id"),
+        ])
+    ->whereIn('id', $userid)
+    ->whereNotIn('id',$blocked_users_id)
+    ->where(function ($query) use ($search) {
+        $query->where('first_name', 'LIKE', '%' . $search . '%')
+              ->orWhere('last_name', 'LIKE', '%' . $search . '%')
+              ->orWhere('display_name', 'LIKE', '%' . $search . '%')
+              ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ['%' . $search . '%']);
+    })
+    ->latest()
+    ->paginate(10);
+
+    return $this->responseOk('Friend List.', ['friend' => $list]);
+}
+
+
+
+
+
+        public function updatestatus(Request $request)
+        {
+
             $this->is_validationRule(Validation::updateuserstatus($Validation="",$message=""),$request);
                 $user = auth()->user()->id;
+                $from=  $request->from_user_id;
+                $my_user=User::where('id', $user)
+                ->first();
+                // dd($user);
 
                 // $list = AddFriend::where('from_user_id', $request->from_user_id)
                 // ->where('to_user_id',$user)
 
-                $list = AddFriend::where(function($query) use ($user, $request) {
-                    $query->where('from_user_id', $request->from_user_id)
+
+                $device=User::where('id', $from)
+                ->first();
+                $list = AddFriend::where(function($query) use ($user,$from) {
+                    $query->where('from_user_id',  $from)
                         ->where('to_user_id', $user)
                         ->where("status" ,"!=" ,"Blocked");
 
                 })
-                ->orWhere(function($query) use ($user,$request) {
+
+                ->orWhere(function($query) use ($user,$from) {
 
                     $query->where('from_user_id', $user)
-                    ->where('to_user_id', $request->from_user_id)
+                    ->where('to_user_id', $from)
                     ->where("status" ,"!=" ,"Blocked");
                 })
 
@@ -1152,15 +1249,48 @@ if($existingFriendship) {
                     }
                     else
                     if($list->status=='Blocked'){
-                        $list->save();
+                        $blocked_user = new BlockUser();
+                        $blocked_user->user_id = $user;
+                        $blocked_user->blocked_user_id = $from;
+                        $blocked_user->save();
+                        $list->delete();
                         return $this->responseOk('User blocked successfully.');
-
-
                     }
 
                     else
                          {
                         $list->save();
+
+
+                        $message = 'You have received a friend notification from ' .  $my_user->first_name;
+                        $notification_key = 'Friend Request Accepted';
+                        $notification_type = 5;
+
+                        if($device->device_type == 'Android'){
+                         if( $device->device_token && strlen( $device->device_token) > 20){
+
+                             $total_noti_record = NotiRecord::whereUserId( $from)->sum(DB::raw('wallet + offer + event + normal'));
+
+                            $android_notify =  $this->send_android_notification_new($device->device_token, $message, $notmessage = $notification_key, $noti_type = $notification_type,null,null,$total_noti_record);
+                        }
+                     }
+
+                     if($device->device_type == 'Ios' && strlen($device->device_token) > 20){
+                         if( $device->device_token){
+                             $total_noti_record = NotiRecord::whereUserId($from)->sum(DB::raw('wallet + offer + event + normal'));
+                             $ios_notify =  $this->iphoneNotification($device->device_token, $message, $notmessage = $notification_key, $noti_type = $notification_type,null,null,$total_noti_record);
+
+                        }
+                     }
+
+                     $criteria_data = [
+                         'user_id'   =>  $from,
+                         'message'   => $message,
+                         'noti_type' => $notification_type,
+                         'sent_by'   => $user
+                     ];
+
+                             AdminCriteriaNotification::create($criteria_data);
                         return $this->responseOk('Friend request accepted successfully.');
 
                     }
@@ -1171,10 +1301,19 @@ if($existingFriendship) {
 
 
 
+
+
+
+
+
+
+
+
 public function updateContactList(Request $request){
     $user=auth()->user()->id;
     $contactsdata=$request->input('contacts');
     $contacts=[];
+
     foreach($contactsdata as  $contactdata){
 
         $validator=Validator::make($contactdata,[
@@ -1212,8 +1351,14 @@ public function contactUserList(Request $request){
     })
     ->get();
 
+    $blocked_users = BlockUser::where(function ($query) use ($user) {
+        $query->where('user_id',$user);
+    })
+    ->get();
+
     $lists = $list->pluck("to_user_id");
     $detail = $list->pluck("from_user_id");
+    $blocked_users_id = $blocked_users->pluck("blocked_user_id");
 
 
     // Fetch matched users
@@ -1227,6 +1372,7 @@ public function contactUserList(Request $request){
         ->where('users.id', '!=', $user)
         ->whereNotIn('users.id', $lists)
         ->whereNotIn('users.id', $detail)
+        ->whereNotIn('users.id',$blocked_users_id)
         ->get();
     $matchedUsers = $matchedUsers->map(function($each){
         if(!empty($each->image)){
@@ -1262,48 +1408,486 @@ public function contactUserList(Request $request){
 }
 
 
-// public function uploadImage(Request $request)
-// {
-//     // Validation rules for the image
-//     $validator = Validator::make($request->all(), [
-//         'image' => 'required|mimes:png,jpg,jpeg,gif'
-//     ]);
+public function uploadFile(Request $request)
+{
+    $user=auth()->user()->id;
+    $validator = Validator::make($request->all(), [
+        'image' => 'required|mimes:png,jpg,jpeg,gif,pdf,excel,doc,docx'
+    ]);
 
-//     // Check if validation fails
-//     if ($validator->fails()) {
-//         return response()->json([
-//             'status' => false,
-//             'message' => 'Please fix the errors',
-//             'errors' => $validator->errors()
-//         ]);
-//     }
-
-//     // Handle image upload
-//     $img = $request->file('image'); // Retrieving the uploaded image
-//     $ext = $img->getClientOriginalExtension(); // Get the original extension of the file
-//     $imageName = time() . '.' . $ext; // Generate a unique name for the image
-//     $img->move(public_path('uploads'), $imageName); // Move the image to the 'public/uploads' directory
-
-//     // Create a new Image model instance
-//     $image = new Image;
-//     $image->image = $imageName; // Assign the image name to the 'image' property of the Image model
-//     $image->save(); // Save the model instance to the database
-
-//     // Return response with success message and image details
-//     return response()->json([
-//         'status' => true,
-//         'message' => 'Image uploaded successfully.',
-//         'path' => asset('uploads/' . $imageName), // Provide the URL to access the uploaded image
-//         'data' => $image // Provide the Image model data
-//     ]);
+    if ($validator->fails()) {
+        return response()->json([
+            'status' => false,
+            'errors' => $validator->errors()
+        ]);
+    }
+    $img = $request->file('image');
+    $ext = $img->getClientOriginalExtension();
+    $imageName = time() . '.' . $ext;
+    $img->move(public_path('/public/storage/uploads'), $imageName);
+    $image = new Message;
+    $image->image = $imageName;
+    $image->from_user_id=$user;
+    $image->type=2;
+    $image->save();
+    return $this->responseOk('Image uploaded successfully', ['path' => asset('public/public/storage/uploads/' . $imageName), 'data' => $image]);
+ }
 
 
+    public function addinviteuser(Request $request){
+        $this->is_validationRule(Validation::adduserinvite($Validation="", $message=""), $request);
+        $user = auth()->user()->id;
+
+        $touser = $request->to_user_id;
+        $shop = $request->shop_id;
+        $blockage = $request->blockage_id;
+        $start = $request->start_at;
+        $sour = $request->source;
+        $pax = $request->pax;
+        $last = $request->last_name;
+        $cust = $request->customer_ref;
+        $device=User::where('id',$touser)
+        ->first();
+        $my_user=User::where('id', $user)
+        ->first();
+
+        // $exist=Invite::where(function($query) use ($user,$touser) {
+        //     $query->where('from_user_id', $user)
+        //     ->where('to_user_id',$touser);
+        // })
+        // ->orWhere(function($query) use ($user,$touser){
+        //     $query->where('from_user_id',$touser)
+        //     ->where('to_user_id',$user);
+        // })
+
+        // ->first();
+        // if($exist) {
+        //     if($exist->to_user_id==$user){
+        //         return $this->responseOk('User has already sent Invite request.');
+        //     }
+
+        //     elseif($exist->status=="Accepted"){
+        //         return $this->responseOk('You both are already Invites.');
+        //     }
+        //     else{
+        //         return $this->responseOk('Invite request already sent to user.');
+        //     }
+        // } else {
+           $list = new Invite();
+           $list->from_user_id = $user;
+           $list->to_user_id =  $touser;
+           $list->status = 'Pending';
+           $list->shop_id = $shop;
+           $list->blockage_id = $blockage;
+           $list->start_at = $start;
+           $list->source = $sour;
+           $list->pax = $pax;
+           $list->last_name = $last;
+           $list->customer_ref = $cust;
+           $list->save();
+
+
+           $message = 'You have received a friend notification from ' .$my_user->first_name;
+           $notification_key = 'Invite request';
+           $notification_type = 6;
+
+           if($device->device_type == 'Android'){
+            if( $device->device_token && strlen( $device->device_token) > 20){
+
+                $total_noti_record = NotiRecord::whereUserId($touser)->sum(DB::raw('wallet + offer + event + normal'));
+
+               $android_notify =  $this->send_android_notification_new($device->device_token, $message, $notmessage = $notification_key, $noti_type = $notification_type,null,null,$total_noti_record);
+           }
+        }
+
+        if($device->device_type == 'Ios' && strlen($device->device_token) > 20){
+            if( $device->device_token){
+                $total_noti_record = NotiRecord::whereUserId($touser)->sum(DB::raw('wallet + offer + event + normal'));
+                $ios_notify =  $this->iphoneNotification($device->device_token, $message, $notmessage = $notification_key, $noti_type = $notification_type,null,null,$total_noti_record);
+
+           }
+        }
+
+        $criteria_data = [
+            'user_id'   =>  $touser,
+            'message'   => $message,
+            'noti_type' => $notification_type,
+            'sent_by'   => $user
+        ];
+
+                AdminCriteriaNotification::create($criteria_data);
+            return $this->responseOk('Your Invite request has been sent.', ["data" =>$list]);
+        //  }
+
+
+    }
 
 
 
-// }
+    public function inviteuserlist(){
+        $user = auth()->user()->id;
+        $users = Invite::
+        with(['fromUser','toUser','shopDetails'])
+        ->where(function($query) use ($user) {
+            $query->where('to_user_id', $user)
+                ->whereNotIn('to_user_id',[0])
+                ->where('status', 'Pending');
+        })
+        ->orderBy('invites.created_at', 'desc')
+        ->get();
+        return $this->responseOk('Invite User List.', ['List' =>  $users]);
+    }
 
+    public function myInvites(){
+        $user = auth()->user()->id;
+        $users = Invite::
+        with(['fromUser','toUser','shopDetails'])
+        ->where(function($query) use ($user) {
+            $query->where('from_user_id', $user)
+            ->whereNotIn('to_user_id',[0])
+                ->where('status', 'Pending');
+        })
+        ->orderBy('invites.created_at', 'desc')
+        ->get();
+        return $this->responseOk('Invite User List.', ['List' =>  $users]);
+    }
+
+
+  
+  
+
+    public function myReservations(){
+        $user = auth()->user()->id;
+        $users = Invite::
+        with(['fromUser','toUser','shopDetails'])
+        ->where(function($query) use ($user) {
+            $query->where('from_user_id', $user)
+                ->where('status', 'Accepted');
+        })
+        ->orWhere(function($query) use ($user) {
+            $query->where('to_user_id', $user)
+                ->where('status', 'Accepted');
+        })
+        ->orderBy('invites.created_at', 'desc')
+        ->get();
+        return $this->responseOk('Reservations List.', ['List' =>  $users]);
+    }
+
+public function updateinvitestatus(Request $request) {
+    $this->is_validationRule(Validation::updateinvitestatus($Validation="",$message=""),$request);
+        $user = auth()->user()->id;
+        $id=$request->id;
+        $device=User::where('id', $id)
+        ->first();
+        $list = Invite::where(function($query) use ( $id) {
+            $query->where('id', $id);
+        })
+        ->first();
+        if(!$list){
+        return $this->responseOk('Reservation Not Found.');
+        }
+        else {
+            $list->status = $request->status;
+            if($list->status == 'Rejected') {
+                $list->save();
+                return $this->responseOk('Your Invitation Request is Rejected.');
+            }
+            elseif($list->status=='Blocked'){
+                $list->save();
+                return $this->responseOk('User Blocked successfully.');
+            }
+            else {
+                $list->save();
+
+        //    $message = 'You have received a invite notification from ' . $device->first_name;
+        //    $notification_key = 'Invite request Accepted';
+        //    $notification_type = 7;
+
+        //    if($device->device_type == 'Android'){
+        //     if( $device->device_token && strlen( $device->device_token) > 20){
+
+        //         $total_noti_record = NotiRecord::whereUserId( $id)->sum(DB::raw('wallet + offer + event + normal'));
+
+        //        $android_notify =  $this->send_android_notification_new($device->device_token, $message, $notmessage = $notification_key, $noti_type = $notification_type,null,null,$total_noti_record);
+        //    }
+        // }
+
+        // if($device->device_type == 'Ios' && strlen($device->device_token) > 20){
+        //     if( $device->device_token){
+        //         $total_noti_record = NotiRecord::whereUserId($id)->sum(DB::raw('wallet + offer + event + normal'));
+        //         $ios_notify =  $this->iphoneNotification($device->device_token, $message, $notmessage = $notification_key, $noti_type = $notification_type,null,null,$total_noti_record);
+
+        //    }
+        // }
+
+        // $criteria_data = [
+        //     'user_id'   =>  $id,
+        //     'message'   => $message,
+        //     'noti_type' => $notification_type,
+        //     'sent_by'   => $user
+        // ];
+        //         AdminCriteriaNotification::create($criteria_data);
+
+                return $this->responseOk('Invitation Request is accepted.');
+            }
+        }
+    }
+
+
+
+    public function blockedUserslist(){
+        $user = auth()->user()->id;
+        $users = BlockUser::
+        with(['blocked_user'])
+        ->where(function($query) use ($user) {
+            $query->where('user_id', $user);
+        })
+        ->get();
+        return $this->responseOk('Blocked Users List.', ['users' =>  $users]);
+
+    }
+
+    public function unblockUser(Request $request){
+        $user = auth()->user()->id;
+        BlockUser::where(function($query) use ($user,$request) {
+            $query->where('user_id',$user)
+            ->where('blocked_user_id', $request->user_id);
+        })->delete();
+        return $this->responseOk('User Unblocked successfully.');
+    }
+
+
+    public function createReservation(Request $request) {
+        //Empty Check
+        $this->is_validationRule(Validation::createReservation($Validation="",$message=""),$request);
+        $user = auth()->user()->id;
+        $reservations = new Reservation();
+        $reservations->user_id = $user;
+        $reservations->reservation_id =  $request->reservation_id;
+        $reservations->venue_id = $request->venue_id;
+        $reservations->shop_id = $request->shop_id;
+        $reservations->pax = $request->pax;
+        $reservations->start_at = $request->start_at;
+        $reservations->save();
+        return $this->responseOk('Reservation created successfully.', ['data' =>  $reservations]);
+    }
+
+    public function sendReservationInvite(Request $request) {
+
+        //Empty Check and check if reservation id and other user id exist
+        $this->is_validationRule(Validation::sendReservation($Validation="",$message=""),$request);
+        $user = auth()->user()->id;
+        $res = $request->reservation_id;
+        $other = $request->other_user_id;
+        $existingInvite = ReservationUser::where('reservation_id', $res)
+        ->where('other_user_id',$other)
+        ->first();
+
+        $device = User::where('id', $other)
+       ->first();
+       $my_user = User::where('id',$user)
+       ->first();
+
+        $count = ReservationUser::where('reservation_id',$res)
+        ->get()->count();
+        $reservation = Reservation::where('id',$res)->first();
+        if($existingInvite){
+            return $this->responseWithErrorValidation('Invitation already exist.');
+        }
+        else if($count+1 >= $reservation->pax) {
+            return $this->responseWithErrorValidation('Your table is already full, please try to remove a buddy and add him again.');
+        }
+        else{
+            $reservationUser = new ReservationUser();
+            $reservationUser->reservation_id = $res;
+            $reservationUser->other_user_id = $other;
+            $reservationUser->status = "Pending";
+            $reservationUser->save();
+
+            $message = 'Invitation sent from ' .  $device->first_name;
+            $notification_key = 'Invitation ';
+            $notification_type = 8;
+
+            if($device->device_type == 'Android'){
+             if( $device->device_token && strlen($device->device_token) > 20){
+
+                 $total_noti_record = NotiRecord::whereUserId($other)->sum(DB::raw('wallet + offer + event + normal'));
+
+                $android_notify =  $this->send_android_notification_new($device->device_token, $message, $notmessage = $notification_key, $noti_type = $notification_type,null,null,$total_noti_record);
+            }
+         }
+
+         if($device->device_type == 'Ios' && strlen($device->device_token) > 20){
+             if( $device->device_token){
+                 $total_noti_record = NotiRecord::whereUserId($other)->sum(DB::raw('wallet + offer + event + normal'));
+                 $ios_notify =  $this->iphoneNotification($device->device_token, $message, $notmessage = $notification_key, $noti_type = $notification_type,null,null,$total_noti_record);
+
+            }
+         }
+
+         $criteria_data = [
+             'user_id'   => $user,
+             'message'   => $message,
+             'noti_type' => $notification_type,
+             'sent_by'   => $other
+         ];
+
+                 AdminCriteriaNotification::create($criteria_data);
+
+            return $this->responseOk('Invitation sent successfully.');
+
+        }
+
+    }
+
+    public function reservationDetails(Request $request) {
+
+        $this->is_validationRule(Validation::reservationDetails($Validation="",$message=""),$request);
+
+        $reservation = Reservation::with(['venue','admin_user','joined_users','pending_users'])
+        ->where(function($query) use ($request) {
+            $query->where('id', $request->reservation_id);
+        })
+        ->first();
+        return $this->responseOk('My Reservations fetched successfully.', ['reservation_detail' =>  $reservation]);
+    }
+
+
+    public function updateReservationInvite(Request $request) {
+        //Empty Check
+        $this->is_validationRule(Validation::updateReservation($Validation="",$message=""),$request);
+
+        $user = auth()->user()->id;
+        $id=$request->id;
+        $userid=$request->user_id;
+
+        // $usersid=$request->users_id;
+
+        $reservation = Reservation::select('user_id')
+                        ->where('id',$id)
+                        ->first();
+
+        $device =  User::where('id', $reservation->user_id)->first();
+
+        $my_user =User::where('id',$user)
+       ->first();
+
+        $reservationUser = ReservationUser::where(function($query) use ($id,$userid) {
+            $query->where('reservation_id', $id )
+            ->where('other_user_id',$userid);
+        })
+        ->first();
+
+        if($reservationUser) {
+            $reservationUser->status = $request->status;
+            $reservationUser->save();
+            if ($request->status == "Accepted") {
+                $message = 'Invitation Accepted from ' . $my_user->first_name;
+                $notification_key = 'Invitation Accepted';
+                $notification_type = 7;
+
+                if($device->device_type == 'Android'){
+                 if( $device->device_token && strlen( $device->device_token) > 20){
+
+                     $total_noti_record = NotiRecord::whereUserId($device)
+                     ->sum(DB::raw('wallet + offer + event + normal'));
+
+                    $android_notify =  $this->send_android_notification_new($device->device_token, $message, $notmessage = $notification_key, $noti_type = $notification_type,null,null,$total_noti_record);
+                }
+             }
+
+             if($device->device_type == 'Ios' && strlen($device->device_token) > 20){
+                 if( $device->device_token){
+                     $total_noti_record = NotiRecord::whereUserId($device)
+                     ->sum(DB::raw('wallet + offer + event + normal'));
+                     $ios_notify =  $this->iphoneNotification($device->device_token, $message, $notmessage = $notification_key, $noti_type = $notification_type,null,null,$total_noti_record);
+
+                }
+             }
+
+             $criteria_data = [
+                 'user_id'   => $user,
+                 'message'   => $message,
+                 'noti_type' => $notification_type,
+                 'sent_by'   => $device->id
+             ];
+                     AdminCriteriaNotification::create($criteria_data);
+
+                return $this->responseOk('Invitation Accepted successfully.');
+            }
+            else {
+                $reservationUser->delete();
+                if ($request->status == "Rejected")
+                    $message = 'Invitation Rejected from ' . $my_user->first_name;
+                    $notification_key = 'Invitation Rejected';
+                    $notification_type = 9;
+
+                    if($device->device_type == 'Android'){
+                     if( $device->device_token && strlen( $device->device_token) > 20){
+
+                         $total_noti_record = NotiRecord::whereUserId($user)
+                         ->sum(DB::raw('wallet + offer + event + normal'));
+
+                        $android_notify =  $this->send_android_notification_new($device->device_token, $message, $notmessage = $notification_key, $noti_type = $notification_type,null,null,$total_noti_record);
+                    }
+                 }
+
+                 if($device->device_type == 'Ios' && strlen($device->device_token) > 20){
+                     if( $device->device_token){
+                         $total_noti_record = NotiRecord::whereUserId($user)
+                         ->sum(DB::raw('wallet + offer + event + normal'));
+                         $ios_notify =  $this->iphoneNotification($device->device_token, $message, $notmessage = $notification_key, $noti_type = $notification_type,null,null,$total_noti_record);
+
+                    }
+                 }
+
+                 $criteria_data = [
+                     'user_id'   => $user,
+                     'message'   => $message,
+                     'noti_type' => $notification_type,
+                     'sent_by'   => $device->id
+
+                 ];
+                         AdminCriteriaNotification::create($criteria_data);
+
+                return $this->responseOk('Invitation Rejected successfully.');
+            }
+        }
+        else {
+            $this->responseWithErrorValidation("Reservation not found or deleted by admin.");
+        }
+    }
+
+    public function myReservationsNew() {
+        $user = auth()->user()->id;
+        $reservations = Reservation::with(['venue','admin_user'])
+        ->withCount(['joined_users','total_users'])
+        ->where(function($query) use ($user) {
+            $query->where('user_id', $user);
+        })
+        ->get();
+        return $this->responseOk('My Reservations fetched successfully.', ['reservation_list' =>  $reservations]);
+    }
+
+    public function myJoinedReservations() {
+        $user = auth()->user()->id;
+        $reservations = ReservationUser::with(['reservation','other_user'])
+        ->where(function($query) use ($user) {
+            $query->where('other_user_id', $user)
+            ->where('status', "Accepted");
+        })
+        ->get();
+        return $this->responseOk('My Joined Reservations fetched successfully.', ['my_joined_reservation_list' =>  $reservations]);
+    }
+
+    public function myPendingReservations() {
+        $user = auth()->user()->id;
+        $reservations = ReservationUser::with(['reservation','other_user'])
+        ->where(function($query) use ($user) {
+            $query->where('other_user_id', $user)
+            ->where('status', "Pending");
+        })
+        ->get();
+        return $this->responseOk('My Pending Reservations fetched successfully.', ['pending_reservation_list' =>  $reservations]);
+    }
 }
-
-
-

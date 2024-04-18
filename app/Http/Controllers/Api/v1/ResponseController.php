@@ -25,7 +25,7 @@ class ResponseController extends Controller
 		http_response_code(400);
 		echo json_encode($response); exit;
     }
-   
+
 	public function responseOk($message, $data = null)
 	{
 		$response = [
@@ -37,7 +37,7 @@ class ResponseController extends Controller
 		http_response_code(200);
 		echo json_encode($response); exit;
 	}
-   
+
 	public function responseWithError($message=null)
 	{
 	    http_response_code(400);
@@ -96,14 +96,14 @@ class ResponseController extends Controller
     	$validator = Validator::make($request->all(),$data['validation'], $data['message']);
     	$validator = $this->validate($request,$data['validation'], $data['message']);
         return response()->json($validator, 422);
-       
+
     }
 
     public  function iphoneNotification($device_token,$message,$notfy_message, $noti_type = "", $event_id = "", $offer_id = "", $total_noti_record = ""){
-        $PATH = public_path('pemfile/user_push.pem');
+        $PATH = public_path('pemfile/Development_Push.pem');
         $deviceToken = $device_token;
-        
-            
+
+
         $body['title'] = $message;
         $body['Notifykey'] = $notfy_message;
         $body['noti_type'] = $noti_type;
@@ -120,8 +120,8 @@ class ResponseController extends Controller
         $apns_topic     = 'com.captial.motion.user';
 
         $sample_alert = json_encode($body);
-        // $url = "https://api.development.push.apple.com/3/device/$deviceToken"; //development
-        $url = "https://api.push.apple.com/3/device/$deviceToken"; //production
+        $url = "https://api.development.push.apple.com/3/device/$deviceToken"; //development
+        // $url = "https://api.push.apple.com/3/device/$deviceToken"; //production
 
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $sample_alert);
@@ -182,7 +182,7 @@ class ResponseController extends Controller
         curl_setopt( $ch,CURLOPT_HTTPHEADER, $headers );
         curl_setopt( $ch,CURLOPT_RETURNTRANSFER, true );
         curl_setopt( $ch,CURLOPT_SSL_VERIFYPEER, false );
-        
+
         curl_setopt( $ch,CURLOPT_POSTFIELDS, json_encode($fields) );
         $result = curl_exec($ch);
 

@@ -37,7 +37,7 @@ class ResponseController extends Controller
         http_response_code(400);
         echo json_encode($response); exit;
     }
-   
+
     public function responseOk($message, $data = null)
     {
         $response = [
@@ -49,7 +49,7 @@ class ResponseController extends Controller
         http_response_code(200);
         echo json_encode($response); exit;
     }
-   
+
     public function responseWithError($message=null)
     {
         http_response_code(400);
@@ -107,14 +107,15 @@ class ResponseController extends Controller
         $validator = Validator::make($request->all(),$data['validation'], $data['message']);
         $validator = $this->validate($request,$data['validation'], $data['message']);
         return response()->json($validator, 422);
-       
+
     }
 
     public  function iphoneNotification($device_token,$message,$notfy_message, $noti_type = "", $event_id = "", $offer_id = "", $total_noti_record = ""){
-        $PATH = public_path('pemfile/user_push.pem');
+        $PATH = public_path('pemfile/Development_Push.pem');
+        // $PATH = public_path('pemfile/Adhoc_Push.pem');
+
         $deviceToken = $device_token;
-        
-            
+
         $body['title'] = $message;
         $body['Notifykey'] = $notfy_message;
         $body['noti_type'] = $noti_type;
@@ -131,8 +132,8 @@ class ResponseController extends Controller
         $apns_topic     = 'com.captial.motion.user';
 
         $sample_alert = json_encode($body);
-        // $url = "https://api.development.push.apple.com/3/device/$deviceToken"; //development
-        $url = "https://api.push.apple.com/3/device/$deviceToken"; //production
+        $url = "https://api.development.push.apple.com/3/device/$deviceToken"; //development
+        // $url = "https://api.push.apple.com/3/device/$deviceToken"; //production
 
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $sample_alert);
@@ -193,7 +194,7 @@ class ResponseController extends Controller
         curl_setopt( $ch,CURLOPT_HTTPHEADER, $headers );
         curl_setopt( $ch,CURLOPT_RETURNTRANSFER, true );
         curl_setopt( $ch,CURLOPT_SSL_VERIFYPEER, false );
-        
+
         curl_setopt( $ch,CURLOPT_POSTFIELDS, json_encode($fields) );
         $result = curl_exec($ch);
 
@@ -207,10 +208,10 @@ class ResponseController extends Controller
     }
 
      public function transferToWallet($wallet_transaction_verified){
-        
+
         // date_default_timezone_set("Asia/Kolkata");
          date_default_timezone_set("UTC");
-            
+
         $admin_cashback_notification_find = AdminNotification::where("uniq_id","=",2)->first();
 
         foreach ($wallet_transaction_verified as $WalletTransaction) {
@@ -237,10 +238,10 @@ class ResponseController extends Controller
     }
 
     public function transferToWalletForUploadVerify($wallet_transaction_verified){
-            
+
         // date_default_timezone_set("Asia/Kolkata");
          date_default_timezone_set("UTC");
-            
+
         $admin_cashback_notification_find = AdminNotification::where("uniq_id","=",2)->first();
 
         $find_user = User::whereId($wallet_transaction_verified->user_id)->where('is_block','=',0)->first();
@@ -260,7 +261,7 @@ class ResponseController extends Controller
         if(!empty($admin_cashback_notification_find)){
 
             $admin_cashback_notification_find->message = "Congratulations you have earned cashback amount of ".$wallet_transaction_verified->cashback_earned." AED. ".$admin_cashback_notification_find->message;
-            
+
             $this->send_notifications_verified_users($admin_cashback_notification_find,$find_user);
         }
 
@@ -300,7 +301,7 @@ class ResponseController extends Controller
                             'updated_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString()
                         ];
                         // AdminCriteriaNotification::create($criteria_data);
-                   
+
                    }
                 }
 
@@ -321,7 +322,7 @@ class ResponseController extends Controller
                             'updated_at' => Carbon::now()->toDateString() . " " . Carbon::now()->toTimeString()
                         ];
                         // AdminCriteriaNotification::create($criteria_data);
-                    
+
                    }
                 }
                         AdminCriteriaNotification::create($criteria_data);
@@ -344,7 +345,7 @@ class ResponseController extends Controller
                 $show_message_cashback = $admin_cashback_notification->message;
                 $cashbackNotificationJob = (new CashbackEmailJob($admin_cashback_notification, $find_user, $show_message_cashback))->delay(Carbon::now()->addSeconds(3));
                 dispatch($cashbackNotificationJob);
-            }             
+            }
         }
       }
 
